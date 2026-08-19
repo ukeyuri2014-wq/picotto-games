@@ -3,137 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ウケユリゲームズ | みんなでつくる無料ゲーム</title>
-<meta name="description" content="就労継続支援B型事業所「ウケユリ 喜連瓜破」のメンバーが1つずつ手づくりしたミニゲームで、無料であそべるサイトです。">
+<title>ピコットゲームズ | PICOTTO GAMES</title>
+<meta name="description" content="ちいさな手づくりミニゲームがすこしずつ増えていく、無料で遊べるゲームコレクション。スマホ・PC対応。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Press+Start+2P&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #fdf8f2;
-    --card: #ffffff;
-    --ink: #4a3f3a;
-    --sub: #8a7d76;
-    --pink: #e88fa8;
-    --pink-deep: #d96e8e;
-    --green: #7fb069;
-    --cream: #fbeee0;
-    --shadow: 0 6px 20px rgba(120, 90, 70, 0.12);
-    --radius: 20px;
+    --bg: #131322;
+    --bg2: #1a1a2e;
+    --panel: #1e1e36;
+    --panel-edge: #2c2c4d;
+    --ink: #eeecfa;
+    --sub: #9d99c0;
+    --pink: #ff5fa2;
+    --pink-deep: #ff3d8c;
+    --cyan: #53e0d8;
+    --gold: #ffd166;
+    --radius: 18px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
     line-height: 1.7;
   }
   .hero {
-    background: linear-gradient(160deg, #ffe3ec 0%, #fff6e9 55%, #eaf6e2 100%);
-    padding: 48px 20px 40px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% -10%, #35234d 0%, transparent 70%),
+      linear-gradient(180deg, #191930 0%, var(--bg) 100%);
+    padding: 64px 20px 52px;
     text-align: center;
-    border-bottom: 4px solid #fff;
+    overflow: hidden;
   }
-  .hero .flower { font-size: 3rem; letter-spacing: 8px; }
-  .hero h1 {
-    font-size: clamp(1.9rem, 5.5vw, 3rem);
-    font-weight: 900;
-    color: var(--pink-deep);
-    letter-spacing: 0.06em;
-    margin: 8px 0 4px;
+  .stars { position: absolute; inset: 0; pointer-events: none; }
+  .stars span {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: var(--cyan);
+    border-radius: 1px;
+    opacity: 0.7;
+    animation: twinkle 2.6s ease-in-out infinite;
   }
-  .hero .en {
-    font-size: 0.85rem;
+  .stars span:nth-child(2n) { background: var(--pink); animation-delay: 0.9s; }
+  .stars span:nth-child(3n) { background: var(--gold); animation-delay: 1.7s; width: 3px; height: 3px; }
+  @keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.9; } }
+  @media (prefers-reduced-motion: reduce) { .stars span { animation: none; } }
+  .hero .eyebrow {
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.62rem;
     letter-spacing: 0.35em;
-    color: var(--green);
-    font-weight: 700;
-    text-transform: uppercase;
+    color: var(--cyan);
+    text-shadow: 0 0 12px rgba(83, 224, 216, 0.6);
   }
+  .hero h1 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 7vw, 3.6rem);
+    letter-spacing: 0.04em;
+    margin: 14px 0 6px;
+    text-wrap: balance;
+    background: linear-gradient(100deg, var(--pink) 15%, #c77dff 50%, var(--cyan) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(255, 95, 162, 0.35));
+  }
+  .hero .logo-emoji { font-size: 2rem; letter-spacing: 10px; }
   .hero p.lead {
-    max-width: 560px;
-    margin: 18px auto 0;
-    font-size: 0.98rem;
-    color: var(--ink);
+    max-width: 540px;
+    margin: 16px auto 0;
+    font-size: 0.95rem;
+    color: var(--sub);
+    font-weight: 700;
   }
-  .badge-row { margin-top: 18px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .badge-row { margin-top: 22px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .badge {
-    background: #fff;
+    border: 1px solid var(--panel-edge);
+    background: rgba(30, 30, 54, 0.8);
     border-radius: 999px;
     padding: 6px 16px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: var(--sub);
-    box-shadow: var(--shadow);
   }
-  main { max-width: 980px; margin: 0 auto; padding: 36px 20px 20px; }
-  .section-title {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 20px;
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 20px 10px; }
+  .section-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; }
+  .section-title h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.35rem;
   }
-  .section-title h2 { font-size: 1.4rem; font-weight: 900; }
-  .section-title .count { color: var(--pink-deep); font-weight: 700; font-size: 0.95rem; }
+  .section-title .count {
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.6rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 22px;
   }
   .card {
-    background: var(--card);
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(120, 90, 70, 0.18); }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--pink);
+    box-shadow: 0 0 0 1px var(--pink), 0 10px 32px rgba(255, 95, 162, 0.25);
+  }
   .thumb {
-    background: linear-gradient(150deg, var(--cream), #ffe3ec);
+    background:
+      radial-gradient(ellipse 80% 90% at 50% 110%, rgba(255, 95, 162, 0.28) 0%, transparent 65%),
+      linear-gradient(160deg, #232345, #191930);
     font-size: 4rem;
     text-align: center;
     padding: 30px 0 22px;
+    border-bottom: 1px solid var(--panel-edge);
   }
   .card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-  .card-body h3 { font-size: 1.15rem; font-weight: 900; }
-  .meta { font-size: 0.78rem; color: var(--sub); display: flex; gap: 12px; flex-wrap: wrap; }
-  .desc { font-size: 0.88rem; flex: 1; }
-  .controls { font-size: 0.78rem; color: var(--green); font-weight: 700; }
+  .card-body h3 { font-size: 1.12rem; font-weight: 900; }
+  .meta { font-size: 0.76rem; color: var(--sub); display: flex; gap: 12px; flex-wrap: wrap; }
+  .desc { font-size: 0.86rem; color: #c9c5e6; flex: 1; }
+  .controls { font-size: 0.76rem; color: var(--cyan); font-weight: 700; }
   .play-btn {
     display: block;
     text-align: center;
-    background: var(--pink);
+    background: linear-gradient(100deg, var(--pink-deep), var(--pink));
     color: #fff;
     font-weight: 900;
-    font-size: 1.05rem;
+    font-size: 1rem;
     text-decoration: none;
     border-radius: 999px;
-    padding: 10px 0;
-    margin-top: 6px;
-    letter-spacing: 0.15em;
-    transition: background 0.15s ease;
+    padding: 11px 0;
+    margin-top: 8px;
+    letter-spacing: 0.2em;
+    box-shadow: 0 4px 18px rgba(255, 61, 140, 0.4);
+    transition: filter 0.15s ease, transform 0.1s ease;
   }
-  .play-btn:hover { background: var(--pink-deep); }
+  .play-btn:hover { filter: brightness(1.12); }
+  .play-btn:active { transform: translateY(1px); }
+  .play-btn:focus-visible, .card a:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
   .empty { text-align: center; color: var(--sub); padding: 40px 0; }
-  .about {
-    max-width: 980px;
-    margin: 40px auto 0;
-    padding: 0 20px 30px;
-  }
+  .about { max-width: 1000px; margin: 44px auto 0; padding: 0 20px 30px; }
   .about-box {
-    background: #fff;
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 28px 26px;
+    padding: 26px 26px;
   }
-  .about-box h2 { font-size: 1.2rem; font-weight: 900; color: var(--green); margin-bottom: 10px; }
-  .about-box p { font-size: 0.92rem; margin-bottom: 10px; }
-  .about-box .note { font-size: 0.8rem; color: var(--sub); }
+  .about-box h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    margin-bottom: 10px;
+  }
+  .about-box p { font-size: 0.9rem; color: #c9c5e6; }
   footer {
     text-align: center;
-    padding: 26px 20px 34px;
-    font-size: 0.78rem;
+    padding: 26px 20px 36px;
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
     color: var(--sub);
   }
 </style>
@@ -141,12 +185,20 @@
 <body>
 
 <header class="hero">
-  <div class="flower">🌸🎮🌸</div>
-  <h1>ウケユリゲームズ</h1>
-  <div class="en">Ukeyuri Games</div>
+  <div class="stars" aria-hidden="true">
+    <span style="left:8%;  top:22%"></span><span style="left:16%; top:64%"></span>
+    <span style="left:24%; top:38%"></span><span style="left:33%; top:15%"></span>
+    <span style="left:44%; top:70%"></span><span style="left:55%; top:18%"></span>
+    <span style="left:63%; top:58%"></span><span style="left:72%; top:30%"></span>
+    <span style="left:82%; top:66%"></span><span style="left:90%; top:24%"></span>
+    <span style="left:12%; top:85%"></span><span style="left:87%; top:86%"></span>
+  </div>
+  <div class="eyebrow">PICOTTO GAMES</div>
+  <h1>ピコットゲームズ</h1>
+  <div class="logo-emoji">🌸🕹️⭐</div>
   <p class="lead">
-    就労継続支援B型事業所「ウケユリ 喜連瓜破」のメンバーが、<br>
-    1つずつ手づくりしたミニゲームです。ぜんぶ無料であそべるよ！
+    ちいさな手づくりミニゲームが、すこしずつ増えていくゲームランド。<br>
+    ぜんぶ無料。気になったやつから、ピッと遊んでって！
   </p>
   <div class="badge-row">
     <span class="badge">📱 スマホOK</span>
@@ -167,26 +219,15 @@
 
 <section class="about">
   <div class="about-box">
-    <h2>🏠 このサイトについて</h2>
+    <h2>ABOUT</h2>
     <p>
-      ウケユリゲームズは、大阪市平野区の就労継続支援B型事業所
-      「ウケユリ 喜連瓜破」のメンバーが、お仕事のひとつとしてゲームづくりに
-      チャレンジして、できあがった作品を公開しているサイトです。
-    </p>
-    <p>
-      さいしょはみんな未経験からのスタート。AIといっしょに少しずつおぼえながら、
-      週に1つずつ新しいゲームがふえていく予定です。あたたかく見守ってね🌱
-    </p>
-    <p class="note">
-      ※ ゲームづくりや動画編集のお仕事に興味のある方は、「ウケユリ 喜連瓜破」まで
-      お気軽に見学のお問い合わせをどうぞ。
+      ピコットゲームズは、ちいさなチームが1つずつ手づくりしているミニゲームのコレクション。
+      あたらしいゲームが「ぽつ、ぽつ」と増えていきます。ときどきのぞきに来てね。
     </p>
   </div>
 </section>
 
-<footer>
-  © 2026 ウケユリ 喜連瓜破（株式会社SMART EDGE） | ウケユリゲームズ
-</footer>
+<footer>© 2026 PICOTTO GAMES</footer>
 
 <script src="games.js"></script>
 <script>
@@ -198,7 +239,7 @@
       return;
     }
     const sorted = [...GAMES].sort((a, b) => (a.date < b.date ? 1 : -1));
-    count.textContent = "ぜんぶで " + sorted.length + " こ";
+    count.textContent = "GAMES: " + sorted.length;
     grid.innerHTML = sorted
       .map(function (g) {
         return (
@@ -209,7 +250,7 @@
           '<div class="meta"><span>👤 ' + g.author + "</span><span>📅 " + g.date + "</span></div>" +
           '<p class="desc">' + g.description + "</p>" +
           '<div class="controls">🎮 ' + g.controls + "</div>" +
-          '<a class="play-btn" href="' + g.path + '">あそぶ！</a>' +
+          '<a class="play-btn" href="' + g.path + '">PLAY!</a>' +
           "</div></article>"
         );
       })
