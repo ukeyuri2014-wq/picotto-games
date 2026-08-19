@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>マーライオンシューター | ピコットゲームズ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, #35234d 0%, transparent 70%),
+      #131322;
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    color: #eeecfa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 8px;
+  }
+  .topbar a {
+    color: #53e0d8;
+    font-weight: 900;
+    text-decoration: none;
+    font-size: 0.88rem;
+    background: #1e1e36;
+    border: 1px solid #2c2c4d;
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .topbar a:hover { border-color: #53e0d8; }
+  .topbar h1 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    background: linear-gradient(100deg, #ff5fa2, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .stage {
+    position: relative;
+    width: min(94vw, 480px);
+    margin: 6px 0 24px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid #2c2c4d;
+    box-shadow: 0 0 40px rgba(83, 224, 216, 0.15), 0 14px 34px rgba(0, 0, 0, 0.45);
+    touch-action: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(19, 19, 34, 0.92);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    gap: 13px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big { font-size: 2.7rem; }
+  .overlay h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    background: linear-gradient(100deg, #ff5fa2, #53e0d8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay p { font-size: 0.92rem; line-height: 1.75; color: #c9c5e6; }
+  .overlay p b { color: #eeecfa; }
+  .overlay .place {
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    color: #ffd166;
+    font-weight: 700;
+  }
+  .overlay .score-line { font-size: 1.25rem; font-weight: 900; color: #eeecfa; }
+  .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
+  .btn {
+    border: none;
+    background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    border-radius: 999px;
+    padding: 12px 46px;
+    cursor: pointer;
+    box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:active { transform: translateY(2px); }
+  .btn:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
+  .hint { font-size: 0.78rem; color: #9d99c0; }
+  .hint a { color: #9d99c0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../index.html">← いちらんへ</a>
+  <h1>🦁 マーライオンシューター</h1>
+</div>
+
+<div class="stage">
+  <canvas id="game" width="480" height="640"></canvas>
+
+  <div class="overlay" id="title-screen">
+    <div class="big">🦁💧🍈</div>
+    <h2>マーライオンシューター</h2>
+    <div class="place">SINGAPORE NIGHT</div>
+    <p>
+      シンガポールのよるけいをまもれ！<br>
+      🦁マーライオンを左右にうごかすと<br>
+      みずでっぽう💧をれんしゃするよ。<br>
+      🍈 ドリアン = うちおとして <b>+20てん</b><br>
+      🌟 ながれぼし = あてたら <b>+50てん</b><br>
+      🍈が海におちたり🦁に当たると<b>ライフ−1</b>（ぜんぶで3つ）
+    </p>
+    <button class="btn" id="start-btn">スタート！</button>
+    <p class="hint">そうさ：←→キー / マウス / ゆびでスライド</p>
+  </div>
+
+  <div class="overlay hidden" id="over-screen">
+    <div class="big">🌃</div>
+    <h2>ゲームオーバー！</h2>
+    <p class="score-line" id="final-score">スコア：0てん</p>
+    <p class="best-line" id="best-score"></p>
+    <button class="btn" id="retry-btn">もういちど！</button>
+    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// ★カスタマイズポイント★
+// ここの数字や絵文字をかえると、じぶんだけのゲームになるよ！
+// ================================================================
+const SETTINGS = {
+  playerEmoji: "🦁",     // じぶん（マーライオン）
+  bulletEmoji: "💧",     // みずでっぽうのたま
+  enemyEmoji: "🍈",      // てき（ドリアン）
+  enemyPoint: 20,        //   → うちおとしたてん
+  bonusEmoji: "🌟",      // ボーナス（ながれぼし）
+  bonusPoint: 50,        //   → あてたてん
+  lives: 3,              // ライフのかず
+  shootInterval: 0.32,   // たまを出すあいだ（びょう）
+  storageKey: "merlion-shooter-best",
+};
+// ================================================================
+
+(function () {
+  const W = 480;
+  const H = 640;
+  const WATER_Y = 540;   // ここから下は海
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const titleScreen = document.getElementById("title-screen");
+  const overScreen = document.getElementById("over-screen");
+  const finalScoreEl = document.getElementById("final-score");
+  const bestScoreEl = document.getElementById("best-score");
+
+  let state = "title"; // title | play | over
+  let score = 0;
+  let lives = SETTINGS.lives;
+  let elapsed = 0;
+  let bullets = [];
+  let enemies = [];
+  let stars = [];      // ながれぼし
+  let popups = [];
+  let spawnTimer = 1;
+  let starTimer = 5;
+  let shootTimer = 0;
+  let invincible = 0;
+  let player = { x: W / 2, y: 575 };
+  let keys = { left: false, right: false };
+  let lastTime = 0;
+
+  // よぞらの星（背景かざり）
+  const bgStars = [];
+  for (let i = 0; i < 42; i++) {
+    bgStars.push({
+      x: Math.random() * W,
+      y: Math.random() * 330,
+      r: 0.6 + Math.random() * 1.3,
+      tw: Math.random() * Math.PI * 2,
+    });
+  }
+  // ビルのまど明かり（さいしょに位置を決めておく）
+  const windows = [];
+  (function makeWindows() {
+    const blocks = [
+      [0, 402, 46, 128], [52, 428, 34, 102], [148, 452, 30, 78],
+      [262, 448, 26, 82], [296, 430, 32, 100],
+      [340, 418, 22, 112], [376, 408, 22, 122], [412, 418, 22, 112],
+    ];
+    blocks.forEach(function (b) {
+      for (let i = 0; i < 14; i++) {
+        windows.push({
+          x: b[0] + 4 + Math.random() * (b[2] - 8),
+          y: b[1] + 6 + Math.random() * (b[3] - 12),
+          gold: Math.random() < 0.7,
+        });
+      }
+    });
+  })();
+
+  // ---- 音（うまく鳴らない環境でもゲームは止めない） ----
+  let audioCtx = null;
+  function beep(freq, dur, type, vol) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol || 0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    } catch (e) { /* 音なしでも続行 */ }
+  }
+
+  // ---- そうさ ----
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") e.preventDefault();
+    if (e.key === "ArrowLeft") keys.left = true;
+    if (e.key === "ArrowRight") keys.right = true;
+  });
+  document.addEventListener("keyup", function (e) {
+    if (e.key === "ArrowLeft") keys.left = false;
+    if (e.key === "ArrowRight") keys.right = false;
+  });
+  function pointerMove(e) {
+    const rect = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    player.x = Math.max(40, Math.min(W - 40, (cx / rect.width) * W));
+  }
+  canvas.addEventListener("pointermove", pointerMove);
+  canvas.addEventListener("pointerdown", pointerMove);
+
+  // ---- ゲームのながれ ----
+  function startGame() {
+    score = 0;
+    lives = SETTINGS.lives;
+    elapsed = 0;
+    bullets = [];
+    enemies = [];
+    stars = [];
+    popups = [];
+    spawnTimer = 1;
+    starTimer = 5;
+    shootTimer = 0;
+    invincible = 0;
+    player.x = W / 2;
+    state = "play";
+    titleScreen.classList.add("hidden");
+    overScreen.classList.add("hidden");
+    beep(660, 0.15);
+  }
+
+  function endGame() {
+    state = "over";
+    const best = Math.max(score, Number(localStorage.getItem(SETTINGS.storageKey) || 0));
+    localStorage.setItem(SETTINGS.storageKey, String(best));
+    finalScoreEl.textContent = "スコア：" + score + "てん";
+    bestScoreEl.textContent = "さいこうきろく：" + best + "てん";
+    overScreen.classList.remove("hidden");
+    beep(220, 0.5, "sawtooth");
+  }
+
+  document.getElementById("start-btn").addEventListener("click", startGame);
+  document.getElementById("retry-btn").addEventListener("click", startGame);
+
+  function loseLife(x, y) {
+    if (invincible > 0) return;
+    lives--;
+    invincible = 1.5;
+    popups.push({ x: x, y: y, text: "−❤️", color: "#ff5fa2", life: 0.9 });
+    beep(150, 0.3, "sawtooth", 0.14);
+    if (lives <= 0) endGame();
+  }
+
+  function update(dt) {
+    elapsed += dt;
+    const ratio = Math.min(elapsed / 60, 1); // 60びょうかけてだんだんむずかしく
+    if (invincible > 0) invincible -= dt;
+
+    // いどう
+    const kbSpeed = 340;
+    if (keys.left) player.x -= kbSpeed * dt;
+    if (keys.right) player.x += kbSpeed * dt;
+    player.x = Math.max(40, Math.min(W - 40, player.x));
+
+    // みずでっぽう（オートれんしゃ）
+    shootTimer -= dt;
+    if (shootTimer <= 0) {
+      bullets.push({ x: player.x, y: player.y - 34 });
+      shootTimer = SETTINGS.shootInterval;
+      beep(760, 0.05, "sine", 0.05);
+    }
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      bullets[i].y -= 430 * dt;
+      if (bullets[i].y < -20) bullets.splice(i, 1);
+    }
+
+    // ドリアン
+    spawnTimer -= dt;
+    if (spawnTimer <= 0) {
+      enemies.push({
+        x: 40 + Math.random() * (W - 80),
+        y: -30,
+        vy: 85 + 105 * ratio + Math.random() * 30,
+        wobble: Math.random() * Math.PI * 2,
+      });
+      spawnTimer = 1.15 - 0.6 * ratio;
+    }
+    for (let i = enemies.length - 1; i >= 0; i--) {
+      const en = enemies[i];
+      en.y += en.vy * dt;
+      en.wobble += dt * 3;
+      en.x += Math.sin(en.wobble) * 0.5;
+
+      // たまに当たった？
+      let hit = false;
+      for (let j = bullets.length - 1; j >= 0; j--) {
+        const b = bullets[j];
+        if (Math.abs(b.x - en.x) < 26 && Math.abs(b.y - en.y) < 28) {
+          bullets.splice(j, 1);
+          hit = true;
+          break;
+        }
+      }
+      if (hit) {
+        score += SETTINGS.enemyPoint;
+        popups.push({ x: en.x, y: en.y, text: "+" + SETTINGS.enemyPoint, color: "#53e0d8", life: 0.8 });
+        enemies.splice(i, 1);
+        beep(1000, 0.1, "triangle");
+        continue;
+      }
+      // マーライオンに当たった？
+      if (Math.abs(en.x - player.x) < 40 && Math.abs(en.y - player.y) < 42) {
+        enemies.splice(i, 1);
+        loseLife(en.x, en.y);
+        continue;
+      }
+      // 海におちた？
+      if (en.y > WATER_Y + 10) {
+        enemies.splice(i, 1);
+        loseLife(en.x, WATER_Y);
+      }
+    }
+
+    // ながれぼし
+    starTimer -= dt;
+    if (starTimer <= 0) {
+      const fromLeft = Math.random() < 0.5;
+      stars.push({
+        x: fromLeft ? -20 : W + 20,
+        y: 70 + Math.random() * 150,
+        vx: (fromLeft ? 1 : -1) * (130 + Math.random() * 60),
+      });
+      starTimer = 6 + Math.random() * 4;
+    }
+    for (let i = stars.length - 1; i >= 0; i--) {
+      const st = stars[i];
+      st.x += st.vx * dt;
+      let hit = false;
+      for (let j = bullets.length - 1; j >= 0; j--) {
+        const b = bullets[j];
+        if (Math.abs(b.x - st.x) < 24 && Math.abs(b.y - st.y) < 24) {
+          bullets.splice(j, 1);
+          hit = true;
+          break;
+        }
+      }
+      if (hit) {
+        score += SETTINGS.bonusPoint;
+        popups.push({ x: st.x, y: st.y, text: "+" + SETTINGS.bonusPoint, color: "#ffd166", life: 0.9 });
+        stars.splice(i, 1);
+        beep(1400, 0.15, "triangle");
+        continue;
+      }
+      if (st.x < -30 || st.x > W + 30) stars.splice(i, 1);
+    }
+
+    // とくてんひょうじ
+    for (let i = popups.length - 1; i >= 0; i--) {
+      popups[i].y -= 50 * dt;
+      popups[i].life -= dt;
+      if (popups[i].life <= 0) popups.splice(i, 1);
+    }
+  }
+
+  // ---- シンガポールの夜景 ----
+  function drawBackground(t) {
+    // よぞら
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#171432");
+    sky.addColorStop(0.6, "#2b2050");
+    sky.addColorStop(1, "#3a2a5e");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    // 星
+    for (const s of bgStars) {
+      ctx.globalAlpha = 0.3 + 0.55 * Math.abs(Math.sin(t / 900 + s.tw));
+      ctx.fillStyle = "#e8e4ff";
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "34px serif";
+    ctx.fillText("🌙", 52, 62);
+
+    // ---- スカイライン ----
+    ctx.fillStyle = "#221d40";
+    // ふつうのビル
+    ctx.fillRect(0, 402, 46, 128);
+    ctx.fillRect(52, 428, 34, 102);
+    ctx.fillRect(148, 452, 30, 78);
+    ctx.fillRect(262, 448, 26, 82);
+    ctx.fillRect(296, 430, 32, 100);
+    // マリーナベイサンズ（3本タワー＋屋上のふね）
+    ctx.fillRect(340, 418, 22, 112);
+    ctx.fillRect(376, 408, 22, 122);
+    ctx.fillRect(412, 418, 22, 112);
+    ctx.save();
+    ctx.translate(387, 402);
+    ctx.rotate(-0.06);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 62, 9, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#2a2153";
+    ctx.fill();
+    ctx.restore();
+
+    // シンガポールフライヤー（かんらんしゃ）
+    ctx.strokeStyle = "#3d3370";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(115, 462, 40, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.lineWidth = 1.5;
+    const spin = t / 4000;
+    for (let k = 0; k < 8; k++) {
+      const a = spin + (k * Math.PI) / 4;
+      ctx.beginPath();
+      ctx.moveTo(115, 462);
+      ctx.lineTo(115 + Math.cos(a) * 40, 462 + Math.sin(a) * 40);
+      ctx.stroke();
+      ctx.fillStyle = "#53e0d8";
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.arc(115 + Math.cos(a) * 40, 462 + Math.sin(a) * 40, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    ctx.strokeStyle = "#3d3370";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(100, 530); ctx.lineTo(115, 466); ctx.lineTo(130, 530);
+    ctx.stroke();
+
+    // スーパーツリー（ガーデンズ・バイ・ザ・ベイ）
+    for (const tx of [196, 222, 246]) {
+      ctx.strokeStyle = "#2a2153";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(tx, 530);
+      ctx.lineTo(tx, 478);
+      ctx.stroke();
+      ctx.fillStyle = "#2a2153";
+      ctx.beginPath();
+      ctx.moveTo(tx - 16, 478);
+      ctx.quadraticCurveTo(tx, 448, tx + 16, 478);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "#c77dff";
+      ctx.globalAlpha = 0.5 + 0.4 * Math.abs(Math.sin(t / 700 + tx));
+      ctx.beginPath();
+      ctx.arc(tx, 470, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // ビルのまど明かり
+    for (const wnd of windows) {
+      ctx.fillStyle = wnd.gold ? "#ffd166" : "#53e0d8";
+      ctx.globalAlpha = 0.55;
+      ctx.fillRect(wnd.x, wnd.y, 2.2, 2.2);
+    }
+    ctx.globalAlpha = 1;
+
+    // ---- 海（マリーナ・ベイ） ----
+    const water = ctx.createLinearGradient(0, WATER_Y - 10, 0, H);
+    water.addColorStop(0, "#1c2a52");
+    water.addColorStop(1, "#101b38");
+    ctx.fillStyle = water;
+    ctx.fillRect(0, WATER_Y - 10, W, H - WATER_Y + 10);
+    // なみのきらめき
+    ctx.strokeStyle = "rgba(83, 224, 216, 0.35)";
+    ctx.lineWidth = 1.5;
+    for (let row = 0; row < 4; row++) {
+      const wy = WATER_Y + 14 + row * 22;
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 8) {
+        const yy = wy + Math.sin(x / 26 + t / 500 + row) * 2.5;
+        if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+      }
+      ctx.stroke();
+    }
+    // ビルのうつりこみ
+    ctx.fillStyle = "rgba(255, 209, 102, 0.08)";
+    ctx.fillRect(340, WATER_Y - 4, 94, 34);
+    ctx.fillStyle = "rgba(83, 224, 216, 0.07)";
+    ctx.fillRect(90, WATER_Y - 4, 60, 26);
+  }
+
+  function draw(t) {
+    drawBackground(t || 0);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // たま
+    ctx.font = "20px serif";
+    for (const b of bullets) ctx.fillText(SETTINGS.bulletEmoji, b.x, b.y);
+
+    // ながれぼし
+    ctx.font = "30px serif";
+    for (const st of stars) ctx.fillText(SETTINGS.bonusEmoji, st.x, st.y);
+
+    // ドリアン（見やすいように後ろをほんのり光らせる）
+    for (const en of enemies) {
+      const glow = ctx.createRadialGradient(en.x, en.y, 4, en.x, en.y, 30);
+      glow.addColorStop(0, "rgba(255, 209, 102, 0.4)");
+      glow.addColorStop(1, "rgba(255, 209, 102, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(en.x, en.y, 30, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.font = "36px serif";
+    for (const en of enemies) ctx.fillText(SETTINGS.enemyEmoji, en.x, en.y);
+
+    // マーライオン（だい座つき）
+    const blink = invincible > 0 && Math.sin(invincible * 20) > 0;
+    ctx.globalAlpha = blink ? 0.35 : 1;
+    ctx.fillStyle = "#dfe7ff";
+    ctx.beginPath();
+    ctx.moveTo(player.x - 24, player.y + 30);
+    ctx.lineTo(player.x + 24, player.y + 30);
+    ctx.lineTo(player.x + 16, player.y + 14);
+    ctx.lineTo(player.x - 16, player.y + 14);
+    ctx.closePath();
+    ctx.fill();
+    ctx.font = "46px serif";
+    ctx.fillText(SETTINGS.playerEmoji, player.x, player.y - 4);
+    ctx.globalAlpha = 1;
+
+    // とくてんポップアップ
+    ctx.font = "900 22px 'Zen Maru Gothic', sans-serif";
+    for (const p of popups) {
+      ctx.globalAlpha = Math.max(p.life / 0.9, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+
+    // スコアとライフ
+    ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
+    roundRect(ctx, 12, 12, 160, 40, 12);
+    roundRect(ctx, W - 132, 12, 120, 40, 12);
+    ctx.fillStyle = "#53e0d8";
+    ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("💧 " + score + " てん", 24, 33);
+    ctx.textAlign = "right";
+    ctx.font = "18px serif";
+    ctx.fillText("❤️".repeat(Math.max(lives, 0)) || "💔", W - 24, 33);
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+    c.fill();
+  }
+
+  function loop(t) {
+    const dt = Math.min((t - lastTime) / 1000, 0.05);
+    lastTime = t;
+    if (state === "play") update(dt);
+    draw(t);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(function (t) {
+    lastTime = t;
+    requestAnimationFrame(loop);
+  });
+  draw(0);
+})();
+</script>
+</body>
+</html>
