@@ -18,6 +18,17 @@
 
 const GAMES = [
   {
+    id: "003",
+    title: "マーライオンシューター",
+    emoji: "🦁",
+    author: "スタッフ（みほん）",
+    date: "2026-08-19",
+    description:
+      "シンガポールのよるけいをまもれ！マーライオンのみずでっぽうで、そらからふってくるドリアンをうちおとそう。ながれぼしはボーナス！",
+    controls: "←→キー / マウス / ゆびでスライド",
+    path: "games/003-merlion-shooter/index.html",
+  },
+  {
     id: "002",
     title: "よふかしペアさがし",
     emoji: "👻",
