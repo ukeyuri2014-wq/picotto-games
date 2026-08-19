@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>きみのゲーム（ひな形） | ウケユリゲームズ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(160deg, #ffe3ec 0%, #fff6e9 60%, #eaf6e2 100%);
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    color: #4a3f3a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 8px;
+  }
+  .topbar a {
+    color: #d96e8e;
+    font-weight: 900;
+    text-decoration: none;
+    font-size: 0.9rem;
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 14px;
+    box-shadow: 0 4px 12px rgba(120, 90, 70, 0.12);
+  }
+  .topbar h1 { font-size: 1.1rem; font-weight: 900; color: #d96e8e; }
+  .stage {
+    position: relative;
+    width: min(94vw, 480px);
+    margin: 6px 0 20px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(120, 90, 70, 0.2);
+    touch-action: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 250, 245, 0.92);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    gap: 14px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big { font-size: 3rem; }
+  .overlay h2 { font-size: 1.6rem; font-weight: 900; color: #d96e8e; }
+  .overlay p { font-size: 0.95rem; line-height: 1.8; }
+  .overlay .score-line { font-size: 1.2rem; font-weight: 900; }
+  .overlay .best-line { font-size: 0.9rem; color: #7fb069; font-weight: 700; }
+  .btn {
+    border: none;
+    background: #e88fa8;
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    border-radius: 999px;
+    padding: 12px 44px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(217, 110, 142, 0.4);
+  }
+  .btn:active { transform: translateY(2px); }
+  .hint { font-size: 0.78rem; color: #8a7d76; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../index.html">← いちらんへ</a>
+  <h1>🎮 きみのゲーム</h1>
+</div>
+
+<div class="stage">
+  <canvas id="game" width="480" height="640"></canvas>
+
+  <div class="overlay" id="title-screen">
+    <div class="big">🌸🧺⭐</div>
+    <h2>きみのゲーム</h2>
+    <p>
+      かごをうごかして おちてくるものをキャッチ！<br>
+      🌸 おはな = <b>+10てん</b><br>
+      ⭐ ほし = <b>+30てん</b><br>
+      🪨 いわ = <b>−20てん</b>（とっちゃダメ！）<br>
+      せいげんじかんは <b>45びょう</b>だよ。
+    </p>
+    <button class="btn" id="start-btn">スタート！</button>
+    <p class="hint">そうさ：←→キー / マウス / ゆびでスライド</p>
+  </div>
+
+  <div class="overlay hidden" id="over-screen">
+    <div class="big">🎉</div>
+    <h2>じかんぎれ！</h2>
+    <p class="score-line" id="final-score">スコア：0てん</p>
+    <p class="best-line" id="best-score"></p>
+    <button class="btn" id="retry-btn">もういちど！</button>
+    <p class="hint"><a href="../../index.html" style="color:#8a7d76;">ゲームいちらんへもどる</a></p>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// ★カスタマイズポイント★
+// ここの数字や絵文字をかえると、じぶんだけのゲームになるよ！
+// ================================================================
+const SETTINGS = {
+  gameTime: 45,        // せいげんじかん（びょう）
+  playerEmoji: "🧺",   // じぶんが うごかすもの
+  goodEmoji: "🌸",     // ふつうのアイテム
+  goodPoint: 10,       //   → もらえるてん
+  bonusEmoji: "⭐",    // ボーナスアイテム
+  bonusPoint: 30,      //   → もらえるてん
+  badEmoji: "🪨",      // わるいアイテム
+  badPoint: -20,       //   → へるてん
+  fallSpeedStart: 130, // おちるはやさ（さいしょ）
+  fallSpeedMax: 260,   // おちるはやさ（さいご）
+  storageKey: "my-game-best",
+};
+// ================================================================
+
+(function () {
+  const W = 480;
+  const H = 640;
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const titleScreen = document.getElementById("title-screen");
+  const overScreen = document.getElementById("over-screen");
+  const finalScoreEl = document.getElementById("final-score");
+  const bestScoreEl = document.getElementById("best-score");
+
+  let state = "title"; // title | play | over
+  let score = 0;
+  let timeLeft = SETTINGS.gameTime;
+  let elapsed = 0;
+  let items = [];
+  let popups = [];
+  let spawnTimer = 0;
+  let player = { x: W / 2, y: H - 70 };
+  let keys = { left: false, right: false };
+  let lastTime = 0;
+
+  // ---- 音（うまく鳴らない環境でもゲームは止めない） ----
+  let audioCtx = null;
+  function beep(freq, dur, type) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    } catch (e) { /* 音なしでも続行 */ }
+  }
+
+  // ---- そうさ ----
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") e.preventDefault();
+    if (e.key === "ArrowLeft") keys.left = true;
+    if (e.key === "ArrowRight") keys.right = true;
+  });
+  document.addEventListener("keyup", function (e) {
+    if (e.key === "ArrowLeft") keys.left = false;
+    if (e.key === "ArrowRight") keys.right = false;
+  });
+  function pointerMove(e) {
+    const rect = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    player.x = Math.max(40, Math.min(W - 40, (cx / rect.width) * W));
+  }
+  canvas.addEventListener("pointermove", pointerMove);
+  canvas.addEventListener("pointerdown", pointerMove);
+
+  // ---- ゲームのながれ ----
+  function startGame() {
+    score = 0;
+    timeLeft = SETTINGS.gameTime;
+    elapsed = 0;
+    items = [];
+    popups = [];
+    spawnTimer = 0;
+    player.x = W / 2;
+    state = "play";
+    titleScreen.classList.add("hidden");
+    overScreen.classList.add("hidden");
+    beep(660, 0.15);
+  }
+
+  function endGame() {
+    state = "over";
+    const best = Math.max(score, Number(localStorage.getItem(SETTINGS.storageKey) || 0));
+    localStorage.setItem(SETTINGS.storageKey, String(best));
+    finalScoreEl.textContent = "スコア：" + score + "てん";
+    bestScoreEl.textContent = "さいこうきろく：" + best + "てん";
+    overScreen.classList.remove("hidden");
+    beep(440, 0.4);
+  }
+
+  document.getElementById("start-btn").addEventListener("click", startGame);
+  document.getElementById("retry-btn").addEventListener("click", startGame);
+
+  function spawnItem() {
+    const r = Math.random();
+    let type;
+    if (r < 0.62) type = "good";
+    else if (r < 0.82) type = "bad";
+    else type = "bonus";
+    const speedRatio = Math.min(elapsed / SETTINGS.gameTime, 1);
+    const vy =
+      SETTINGS.fallSpeedStart +
+      (SETTINGS.fallSpeedMax - SETTINGS.fallSpeedStart) * speedRatio +
+      Math.random() * 40;
+    items.push({
+      x: 40 + Math.random() * (W - 80),
+      y: -30,
+      vy: vy,
+      type: type,
+      wobble: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function update(dt) {
+    elapsed += dt;
+    timeLeft -= dt;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      endGame();
+      return;
+    }
+
+    // キーボードいどう
+    const kbSpeed = 340;
+    if (keys.left) player.x -= kbSpeed * dt;
+    if (keys.right) player.x += kbSpeed * dt;
+    player.x = Math.max(40, Math.min(W - 40, player.x));
+
+    // アイテムをふやす（だんだんはやく）
+    spawnTimer -= dt;
+    if (spawnTimer <= 0) {
+      spawnItem();
+      const ratio = Math.min(elapsed / SETTINGS.gameTime, 1);
+      spawnTimer = 0.85 - 0.4 * ratio;
+    }
+
+    // アイテムいどう＆キャッチはんてい
+    for (let i = items.length - 1; i >= 0; i--) {
+      const it = items[i];
+      it.y += it.vy * dt;
+      it.wobble += dt * 3;
+      it.x += Math.sin(it.wobble) * 0.4;
+
+      const caught =
+        it.y > player.y - 26 && it.y < player.y + 26 && Math.abs(it.x - player.x) < 46;
+
+      if (caught) {
+        let pts = 0;
+        if (it.type === "good") { pts = SETTINGS.goodPoint; beep(880, 0.1); }
+        if (it.type === "bonus") { pts = SETTINGS.bonusPoint; beep(1320, 0.15, "triangle"); }
+        if (it.type === "bad") { pts = SETTINGS.badPoint; beep(150, 0.25, "sawtooth"); }
+        score = Math.max(0, score + pts);
+        popups.push({
+          x: it.x,
+          y: player.y - 40,
+          text: (pts > 0 ? "+" : "") + pts,
+          color: pts > 0 ? (it.type === "bonus" ? "#e6a817" : "#d96e8e") : "#8a6bbf",
+          life: 0.8,
+        });
+        items.splice(i, 1);
+      } else if (it.y > H + 40) {
+        items.splice(i, 1);
+      }
+    }
+
+    // とくてんひょうじの浮き上がり
+    for (let i = popups.length - 1; i >= 0; i--) {
+      popups[i].y -= 50 * dt;
+      popups[i].life -= dt;
+      if (popups[i].life <= 0) popups.splice(i, 1);
+    }
+  }
+
+  function drawBackground() {
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#c9e8f7");
+    sky.addColorStop(0.7, "#fdf3e3");
+    sky.addColorStop(1, "#d8eec9");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    // くも
+    ctx.font = "36px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.globalAlpha = 0.8;
+    ctx.fillText("☁️", 90, 90);
+    ctx.fillText("☁️", 370, 60);
+    ctx.fillText("☁️", 250, 130);
+    ctx.globalAlpha = 1;
+
+    // じめん
+    ctx.fillStyle = "#a8d18d";
+    ctx.fillRect(0, H - 36, W, 36);
+    ctx.font = "20px serif";
+    ctx.fillText("🌷", 40, H - 40);
+    ctx.fillText("🌼", 440, H - 40);
+  }
+
+  function draw() {
+    drawBackground();
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // アイテム
+    ctx.font = "38px serif";
+    for (const it of items) {
+      const emoji =
+        it.type === "good" ? SETTINGS.goodEmoji :
+        it.type === "bonus" ? SETTINGS.bonusEmoji : SETTINGS.badEmoji;
+      ctx.fillText(emoji, it.x, it.y);
+    }
+
+    // プレイヤー
+    ctx.font = "52px serif";
+    ctx.fillText(SETTINGS.playerEmoji, player.x, player.y);
+
+    // とくてんポップアップ
+    ctx.font = "900 22px 'Zen Maru Gothic', sans-serif";
+    for (const p of popups) {
+      ctx.globalAlpha = Math.max(p.life / 0.8, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+
+    // スコアとじかん
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    roundRect(ctx, 12, 12, 150, 40, 12);
+    roundRect(ctx, W - 162, 12, 150, 40, 12);
+    ctx.fillStyle = "#d96e8e";
+    ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("🌸 " + score + " てん", 24, 33);
+    ctx.fillStyle = timeLeft <= 10 ? "#e2574c" : "#4a3f3a";
+    ctx.textAlign = "right";
+    ctx.fillText("⏰ " + Math.ceil(timeLeft) + " びょう", W - 24, 33);
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+    c.fill();
+  }
+
+  function loop(t) {
+    const dt = Math.min((t - lastTime) / 1000, 0.05);
+    lastTime = t;
+    if (state === "play") update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(function (t) {
+    lastTime = t;
+    requestAnimationFrame(loop);
+  });
+  draw();
+})();
+</script>
+</body>
+</html>
