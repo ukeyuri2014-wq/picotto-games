@@ -80,21 +80,17 @@
   }
   .card {
     aspect-ratio: 1;
-    perspective: 600px;
+    position: relative;
     cursor: pointer;
     border: none;
     background: none;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
   }
   .card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.35s ease;
+    position: absolute;
+    inset: 0;
   }
-  @media (prefers-reduced-motion: reduce) { .card-inner { transition: none; } }
-  .card.open .card-inner { transform: rotateY(180deg); }
   .face {
     position: absolute;
     inset: 0;
@@ -102,24 +98,37 @@
     align-items: center;
     justify-content: center;
     border-radius: 14px;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
   }
+  /* 2Dフリップ（横につぶれて→ひろがる）。3D変形なしで全ブラウザ対応 */
   .face.front {
     background: linear-gradient(150deg, #232345, #1b1b38);
     border: 1px solid #2c2c4d;
     color: #6d67a0;
     font-family: "Mochiy Pop One", sans-serif;
     font-size: 1.5rem;
+    transform: scaleX(1);
+    transition: transform 0.16s ease 0.16s;
   }
-  .card:hover .face.front { border-color: #ff5fa2; }
-  .card:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; border-radius: 14px; }
+  .card.open .face.front {
+    transform: scaleX(0);
+    transition: transform 0.16s ease 0s;
+  }
   .face.back {
     background: linear-gradient(150deg, #2d2250, #241f42);
     border: 1px solid #53e0d8;
     font-size: 2.1rem;
-    transform: rotateY(180deg);
+    transform: scaleX(0);
+    transition: transform 0.16s ease 0s;
   }
+  .card.open .face.back {
+    transform: scaleX(1);
+    transition: transform 0.16s ease 0.16s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .face.front, .face.back, .card.open .face.front, .card.open .face.back { transition: none; }
+  }
+  .card:hover .face.front { border-color: #ff5fa2; }
+  .card:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; border-radius: 14px; }
   .card.matched .face.back {
     border-color: #ffd166;
     box-shadow: 0 0 14px rgba(255, 209, 102, 0.5);
