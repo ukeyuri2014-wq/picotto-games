@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>よふかしペアさがし | ピコットゲームズ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, #35234d 0%, transparent 70%),
+      #131322;
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    color: #eeecfa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 8px;
+  }
+  .topbar a {
+    color: #53e0d8;
+    font-weight: 900;
+    text-decoration: none;
+    font-size: 0.88rem;
+    background: #1e1e36;
+    border: 1px solid #2c2c4d;
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .topbar a:hover { border-color: #53e0d8; }
+  .topbar h1 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    background: linear-gradient(100deg, #ff5fa2, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .stage {
+    position: relative;
+    width: min(94vw, 480px);
+    margin: 6px 0 24px;
+    background: #191930;
+    border: 1px solid #2c2c4d;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(83, 224, 216, 0.12), 0 14px 34px rgba(0, 0, 0, 0.45);
+    padding: 16px;
+  }
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .chip {
+    background: rgba(19, 19, 34, 0.85);
+    border: 1px solid #2c2c4d;
+    border-radius: 12px;
+    padding: 6px 14px;
+    font-weight: 900;
+    font-size: 0.95rem;
+  }
+  .chip.moves { color: #ff5fa2; }
+  .chip.time { color: #53e0d8; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .card {
+    aspect-ratio: 1;
+    perspective: 600px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.35s ease;
+  }
+  @media (prefers-reduced-motion: reduce) { .card-inner { transition: none; } }
+  .card.open .card-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .face.front {
+    background: linear-gradient(150deg, #232345, #1b1b38);
+    border: 1px solid #2c2c4d;
+    color: #6d67a0;
+    font-family: "Mochiy Pop One", sans-serif;
+    font-size: 1.5rem;
+  }
+  .card:hover .face.front { border-color: #ff5fa2; }
+  .card:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; border-radius: 14px; }
+  .face.back {
+    background: linear-gradient(150deg, #2d2250, #241f42);
+    border: 1px solid #53e0d8;
+    font-size: 2.1rem;
+    transform: rotateY(180deg);
+  }
+  .card.matched .face.back {
+    border-color: #ffd166;
+    box-shadow: 0 0 14px rgba(255, 209, 102, 0.5);
+  }
+  .card.matched { cursor: default; }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(19, 19, 34, 0.93);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    gap: 14px;
+    z-index: 5;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big { font-size: 3rem; }
+  .overlay h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.55rem;
+    background: linear-gradient(100deg, #ff5fa2, #53e0d8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay p { font-size: 0.95rem; line-height: 1.8; color: #c9c5e6; }
+  .overlay p b { color: #eeecfa; }
+  .overlay .score-line { font-size: 1.2rem; font-weight: 900; color: #eeecfa; }
+  .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
+  .btn {
+    border: none;
+    background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    border-radius: 999px;
+    padding: 12px 46px;
+    cursor: pointer;
+    box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:active { transform: translateY(2px); }
+  .btn:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
+  .hint { font-size: 0.78rem; color: #9d99c0; }
+  .hint a { color: #9d99c0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../index.html">← いちらんへ</a>
+  <h1>👻 よふかしペアさがし</h1>
+</div>
+
+<div class="stage">
+  <div class="hud">
+    <span class="chip moves">🃏 <span id="moves">0</span> かい</span>
+    <span class="chip time">⏰ <span id="time">0</span> びょう</span>
+  </div>
+  <div class="board" id="board"></div>
+
+  <div class="overlay" id="title-screen">
+    <div class="big">👻🌙⭐</div>
+    <h2>よふかしペアさがし</h2>
+    <p>
+      うらがえったカードを2まいずつめくって、<br>
+      おなじえもじの<b>ペア</b>をみつけよう！<br>
+      ぜんぶそろえるまでの<b>タイム</b>にちょうせん。
+    </p>
+    <button class="btn" id="start-btn">スタート！</button>
+    <p class="hint">そうさ：タップ / クリック</p>
+  </div>
+
+  <div class="overlay hidden" id="clear-screen">
+    <div class="big">🎉</div>
+    <h2>ぜんぶそろった！</h2>
+    <p class="score-line" id="final-score">タイム：0びょう</p>
+    <p class="best-line" id="best-score"></p>
+    <button class="btn" id="retry-btn">もういちど！</button>
+    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// ★カスタマイズポイント★
+// えもじをかえると、じぶんだけのペアさがしになるよ！（8しゅるい）
+// ================================================================
+const SETTINGS = {
+  emojis: ["🌸", "⭐", "👻", "🌙", "🍬", "🎀", "🐱", "🍒"],
+  storageKey: "pair-match-best",
+};
+// ================================================================
+
+(function () {
+  const board = document.getElementById("board");
+  const movesEl = document.getElementById("moves");
+  const timeEl = document.getElementById("time");
+  const titleScreen = document.getElementById("title-screen");
+  const clearScreen = document.getElementById("clear-screen");
+  const finalScoreEl = document.getElementById("final-score");
+  const bestScoreEl = document.getElementById("best-score");
+
+  let first = null;      // 1まいめにめくったカード
+  let lock = false;      // はんてい中はめくれない
+  let moves = 0;
+  let matched = 0;
+  let seconds = 0;
+  let timerId = null;
+
+  // ---- 音（うまく鳴らない環境でもゲームは止めない） ----
+  let audioCtx = null;
+  function beep(freq, dur, type) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    } catch (e) { /* 音なしでも続行 */ }
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildBoard() {
+    const deck = shuffle([...SETTINGS.emojis, ...SETTINGS.emojis]);
+    board.innerHTML = "";
+    deck.forEach(function (emoji) {
+      const card = document.createElement("button");
+      card.className = "card";
+      card.type = "button";
+      card.setAttribute("aria-label", "カード");
+      card.dataset.emoji = emoji;
+      card.innerHTML =
+        '<span class="card-inner">' +
+        '<span class="face front">?</span>' +
+        '<span class="face back">' + emoji + "</span>" +
+        "</span>";
+      card.addEventListener("click", function () { flip(card); });
+      board.appendChild(card);
+    });
+  }
+
+  function startGame() {
+    first = null;
+    lock = false;
+    moves = 0;
+    matched = 0;
+    seconds = 0;
+    movesEl.textContent = "0";
+    timeEl.textContent = "0";
+    buildBoard();
+    titleScreen.classList.add("hidden");
+    clearScreen.classList.add("hidden");
+    if (timerId) clearInterval(timerId);
+    timerId = setInterval(function () {
+      seconds++;
+      timeEl.textContent = String(seconds);
+    }, 1000);
+    beep(660, 0.15);
+  }
+
+  function flip(card) {
+    if (lock) return;
+    if (card.classList.contains("open") || card.classList.contains("matched")) return;
+
+    card.classList.add("open");
+    beep(520, 0.07);
+
+    if (!first) {
+      first = card;
+      return;
+    }
+
+    // 2まいめ
+    moves++;
+    movesEl.textContent = String(moves);
+
+    if (first.dataset.emoji === card.dataset.emoji) {
+      first.classList.add("matched");
+      card.classList.add("matched");
+      first = null;
+      matched++;
+      beep(1040, 0.12, "triangle");
+      if (matched === SETTINGS.emojis.length) finishGame();
+    } else {
+      lock = true;
+      const a = first, b = card;
+      first = null;
+      beep(180, 0.18, "sawtooth");
+      setTimeout(function () {
+        a.classList.remove("open");
+        b.classList.remove("open");
+        lock = false;
+      }, 750);
+    }
+  }
+
+  function finishGame() {
+    clearInterval(timerId);
+    timerId = null;
+    const prev = Number(localStorage.getItem(SETTINGS.storageKey) || 0);
+    const best = prev > 0 ? Math.min(prev, seconds) : seconds;
+    localStorage.setItem(SETTINGS.storageKey, String(best));
+    finalScoreEl.textContent = "タイム：" + seconds + "びょう（" + moves + "かい）";
+    bestScoreEl.textContent = "さいそくきろく：" + best + "びょう";
+    setTimeout(function () {
+      clearScreen.classList.remove("hidden");
+      beep(880, 0.3);
+    }, 500);
+  }
+
+  document.getElementById("start-btn").addEventListener("click", startGame);
+  document.getElementById("retry-btn").addEventListener("click", startGame);
+
+  buildBoard(); // タイトル画面のうしろに1回ならべておく
+})();
+</script>
+</body>
+</html>
