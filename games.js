@@ -18,6 +18,17 @@
 
 const GAMES = [
   {
+    id: "002",
+    title: "よふかしペアさがし",
+    emoji: "👻",
+    author: "スタッフ（みほん）",
+    date: "2026-08-19",
+    description:
+      "うらがえったカードをめくって、おなじえもじのペアをみつけよう！ぜんぶそろえるまでのタイムにちょうせん。",
+    controls: "タップ / クリック",
+    path: "games/002-pair-match/index.html",
+  },
+  {
     id: "001",
     title: "はなびらキャッチ",
     emoji: "🌸",
