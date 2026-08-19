@@ -26,9 +26,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
     padding: 14px 16px 8px;
   }
-  .topbar a {
+  .topbar a, .topbar button.mute {
     color: #53e0d8;
     font-weight: 900;
     text-decoration: none;
@@ -37,8 +38,11 @@
     border: 1px solid #2c2c4d;
     border-radius: 999px;
     padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
   }
-  .topbar a:hover { border-color: #53e0d8; }
+  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
   .topbar h1 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
@@ -101,14 +105,29 @@
   }
   /* 2Dフリップ（横につぶれて→ひろがる）。3D変形なしで全ブラウザ対応 */
   .face.front {
-    background: linear-gradient(150deg, #232345, #1b1b38);
-    border: 1px solid #2c2c4d;
-    color: #6d67a0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(199, 125, 255, 0.18) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(83, 224, 216, 0.15) 0%, transparent 40%),
+      radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.5px),
+      linear-gradient(150deg, #232345, #1b1b38);
+    background-size: auto, auto, 12px 12px, auto;
+    border: 1px solid #363063;
+    color: #8f88c9;
     font-family: "Mochiy Pop One", sans-serif;
     font-size: 1.5rem;
     transform: scaleX(1);
     transition: transform 0.16s ease 0.16s;
+    text-shadow: 0 0 10px rgba(199, 125, 255, 0.5);
   }
+  .face.front::before, .face.front::after {
+    content: "✦";
+    position: absolute;
+    font-size: 0.55rem;
+    color: #53e0d8;
+    opacity: 0.7;
+  }
+  .face.front::before { top: 6px; left: 8px; }
+  .face.front::after { bottom: 6px; right: 8px; color: #ff5fa2; }
   .card.open .face.front {
     transform: scaleX(0);
     transition: transform 0.16s ease 0s;
@@ -132,8 +151,39 @@
   .card.matched .face.back {
     border-color: #ffd166;
     box-shadow: 0 0 14px rgba(255, 209, 102, 0.5);
+    animation: match-pop 0.45s ease;
+  }
+  @keyframes match-pop {
+    0% { scale: 1; }
+    40% { scale: 1.14; rotate: 4deg; }
+    70% { scale: 0.96; rotate: -2deg; }
+    100% { scale: 1; rotate: 0deg; }
   }
   .card.matched { cursor: default; }
+  .confetti-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .confetti-piece {
+    position: absolute;
+    top: -14px;
+    width: 8px;
+    height: 13px;
+    border-radius: 2px;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(620px) rotate(660deg); opacity: 0.6; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card.matched .face.back { animation: none; }
+    .confetti-piece { animation: none; display: none; }
+  }
   .overlay {
     position: absolute;
     inset: 0;
@@ -188,6 +238,7 @@
 <div class="topbar">
   <a href="../../index.html">← いちらんへ</a>
   <h1>👻 よふかしペアさがし</h1>
+  <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
 </div>
 
 <div class="stage">
@@ -246,21 +297,92 @@ const SETTINGS = {
   let seconds = 0;
   let timerId = null;
 
-  // ---- 音（うまく鳴らない環境でもゲームは止めない） ----
+  // ============ おと（BGM＋こうかおん・ミュート対応） ============
   let audioCtx = null;
-  function beep(freq, dur, type) {
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type || "sine";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-      osc.connect(gain).connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + dur);
-    } catch (e) { /* 音なしでも続行 */ }
+  let muted = localStorage.getItem("picotto-muted") === "1";
+  const muteBtn = document.getElementById("mute-btn");
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function tone(freq, t, dur, type, vol) {
+    const c = getCtx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(dur, 0.05));
+    o.connect(g).connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.1);
+  }
+  function beep(freq, dur, type, vol) {
+    if (muted) return;
+    try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.1); } catch (e) {}
+  }
+  // オルゴールふうのしずかなループBGM
+  const BGM = {
+    timer: null, step: 0, next: 0,
+    song: {
+      bpm: 80, lead: "sine",
+      melody: [784, 0, 659, 0, 523, 0, 659, 0, 587, 0, 494, 0, 392, 0, 0, 0,
+               784, 0, 880, 0, 784, 0, 659, 0, 587, 0, 659, 0, 523, 0, 0, 0],
+      bass:   [0, 0, 131, 0, 0, 0, 165, 0, 0, 0, 147, 0, 0, 0, 196, 0],
+    },
+    start: function () {
+      try {
+        const c = getCtx();
+        this.stop();
+        const spb = 60 / this.song.bpm / 2;
+        this.next = c.currentTime + 0.1;
+        this.step = 0;
+        const self = this;
+        this.timer = setInterval(function () {
+          try {
+            const cc = getCtx();
+            while (self.next < cc.currentTime + 0.25) {
+              if (!muted && !document.hidden) {
+                const m = self.song.melody[self.step % self.song.melody.length];
+                const b = self.song.bass[self.step % self.song.bass.length];
+                if (m) tone(m, self.next, spb * 1.4, self.song.lead, 0.04);
+                if (b) tone(b, self.next, spb * 1.2, "triangle", 0.05);
+              }
+              self.next += spb;
+              self.step++;
+            }
+          } catch (e) {}
+        }, 80);
+      } catch (e) {}
+    },
+    stop: function () { if (this.timer) { clearInterval(this.timer); this.timer = null; } },
+  };
+  function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
+  muteBtn.addEventListener("click", function () {
+    muted = !muted;
+    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    updateMuteBtn();
+  });
+  updateMuteBtn();
+
+  // カードの絵ごとに、うっすら色のハロー（後光）をつける
+  const EMOJI_HUES = { "🌸": 330, "⭐": 45, "👻": 260, "🌙": 55, "🍬": 300, "🎀": 335, "🐱": 25, "🍒": 350 };
+
+  // クリアのとき紙ふぶきをふらせる
+  const CONFETTI_COLORS = ["#ff5fa2", "#53e0d8", "#ffd166", "#c77dff", "#ffffff"];
+  function throwConfetti() {
+    const stage = document.querySelector(".stage");
+    const layer = document.createElement("div");
+    layer.className = "confetti-layer";
+    for (let i = 0; i < 46; i++) {
+      const piece = document.createElement("span");
+      piece.className = "confetti-piece";
+      piece.style.left = Math.random() * 100 + "%";
+      piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      piece.style.animationDuration = 1.6 + Math.random() * 1.6 + "s";
+      piece.style.animationDelay = Math.random() * 0.7 + "s";
+      layer.appendChild(piece);
+    }
+    stage.appendChild(layer);
+    setTimeout(function () { layer.remove(); }, 4200);
   }
 
   function shuffle(arr) {
@@ -281,10 +403,11 @@ const SETTINGS = {
       card.type = "button";
       card.setAttribute("aria-label", "カード");
       card.dataset.emoji = emoji;
+      const hue = EMOJI_HUES[emoji] !== undefined ? EMOJI_HUES[emoji] : 200;
       card.innerHTML =
         '<span class="card-inner">' +
         '<span class="face front">?</span>' +
-        '<span class="face back">' + emoji + "</span>" +
+        '<span class="face back" style="background: radial-gradient(circle at 50% 42%, hsla(' + hue + ', 80%, 65%, 0.4) 0%, transparent 68%), linear-gradient(150deg, #2d2250, #241f42);">' + emoji + "</span>" +
         "</span>";
       card.addEventListener("click", function () { flip(card); });
       board.appendChild(card);
@@ -308,6 +431,7 @@ const SETTINGS = {
       timeEl.textContent = String(seconds);
     }, 1000);
     beep(660, 0.15);
+    BGM.start();
   }
 
   function flip(card) {
@@ -349,6 +473,7 @@ const SETTINGS = {
   function finishGame() {
     clearInterval(timerId);
     timerId = null;
+    BGM.stop();
     const prev = Number(localStorage.getItem(SETTINGS.storageKey) || 0);
     const best = prev > 0 ? Math.min(prev, seconds) : seconds;
     localStorage.setItem(SETTINGS.storageKey, String(best));
@@ -356,7 +481,15 @@ const SETTINGS = {
     bestScoreEl.textContent = "さいそくきろく：" + best + "びょう";
     setTimeout(function () {
       clearScreen.classList.remove("hidden");
-      beep(880, 0.3);
+      throwConfetti();
+      try {
+        const c = getCtx();
+        if (!muted) {
+          tone(659, c.currentTime + 0.05, 0.18, "sine", 0.07);
+          tone(784, c.currentTime + 0.22, 0.18, "sine", 0.07);
+          tone(1047, c.currentTime + 0.39, 0.35, "sine", 0.08);
+        }
+      } catch (e) {}
     }, 500);
   }
 
