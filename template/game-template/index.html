@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>きみのゲーム（ひな形） | ウケユリゲームズ</title>
+<title>きみのゲーム（ひな形） | ピコットゲームズ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: linear-gradient(160deg, #ffe3ec 0%, #fff6e9 60%, #eaf6e2 100%);
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, #35234d 0%, transparent 70%),
+      #131322;
     font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
-    color: #4a3f3a;
+    color: #eeecfa;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -27,32 +29,42 @@
     padding: 14px 16px 8px;
   }
   .topbar a {
-    color: #d96e8e;
+    color: #53e0d8;
     font-weight: 900;
     text-decoration: none;
-    font-size: 0.9rem;
-    background: #fff;
+    font-size: 0.88rem;
+    background: #1e1e36;
+    border: 1px solid #2c2c4d;
     border-radius: 999px;
     padding: 6px 14px;
-    box-shadow: 0 4px 12px rgba(120, 90, 70, 0.12);
   }
-  .topbar h1 { font-size: 1.1rem; font-weight: 900; color: #d96e8e; }
+  .topbar a:hover { border-color: #53e0d8; }
+  .topbar h1 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    background: linear-gradient(100deg, #ff5fa2, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   .stage {
     position: relative;
     width: min(94vw, 480px);
-    margin: 6px 0 20px;
+    margin: 6px 0 24px;
   }
   canvas {
     display: block;
     width: 100%;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(120, 90, 70, 0.2);
+    border: 1px solid #2c2c4d;
+    box-shadow: 0 0 40px rgba(255, 95, 162, 0.15), 0 14px 34px rgba(0, 0, 0, 0.45);
     touch-action: none;
   }
   .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(255, 250, 245, 0.92);
+    background: rgba(19, 19, 34, 0.92);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -64,25 +76,37 @@
   }
   .overlay.hidden { display: none; }
   .overlay .big { font-size: 3rem; }
-  .overlay h2 { font-size: 1.6rem; font-weight: 900; color: #d96e8e; }
-  .overlay p { font-size: 0.95rem; line-height: 1.8; }
-  .overlay .score-line { font-size: 1.2rem; font-weight: 900; }
-  .overlay .best-line { font-size: 0.9rem; color: #7fb069; font-weight: 700; }
+  .overlay h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.55rem;
+    background: linear-gradient(100deg, #ff5fa2, #53e0d8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay p { font-size: 0.95rem; line-height: 1.8; color: #c9c5e6; }
+  .overlay p b { color: #eeecfa; }
+  .overlay .score-line { font-size: 1.25rem; font-weight: 900; color: #eeecfa; }
+  .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
   .btn {
     border: none;
-    background: #e88fa8;
+    background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
     color: #fff;
     font-family: inherit;
     font-size: 1.15rem;
     font-weight: 900;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     border-radius: 999px;
-    padding: 12px 44px;
+    padding: 12px 46px;
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(217, 110, 142, 0.4);
+    box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
   }
+  .btn:hover { filter: brightness(1.12); }
   .btn:active { transform: translateY(2px); }
-  .hint { font-size: 0.78rem; color: #8a7d76; }
+  .btn:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
+  .hint { font-size: 0.78rem; color: #9d99c0; }
+  .hint a { color: #9d99c0; }
 </style>
 </head>
 <body>
@@ -99,10 +123,10 @@
     <div class="big">🌸🧺⭐</div>
     <h2>きみのゲーム</h2>
     <p>
-      かごをうごかして おちてくるものをキャッチ！<br>
+      かごをうごかして よぞらからおちてくるものをキャッチ！<br>
       🌸 おはな = <b>+10てん</b><br>
       ⭐ ほし = <b>+30てん</b><br>
-      🪨 いわ = <b>−20てん</b>（とっちゃダメ！）<br>
+      👻 おばけ = <b>−20てん</b>（とっちゃダメ！）<br>
       せいげんじかんは <b>45びょう</b>だよ。
     </p>
     <button class="btn" id="start-btn">スタート！</button>
@@ -115,7 +139,7 @@
     <p class="score-line" id="final-score">スコア：0てん</p>
     <p class="best-line" id="best-score"></p>
     <button class="btn" id="retry-btn">もういちど！</button>
-    <p class="hint"><a href="../../index.html" style="color:#8a7d76;">ゲームいちらんへもどる</a></p>
+    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
   </div>
 </div>
 
@@ -131,7 +155,7 @@ const SETTINGS = {
   goodPoint: 10,       //   → もらえるてん
   bonusEmoji: "⭐",    // ボーナスアイテム
   bonusPoint: 30,      //   → もらえるてん
-  badEmoji: "🪨",      // わるいアイテム
+  badEmoji: "👻",      // わるいアイテム
   badPoint: -20,       //   → へるてん
   fallSpeedStart: 130, // おちるはやさ（さいしょ）
   fallSpeedMax: 260,   // おちるはやさ（さいご）
@@ -165,6 +189,17 @@ const SETTINGS = {
   let player = { x: W / 2, y: H - 70 };
   let keys = { left: false, right: false };
   let lastTime = 0;
+
+  // よぞらの星（背景かざり）
+  const bgStars = [];
+  for (let i = 0; i < 40; i++) {
+    bgStars.push({
+      x: Math.random() * W,
+      y: Math.random() * (H - 120),
+      r: 0.6 + Math.random() * 1.4,
+      tw: Math.random() * Math.PI * 2,
+    });
+  }
 
   // ---- 音（うまく鳴らない環境でもゲームは止めない） ----
   let audioCtx = null;
@@ -292,7 +327,7 @@ const SETTINGS = {
           x: it.x,
           y: player.y - 40,
           text: (pts > 0 ? "+" : "") + pts,
-          color: pts > 0 ? (it.type === "bonus" ? "#e6a817" : "#d96e8e") : "#8a6bbf",
+          color: pts > 0 ? (it.type === "bonus" ? "#ffd166" : "#ff5fa2") : "#c77dff",
           life: 0.8,
         });
         items.splice(i, 1);
@@ -309,34 +344,46 @@ const SETTINGS = {
     }
   }
 
-  function drawBackground() {
+  function drawBackground(t) {
+    // よぞら
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#c9e8f7");
-    sky.addColorStop(0.7, "#fdf3e3");
-    sky.addColorStop(1, "#d8eec9");
+    sky.addColorStop(0, "#1b1836");
+    sky.addColorStop(0.55, "#2b2050");
+    sky.addColorStop(1, "#3a2a5e");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, H);
 
-    // くも
-    ctx.font = "36px serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.globalAlpha = 0.8;
-    ctx.fillText("☁️", 90, 90);
-    ctx.fillText("☁️", 370, 60);
-    ctx.fillText("☁️", 250, 130);
+    // 星
+    for (const s of bgStars) {
+      const a = 0.35 + 0.55 * Math.abs(Math.sin(t / 900 + s.tw));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = "#e8e4ff";
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.globalAlpha = 1;
 
+    // つき
+    ctx.font = "40px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("🌙", 415, 88);
+
     // じめん
-    ctx.fillStyle = "#a8d18d";
+    ctx.fillStyle = "#241f42";
     ctx.fillRect(0, H - 36, W, 36);
+    ctx.fillStyle = "#53e0d8";
+    ctx.globalAlpha = 0.6;
+    ctx.fillRect(0, H - 36, W, 2);
+    ctx.globalAlpha = 1;
     ctx.font = "20px serif";
     ctx.fillText("🌷", 40, H - 40);
     ctx.fillText("🌼", 440, H - 40);
   }
 
-  function draw() {
-    drawBackground();
+  function draw(t) {
+    drawBackground(t || 0);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -364,14 +411,14 @@ const SETTINGS = {
     ctx.globalAlpha = 1;
 
     // スコアとじかん
-    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
     roundRect(ctx, 12, 12, 150, 40, 12);
     roundRect(ctx, W - 162, 12, 150, 40, 12);
-    ctx.fillStyle = "#d96e8e";
+    ctx.fillStyle = "#ff5fa2";
     ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("🌸 " + score + " てん", 24, 33);
-    ctx.fillStyle = timeLeft <= 10 ? "#e2574c" : "#4a3f3a";
+    ctx.fillStyle = timeLeft <= 10 ? "#ffd166" : "#53e0d8";
     ctx.textAlign = "right";
     ctx.fillText("⏰ " + Math.ceil(timeLeft) + " びょう", W - 24, 33);
   }
@@ -391,14 +438,14 @@ const SETTINGS = {
     const dt = Math.min((t - lastTime) / 1000, 0.05);
     lastTime = t;
     if (state === "play") update(dt);
-    draw();
+    draw(t);
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(function (t) {
     lastTime = t;
     requestAnimationFrame(loop);
   });
-  draw();
+  draw(0);
 })();
 </script>
 </body>
