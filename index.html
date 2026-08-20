@@ -238,7 +238,7 @@
       grid.innerHTML = '<p class="empty">ゲームじゅんびちゅう！もうすこしまってね🌸</p>';
       return;
     }
-    const sorted = [...GAMES].sort((a, b) => (a.date < b.date ? 1 : -1));
+    const sorted = [...GAMES].sort((a, b) => a.date !== b.date ? (a.date < b.date ? 1 : -1) : (a.id < b.id ? 1 : -1));
     count.textContent = "GAMES: " + sorted.length;
     grid.innerHTML = sorted
       .map(function (g) {
