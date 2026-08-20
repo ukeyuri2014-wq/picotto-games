@@ -76,14 +76,16 @@
   .help i{font-style:normal}
   .help .k-move{color:#8fb8d8}.help .k-kill{color:var(--foe)}.help .k-portal{color:var(--portal)}
   .help .k-switch{color:var(--laser)}.help .k-grav{color:var(--self)}
-  .backbar{width:min(760px,100%);margin:0 2px 6px;font-size:13px}
+  .backbar{width:min(760px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar button{background:none;border:1px solid #2c2c4a;border-radius:999px;color:var(--dim);font-size:13px;padding:3px 12px;cursor:pointer}
+  .backbar button:hover{color:var(--laser);border-color:var(--laser)}
   .backbar a{color:var(--dim);text-decoration:none}
   .backbar a:hover,.backbar a:focus-visible{color:var(--laser);outline:none}
 </style>
 </head>
 <body>
 
-<div class="backbar"><a href="../../index.html">← いちらんへ</a></div>
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
 
 <header>
   <h1>リコシェ・ワン</h1>
@@ -317,6 +319,74 @@
     return bounced;
   }
 
+
+  // ---- おと（BGM＋心地よい効果音 / ミュート設定は全ゲーム共通） ------------
+  let audioCtx = null;
+  let muted = localStorage.getItem('picotto-muted') === '1';
+  function getCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+  function tone(freq, at, dur, type, vol) {
+    const c = getCtx(); const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.linearRampToValueAtTime(vol, at + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + Math.max(dur, 0.05));
+    o.connect(g).connect(c.destination); o.start(at); o.stop(at + dur + 0.1);
+  }
+  function sfx(freq, dur, type, vol) { if (muted) return; try { tone(freq, getCtx().currentTime, dur, type || 'sine', vol || 0.08); } catch (e) {} }
+  // 壁バウンドの「ぽん」：跳ねるたびにペンタトニックで音が上がる
+  const PON = [523, 587, 659, 784, 880, 1047];
+  function ponSound(n) {
+    if (muted) return;
+    try {
+      const c = getCtx(), f = PON[Math.min(Math.max(n, 0), PON.length - 1)];
+      tone(f, c.currentTime, 0.16, 'sine', 0.09);
+      tone(f * 2, c.currentTime, 0.07, 'sine', 0.02);
+    } catch (e) {}
+  }
+  function winChime() {
+    if (muted) return;
+    try {
+      const c = getCtx();
+      tone(659, c.currentTime, 0.16, 'sine', 0.08);
+      tone(784, c.currentTime + 0.13, 0.16, 'sine', 0.08);
+      tone(1047, c.currentTime + 0.26, 0.34, 'sine', 0.09);
+    } catch (e) {}
+  }
+  const BGM = {
+    timer: null, step: 0, next: 0,
+    song: { bpm: 76,
+      melody: [523,0,587,0,659,0,784,0, 880,0,784,0,659,0,587,0, 523,0,659,0,784,0,880,0, 1047,0,880,0,784,0,659,0],
+      bass: [131,0,0,0,165,0,0,0, 196,0,0,0,165,0,0,0] },
+    start: function () { try {
+      const c = getCtx(); this.stop();
+      const spb = 60 / this.song.bpm / 2; this.next = c.currentTime + 0.1; this.step = 0;
+      const self = this;
+      this.timer = setInterval(function () { try {
+        const cc = getCtx();
+        while (self.next < cc.currentTime + 0.25) {
+          if (!muted && !document.hidden) {
+            const m = self.song.melody[self.step % self.song.melody.length];
+            const b = self.song.bass[self.step % self.song.bass.length];
+            if (m) tone(m, self.next, spb * 1.5, 'sine', 0.026);
+            if (b) tone(b, self.next, spb * 1.3, 'triangle', 0.05);
+          }
+          self.next += spb; self.step++;
+        }
+      } catch (e) {} }, 90);
+    } catch (e) {} },
+    stop: function () { if (this.timer) { clearInterval(this.timer); this.timer = null; } },
+  };
+  let bgmStarted = false;
+  function ensureBgm() { if (!bgmStarted) { bgmStarted = true; try { BGM.start(); } catch (e) {} } }
+  const muteBtn = document.getElementById('mute-btn');
+  function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', function () {
+    muted = !muted;
+    localStorage.setItem('picotto-muted', muted ? '1' : '0');
+    updateMuteBtn();
+  });
+  updateMuteBtn();
+
   // ---- game state ---------------------------------------------------------
   let levelIdx = 0, level = LEVELS[0];
   let player, target, opened;
@@ -331,7 +401,7 @@
     return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
   }
   cv.addEventListener('pointermove', e => { const p = canvasPos(e); aim.x = p.x; aim.y = p.y; aim.active = true; });
-  cv.addEventListener('pointerdown', e => { const p = canvasPos(e); aim.x = p.x; aim.y = p.y; aim.active = true; });
+  cv.addEventListener('pointerdown', e => { ensureBgm(); const p = canvasPos(e); aim.x = p.x; aim.y = p.y; aim.active = true; });
   cv.addEventListener('pointerup', e => {
     if (state !== 'play') return;
     const p = canvasPos(e);
@@ -345,6 +415,7 @@
     if (len < 5) return;
     shotsLeft--;
     updateShotsHud();
+    sfx(392, 0.1, 'triangle', 0.06);
     bullets.push({ x: player.x, y: player.y, vx: dx / len * SPEED, vy: dy / len * SPEED,
                    bounces: 0, age: 0, trail: [] });
   }
@@ -379,7 +450,7 @@
     const t = document.getElementById('ovTitle');
     if (kind === 'win')      { t.textContent = 'CLEAR!';     t.className = 'big win';  ovBtn.textContent = 'つぎの面へ'; }
     else if (kind === 'all') { t.textContent = 'ALL CLEAR!'; t.className = 'big win';  ovBtn.textContent = 'さいしょから'; }
-    else                     { t.textContent = 'GAME OVER';  t.className = 'big lose'; ovBtn.textContent = 'もういちど'; }
+    else                     { t.textContent = 'GAME OVER';  t.className = 'big lose'; ovBtn.textContent = 'もういちど'; sfx(196, 0.3, 'sine', 0.07); setTimeout(function(){ sfx(147, 0.4, 'sine', 0.07); }, 180); }
     document.getElementById('ovNote').textContent = note;
     overlay.classList.add('show');
   }
@@ -405,17 +476,19 @@
       b.trail.push({ x: b.x, y: b.y, life: 0.35 });
       const preWarp = b.warped;
       const bn = stepReflect(level, b, dt, simTime, opened, false);
-      if (bn > 0) { b.bounces += bn; burst(b.x, b.y, 'rgba(255,210,63,'); }
-      if (b.warped && !preWarp) { burst(b.x, b.y, 'rgba(184,146,255,', 14); b.trail = []; }
+      if (bn > 0) { b.bounces += bn; burst(b.x, b.y, 'rgba(255,210,63,'); ponSound(b.bounces - 1); }
+      if (b.warped && !preWarp) { burst(b.x, b.y, 'rgba(184,146,255,', 14); b.trail = []; sfx(1320, 0.2, 'sine', 0.05); sfx(1760, 0.12, 'sine', 0.03); }
       if (b.hitSwitch && level.switch && opened.size === 0) {
         for (const id of level.switch.opens) opened.add(id);
         burst(level.switch.x, level.switch.y, 'rgba(255,210,63,', 20);
+        sfx(988, 0.18, 'square', 0.045);
       }
-      if (b.dead) { burst(b.x, b.y, 'rgba(255,93,115,', 14); continue; }
+      if (b.dead) { burst(b.x, b.y, 'rgba(255,93,115,', 14); sfx(165, 0.22, 'sine', 0.06); continue; }
       const tp = targetPosAt(level, simTime);
       if (target.alive && (b.x - tp.x) ** 2 + (b.y - tp.y) ** 2 < (level.target.r + BULLET_R) ** 2) {
         target.alive = false;
         burst(tp.x, tp.y, 'rgba(255,93,115,', 26);
+        winChime();
         const used = level.shots - shotsLeft;
         const isLast = levelIdx === LEVELS.length - 1;
         state = isLast ? 'allclear' : 'win';
