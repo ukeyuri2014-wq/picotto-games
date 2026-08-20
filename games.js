@@ -20,6 +20,19 @@
 
 const GAMES = [
   {
+    id: "007",
+    color: "#4db56a",
+    genre: "MERGE",
+    title: "よふかしスイカ",
+    emoji: "🍉",
+    author: "スタッフ",
+    date: "2026-08-21",
+    description:
+      "落として、くっつけて、育てる。同じフルーツを合体させて、夜のスイカを目指すパズル。上のラインを超えたらゲームオーバー。",
+    controls: "ねらって、はなすと落ちる（タップ / クリック）",
+    path: "games/007-yofukashi-suika/index.html",
+  },
+  {
     id: "006",
     genre: "BOSS RUSH",
     color: "#ffe14d",
