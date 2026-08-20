@@ -18,6 +18,17 @@
 
 const GAMES = [
   {
+    id: "006",
+    title: "コラムブレイカー",
+    emoji: "⚡",
+    author: "ゲスト",
+    date: "2026-08-20",
+    description:
+      "たてレーザーでボス5れんせん！ボスと同じ「たて一列」に立てばダメージ、でも真下は弾がキケン。回るコアにあてると3ばいダメージ！",
+    controls: "WASD/矢印＋スペース / スマホはドラッグ＋FOCUS",
+    path: "games/006-column-breaker/index.html",
+  },
+  {
     id: "005",
     title: "リコシェ・ワン",
     emoji: "🎯",
