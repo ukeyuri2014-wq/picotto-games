@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ピコットゲームズ | PICOTTO GAMES</title>
 <meta name="description" content="その3分、ゲームにしよう。アプリも登録もいらない、スキマ時間にちょうどいい無料ミニゲーム PICOTTO GAMES。スマホ・PC対応。">
+<link rel="preload" as="image" href="assets/picotto-dream-arcade-hero.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Antique+B1&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
@@ -323,6 +324,310 @@
     color: var(--faint);
   }
   a:focus-visible, .card:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 4px; }
+
+  /* ============ v8 / DREAM ARCADE : first viewport ============ */
+  body { background: #080a18; color: #f7f7ff; }
+  .nav-outer {
+    position: fixed;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(5,7,18,.92), rgba(5,7,18,.62) 72%, transparent);
+    border-bottom: 0;
+    backdrop-filter: blur(10px);
+  }
+  .nav { padding: 20px 0; }
+  .nav .logo { color: #fff; font-weight: 700; text-shadow: 0 2px 20px rgba(124,92,255,.45); }
+  .nav .logo span { color: #55e6d3; }
+  .nav .links a { color: rgba(255,255,255,.68); }
+  .nav .links a:hover { color: #fff; border-color: #55e6d3; }
+
+  .hero-stage {
+    position: relative;
+    min-height: min(900px, 100svh);
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    background: #090b1a;
+  }
+  .hero-stage::before {
+    content: "";
+    position: absolute;
+    z-index: -3;
+    inset: -3%;
+    background-image: url("assets/picotto-dream-arcade-hero.jpg");
+    background-size: cover;
+    background-position: center center;
+    animation: hero-breathe 18s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .hero-stage::after {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(5,7,18,.94) 0%, rgba(5,7,18,.83) 28%, rgba(5,7,18,.24) 64%, rgba(5,7,18,.08) 100%),
+      linear-gradient(0deg, #080a18 0%, transparent 25%, rgba(5,7,18,.15) 100%);
+  }
+  @keyframes hero-breathe { from { transform: scale(1.01) translate3d(0,0,0); } to { transform: scale(1.055) translate3d(-.7%, -.4%, 0); } }
+  .hero-glow {
+    position: absolute;
+    z-index: -1;
+    width: 360px;
+    height: 360px;
+    left: 18%;
+    top: 32%;
+    border-radius: 50%;
+    background: rgba(124,92,255,.16);
+    filter: blur(90px);
+    animation: glow-drift 8s ease-in-out infinite alternate;
+  }
+  @keyframes glow-drift { to { transform: translate3d(44px, 26px, 0) scale(1.15); opacity: .65; } }
+  .hero-stage .wrap { width: 100%; }
+  .hero-stage .hero { padding: 144px 0 100px; max-width: 680px; }
+  .hero-stage .eyebrow {
+    color: #55e6d3;
+    font-size: .72rem;
+    letter-spacing: .34em;
+    text-shadow: 0 0 22px rgba(85,230,211,.45);
+  }
+  .hero-stage .hero h1 {
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    font-size: clamp(3.35rem, 6.7vw, 6.6rem);
+    font-weight: 900;
+    line-height: 1.04;
+    letter-spacing: -.055em;
+    color: #fff;
+    text-shadow: 0 12px 46px rgba(0,0,0,.42);
+  }
+  .hero-stage .hero h1 em {
+    background: linear-gradient(100deg, #fff 5%, #9cf9ed 40%, #a58bff 72%, #ff8eb5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-stage .hero p.lead {
+    max-width: 600px;
+    color: rgba(237,239,255,.76);
+    font-size: 1.02rem;
+    line-height: 1.95;
+    text-shadow: 0 2px 18px rgba(0,0,0,.55);
+  }
+  .hero-stage .hero p.lead b { color: #fff; }
+  .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 30px; }
+  .hero-play, .hero-browse {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    border-radius: 999px;
+    padding: 0 28px;
+    text-decoration: none;
+    font-weight: 900;
+    letter-spacing: .04em;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .hero-play { color: #080a18; background: #fff; box-shadow: 0 14px 36px rgba(0,0,0,.34), 0 0 30px rgba(85,230,211,.15); }
+  .hero-browse { color: #fff; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(10px); }
+  .hero-play:hover, .hero-browse:hover { transform: translateY(-3px); }
+  .hero-play:hover { box-shadow: 0 18px 42px rgba(0,0,0,.4), 0 0 34px rgba(85,230,211,.25); }
+  .hero-browse:hover { background: rgba(255,255,255,.16); }
+  .hero-stage .stats { margin-top: 24px; }
+  .hero-stage .stat {
+    color: rgba(240,242,255,.68);
+    background: rgba(10,12,30,.48);
+    border-color: rgba(255,255,255,.13);
+    box-shadow: none;
+    backdrop-filter: blur(10px);
+  }
+  .hero-credit {
+    position: absolute;
+    right: 28px;
+    bottom: 24px;
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .22em;
+    color: rgba(255,255,255,.38);
+  }
+  .showcase { background: #080a18; }
+
+  @media (max-width: 720px) {
+    .nav { padding: 15px 0; }
+    .nav .links { gap: 14px; }
+    .nav .links a { font-size: .62rem; letter-spacing: .13em; }
+    .hero-stage { min-height: 760px; align-items: flex-end; }
+    .hero-stage::before { inset: -2%; background-position: 76% center; }
+    .hero-stage::after {
+      background:
+        linear-gradient(0deg, #080a18 0%, rgba(5,7,18,.92) 22%, rgba(5,7,18,.42) 65%, rgba(5,7,18,.12) 100%),
+        linear-gradient(90deg, rgba(5,7,18,.65), rgba(5,7,18,.04));
+    }
+    .hero-stage .hero { padding: 170px 0 76px; }
+    .hero-stage .hero h1 { font-size: clamp(3rem, 15vw, 4.65rem); }
+    .hero-stage .hero p.lead { font-size: .92rem; line-height: 1.8; }
+    .hero-play, .hero-browse { min-height: 50px; padding: 0 21px; font-size: .88rem; }
+    .hero-credit { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-stage::before, .hero-glow { animation: none; }
+  }
+
+  /* ============ v8 / DREAM ARCADE : collection ============ */
+  .showcase {
+    position: relative;
+    padding: 52px 0 22px;
+    background:
+      radial-gradient(circle at 78% 20%, rgba(124,92,255,.13), transparent 28%),
+      radial-gradient(circle at 8% 82%, rgba(85,230,211,.07), transparent 25%),
+      #080a18;
+  }
+  .featured { gap: 64px; padding: 64px 0 84px; }
+  .f-copy .f-tag {
+    color: #090b1a;
+    background: #55e6d3;
+    box-shadow: 0 0 28px rgba(85,230,211,.24);
+  }
+  .f-copy h2 { color: #fff; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 900; font-size: clamp(2.1rem, 4vw, 3.4rem); letter-spacing: -.035em; }
+  .f-meta { color: rgba(232,234,255,.42); }
+  .f-copy p.desc { color: rgba(232,234,255,.68); line-height: 1.9; }
+  .f-copy .ctrl { color: rgba(232,234,255,.42); }
+  .btn-primary { color: #080a18; background: #fff; box-shadow: 0 14px 34px rgba(0,0,0,.34); }
+  .btn-primary:hover { color: #080a18; background: #dffcf7; box-shadow: 0 18px 42px rgba(0,0,0,.4), 0 0 28px rgba(85,230,211,.14); }
+  .btn-ghost { color: rgba(232,234,255,.58); border-color: rgba(255,255,255,.2); }
+  .btn-ghost:hover { color: #fff; border-color: #55e6d3; }
+  .f-art {
+    border-radius: 26px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.12), 0 0 70px color-mix(in srgb, var(--ac, #7c5cff) 17%, transparent);
+  }
+  .f-art:hover { box-shadow: 0 38px 90px rgba(0,0,0,.58), 0 0 0 1px rgba(255,255,255,.18), 0 0 85px color-mix(in srgb, var(--ac, #7c5cff) 22%, transparent); }
+
+  body > .wrap {
+    max-width: none;
+    padding: 0;
+    background:
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+      #0b0d1c;
+    background-size: 48px 48px;
+  }
+  body > .wrap > main, body > .wrap > .about { max-width: 1120px; margin-left: auto; margin-right: auto; }
+  body > .wrap > main { padding: 0 24px 48px; }
+
+  .ranking {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 84px 24px 18px;
+  }
+  .ranking-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; margin-bottom: 30px; }
+  .ranking-head .label { font-family: var(--mono); font-size: .68rem; letter-spacing: .34em; color: #ff8eb5; margin-bottom: 9px; }
+  .ranking-head h2 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.25; letter-spacing: -.035em; }
+  .ranking-note { max-width: 310px; color: rgba(232,234,255,.46); font-size: .78rem; line-height: 1.8; text-align: right; }
+  .ranking-note b { color: rgba(232,234,255,.76); }
+  .rank-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .rank-card {
+    --ac: #7c5cff;
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    min-height: 132px;
+    padding: 14px;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(145deg, rgba(30,33,62,.96), rgba(13,15,32,.98));
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 20px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.23);
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  .rank-card:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--ac) 54%, #fff); box-shadow: 0 22px 48px rgba(0,0,0,.38), 0 0 32px color-mix(in srgb, var(--ac) 14%, transparent); }
+  .rank-art { overflow: hidden; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.28); }
+  .rank-art svg, .rank-art .fallback { display: block; width: 100%; height: auto; }
+  .rank-no {
+    position: absolute;
+    right: 10px;
+    bottom: -21px;
+    font-family: var(--mono);
+    font-size: 4.7rem;
+    line-height: 1;
+    color: color-mix(in srgb, var(--ac) 17%, transparent);
+    pointer-events: none;
+  }
+  .rank-copy { position: relative; z-index: 1; min-width: 0; }
+  .rank-copy .rank-kicker { display: block; font-family: var(--mono); font-size: .58rem; letter-spacing: .18em; color: color-mix(in srgb, var(--ac) 72%, #fff); margin-bottom: 6px; }
+  .rank-copy h3 { overflow: hidden; color: #fff; font-size: 1.04rem; font-weight: 900; line-height: 1.45; white-space: nowrap; text-overflow: ellipsis; }
+  .rank-copy .rank-play { display: inline-block; margin-top: 10px; color: rgba(232,234,255,.48); font-family: var(--mono); font-size: .58rem; letter-spacing: .14em; }
+  .sec-head { padding: 92px 0 36px; }
+  .sec-head .label { color: #55e6d3; }
+  .sec-head h2 { color: #fff; font-family: "Zen Kaku Gothic New", sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; letter-spacing: -.035em; }
+  .sec-head .count { color: rgba(232,234,255,.38); }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .card {
+    background: linear-gradient(160deg, rgba(26,29,55,.94), rgba(13,15,32,.98));
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgba(0,0,0,.22);
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    border-color: color-mix(in srgb, var(--ac) 52%, rgba(255,255,255,.2));
+    box-shadow: 0 26px 62px rgba(0,0,0,.46), 0 0 42px color-mix(in srgb, var(--ac) 13%, transparent);
+  }
+  .art { margin: 0; border-radius: 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+  .card-body { padding: 20px 22px 18px; gap: 10px; }
+  .chip { background: color-mix(in srgb, var(--ac) 17%, #171a31); color: color-mix(in srgb, var(--ac) 80%, #fff); }
+  .chip.new { background: #fff; color: #090b1a; box-shadow: 0 5px 18px rgba(255,255,255,.13); }
+  .chips .no { color: rgba(232,234,255,.35); }
+  .card-body h3 { color: #fff; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 1.28rem; font-weight: 900; letter-spacing: -.01em; }
+  .desc { color: rgba(232,234,255,.61); line-height: 1.75; }
+  .meta { color: rgba(232,234,255,.34); }
+  .card-foot { border-color: rgba(255,255,255,.075); }
+  .play { color: color-mix(in srgb, var(--ac) 72%, #fff); }
+  .card-foot .free { color: rgba(232,234,255,.32); }
+
+  .about {
+    width: calc(100% - 48px);
+    border-top: 1px solid rgba(255,255,255,.09);
+    padding: 82px 0 60px;
+  }
+  .about h2 { color: #fff; font-family: "Zen Kaku Gothic New", sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; letter-spacing: -.035em; line-height: 1.35; }
+  .about .a-body p { color: rgba(232,234,255,.64); line-height: 1.95; }
+  .about .a-body a { color: #55e6d3; border-color: rgba(85,230,211,.3); }
+  .point {
+    background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+    border-color: rgba(255,255,255,.09);
+    box-shadow: 0 10px 28px rgba(0,0,0,.15);
+  }
+  .point .num { color: #8f76ff; }
+  .point h3 { color: #fff; }
+  .point p { color: rgba(232,234,255,.55); }
+
+  footer { margin-top: 0; border-color: rgba(255,255,255,.08); background: #060711; }
+  .foot-inner .logo { color: #fff; }
+  .foot-inner .logo span { color: #55e6d3; }
+  .foot-inner .tg, .foot-inner .links a, .foot-base { color: rgba(232,234,255,.38); }
+  .foot-inner .links a:hover { color: #fff; }
+  .foot-base { border-color: rgba(255,255,255,.07); }
+
+  @media (max-width: 820px) {
+    .featured { gap: 38px; padding: 38px 0 76px; }
+    .f-art { order: -1; }
+    .ranking-head { align-items: flex-start; flex-direction: column; gap: 10px; }
+    .ranking-note { max-width: none; text-align: left; }
+    .rank-grid { grid-template-columns: 1fr; }
+    .rank-card { grid-template-columns: 132px minmax(0, 1fr); }
+    .sec-head { padding-top: 72px; }
+  }
+  @media (max-width: 520px) {
+    .showcase .wrap { padding: 0 18px; }
+    body > .wrap > main { padding-left: 18px; padding-right: 18px; }
+    .grid { grid-template-columns: 1fr; }
+    .about { width: calc(100% - 36px); }
+    .foot-inner .links { gap: 15px; }
+  }
 </style>
 </head>
 <body>
@@ -340,15 +645,20 @@
   </div>
 </div>
 
-<div class="top">
+<div class="hero-stage">
+  <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
     <header class="hero">
-      <div class="eyebrow">PICOTTO GAMES — FREE MINI GAMES</div>
-      <h1>その3分、<br><em>ゲームにしよう。</em></h1>
+      <div class="eyebrow">SMALL GAMES. BIG ESCAPES.</div>
+      <h1>その3分、<br><em>別世界へ。</em></h1>
       <p class="lead">
-        アプリも、登録も、ダウンロードもなし。リンクを開いたら、もう始まってる。
-        スキマ時間にちょうどいい<b>無料ミニゲーム</b>、そろえてます。
+        アプリも、登録も、ダウンロードもなし。ひらいた瞬間、もうゲームの中。
+        すきま時間に飛びこめる<b>無料ミニゲーム</b>を集めました。
       </p>
+      <div class="hero-actions">
+        <a class="hero-play" id="hero-play" href="#games">▶ おすすめをあそぶ</a>
+        <a class="hero-browse" href="#games">ゲームをえらぶ ↓</a>
+      </div>
       <div class="stats">
         <span class="stat"><i style="background:var(--pink)"></i><span id="stat-count">--</span>&nbsp;GAMES</span>
         <span class="stat"><i style="background:var(--teal)"></i>100% FREE</span>
@@ -356,25 +666,33 @@
       </div>
     </header>
 
+  </div>
+  <div class="hero-credit">ORIGINAL WORLD OF PICOTTO GAMES</div>
+</div>
+
+<div class="showcase">
+  <div class="wrap">
     <section class="featured" id="featured"></section>
   </div>
 </div>
 
 <div class="wrap">
+  <section class="ranking" id="ranking" aria-live="polite"></section>
+
   <main id="games">
     <div class="sec-head">
       <div class="label">ALL GAMES</div>
-      <h2>今日は、どれにする？ <span class="count" id="game-count"></span></h2>
+      <h2>今日は、どこへ行く？ <span class="count" id="game-count"></span></h2>
     </div>
     <div class="grid" id="game-grid"><p class="empty">LOADING...</p></div>
   </main>
 
   <section class="about" id="about">
-    <h2>かるく遊べて、<br>ちゃんと作ってある。</h2>
+    <h2>3分で戻れる、<br>ちいさな別世界。</h2>
     <div class="a-body">
       <p>
         ピコットゲームズは、小さな制作チームが1本ずつ手づくりしている
-        ミニゲームのセレクションです。「3分で遊べる手軽さ」と「つい、もう1回」の
+        ミニゲームの入り口です。「3分で飛びこめる手軽さ」と「つい、もう1回」の
         手応えを大切にしています。すべて無料。
         ゲームの投稿も受け付けています——<a href="submit.html">投稿について →</a>
       </p>
@@ -629,6 +947,8 @@
     const count = document.getElementById("game-count");
     const statCount = document.getElementById("stat-count");
     const featured = document.getElementById("featured");
+    const heroPlay = document.getElementById("hero-play");
+    const ranking = document.getElementById("ranking");
     if (typeof GAMES === "undefined" || !GAMES.length) {
       grid.innerHTML = '<p class="empty">COMING SOON...</p>';
       return;
@@ -648,6 +968,8 @@
 
     // 最新作フィーチャー
     const f = sorted[0];
+    heroPlay.href = f.path;
+    heroPlay.setAttribute("data-game-id", f.id);
     const fac = f.color || "#ff2e88";
     featured.innerHTML =
       '<div class="f-copy" style="--ac:' + fac + '">' +
@@ -657,17 +979,17 @@
       '<p class="desc">' + f.description + "</p>" +
       '<div class="ctrl">そうさ：' + f.controls + "</div>" +
       '<div class="f-actions">' +
-      '<a class="btn-primary" href="' + f.path + '">▶ いますぐあそぶ</a>' +
+      '<a class="btn-primary" data-game-id="' + f.id + '" href="' + f.path + '">▶ いますぐあそぶ</a>' +
       '<a class="btn-ghost" href="#games">ぜんぶ見る ↓</a>' +
       "</div></div>" +
-      '<a class="f-art" href="' + f.path + '" aria-label="' + f.title + 'をプレイ">' + artOf(f) + "</a>";
+      '<a class="f-art" data-game-id="' + f.id + '" href="' + f.path + '" aria-label="' + f.title + 'をプレイ">' + artOf(f) + "</a>";
 
     // 一覧
     grid.innerHTML = sorted
       .map(function (g) {
         const ac = g.color || "#ff2e88";
         return (
-          '<a class="card" style="--ac:' + ac + '" href="' + g.path + '">' +
+          '<a class="card" data-game-id="' + g.id + '" style="--ac:' + ac + '" href="' + g.path + '">' +
           '<div class="art">' + artOf(g) + "</div>" +
           '<div class="card-body">' +
           '<div class="chips"><span class="chip">' + (g.genre || "GAME") + "</span>" +
@@ -681,6 +1003,46 @@
         );
       })
       .join("");
+
+    // 数字を見せないTOP 3。初回は編集部セレクト、以降はこの端末のプレイ履歴で並び替える。
+    const storageKey = "picotto-home-plays-v1";
+    let playCounts = {};
+    try { playCounts = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch (e) { playCounts = {}; }
+    const staffOrder = ["007", "005", "003"];
+    const staffIndex = function (id) {
+      const i = staffOrder.indexOf(id);
+      return i < 0 ? 999 : i;
+    };
+    const hasHistory = Object.keys(playCounts).some(function (id) { return Number(playCounts[id]) > 0; });
+    const ranked = [...sorted].sort(function (a, b) {
+      const countDiff = Number(playCounts[b.id] || 0) - Number(playCounts[a.id] || 0);
+      if (countDiff) return countDiff;
+      return staffIndex(a.id) - staffIndex(b.id);
+    }).slice(0, 3);
+
+    ranking.innerHTML =
+      '<div class="ranking-head"><div><div class="label">PICOTTO CHART</div><h2>' +
+      (hasHistory ? "あなたがよく遊ぶ TOP 3" : "今週の注目 TOP 3") +
+      '</h2></div><p class="ranking-note"><b>' + (hasHistory ? "YOUR PLAY HISTORY" : "EDITOR’S PICK") +
+      '</b><br>プレイ回数は表示せず、順位だけを紹介します。</p></div>' +
+      '<div class="rank-grid">' + ranked.map(function (g, i) {
+        const ac = g.color || "#7c5cff";
+        return '<a class="rank-card" data-game-id="' + g.id + '" style="--ac:' + ac + '" href="' + g.path + '">' +
+          '<span class="rank-no">0' + (i + 1) + '</span><div class="rank-art">' + artOf(g) + '</div>' +
+          '<div class="rank-copy"><span class="rank-kicker">NO.0' + (i + 1) + ' · ' + (g.genre || "GAME") +
+          '</span><h3>' + g.title + '</h3><span class="rank-play">PLAY →</span></div></a>';
+      }).join("") + '</div>';
+
+    document.querySelectorAll("[data-game-id]").forEach(function (link) {
+      link.addEventListener("click", function () {
+        const id = link.getAttribute("data-game-id");
+        try {
+          const counts = JSON.parse(localStorage.getItem(storageKey) || "{}");
+          counts[id] = Number(counts[id] || 0) + 1;
+          localStorage.setItem(storageKey, JSON.stringify(counts));
+        } catch (e) {}
+      });
+    });
   })();
 </script>
 </body>
