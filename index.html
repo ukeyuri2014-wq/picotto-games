@@ -4,253 +4,341 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ピコットゲームズ | PICOTTO GAMES</title>
-<meta name="description" content="ちいさな手づくりミニゲームがすこしずつ増えていく、無料で遊べるゲームコレクション。スマホ・PC対応。">
+<meta name="description" content="ダウンロード不要、ブラウザで即プレイ。自家製ミニゲームのアーカイブ PICOTTO GAMES。スマホ・PC対応、すべて無料。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Press+Start+2P&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #131322;
-    --bg2: #1a1a2e;
-    --panel: #1e1e36;
-    --panel-edge: #2c2c4d;
-    --ink: #eeecfa;
-    --sub: #9d99c0;
-    --pink: #ff5fa2;
-    --pink-deep: #ff3d8c;
-    --cyan: #53e0d8;
-    --gold: #ffd166;
-    --radius: 18px;
+    --bg: #0c0c15;
+    --bg2: #101020;
+    --panel: #14141f;
+    --line: #24243a;
+    --ink: #e8e8f2;
+    --sub: #8a8aa8;
+    --pink: #ff2e88;
+    --cyan: #3ff2e6;
+    --gold: #ffc94d;
+    --purple: #8b5bff;
+    --mono: "DotGothic16", monospace;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
-    line-height: 1.7;
-  }
-  .hero {
-    position: relative;
     background:
-      radial-gradient(ellipse 70% 55% at 50% -10%, #35234d 0%, transparent 70%),
-      linear-gradient(180deg, #191930 0%, var(--bg) 100%);
-    padding: 64px 20px 52px;
-    text-align: center;
-    overflow: hidden;
+      radial-gradient(ellipse 80% 40% at 50% -5%, rgba(139, 91, 255, 0.14) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent 0 39px, rgba(255, 255, 255, 0.015) 39px 40px),
+      repeating-linear-gradient(90deg, transparent 0 39px, rgba(255, 255, 255, 0.015) 39px 40px),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+    line-height: 1.75;
   }
-  .stars { position: absolute; inset: 0; pointer-events: none; }
-  .stars span {
-    position: absolute;
-    width: 4px; height: 4px;
-    background: var(--cyan);
-    border-radius: 1px;
-    opacity: 0.7;
-    animation: twinkle 2.6s ease-in-out infinite;
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+
+  /* ===== top nav ===== */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0 14px;
+    border-bottom: 1px solid var(--line);
   }
-  .stars span:nth-child(2n) { background: var(--pink); animation-delay: 0.9s; }
-  .stars span:nth-child(3n) { background: var(--gold); animation-delay: 1.7s; width: 3px; height: 3px; }
-  @keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.9; } }
-  @media (prefers-reduced-motion: reduce) { .stars span { animation: none; } }
-  .hero .eyebrow {
-    font-family: "Press Start 2P", monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.35em;
-    color: var(--cyan);
-    text-shadow: 0 0 12px rgba(83, 224, 216, 0.6);
+  .nav .logo {
+    font-family: var(--mono);
+    font-size: 1.02rem;
+    letter-spacing: 0.14em;
+    color: var(--ink);
   }
+  .nav .logo span { color: var(--pink); }
+  .nav .tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    color: var(--sub);
+  }
+
+  /* ===== hero ===== */
+  .hero { padding: 62px 0 40px; position: relative; overflow: hidden; }
   .hero h1 {
-    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-family: var(--mono);
     font-weight: 400;
-    font-size: clamp(2.2rem, 7vw, 3.6rem);
-    letter-spacing: 0.04em;
-    margin: 14px 0 6px;
+    font-size: clamp(2.4rem, 7vw, 4.2rem);
+    letter-spacing: 0.05em;
+    line-height: 1.15;
     text-wrap: balance;
-    background: linear-gradient(100deg, var(--pink) 15%, #c77dff 50%, var(--cyan) 85%);
+    background: linear-gradient(95deg, #fff 0%, #d9d9ff 35%, var(--cyan) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 0 18px rgba(255, 95, 162, 0.35));
+    filter: drop-shadow(0 0 24px rgba(63, 242, 230, 0.25));
   }
-  .hero .logo-emoji { font-size: 2rem; letter-spacing: 10px; }
-  .hero p.lead {
-    max-width: 540px;
-    margin: 16px auto 0;
-    font-size: 0.95rem;
-    color: var(--sub);
-    font-weight: 700;
-  }
-  .badge-row { margin-top: 22px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .badge {
-    border: 1px solid var(--panel-edge);
-    background: rgba(30, 30, 54, 0.8);
-    border-radius: 999px;
-    padding: 6px 16px;
+  .hero .en {
+    font-family: var(--mono);
+    color: var(--pink);
+    letter-spacing: 0.42em;
     font-size: 0.8rem;
-    font-weight: 700;
+    margin-bottom: 14px;
+    text-shadow: 0 0 14px rgba(255, 46, 136, 0.6);
+  }
+  .hero p.lead {
+    margin-top: 20px;
+    max-width: 560px;
     color: var(--sub);
+    font-size: 0.98rem;
+    font-weight: 500;
   }
-  main { max-width: 1000px; margin: 0 auto; padding: 40px 20px 10px; }
-  .section-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; }
-  .section-title h2 {
-    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
-    font-weight: 400;
-    font-size: 1.35rem;
-  }
-  .section-title .count {
-    font-family: "Press Start 2P", monospace;
-    font-size: 0.6rem;
+  .hero p.lead b { color: var(--ink); }
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .stat {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
     color: var(--cyan);
-    letter-spacing: 0.15em;
+    border: 1px solid var(--line);
+    background: rgba(20, 20, 31, 0.7);
+    padding: 7px 14px;
+  }
+  .stat b { color: var(--ink); font-weight: 400; }
+  .scan {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(63, 242, 230, 0.5), transparent);
+    animation: scan 7s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .scan { display: none; } }
+
+  /* ===== archive ===== */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    border-top: 1px solid var(--line);
+    padding: 26px 0 22px;
+  }
+  .section-head h2 {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 1.15rem;
+    letter-spacing: 0.2em;
+  }
+  .section-head h2::before { content: "▸ "; color: var(--pink); }
+  .section-head .count {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--sub);
   }
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    padding-bottom: 10px;
   }
   .card {
+    position: relative;
     background: var(--panel);
-    border: 1px solid var(--panel-edge);
-    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    border-radius: 10px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
   }
   .card:hover {
-    transform: translateY(-4px);
-    border-color: var(--pink);
-    box-shadow: 0 0 0 1px var(--pink), 0 10px 32px rgba(255, 95, 162, 0.25);
+    transform: translateY(-3px);
+    border-color: rgba(63, 242, 230, 0.6);
+    box-shadow: 0 0 0 1px rgba(63, 242, 230, 0.25), 0 14px 34px rgba(0, 0, 0, 0.5);
   }
   .thumb {
+    position: relative;
     background:
-      radial-gradient(ellipse 80% 90% at 50% 110%, rgba(255, 95, 162, 0.28) 0%, transparent 65%),
-      linear-gradient(160deg, #232345, #191930);
-    font-size: 4rem;
+      radial-gradient(ellipse 90% 100% at 50% 120%, rgba(255, 46, 136, 0.16) 0%, transparent 60%),
+      linear-gradient(160deg, #191928, #10101c);
+    border-bottom: 1px solid var(--line);
     text-align: center;
-    padding: 30px 0 22px;
-    border-bottom: 1px solid var(--panel-edge);
+    padding: 30px 0 24px;
+    font-size: 3.4rem;
   }
-  .card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-  .card-body h3 { font-size: 1.12rem; font-weight: 900; }
-  .meta { font-size: 0.76rem; color: var(--sub); display: flex; gap: 12px; flex-wrap: wrap; }
-  .desc { font-size: 0.86rem; color: #c9c5e6; flex: 1; }
-  .controls { font-size: 0.76rem; color: var(--cyan); font-weight: 700; }
+  .thumb .no {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--sub);
+  }
+  .thumb .new {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    border: 1px solid rgba(255, 201, 77, 0.5);
+    padding: 2px 8px;
+    text-shadow: 0 0 10px rgba(255, 201, 77, 0.6);
+  }
+  .card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card-body h3 { font-size: 1.08rem; font-weight: 900; letter-spacing: 0.02em; }
+  .meta {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--sub);
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .desc { font-size: 0.86rem; color: #b9b9d0; font-weight: 500; flex: 1; }
+  .ctrl {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--cyan);
+  }
+  .ctrl::before { content: "CTRL: "; color: var(--sub); }
   .play-btn {
     display: block;
     text-align: center;
-    background: linear-gradient(100deg, var(--pink-deep), var(--pink));
-    color: #fff;
-    font-weight: 900;
-    font-size: 1rem;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    letter-spacing: 0.5em;
+    text-indent: 0.5em;
     text-decoration: none;
-    border-radius: 999px;
-    padding: 11px 0;
+    color: var(--pink);
+    border: 1px solid rgba(255, 46, 136, 0.65);
+    border-radius: 6px;
+    padding: 11px 0 9px;
     margin-top: 8px;
-    letter-spacing: 0.2em;
-    box-shadow: 0 4px 18px rgba(255, 61, 140, 0.4);
-    transition: filter 0.15s ease, transform 0.1s ease;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   }
-  .play-btn:hover { filter: brightness(1.12); }
-  .play-btn:active { transform: translateY(1px); }
-  .play-btn:focus-visible, .card a:focus-visible {
-    outline: 2px solid var(--cyan);
-    outline-offset: 2px;
+  .play-btn:hover {
+    background: linear-gradient(95deg, var(--pink), #ff5fa2);
+    color: #fff;
+    box-shadow: 0 6px 22px rgba(255, 46, 136, 0.4);
   }
-  .empty { text-align: center; color: var(--sub); padding: 40px 0; }
-  .about { max-width: 1000px; margin: 44px auto 0; padding: 0 20px 30px; }
-  .about-box {
-    background: var(--panel);
-    border: 1px solid var(--panel-edge);
-    border-radius: var(--radius);
-    padding: 26px 26px;
+  .play-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .empty { color: var(--sub); padding: 40px 0; font-family: var(--mono); }
+
+  /* ===== about / footer ===== */
+  .about {
+    margin-top: 34px;
+    border-top: 1px solid var(--line);
+    padding: 26px 0 8px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 26px;
   }
-  .about-box h2 {
-    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+  .about h2 {
+    font-family: var(--mono);
     font-weight: 400;
-    font-size: 1.1rem;
-    color: var(--cyan);
-    margin-bottom: 10px;
+    font-size: 0.78rem;
+    letter-spacing: 0.24em;
+    color: var(--sub);
+    padding-top: 3px;
   }
-  .about-box p { font-size: 0.9rem; color: #c9c5e6; }
+  .about p { font-size: 0.88rem; color: #b9b9d0; max-width: 640px; font-weight: 500; }
+  @media (max-width: 560px) { .about { grid-template-columns: 1fr; } }
   footer {
-    text-align: center;
-    padding: 26px 20px 36px;
-    font-family: "Press Start 2P", monospace;
-    font-size: 0.55rem;
+    margin-top: 34px;
+    border-top: 1px solid var(--line);
+    padding: 22px 0 40px;
+    font-family: var(--mono);
+    font-size: 0.66rem;
     letter-spacing: 0.2em;
     color: var(--sub);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="stars" aria-hidden="true">
-    <span style="left:8%;  top:22%"></span><span style="left:16%; top:64%"></span>
-    <span style="left:24%; top:38%"></span><span style="left:33%; top:15%"></span>
-    <span style="left:44%; top:70%"></span><span style="left:55%; top:18%"></span>
-    <span style="left:63%; top:58%"></span><span style="left:72%; top:30%"></span>
-    <span style="left:82%; top:66%"></span><span style="left:90%; top:24%"></span>
-    <span style="left:12%; top:85%"></span><span style="left:87%; top:86%"></span>
-  </div>
-  <div class="eyebrow">PICOTTO GAMES</div>
-  <h1>ピコットゲームズ</h1>
-  <div class="logo-emoji">🌸🕹️⭐</div>
-  <p class="lead">
-    ちいさな手づくりミニゲームが、すこしずつ増えていくゲームランド。<br>
-    ぜんぶ無料。気になったやつから、ピッと遊んでって！
-  </p>
-  <div class="badge-row">
-    <span class="badge">📱 スマホOK</span>
-    <span class="badge">💻 パソコンOK</span>
-    <span class="badge">🆓 ぜんぶ無料</span>
-  </div>
-</header>
+<div class="wrap">
+  <nav class="nav">
+    <div class="logo">PICOTTO<span>_</span>GAMES</div>
+    <div class="tag">FREE BROWSER GAMES</div>
+  </nav>
 
-<main>
-  <div class="section-title">
-    <h2>🕹️ ゲームいちらん</h2>
-    <span class="count" id="game-count"></span>
-  </div>
-  <div class="grid" id="game-grid">
-    <p class="empty">よみこみ中…</p>
-  </div>
-</main>
+  <header class="hero">
+    <div class="scan" aria-hidden="true"></div>
+    <div class="en">PICOTTO GAMES</div>
+    <h1>ピコットゲームズ</h1>
+    <p class="lead">
+      ダウンロード不要、<b>ブラウザで即プレイ</b>。<br>
+      1本ずつ手づくりしているミニゲームのアーカイブ。新作は不定期に追加。
+    </p>
+    <div class="stats">
+      <div class="stat">GAMES <b id="stat-count">--</b></div>
+      <div class="stat">100% <b>FREE</b></div>
+      <div class="stat">SP / <b>PC</b></div>
+      <div class="stat">NO <b>APP</b></div>
+    </div>
+  </header>
 
-<section class="about">
-  <div class="about-box">
+  <main>
+    <div class="section-head">
+      <h2>GAME ARCHIVE</h2>
+      <span class="count" id="game-count"></span>
+    </div>
+    <div class="grid" id="game-grid">
+      <p class="empty">LOADING...</p>
+    </div>
+  </main>
+
+  <section class="about">
     <h2>ABOUT</h2>
     <p>
-      ピコットゲームズは、ちいさなチームが1つずつ手づくりしているミニゲームのコレクション。
-      あたらしいゲームが「ぽつ、ぽつ」と増えていきます。ときどきのぞきに来てね。
+      PICOTTO GAMES（ピコットゲームズ）は、小さなチームが1本ずつ手づくりしている
+      ブラウザゲームのアーカイブ。すべて無料・アプリ不要・登録不要。
+      気になったタイトルから、そのまま遊べます。
     </p>
-  </div>
-</section>
+  </section>
 
-<footer>© 2026 PICOTTO GAMES</footer>
+  <footer>
+    <span>© 2026 PICOTTO GAMES</span>
+    <span>MADE WITH JAVASCRIPT</span>
+  </footer>
+</div>
 
 <script src="games.js"></script>
 <script>
   (function () {
     const grid = document.getElementById("game-grid");
     const count = document.getElementById("game-count");
+    const statCount = document.getElementById("stat-count");
     if (typeof GAMES === "undefined" || !GAMES.length) {
-      grid.innerHTML = '<p class="empty">ゲームじゅんびちゅう！もうすこしまってね🌸</p>';
+      grid.innerHTML = '<p class="empty">COMING SOON...</p>';
       return;
     }
-    const sorted = [...GAMES].sort((a, b) => a.date !== b.date ? (a.date < b.date ? 1 : -1) : (a.id < b.id ? 1 : -1));
-    count.textContent = "GAMES: " + sorted.length;
+    const sorted = [...GAMES].sort(function (a, b) {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return a.id < b.id ? 1 : -1;
+    });
+    const latest = sorted[0].date;
+    count.textContent = "TOTAL " + String(sorted.length).padStart(2, "0");
+    statCount.textContent = String(sorted.length).padStart(2, "0");
     grid.innerHTML = sorted
       .map(function (g) {
         return (
           '<article class="card">' +
-          '<div class="thumb">' + g.emoji + "</div>" +
+          '<div class="thumb"><span class="no">#' + g.id + "</span>" +
+          (g.date === latest ? '<span class="new">NEW</span>' : "") +
+          g.emoji + "</div>" +
           '<div class="card-body">' +
           "<h3>" + g.title + "</h3>" +
-          '<div class="meta"><span>👤 ' + g.author + "</span><span>📅 " + g.date + "</span></div>" +
+          '<div class="meta"><span>' + g.date + "</span><span>by " + g.author + "</span></div>" +
           '<p class="desc">' + g.description + "</p>" +
-          '<div class="controls">🎮 ' + g.controls + "</div>" +
-          '<a class="play-btn" href="' + g.path + '">PLAY!</a>' +
+          '<div class="ctrl">' + g.controls + "</div>" +
+          '<a class="play-btn" href="' + g.path + '">PLAY</a>' +
           "</div></article>"
         );
       })
