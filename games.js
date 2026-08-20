@@ -8,6 +8,7 @@
 //   id: "007",                          // 3けたの通し番号
 //   title: "ゲームのなまえ",
 //   emoji: "🎮",                        // カードに大きく出る絵文字
+//   color: "#3ff2e6",                   // カードのテーマカラー（省略可）
 //   author: "ニックネーム",              // 本名は書かない！
 //   date: "2026-08-27",                 // 公開日
 //   description: "どんなゲームか1〜2文で。",
@@ -19,6 +20,7 @@
 const GAMES = [
   {
     id: "006",
+    color: "#ffe14d",
     title: "コラムブレイカー",
     emoji: "⚡",
     author: "ゲスト",
@@ -30,6 +32,7 @@ const GAMES = [
   },
   {
     id: "005",
+    color: "#ff4d6d",
     title: "リコシェ・ワン",
     emoji: "🎯",
     author: "スタッフ",
@@ -41,6 +44,7 @@ const GAMES = [
   },
   {
     id: "004",
+    color: "#ff7a3d",
     title: "アーセナル10",
     emoji: "💥",
     author: "ゲスト",
@@ -52,6 +56,7 @@ const GAMES = [
   },
   {
     id: "003",
+    color: "#3dd6ff",
     title: "マーライオンシューター",
     emoji: "🦁",
     author: "スタッフ",
@@ -63,6 +68,7 @@ const GAMES = [
   },
   {
     id: "002",
+    color: "#b06bff",
     title: "よふかしペアさがし",
     emoji: "👻",
     author: "スタッフ",
@@ -74,6 +80,7 @@ const GAMES = [
   },
   {
     id: "001",
+    color: "#ff6fa8",
     title: "はなびらキャッチ",
     emoji: "🌸",
     author: "スタッフ",
