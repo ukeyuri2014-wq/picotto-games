@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リコシェ・ワン</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --ground:#101623;
+    --panel:#1a2334;
+    --ink:#dce6f5;
+    --dim:#7e8db0;
+    --laser:#ffd23f;
+    --self:#6ee7ff;
+    --foe:#ff5d73;
+    --wall:#3e527a;
+    --portal:#b892ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:'DotGothic16', 'Hiragino Kaku Gothic ProN', monospace, sans-serif;
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:16px 12px 32px;
+  }
+  header{width:min(760px,100%);display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:4px 2px 10px;flex-wrap:wrap;}
+  h1{font-size:26px;margin:0;letter-spacing:2px;color:var(--laser);text-shadow:0 0 12px rgba(255,210,63,.45);font-weight:400;}
+  .sub{color:var(--dim);font-size:13px;text-align:right}
+  .sub b{color:var(--ink);font-weight:400}
+  #hint{color:var(--dim);font-size:12px;width:100%;text-align:right;margin-top:-4px}
+  #wrap{position:relative;width:min(760px,100%);}
+  canvas{
+    display:block;width:100%;height:auto;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #16203a 0%, var(--ground) 60%);
+    border:2px solid var(--wall);
+    border-radius:6px;
+    touch-action:none;
+    cursor:crosshair;
+  }
+  #hud{
+    width:min(760px,100%);
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--panel);border:1px solid var(--wall);border-radius:6px;
+    padding:8px 14px;margin-top:10px;font-size:15px;
+  }
+  #hud .shots{color:var(--laser)}
+  #hud button{
+    font-family:inherit;font-size:14px;color:var(--ink);
+    background:transparent;border:1px solid var(--dim);border-radius:4px;
+    padding:4px 14px;cursor:pointer;
+  }
+  #hud button:hover,#hud button:focus-visible{border-color:var(--laser);color:var(--laser);outline:none}
+  #overlay{
+    position:absolute;inset:0;display:none;
+    align-items:center;justify-content:center;flex-direction:column;gap:10px;
+    background:rgba(16,22,35,.82);border-radius:6px;text-align:center;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:40px;letter-spacing:4px}
+  #overlay .big.win{color:var(--laser);text-shadow:0 0 18px rgba(255,210,63,.6)}
+  #overlay .big.lose{color:var(--foe);text-shadow:0 0 18px rgba(255,93,115,.5)}
+  #overlay .note{color:var(--ink);font-size:15px}
+  #overlay button{
+    font-family:inherit;font-size:16px;margin-top:6px;
+    background:var(--laser);color:#1a1400;border:none;border-radius:4px;
+    padding:8px 26px;cursor:pointer;letter-spacing:2px;
+  }
+  #overlay button:focus-visible{outline:2px solid var(--self)}
+  .help{width:min(760px,100%);color:var(--dim);font-size:13px;margin-top:10px;line-height:1.7}
+  .help i{font-style:normal}
+  .help .k-move{color:#8fb8d8}.help .k-kill{color:var(--foe)}.help .k-portal{color:var(--portal)}
+  .help .k-switch{color:var(--laser)}.help .k-grav{color:var(--self)}
+  .backbar{width:min(760px,100%);margin:0 2px 6px;font-size:13px}
+  .backbar a{color:var(--dim);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--laser);outline:none}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a></div>
+
+<header>
+  <h1>リコシェ・ワン</h1>
+  <div class="sub">STAGE <b id="stageNo">1</b> / 10 ── <span id="stageName"></span></div>
+  <div id="hint"></div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="760" height="520"></canvas>
+  <div id="overlay">
+    <div class="big" id="ovTitle">CLEAR!</div>
+    <div class="note" id="ovNote"></div>
+    <button id="ovBtn">つぎの面へ</button>
+  </div>
+</div>
+
+<div id="hud">
+  <div>残り弾数 <span class="shots" id="shots"></span></div>
+  <div>バウンド上限 8回</div>
+  <button id="reset">リセット</button>
+</div>
+
+<div class="help">
+  マウスで狙う(照準線は反射2回先まで)→クリックで発射。スマホは指でなぞって離す。的(赤いコア)に当てたらクリア!<br>
+  仕掛け:<i class="k-move">スライド壁=動く</i> /
+  <i class="k-kill">赤いバリア=触れたら弾消滅</i> /
+  <i class="k-portal">紫の輪=ワープ</i> /
+  <i class="k-switch">金のボタン=撃つと扉が開く</i> /
+  <i class="k-grav">青い渦=重力で弾道が曲がる</i>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  const MAX_BOUNCE = 8;
+  const SPEED = 560;
+  const BULLET_R = 6;
+  const TTL = 10;
+
+  // ---- levels: solvability brute-force verified (0.25° sweep, 8 launch phases) ----
+  const LEVELS = [
+    { name: '跳ね返して撃て', hint: '基本や。壁に当てて曲げろ', shots: 3,
+      player: { x: 90, y: 440 }, target: { x: 650, y: 120, r: 22 },
+      walls: [
+        { x: 550, y: 40, w: 26, h: 260 },
+        { x: 300, y: 200, w: 180, h: 26 },
+        { x: 180, y: 360, w: 26, h: 160 },
+        { x: 470, y: 380, w: 200, h: 26 },
+      ] },
+    { name: '袋小路のコア', hint: '天井ルートは塞いだで', shots: 3,
+      player: { x: 670, y: 440 }, target: { x: 110, y: 110, r: 20 },
+      walls: [
+        { x: 190, y: 0, w: 26, h: 300 },
+        { x: 60, y: 300, w: 130, h: 26 },
+        { x: 360, y: 150, w: 200, h: 26 },
+        { x: 300, y: 380, w: 26, h: 140 },
+        { x: 520, y: 260, w: 150, h: 26 },
+      ] },
+    { name: '動く標的', hint: '的が上下に動く。タイミングや', shots: 3,
+      player: { x: 90, y: 440 },
+      target: { x: 640, y: 190, r: 20, osc: { axis: 'y', amp: 110, period: 3.5, phase: 0 } },
+      walls: [
+        { x: 540, y: 30, w: 24, h: 310 },
+        { x: 280, y: 250, w: 160, h: 24 },
+        { x: 620, y: 420, w: 120, h: 24 },
+      ] },
+    { name: '開閉ゲート', hint: 'ゲートが開く瞬間を狙え', shots: 3,
+      player: { x: 90, y: 440 }, target: { x: 660, y: 260, r: 20 },
+      walls: [
+        { x: 480, y: 0, w: 26, h: 80 },
+        { x: 480, y: 320, w: 26, h: 200 },
+        { x: 480, y: 80, w: 26, h: 160, osc: { axis: 'y', amp: 80, period: 3, phase: 0 } },
+        { x: 200, y: 200, w: 150, h: 24 },
+        { x: 340, y: 320, w: 24, h: 130 },
+      ] },
+    { name: '鉄壁の要塞', hint: '照準線の先を読め(最低5バウンド)', shots: 5,
+      player: { x: 90, y: 440 }, target: { x: 380, y: 260, r: 18 },
+      walls: [
+        { x: 300, y: 180, w: 180, h: 20 },
+        { x: 300, y: 340, w: 180, h: 20 },
+        { x: 300, y: 200, w: 20, h: 140 },
+        { x: 460, y: 200, w: 20, h: 100 },
+        { x: 600, y: 60, w: 26, h: 200 },
+        { x: 540, y: 260, w: 26, h: 170 },
+        { x: 120, y: 120, w: 200, h: 26 },
+        { x: 470, y: 430, w: 180, h: 26 },
+        { x: 220, y: 470, w: 26, h: 50 },
+      ] },
+    { name: 'ワープゲート', hint: '密室には紫の輪からしか入れへん', shots: 3,
+      player: { x: 90, y: 440 }, target: { x: 670, y: 400, r: 20 },
+      portals: { a: { x: 150, y: 120 }, b: { x: 580, y: 400 }, r: 18 },
+      walls: [
+        { x: 520, y: 300, w: 220, h: 20 },
+        { x: 520, y: 480, w: 220, h: 20 },
+        { x: 520, y: 320, w: 20, h: 160 },
+        { x: 720, y: 320, w: 20, h: 160 },
+        { x: 60, y: 200, w: 180, h: 24 },
+        { x: 380, y: 100, w: 24, h: 200 },
+        { x: 60, y: 40, w: 24, h: 120 },
+      ] },
+    { name: 'レーザーバリア', hint: '赤い光に触れたら弾が消える', shots: 4,
+      player: { x: 90, y: 440 }, target: { x: 660, y: 100, r: 20 },
+      walls: [
+        { x: 560, y: 40, w: 24, h: 200 },
+        { x: 300, y: 200, w: 180, h: 24 },
+        { x: 140, y: 320, w: 24, h: 200 },
+      ],
+      kills: [
+        { x: 240, y: 0, w: 300, h: 14 },
+        { x: 746, y: 240, w: 14, h: 280 },
+        { x: 400, y: 506, w: 200, h: 14 },
+      ] },
+    { name: 'スイッチ', hint: '金のボタンを撃って扉を開けろ', shots: 4,
+      player: { x: 670, y: 440 }, target: { x: 100, y: 110, r: 20 },
+      walls: [
+        { x: 190, y: 0, w: 26, h: 180 },
+        { x: 0, y: 240, w: 216, h: 26 },
+        { id: 'gate', x: 190, y: 180, w: 26, h: 60 },
+        { x: 300, y: 160, w: 200, h: 26 },
+        { x: 520, y: 300, w: 24, h: 120 },
+      ],
+      switch: { x: 420, y: 80, r: 18, opens: ['gate'] } },
+    { name: '重力井戸', hint: '青い渦が弾道を曲げる', shots: 4,
+      player: { x: 90, y: 440 }, target: { x: 650, y: 90, r: 18 },
+      gravity: { x: 380, y: 260, r: 180, g: 1000 },
+      walls: [
+        { x: 560, y: 40, w: 24, h: 180 },
+        { x: 600, y: 180, w: 140, h: 24 },
+        { x: 340, y: 235, w: 60, h: 50 },
+        { x: 200, y: 120, w: 140, h: 24 },
+      ] },
+    { name: '最終要塞', hint: '全部盛りや。健闘を祈る', shots: 5,
+      player: { x: 90, y: 440 }, target: { x: 390, y: 260, r: 22 },
+      walls: [
+        { x: 300, y: 180, w: 200, h: 20 },
+        { x: 300, y: 340, w: 200, h: 20 },
+        { x: 300, y: 200, w: 20, h: 140 },
+        { x: 480, y: 200, w: 20, h: 40 },
+        { x: 480, y: 300, w: 20, h: 40 },
+        { x: 480, y: 240, w: 20, h: 60, osc: { axis: 'y', amp: 40, period: 2.5, phase: 0 } },
+        { x: 120, y: 120, w: 180, h: 24 },
+        { x: 560, y: 380, w: 160, h: 24 },
+        { x: 620, y: 100, w: 24, h: 160 },
+        { x: 240, y: 330, w: 24, h: 120 },
+      ],
+      kills: [
+        { x: 0, y: 506, w: 300, h: 14 },
+        { x: 746, y: 0, w: 14, h: 200 },
+      ] },
+  ];
+
+  // ---- engine (identical to the offline solver) --------------------------
+  function circleRectHit(cx, cy, r, rc) {
+    const nx = Math.max(rc.x, Math.min(cx, rc.x + rc.w));
+    const ny = Math.max(rc.y, Math.min(cy, rc.y + rc.h));
+    return (cx - nx) ** 2 + (cy - ny) ** 2 <= r * r;
+  }
+  function oscOff(o, t) { return o.amp * Math.sin(2 * Math.PI * t / o.period + (o.phase || 0)); }
+  function wallRects(lv, t, open) {
+    const out = [];
+    for (const w of lv.walls) {
+      if (w.id && open && open.has(w.id)) continue;
+      if (!w.osc) { out.push(w); continue; }
+      const off = oscOff(w.osc, t);
+      out.push(w.osc.axis === 'x' ? { x: w.x + off, y: w.y, w: w.w, h: w.h, osc: true }
+                                  : { x: w.x, y: w.y + off, w: w.w, h: w.h, osc: true });
+    }
+    return out;
+  }
+  function targetPosAt(lv, t) {
+    const tg = lv.target;
+    if (!tg.osc) return { x: tg.x, y: tg.y };
+    const off = oscOff(tg.osc, t);
+    return tg.osc.axis === 'x' ? { x: tg.x + off, y: tg.y } : { x: tg.x, y: tg.y + off };
+  }
+  // advance p by dt at absolute time t; returns bounces, sets p.dead / p.hitSwitch
+  function stepReflect(lv, p, dt, t, open, ghost) {
+    let bounced = 0;
+    const SUB = 4;
+    for (let s = 0; s < SUB; s++) {
+      const h = dt / SUB;
+      if (lv.gravity) {
+        const gdx = lv.gravity.x - p.x, gdy = lv.gravity.y - p.y;
+        const d = Math.hypot(gdx, gdy);
+        if (d < lv.gravity.r && d > 1) {
+          p.vx += lv.gravity.g * gdx / d * h;
+          p.vy += lv.gravity.g * gdy / d * h;
+        }
+      }
+      p.x += p.vx * h; p.y += p.vy * h;
+      if (p.x < BULLET_R) { p.x = BULLET_R; p.vx = Math.abs(p.vx); bounced++; }
+      if (p.x > W - BULLET_R) { p.x = W - BULLET_R; p.vx = -Math.abs(p.vx); bounced++; }
+      if (p.y < BULLET_R) { p.y = BULLET_R; p.vy = Math.abs(p.vy); bounced++; }
+      if (p.y > H - BULLET_R) { p.y = H - BULLET_R; p.vy = -Math.abs(p.vy); bounced++; }
+      for (const rc of wallRects(lv, t + s * h, open)) {
+        if (!circleRectHit(p.x, p.y, BULLET_R, rc)) continue;
+        const oL = (p.x + BULLET_R) - rc.x, oR = (rc.x + rc.w) - (p.x - BULLET_R);
+        const oT = (p.y + BULLET_R) - rc.y, oB = (rc.y + rc.h) - (p.y - BULLET_R);
+        const m = Math.min(oL, oR, oT, oB);
+        if (m === oL) { p.x = rc.x - BULLET_R; p.vx = -Math.abs(p.vx); }
+        else if (m === oR) { p.x = rc.x + rc.w + BULLET_R; p.vx = Math.abs(p.vx); }
+        else if (m === oT) { p.y = rc.y - BULLET_R; p.vy = -Math.abs(p.vy); }
+        else { p.y = rc.y + rc.h + BULLET_R; p.vy = Math.abs(p.vy); }
+        bounced++;
+      }
+      if (lv.kills) for (const k of lv.kills) {
+        if (circleRectHit(p.x, p.y, BULLET_R, k)) { p.dead = true; return bounced; }
+      }
+      if (lv.portals) {
+        const pr = lv.portals.r + BULLET_R;
+        const A = lv.portals.a, B = lv.portals.b;
+        const dA = (p.x - A.x) ** 2 + (p.y - A.y) ** 2;
+        const dB = (p.x - B.x) ** 2 + (p.y - B.y) ** 2;
+        let exit = null;
+        if (dA < pr * pr) exit = B; else if (dB < pr * pr) exit = A;
+        if (exit) {
+          const sp = Math.hypot(p.vx, p.vy);
+          p.x = exit.x + p.vx / sp * (pr + 4);
+          p.y = exit.y + p.vy / sp * (pr + 4);
+          p.warped = true;
+        }
+      }
+      if (lv.switch && !ghost) {
+        const sw = lv.switch;
+        if ((p.x - sw.x) ** 2 + (p.y - sw.y) ** 2 < (sw.r + BULLET_R) ** 2) p.hitSwitch = true;
+      }
+    }
+    return bounced;
+  }
+
+  // ---- game state ---------------------------------------------------------
+  let levelIdx = 0, level = LEVELS[0];
+  let player, target, opened;
+  let shotsLeft = 3, bullets = [], sparks = [];
+  let aim = { x: W - 150, y: 150, active: true };
+  let state = 'play';           // play | win | lose | allclear
+  let simTime = 0;
+
+  // ---- input ----------------------------------------------------------------
+  function canvasPos(e) {
+    const r = cv.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
+  }
+  cv.addEventListener('pointermove', e => { const p = canvasPos(e); aim.x = p.x; aim.y = p.y; aim.active = true; });
+  cv.addEventListener('pointerdown', e => { const p = canvasPos(e); aim.x = p.x; aim.y = p.y; aim.active = true; });
+  cv.addEventListener('pointerup', e => {
+    if (state !== 'play') return;
+    const p = canvasPos(e);
+    fire(p.x, p.y);
+  });
+
+  function fire(tx, ty) {
+    if (shotsLeft <= 0 || bullets.length > 0) return;
+    const dx = tx - player.x, dy = ty - player.y;
+    const len = Math.hypot(dx, dy);
+    if (len < 5) return;
+    shotsLeft--;
+    updateShotsHud();
+    bullets.push({ x: player.x, y: player.y, vx: dx / len * SPEED, vy: dy / len * SPEED,
+                   bounces: 0, age: 0, trail: [] });
+  }
+
+  function updateShotsHud() {
+    document.getElementById('shots').textContent =
+      ('● '.repeat(shotsLeft) + '○ '.repeat(level.shots - shotsLeft)).trim();
+  }
+
+  // ---- level loading / overlay ----------------------------------------------
+  const overlay = document.getElementById('overlay');
+  const ovBtn = document.getElementById('ovBtn');
+
+  function loadLevel(i) {
+    levelIdx = i;
+    level = LEVELS[i];
+    player = level.player;
+    const tp = targetPosAt(level, simTime);
+    target = { alive: true };
+    opened = new Set();
+    shotsLeft = level.shots;
+    bullets = []; sparks = [];
+    state = 'play';
+    overlay.classList.remove('show');
+    document.getElementById('stageNo').textContent = String(i + 1);
+    document.getElementById('stageName').textContent = level.name;
+    document.getElementById('hint').textContent = level.hint;
+    updateShotsHud();
+  }
+
+  function showOverlay(kind, note) {
+    const t = document.getElementById('ovTitle');
+    if (kind === 'win')      { t.textContent = 'CLEAR!';     t.className = 'big win';  ovBtn.textContent = 'つぎの面へ'; }
+    else if (kind === 'all') { t.textContent = 'ALL CLEAR!'; t.className = 'big win';  ovBtn.textContent = 'さいしょから'; }
+    else                     { t.textContent = 'GAME OVER';  t.className = 'big lose'; ovBtn.textContent = 'もういちど'; }
+    document.getElementById('ovNote').textContent = note;
+    overlay.classList.add('show');
+  }
+  ovBtn.addEventListener('click', () => {
+    if (state === 'win')           loadLevel(levelIdx + 1);
+    else if (state === 'allclear') loadLevel(0);
+    else                           loadLevel(levelIdx);
+  });
+  document.getElementById('reset').addEventListener('click', () => loadLevel(levelIdx));
+
+  // ---- update -----------------------------------------------------------------
+  function burst(x, y, color, n = 10) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 180;
+      sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+                    life: 0.3 + Math.random() * 0.3, color });
+    }
+  }
+
+  function update(dt) {
+    for (const b of bullets) {
+      b.age += dt;
+      b.trail.push({ x: b.x, y: b.y, life: 0.35 });
+      const preWarp = b.warped;
+      const bn = stepReflect(level, b, dt, simTime, opened, false);
+      if (bn > 0) { b.bounces += bn; burst(b.x, b.y, 'rgba(255,210,63,'); }
+      if (b.warped && !preWarp) { burst(b.x, b.y, 'rgba(184,146,255,', 14); b.trail = []; }
+      if (b.hitSwitch && level.switch && opened.size === 0) {
+        for (const id of level.switch.opens) opened.add(id);
+        burst(level.switch.x, level.switch.y, 'rgba(255,210,63,', 20);
+      }
+      if (b.dead) { burst(b.x, b.y, 'rgba(255,93,115,', 14); continue; }
+      const tp = targetPosAt(level, simTime);
+      if (target.alive && (b.x - tp.x) ** 2 + (b.y - tp.y) ** 2 < (level.target.r + BULLET_R) ** 2) {
+        target.alive = false;
+        burst(tp.x, tp.y, 'rgba(255,93,115,', 26);
+        const used = level.shots - shotsLeft;
+        const isLast = levelIdx === LEVELS.length - 1;
+        state = isLast ? 'allclear' : 'win';
+        const stateAtWin = state;
+        const msg = used === 1 ? '1発クリア!天才か?' : `${used}発でクリア!`;
+        setTimeout(() => { if (state === stateAtWin) showOverlay(
+          isLast ? 'all' : 'win', isLast ? `全10面制覇!おめでとう!` : msg); }, 500);
+      }
+      if (b.bounces > MAX_BOUNCE || b.age > TTL) b.dead = true;
+    }
+    if (state === 'win' || state === 'allclear') bullets = [];
+    bullets = bullets.filter(b => !b.dead);
+
+    if (state === 'play' && bullets.length === 0 && shotsLeft === 0) {
+      state = 'lose';
+      setTimeout(() => { if (state === 'lose') showOverlay('lose', '弾切れや…もういっかい挑戦しよ!'); }, 400);
+    }
+    for (const b of bullets) b.trail = b.trail.filter(t => (t.life -= dt) > 0);
+    sparks = sparks.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; return s.life > 0; });
+  }
+
+  // ---- preview: ghost bullet up to 2 bounces, honoring every gimmick -----------
+  function previewPath(dirx, diry) {
+    const pts = [{ x: player.x, y: player.y }];
+    const g = { x: player.x, y: player.y, vx: dirx * SPEED, vy: diry * SPEED };
+    let bounces = 0, died = false;
+    const dt = 1 / 240;
+    for (let i = 0; i < 700 && bounces <= 2; i++) {
+      const preWarp = g.warped;
+      const b = stepReflect(level, g, dt, simTime + i * dt, opened, true);
+      if (g.warped && !preWarp) { pts.push(null); pts.push({ x: g.x, y: g.y }); }
+      if (b > 0) { bounces += b; pts.push({ x: g.x, y: g.y }); }
+      else if (level.gravity && i % 8 === 0) pts.push({ x: g.x, y: g.y });
+      if (g.dead) { died = true; break; }
+    }
+    pts.push({ x: g.x, y: g.y });
+    return { pts, died };
+  }
+
+  // ---- draw ---------------------------------------------------------------------
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const now = simTime;
+
+    // grid
+    ctx.strokeStyle = 'rgba(62,82,122,.18)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 40; x < W; x += 40) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+    for (let y = 40; y < H; y += 40) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+    ctx.stroke();
+
+    // gravity well
+    if (level.gravity) {
+      const gv = level.gravity;
+      for (let i = 3; i >= 1; i--) {
+        const rr = gv.r * i / 3 * (1 + Math.sin(now * 2 + i) * 0.02);
+        ctx.strokeStyle = `rgba(110,231,255,${0.10 + 0.05 * (4 - i)})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(gv.x, gv.y, rr, 0, Math.PI * 2); ctx.stroke();
+      }
+      const swirl = now * 1.2;
+      ctx.strokeStyle = 'rgba(110,231,255,.4)';
+      ctx.beginPath(); ctx.arc(gv.x, gv.y, 14, swirl, swirl + 4.2); ctx.stroke();
+    }
+
+    // kill zones
+    if (level.kills) {
+      const pulse = 0.55 + Math.sin(now * 6) * 0.15;
+      for (const k of level.kills) {
+        ctx.fillStyle = `rgba(255,93,115,${0.22 * pulse + 0.08})`;
+        ctx.fillRect(k.x, k.y, k.w, k.h);
+        ctx.strokeStyle = `rgba(255,93,115,${pulse})`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(k.x, k.y, k.w, k.h);
+      }
+    }
+
+    // walls (moving ones glow lighter)
+    for (const rc of wallRects(level, now, opened)) {
+      ctx.fillStyle = rc.osc ? '#2a3d68' : '#223051';
+      ctx.strokeStyle = rc.osc ? '#8fb8d8' : '#5b76ab';
+      ctx.lineWidth = 2;
+      ctx.fillRect(rc.x, rc.y, rc.w, rc.h);
+      ctx.strokeRect(rc.x, rc.y, rc.w, rc.h);
+    }
+    // opened gate remnant
+    if (level.switch && opened.size > 0) {
+      for (const w of level.walls) if (w.id && opened.has(w.id)) {
+        ctx.save();
+        ctx.setLineDash([3, 6]);
+        ctx.strokeStyle = 'rgba(126,141,176,.4)';
+        ctx.strokeRect(w.x, w.y, w.w, w.h);
+        ctx.restore();
+      }
+    }
+
+    // portals
+    if (level.portals) {
+      for (const [pt, ph] of [[level.portals.a, 0], [level.portals.b, Math.PI]]) {
+        const spin = now * 2 + ph;
+        ctx.strokeStyle = '#b892ff';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#b892ff'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, level.portals.r, spin, spin + 5); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(184,146,255,.4)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, level.portals.r * 0.55, -spin, -spin + 4); ctx.stroke();
+      }
+    }
+
+    // switch
+    if (level.switch) {
+      const sw = level.switch, on = opened.size > 0;
+      ctx.strokeStyle = on ? 'rgba(255,210,63,.35)' : '#ffd23f';
+      ctx.lineWidth = 3;
+      if (!on) { ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 8; }
+      ctx.beginPath(); ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = on ? 'rgba(255,210,63,.25)' : '#ffd23f';
+      ctx.beginPath(); ctx.arc(sw.x, sw.y, 6, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // aim preview
+    if (state === 'play' && aim.active && bullets.length === 0 && shotsLeft > 0) {
+      const dx = aim.x - player.x, dy = aim.y - player.y;
+      const len = Math.hypot(dx, dy);
+      if (len > 5) {
+        const { pts, died } = previewPath(dx / len, dy / len);
+        ctx.save();
+        ctx.setLineDash([4, 8]);
+        ctx.strokeStyle = 'rgba(110,231,255,.55)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        let pen = false;
+        for (const p of pts) {
+          if (p === null) { pen = false; continue; }
+          if (!pen) { ctx.moveTo(p.x, p.y); pen = true; }
+          else ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+        ctx.restore();
+        if (died) {
+          const e = pts[pts.length - 1];
+          ctx.strokeStyle = 'rgba(255,93,115,.9)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(e.x - 6, e.y - 6); ctx.lineTo(e.x + 6, e.y + 6);
+          ctx.moveTo(e.x + 6, e.y - 6); ctx.lineTo(e.x - 6, e.y + 6);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // target
+    if (target.alive) {
+      const tp = targetPosAt(level, now);
+      const pulse = 1 + Math.sin(now * 4) * 0.08;
+      ctx.save();
+      ctx.translate(tp.x, tp.y);
+      ctx.strokeStyle = '#ff5d73';
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(0, 0, level.target.r * pulse, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,93,115,.25)';
+      ctx.beginPath(); ctx.arc(0, 0, level.target.r * pulse, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff5d73';
+      ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    // player turret
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    const ang = Math.atan2(aim.y - player.y, aim.x - player.x);
+    ctx.strokeStyle = '#6ee7ff';
+    ctx.fillStyle = 'rgba(110,231,255,.18)';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.rotate(ang);
+    ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(28, 0); ctx.stroke();
+    ctx.restore();
+
+    // bullets + trails
+    for (const b of bullets) {
+      for (const t of b.trail) {
+        ctx.fillStyle = `rgba(255,210,63,${t.life * 1.6})`;
+        ctx.beginPath(); ctx.arc(t.x, t.y, BULLET_R * t.life * 2.2, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = '#ffd23f';
+      ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(b.x, b.y, BULLET_R, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // sparks
+    for (const s of sparks) {
+      ctx.fillStyle = s.color + (s.life * 2) + ')';
+      ctx.fillRect(s.x - 2, s.y - 2, 4, 4);
+    }
+  }
+
+  // ---- main loop --------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 0.033);
+    last = now;
+    simTime += dt;
+    if (state !== 'lose') update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loadLevel(0);
+  window.__loadLevel = loadLevel;   // debug/testing hook
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
