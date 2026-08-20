@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>よふかしスイカ | ピコットゲームズ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, #35234d 0%, transparent 70%),
+      #131322;
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    color: #eeecfa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px 8px;
+  }
+  .topbar a, .topbar button.mute {
+    color: #53e0d8;
+    font-weight: 900;
+    text-decoration: none;
+    font-size: 0.88rem;
+    background: #1e1e36;
+    border: 1px solid #2c2c4d;
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  .topbar h1 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    background: linear-gradient(100deg, #ff5fa2, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .stage { position: relative; width: min(94vw, 480px); margin: 6px 0 24px; }
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid #2c2c4d;
+    box-shadow: 0 0 40px rgba(109, 216, 106, 0.14), 0 14px 34px rgba(0, 0, 0, 0.45);
+    touch-action: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(19, 19, 34, 0.92);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    gap: 13px;
+    z-index: 5;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big { font-size: 2.8rem; }
+  .overlay h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.55rem;
+    background: linear-gradient(100deg, #6fd86a, #53e0d8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay p { font-size: 0.93rem; line-height: 1.8; color: #c9c5e6; }
+  .overlay p b { color: #eeecfa; }
+  .overlay .score-line { font-size: 1.25rem; font-weight: 900; color: #eeecfa; }
+  .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
+  .btn {
+    border: none;
+    background: linear-gradient(100deg, #3fae55, #6fd86a);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    border-radius: 999px;
+    padding: 12px 46px;
+    cursor: pointer;
+    box-shadow: 0 4px 22px rgba(111, 216, 106, 0.45);
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: translateY(2px); }
+  .btn:focus-visible, .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
+  .hint { font-size: 0.78rem; color: #9d99c0; }
+  .hint a { color: #9d99c0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../index.html">← いちらんへ</a>
+  <h1>🍉 よふかしスイカ</h1>
+  <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
+</div>
+
+<div class="stage">
+  <canvas id="game" width="480" height="640"></canvas>
+
+  <div class="overlay" id="title-screen">
+    <div class="big">🍒🍇🍉</div>
+    <h2>よふかしスイカ</h2>
+    <p>
+      フルーツをはこに落として、<br>
+      <b>同じフルーツ同士</b>をくっつけると…<b>大きく育つ！</b><br>
+      どんどん合体させて、よふかしの<b>スイカ</b>を目指そう。<br>
+      上の<b>ラインをこえたら</b>ゲームオーバー。
+    </p>
+    <button class="btn" id="start-btn">スタート！</button>
+    <p class="hint">そうさ：ゆびやマウスでねらって、はなすと落ちる</p>
+  </div>
+
+  <div class="overlay hidden" id="over-screen">
+    <div class="big">🌙</div>
+    <h2>おしまい！</h2>
+    <p class="score-line" id="final-score">スコア：0</p>
+    <p class="best-line" id="best-score"></p>
+    <button class="btn" id="retry-btn">もういちど！</button>
+    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// ★カスタマイズポイント★
+// FRUITS の色や大きさ、SCORES の点数をかえられるよ！
+// ================================================================
+const FRUITS = [
+  { r: 13, c1: "#ffb3cb", c2: "#ff6f9d" },  // 0 さくらんぼ
+  { r: 17, c1: "#ff8f7e", c2: "#e84b3c" },  // 1 いちご
+  { r: 22, c1: "#c99aff", c2: "#8b4de0" },  // 2 ぶどう
+  { r: 28, c1: "#ffcf85", c2: "#f29722" },  // 3 みかん
+  { r: 34, c1: "#ffa06e", c2: "#e05e20" },  // 4 かき
+  { r: 42, c1: "#ff7f96", c2: "#d92b4e" },  // 5 りんご
+  { r: 50, c1: "#e2f39b", c2: "#a7c93e" },  // 6 なし
+  { r: 58, c1: "#ffd9b8", c2: "#ff9e63" },  // 7 もも
+  { r: 68, c1: "#c4ecb0", c2: "#6fc45e" },  // 8 メロン
+  { r: 80, c1: "#63c97e", c2: "#2e8f4c" },  // 9 スイカ
+];
+const SCORES = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55];
+const STORAGE_KEY = "yofukashi-suika-best";
+// ================================================================
+
+(function () {
+  const W = 480, H = 640;
+  const WALL_L = 52, WALL_R = 428, FLOOR = 592, LINE_Y = 152;
+  const G = 1600;
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const titleScreen = document.getElementById("title-screen");
+  const overScreen = document.getElementById("over-screen");
+  const finalScoreEl = document.getElementById("final-score");
+  const bestScoreEl = document.getElementById("best-score");
+  const muteBtn = document.getElementById("mute-btn");
+
+  let state = "title";
+  let fruits = [];
+  let sparks = [];
+  let popups = [];
+  let score = 0;
+  let aimX = W / 2;
+  let currentTier = 0;
+  let nextTier = 1;
+  let dropCd = 0;
+  let dangerPulse = 0;
+  let lastTime = 0;
+
+  const bgStars = [];
+  for (let i = 0; i < 34; i++) {
+    bgStars.push({ x: Math.random() * W, y: Math.random() * 120, r: 0.5 + Math.random() * 1.2, tw: Math.random() * Math.PI * 2 });
+  }
+
+  // ============ おと ============
+  let audioCtx = null;
+  let muted = localStorage.getItem("picotto-muted") === "1";
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function tone(freq, at, dur, type, vol) {
+    const c = getCtx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.linearRampToValueAtTime(vol, at + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + Math.max(dur, 0.05));
+    o.connect(g).connect(c.destination);
+    o.start(at); o.stop(at + dur + 0.1);
+  }
+  function beep(freq, dur, type, vol) {
+    if (muted) return;
+    try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.08); } catch (e) {}
+  }
+  // 合体音：大きいフルーツほど低く豊かに
+  function mergeSound(tier) {
+    if (muted) return;
+    try {
+      const c = getCtx();
+      const f = 880 - tier * 62;
+      tone(f, c.currentTime, 0.16, "sine", 0.09);
+      tone(f * 1.5, c.currentTime + 0.04, 0.14, "sine", 0.04);
+    } catch (e) {}
+  }
+  const BGM = {
+    timer: null, step: 0, next: 0,
+    song: {
+      bpm: 104, lead: "sine",
+      melody: [659, 0, 784, 659, 587, 0, 523, 0, 587, 0, 659, 587, 523, 0, 440, 0,
+               659, 0, 784, 880, 784, 0, 659, 0, 587, 0, 523, 587, 659, 0, 0, 0],
+      bass:   [131, 0, 196, 0, 165, 0, 196, 0, 147, 0, 196, 0, 131, 0, 196, 0],
+    },
+    start: function () {
+      try {
+        const c = getCtx();
+        this.stop();
+        const spb = 60 / this.song.bpm / 2;
+        this.next = c.currentTime + 0.1;
+        this.step = 0;
+        const self = this;
+        this.timer = setInterval(function () {
+          try {
+            const cc = getCtx();
+            while (self.next < cc.currentTime + 0.25) {
+              if (!muted && !document.hidden) {
+                const m = self.song.melody[self.step % self.song.melody.length];
+                const b = self.song.bass[self.step % self.song.bass.length];
+                if (m) tone(m, self.next, spb * 1.1, self.song.lead, 0.032);
+                if (b) tone(b, self.next, spb * 1.0, "triangle", 0.05);
+              }
+              self.next += spb;
+              self.step++;
+            }
+          } catch (e) {}
+        }, 80);
+      } catch (e) {}
+    },
+    stop: function () { if (this.timer) { clearInterval(this.timer); this.timer = null; } },
+  };
+  function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
+  muteBtn.addEventListener("click", function () {
+    muted = !muted;
+    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    updateMuteBtn();
+  });
+  updateMuteBtn();
+
+  // ============ エフェクト ============
+  function burst(x, y, color, n) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 160;
+      sparks.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.5 + Math.random() * 0.3, max: 0.8, color: color });
+    }
+  }
+  function popup(x, y, text, color) {
+    popups.push({ x: x, y: y, text: text, color: color, life: 0.9 });
+  }
+
+  // ============ ゲームのながれ ============
+  function randTier() { return Math.floor(Math.random() * 5); }
+  function startGame() {
+    fruits = [];
+    sparks = [];
+    popups = [];
+    score = 0;
+    dropCd = 0;
+    currentTier = randTier();
+    nextTier = randTier();
+    state = "play";
+    titleScreen.classList.add("hidden");
+    overScreen.classList.add("hidden");
+    beep(660, 0.15);
+    BGM.start();
+  }
+  function gameOver() {
+    state = "over";
+    BGM.stop();
+    const best = Math.max(score, Number(localStorage.getItem(STORAGE_KEY) || 0));
+    localStorage.setItem(STORAGE_KEY, String(best));
+    finalScoreEl.textContent = "スコア：" + score;
+    bestScoreEl.textContent = "さいこうきろく：" + best;
+    overScreen.classList.remove("hidden");
+    beep(220, 0.4, "sawtooth", 0.09);
+    setTimeout(function () { beep(165, 0.5, "sawtooth", 0.08); }, 200);
+  }
+  document.getElementById("start-btn").addEventListener("click", startGame);
+  document.getElementById("retry-btn").addEventListener("click", startGame);
+
+  function dropFruit() {
+    if (state !== "play" || dropCd > 0) return;
+    const spec = FRUITS[currentTier];
+    const x = Math.max(WALL_L + spec.r + 1, Math.min(WALL_R - spec.r - 1, aimX));
+    fruits.push({ x: x, y: 108, vx: 0, vy: 140, r: spec.r, tier: currentTier, grace: 1.3, overT: 0, flash: 0 });
+    currentTier = nextTier;
+    nextTier = randTier();
+    dropCd = 0.55;
+    beep(520, 0.07, "sine", 0.05);
+  }
+
+  // ============ 物理 ============
+  function physics(dt) {
+    for (const f of fruits) {
+      f.grace -= dt;
+      if (f.flash > 0) f.flash -= dt;
+      f.vy += G * dt;
+      f.vx *= 0.999;
+      f.x += f.vx * dt;
+      f.y += f.vy * dt;
+    }
+    const merges = [];
+    for (let iter = 0; iter < 3; iter++) {
+      // かべ・ゆか
+      for (const f of fruits) {
+        if (f.x - f.r < WALL_L) { f.x = WALL_L + f.r; f.vx = Math.abs(f.vx) * 0.25; }
+        if (f.x + f.r > WALL_R) { f.x = WALL_R - f.r; f.vx = -Math.abs(f.vx) * 0.25; }
+        if (f.y + f.r > FLOOR) {
+          f.y = FLOOR - f.r;
+          if (f.vy > 40) beep(300 + f.tier * 20, 0.04, "sine", 0.015);
+          f.vy = -Math.abs(f.vy) * 0.12;
+          f.vx *= 0.96;
+        }
+      }
+      // フルーツどうし
+      for (let i = 0; i < fruits.length; i++) {
+        const a = fruits[i];
+        if (a.dead) continue;
+        for (let j = i + 1; j < fruits.length; j++) {
+          const b = fruits[j];
+          if (b.dead) continue;
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const min = a.r + b.r;
+          let d = Math.hypot(dx, dy);
+          if (d >= min) continue;
+          // 合体判定
+          if (iter === 0 && a.tier === b.tier && !a.merging && !b.merging) {
+            a.merging = b.merging = true;
+            merges.push([a, b]);
+            continue;
+          }
+          let nx, ny;
+          if (d < 0.01) { d = 0.01; nx = 1; ny = 0; } else { nx = dx / d; ny = dy / d; }
+          const ma = a.r * a.r, mb = b.r * b.r, tm = ma + mb;
+          const push = (min - d);
+          a.x -= nx * push * (mb / tm); a.y -= ny * push * (mb / tm);
+          b.x += nx * push * (ma / tm); b.y += ny * push * (ma / tm);
+          const rvx = b.vx - a.vx, rvy = b.vy - a.vy;
+          const vn = rvx * nx + rvy * ny;
+          if (vn < 0) {
+            const e = 0.12;
+            const jimp = (-(1 + e) * vn) / (1 / ma + 1 / mb);
+            a.vx -= (jimp * nx) / ma; a.vy -= (jimp * ny) / ma;
+            b.vx += (jimp * nx) / mb; b.vy += (jimp * ny) / mb;
+          }
+        }
+      }
+    }
+    // 合体を実行
+    for (const pair of merges) {
+      const a = pair[0], b = pair[1];
+      a.dead = b.dead = true;
+      const tier = a.tier;
+      const ma = a.r * a.r, mb = b.r * b.r, tm = ma + mb;
+      const mx = (a.x * ma + b.x * mb) / tm;
+      const my = (a.y * ma + b.y * mb) / tm;
+      if (tier >= FRUITS.length - 1) {
+        // スイカ同士 → だいばくはつボーナス
+        score += 100;
+        popup(mx, my - 40, "+100 🍉!!", "#6fd86a");
+        burst(mx, my, "#6fd86a", 40);
+        burst(mx, my, "#ffffff", 20);
+        beep(784, 0.2, "triangle", 0.1);
+        setTimeout(function () { beep(1047, 0.3, "triangle", 0.1); }, 130);
+      } else {
+        const nt = tier + 1;
+        const spec = FRUITS[nt];
+        fruits.push({
+          x: mx, y: Math.min(my, FLOOR - spec.r),
+          vx: (a.vx + b.vx) / 2, vy: Math.min((a.vy + b.vy) / 2, 0),
+          r: spec.r, tier: nt, grace: 0.6, overT: 0, flash: 0.25,
+        });
+        score += SCORES[tier];
+        popup(mx, my - spec.r - 10, "+" + SCORES[tier], "#ffd166");
+        burst(mx, my, FRUITS[tier].c2, 12);
+        mergeSound(tier);
+      }
+    }
+    if (merges.length) fruits = fruits.filter(function (f) { return !f.dead; });
+    for (const f of fruits) f.merging = false;
+
+    // ゲームオーバーライン
+    let danger = false;
+    for (const f of fruits) {
+      if (f.grace > 0) continue;
+      if (f.y - f.r < LINE_Y) {
+        f.overT += dt;
+        danger = true;
+        if (f.overT > 1.4) { gameOver(); return; }
+      } else {
+        f.overT = 0;
+      }
+    }
+    dangerPulse = danger ? Math.min(dangerPulse + dt * 3, 1) : Math.max(dangerPulse - dt * 3, 0);
+  }
+
+  function update(dt) {
+    if (dropCd > 0) dropCd -= dt;
+    physics(dt);
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const p = sparks[i];
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; p.life -= dt;
+      if (p.life <= 0) sparks.splice(i, 1);
+    }
+    for (let i = popups.length - 1; i >= 0; i--) {
+      popups[i].y -= 44 * dt;
+      popups[i].life -= dt;
+      if (popups[i].life <= 0) popups.splice(i, 1);
+    }
+  }
+
+  // ============ びょうが ============
+  function drawFruit(c, x, y, r, tier, flash) {
+    const spec = FRUITS[tier];
+    const g = c.createRadialGradient(x - r * 0.32, y - r * 0.38, r * 0.1, x, y, r);
+    g.addColorStop(0, spec.c1);
+    g.addColorStop(1, spec.c2);
+    c.fillStyle = g;
+    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    // スイカのしましま
+    if (tier === 9) {
+      c.save();
+      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.clip();
+      c.strokeStyle = "rgba(30, 90, 50, 0.55)";
+      c.lineWidth = r * 0.16;
+      for (let k = -2; k <= 2; k++) {
+        c.beginPath();
+        c.moveTo(x + k * r * 0.38, y - r);
+        c.quadraticCurveTo(x + k * r * 0.55, y, x + k * r * 0.38, y + r);
+        c.stroke();
+      }
+      c.restore();
+    }
+    // ハイライト
+    c.fillStyle = "rgba(255, 255, 255, 0.4)";
+    c.beginPath(); c.ellipse(x - r * 0.35, y - r * 0.45, r * 0.22, r * 0.13, -0.6, 0, Math.PI * 2); c.fill();
+    // かお（小さいのはシンプルに）
+    if (r >= 16) {
+      c.fillStyle = "#3a3355";
+      c.beginPath();
+      c.arc(x - r * 0.26, y - r * 0.06, Math.max(r * 0.07, 1.6), 0, Math.PI * 2);
+      c.arc(x + r * 0.26, y - r * 0.06, Math.max(r * 0.07, 1.6), 0, Math.PI * 2);
+      c.fill();
+      c.strokeStyle = "#3a3355";
+      c.lineWidth = Math.max(r * 0.05, 1.3);
+      c.lineCap = "round";
+      c.beginPath(); c.arc(x, y + r * 0.14, r * 0.2, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+    }
+    // へた
+    c.strokeStyle = "#5f8136";
+    c.lineWidth = Math.max(r * 0.08, 1.6);
+    c.beginPath();
+    c.moveTo(x, y - r + r * 0.04);
+    c.quadraticCurveTo(x + r * 0.14, y - r - r * 0.14, x + r * 0.26, y - r - r * 0.1);
+    c.stroke();
+    if (flash > 0) {
+      c.globalAlpha = flash * 2.4;
+      c.strokeStyle = "#ffffff";
+      c.lineWidth = 3;
+      c.beginPath(); c.arc(x, y, r + 4, 0, Math.PI * 2); c.stroke();
+      c.globalAlpha = 1;
+    }
+  }
+
+  function draw(t) {
+    // よぞら
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#1b1836");
+    sky.addColorStop(0.6, "#251d48");
+    sky.addColorStop(1, "#2c2153");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+    for (const s of bgStars) {
+      ctx.globalAlpha = 0.3 + 0.5 * Math.abs(Math.sin(t / 900 + s.tw));
+      ctx.fillStyle = "#e8e4ff";
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.font = "30px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("🌙", 445, 40);
+
+    // はこ（ガラスふう）
+    ctx.fillStyle = "rgba(255, 255, 255, 0.045)";
+    ctx.fillRect(WALL_L - 8, 120, WALL_R - WALL_L + 16, FLOOR - 120 + 10);
+    ctx.strokeStyle = "rgba(83, 224, 216, 0.5)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(WALL_L - 6, 122);
+    ctx.lineTo(WALL_L - 6, FLOOR + 6);
+    ctx.lineTo(WALL_R + 6, FLOOR + 6);
+    ctx.lineTo(WALL_R + 6, 122);
+    ctx.stroke();
+
+    // きけんライン
+    const lineAlpha = 0.35 + dangerPulse * 0.55 * Math.abs(Math.sin(t / 150));
+    ctx.strokeStyle = dangerPulse > 0.3 ? "rgba(255, 77, 109, " + lineAlpha + ")" : "rgba(255, 209, 102, " + lineAlpha + ")";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10, 8]);
+    ctx.beginPath();
+    ctx.moveTo(WALL_L - 6, LINE_Y);
+    ctx.lineTo(WALL_R + 6, LINE_Y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // フルーツ
+    for (const f of fruits) drawFruit(ctx, f.x, f.y, f.r, f.tier, f.flash);
+
+    // ねらい（プレイ中）
+    if (state === "play") {
+      const spec = FRUITS[currentTier];
+      const gx = Math.max(WALL_L + spec.r + 1, Math.min(WALL_R - spec.r - 1, aimX));
+      ctx.globalAlpha = 0.35;
+      ctx.strokeStyle = "#eeecfa";
+      ctx.setLineDash([4, 8]);
+      ctx.beginPath(); ctx.moveTo(gx, 118); ctx.lineTo(gx, FLOOR); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = dropCd > 0 ? 0.35 : 0.9;
+      drawFruit(ctx, gx, 108, spec.r, currentTier, 0);
+      ctx.globalAlpha = 1;
+    }
+
+    // パーティクル・ポップアップ
+    for (const p of sparks) {
+      ctx.globalAlpha = Math.max(p.life / p.max, 0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
+    for (const p of popups) {
+      ctx.globalAlpha = Math.max(p.life / 0.9, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+
+    // HUD
+    ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
+    roundRect(ctx, 12, 12, 150, 40, 12);
+    roundRect(ctx, W - 118, 56, 106, 52, 12);
+    ctx.fillStyle = "#6fd86a";
+    ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("🍉 " + score, 24, 33);
+    ctx.fillStyle = "#9d99c0";
+    ctx.font = "900 11px 'Zen Maru Gothic', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("つぎ", W - 65, 70);
+    if (state === "play") {
+      const ns = FRUITS[nextTier];
+      const nr = Math.min(ns.r, 15);
+      drawFruit(ctx, W - 65, 90, nr, nextTier, 0);
+    }
+
+    // しんかのじゅん（下のガイド）
+    ctx.fillStyle = "rgba(19, 19, 34, 0.6)";
+    ctx.fillRect(0, H - 32, W, 32);
+    let gx2 = 38;
+    for (let k = 0; k < FRUITS.length; k++) {
+      const rr = 4 + k * 1.15;
+      drawMini(ctx, gx2, H - 16, rr, k);
+      gx2 += rr * 2 + 14;
+    }
+  }
+  function drawMini(c, x, y, r, tier) {
+    const spec = FRUITS[tier];
+    const g = c.createRadialGradient(x - r * 0.3, y - r * 0.3, 0.5, x, y, r);
+    g.addColorStop(0, spec.c1);
+    g.addColorStop(1, spec.c2);
+    c.fillStyle = g;
+    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+  }
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+    c.fill();
+  }
+
+  // ============ メインループ（固定60fps） ============
+  let acc = 0;
+  function loop(t) {
+    const dt = Math.min((t - lastTime) / 1000, 0.1);
+    lastTime = t;
+    acc += dt;
+    while (acc >= 1 / 60) {
+      if (state === "play") update(1 / 60);
+      acc -= 1 / 60;
+    }
+    draw(t);
+    requestAnimationFrame(loop);
+  }
+
+  // ============ 入力（さいごに初期化） ============
+  function canvasX(e) {
+    const rect = canvas.getBoundingClientRect();
+    return ((e.touches ? e.touches[0].clientX : e.clientX) - rect.left) / rect.width * W;
+  }
+  canvas.addEventListener("pointermove", function (e) { aimX = canvasX(e); });
+  canvas.addEventListener("pointerdown", function (e) { aimX = canvasX(e); });
+  canvas.addEventListener("pointerup", function (e) {
+    aimX = canvasX(e);
+    dropFruit();
+  });
+
+  // デバッグフック
+  window.__SUIKA = {
+    get fruits() { return fruits; },
+    get score() { return score; },
+    get state() { return state; },
+    set aim(x) { aimX = x; },
+    drop: dropFruit,
+    forceTier: function (t) { currentTier = t; },
+    start: startGame,
+  };
+
+  requestAnimationFrame(function (t) { lastTime = t; requestAnimationFrame(loop); });
+})();
+</script>
+</body>
+</html>
