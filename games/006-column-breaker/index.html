@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>コラムブレイカー | ピコットゲームズ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, #35234d 0%, transparent 70%),
+      #131322;
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    color: #eeecfa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px 8px;
+  }
+  .topbar a, .topbar button.mute {
+    color: #53e0d8;
+    font-weight: 900;
+    text-decoration: none;
+    font-size: 0.88rem;
+    background: #1e1e36;
+    border: 1px solid #2c2c4d;
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  .topbar h1 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.0rem;
+    background: linear-gradient(100deg, #ff5fa2, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .stage { position: relative; width: min(94vw, 480px); margin: 6px 0 24px; }
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid #2c2c4d;
+    box-shadow: 0 0 40px rgba(83, 224, 216, 0.15), 0 14px 34px rgba(0, 0, 0, 0.45);
+    touch-action: none;
+  }
+  .focus-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 60px;
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    border: 2px solid rgba(83, 224, 216, 0.6);
+    background: rgba(30, 30, 54, 0.5);
+    color: #53e0d8;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    display: none;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .focus-btn.on { background: rgba(83, 224, 216, 0.35); color: #fff; }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(19, 19, 34, 0.93);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 22px;
+    gap: 12px;
+    z-index: 5;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big { font-size: 2.5rem; }
+  .overlay h2 {
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    background: linear-gradient(100deg, #ff5fa2, #53e0d8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay p { font-size: 0.86rem; line-height: 1.7; color: #c9c5e6; }
+  .overlay p b { color: #eeecfa; }
+  .overlay .score-line { font-size: 1.2rem; font-weight: 900; color: #eeecfa; }
+  .overlay .best-line { font-size: 0.88rem; color: #53e0d8; font-weight: 700; }
+  .btn {
+    border: none;
+    background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    border-radius: 999px;
+    padding: 12px 44px;
+    cursor: pointer;
+    box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:active { transform: translateY(2px); }
+  .btn:focus-visible, .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
+  .hint { font-size: 0.75rem; color: #9d99c0; }
+  .hint a { color: #9d99c0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../index.html">← いちらんへ</a>
+  <h1>⚡ コラムブレイカー</h1>
+  <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
+</div>
+
+<div class="stage">
+  <canvas id="game" width="480" height="640"></canvas>
+  <button class="focus-btn" id="focus-btn" aria-label="しゅうちゅうモード">FOCUS</button>
+
+  <div class="overlay" id="title-screen">
+    <div class="big">⚡🔵⚡</div>
+    <h2>コラムブレイカー</h2>
+    <p>
+      たてレーザーで<b>ボス5れんせん</b>！<br>
+      ボスと同じ<b>「たて一列」</b>に立ってレーザーをあてよう。<br>
+      でもボスの真下は弾がいちばんキケン…！<br>
+      ボスの中を回る<b>コア</b>に当てると<b>ダメージ3倍</b>✨
+    </p>
+    <p class="hint">
+      PC：WASD/矢印いどう ＋ スペース/クリック長おしでレーザー<br>
+      Shift＝しゅうちゅう（ゆっくり・高いりょく）／ P＝ポーズ<br>
+      スマホ：ゆびでドラッグいどう（さわってる間レーザー）＋ FOCUSボタン
+    </p>
+    <button class="btn" id="start-btn">スタート！</button>
+  </div>
+
+  <div class="overlay hidden" id="pause-screen">
+    <h2>ポーズ</h2>
+    <p>P か 下のボタンで さいかい</p>
+    <button class="btn" id="resume-btn">つづける</button>
+  </div>
+
+  <div class="overlay hidden" id="over-screen">
+    <div class="big">💥</div>
+    <h2>ゲームオーバー</h2>
+    <p id="over-detail"></p>
+    <p class="score-line" id="over-score">スコア：0</p>
+    <p class="best-line" id="over-best"></p>
+    <button class="btn" id="retry-btn">もういちど！</button>
+    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+  </div>
+
+  <div class="overlay hidden" id="clear-screen">
+    <div class="big">🏆</div>
+    <h2>ぜんボスげきは！！</h2>
+    <p id="clear-detail"></p>
+    <p class="score-line" id="clear-score">スコア：0</p>
+    <p class="best-line" id="clear-best"></p>
+    <button class="btn" id="retry2-btn">もういちど！</button>
+    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// COLUMN BREAKER — 原作「USTG08a4.hsp」より
+// ★調整ポイントは BOSSES 配列と、コメントに★が付いた行★
+// ================================================================
+(function () {
+  const W = 480, H = 640;
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const $ = function (id) { return document.getElementById(id); };
+  const rand = function (a, b) { return a + Math.random() * (b - a); };
+  const clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  const hyp = Math.hypot;
+
+  // ★ボス調整はここ（hp/半径/色/攻撃間隔ms/移動/攻撃/ヒント）
+  const BOSSES = [
+    { name: "紅球 CRIMSON",   hp: 700,  r: 46, color: "#ff3d68", rate: 2100, move: "drift",
+      atk1: ["radial14"], atk2: ["radial20", "aim3", "column"], hasMinis: false,
+      tip: "真下（か真上）にもぐりこんで撃つのが基本！" },
+    { name: "双牙 TWIN FANG", hp: 1000, r: 40, color: "#ff9d3d", rate: 1700, move: "dash",
+      atk1: ["aim3"], atk2: ["aim5", "column", "radial14"], hasMinis: false,
+      tip: "とっしんの予備動作を見てから横にかわそう" },
+    { name: "環 HALO",        hp: 1300, r: 44, color: "#b06bff", rate: 1500, move: "orbit",
+      atk1: ["spiral2"], atk2: ["spiral3", "radial14", "column"], hasMinis: false,
+      tip: "らせん弾は外へにげず、内側のすきまをぬう！" },
+    { name: "貫 PIERCER",     hp: 1650, r: 48, color: "#3dd6ff", rate: 2000, move: "hunt",
+      atk1: ["column"], atk2: ["column", "aim3"], hasMinis: true,
+      tip: "赤い予告線が出たら、その列からすぐぬける！" },
+    { name: "真核 THE CORE",  hp: 2200, r: 54, color: "#ffe14d", rate: 1450, move: "teleport",
+      atk1: ["radial14", "column"], atk2: ["spiral2", "column", "aim5"], hasMinis: true,
+      tip: "しゅうちゅうモードで一瞬のかさなりを刺せ！" },
+  ];
+  const STORAGE_KEY = "column-breaker-best";
+
+  let S = null, P = null, boss = null;
+  let ebul = [], parts = [], floats = [], warns = [], minis = [];
+  const input = { l: false, r: false, u: false, d: false, fire: false, focus: false };
+  let touch = { on: false, x: 0, y: 0 };
+  let paused = false;
+
+  // ============ おと（BGM＋こうかおん・ミュート対応） ============
+  let audioCtx = null;
+  let muted = localStorage.getItem("picotto-muted") === "1";
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function tone(freq, t, dur, type, vol) {
+    const c = getCtx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(dur, 0.05));
+    o.connect(g).connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.1);
+  }
+  function beep(freq, dur, type, vol) {
+    if (muted) return;
+    try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.1); } catch (e) {}
+  }
+  const BGM = {
+    timer: null, step: 0, next: 0,
+    song: {
+      bpm: 144, lead: "square",
+      melody: [440, 0, 523, 587, 659, 0, 587, 523, 440, 0, 392, 440, 523, 0, 392, 0,
+               440, 0, 523, 587, 659, 0, 784, 659, 587, 0, 523, 494, 440, 0, 0, 0],
+      bass:   [110, 110, 0, 110, 131, 131, 0, 131, 98, 98, 0, 98, 147, 147, 0, 147],
+    },
+    start: function () {
+      try {
+        const c = getCtx();
+        this.stop();
+        const spb = 60 / this.song.bpm / 2;
+        this.next = c.currentTime + 0.1;
+        this.step = 0;
+        const self = this;
+        this.timer = setInterval(function () {
+          try {
+            const cc = getCtx();
+            while (self.next < cc.currentTime + 0.25) {
+              if (!muted && !document.hidden && !paused) {
+                const m = self.song.melody[self.step % self.song.melody.length];
+                const b = self.song.bass[self.step % self.song.bass.length];
+                if (m) tone(m, self.next, spb * 0.8, self.song.lead, 0.025);
+                if (b) tone(b, self.next, spb * 0.9, "triangle", 0.05);
+              }
+              self.next += spb;
+              self.step++;
+            }
+          } catch (e) {}
+        }, 80);
+      } catch (e) {}
+    },
+    stop: function () { if (this.timer) { clearInterval(this.timer); this.timer = null; } },
+  };
+
+  // ============ エフェクト ============
+  function sparks(x, y, color, n) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = rand(40, 160);
+      parts.push({ x: x, y: y, vx: Math.cos(a) * sp / 60, vy: Math.sin(a) * sp / 60, life: rand(18, 40), max: 40, color: color });
+    }
+  }
+  function boom(x, y, color) {
+    sparks(x, y, color, 40);
+    sparks(x, y, "#ffffff", 20);
+  }
+  function ftext(x, y, text, color) {
+    floats.push({ x: x, y: y, text: text, color: color, life: 50 });
+  }
+
+  // ============ ゲームのながれ ============
+  function resetAll() {
+    S = { stage: 1, score: 0, frames: 0, running: false, shake: 0, flash: 0, edge: 0,
+          banner: 0, bannerText: "", tip: "", transition: 0 };
+    P = { x: W / 2, y: 520, vx: 0, vy: 0, hp: 100, en: 100, overheat: false, focus: false, inv: 0, firing: false };
+    ebul = []; parts = []; floats = []; warns = []; minis = [];
+  }
+  function spawnBoss() {
+    const B = BOSSES[S.stage - 1];
+    boss = {
+      name: B.name, maxHp: B.hp, hp: B.hp, r: B.r, color: B.color, rate: B.rate,
+      move: B.move, atk1: B.atk1, atk2: B.atk2, hasMinis: B.hasMinis, tip: B.tip,
+      x: W / 2, y: -B.r - 10, ty: 150, phase: 1, t: 0,
+      atkT: Math.round(B.rate / 16.7), coreA: Math.random() * 6.28,
+      dashState: 0, dashT: 70, dashDir: 1, tpT: 132, spiralT: 0, spiralA: 0, spiralN: 2,
+      entering: true,
+    };
+    S.banner = 150;
+    S.bannerText = "STAGE " + S.stage + "　" + boss.name;
+    S.tip = boss.tip;
+  }
+  function start() {
+    resetAll();
+    spawnBoss();
+    S.running = true;
+    paused = false;
+    $("title-screen").classList.add("hidden");
+    $("over-screen").classList.add("hidden");
+    $("clear-screen").classList.add("hidden");
+    $("pause-screen").classList.add("hidden");
+    beep(660, 0.15);
+    BGM.start();
+  }
+  function nextStage() {
+    S.stage++;
+    P.hp = Math.min(100, P.hp + 30);
+    P.en = 100;
+    P.overheat = false;
+    ebul = []; warns = []; minis = [];
+    spawnBoss();
+  }
+  function timeStr(frames) {
+    const s = Math.floor(frames / 60);
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+  function saveBest() {
+    const best = Math.max(Math.floor(S.score), Number(localStorage.getItem(STORAGE_KEY) || 0));
+    localStorage.setItem(STORAGE_KEY, String(best));
+    return best;
+  }
+  function gameOver() {
+    S.running = false;
+    BGM.stop();
+    const best = saveBest();
+    $("over-detail").textContent = "STAGE " + S.stage + " " + boss.name + " にやぶれた…（タイム " + timeStr(S.frames) + "）";
+    $("over-score").textContent = "スコア：" + Math.floor(S.score);
+    $("over-best").textContent = "さいこうきろく：" + best;
+    $("over-screen").classList.remove("hidden");
+    beep(120, 0.6, "sawtooth", 0.12);
+  }
+  function clearGame() {
+    const bonus = Math.max(0, 200000 - S.frames * 40);
+    S.score += bonus;
+    S.running = false;
+    BGM.stop();
+    const best = saveBest();
+    $("clear-detail").textContent = "クリアタイム " + timeStr(S.frames) + "　タイムボーナス +" + bonus;
+    $("clear-score").textContent = "スコア：" + Math.floor(S.score);
+    $("clear-best").textContent = "さいこうきろく：" + best;
+    $("clear-screen").classList.remove("hidden");
+    beep(660, 0.2);
+    try {
+      const c = getCtx();
+      if (!muted) {
+        tone(784, c.currentTime + 0.2, 0.2, "square", 0.05);
+        tone(1047, c.currentTime + 0.42, 0.4, "square", 0.06);
+      }
+    } catch (e) {}
+  }
+
+  // ============ ボスの攻撃 ============
+  function bossAttack() {
+    const list = boss.phase === 2 ? boss.atk2 : boss.atk1;
+    const a = list[Math.floor(Math.random() * list.length)];
+    const spd = clamp(2.9 + (S.stage - 1) * 0.3 + (boss.phase === 2 ? 0.4 : 0), 2.9, 4.6); // ★弾速
+    if (a === "radial14" || a === "radial20") {
+      const n = a === "radial20" ? 20 : 14;
+      const off = Math.random() * 6.28;
+      for (let i = 0; i < n; i++) {
+        const an = off + (i * Math.PI * 2) / n;
+        ebul.push({ x: boss.x, y: boss.y, vx: Math.cos(an) * spd, vy: Math.sin(an) * spd, r: 5 });
+      }
+      beep(300, 0.08, "square", 0.04);
+    } else if (a === "aim3" || a === "aim5") {
+      const n = a === "aim5" ? 5 : 3;
+      const base = Math.atan2(P.y - boss.y, P.x - boss.x);
+      for (let i = 0; i < n; i++) {
+        const an = base + (i - (n - 1) / 2) * 0.22;
+        ebul.push({ x: boss.x, y: boss.y, vx: Math.cos(an) * (spd + 0.7), vy: Math.sin(an) * (spd + 0.7), r: 5 });
+      }
+      beep(360, 0.08, "square", 0.04);
+    } else if (a === "spiral2" || a === "spiral3") {
+      boss.spiralT = 48;
+      boss.spiralN = a === "spiral3" ? 3 : 2;
+    } else if (a === "column") {
+      warns.push({ x: P.x, w: 34, warn: 70, fire: 26 }); // ★予告70f→発射26f 幅34px
+      beep(220, 0.15, "sawtooth", 0.06);
+    }
+  }
+
+  // ============ ボスの移動 ============
+  function moveBoss() {
+    const m = boss.move;
+    if (m === "drift") {
+      boss.x = W / 2 + Math.sin(boss.t * 0.011) * 150;
+      boss.y = boss.ty + Math.sin(boss.t * 0.023) * 36;
+    } else if (m === "dash") {
+      if (boss.dashState === 0) {          // ホバー
+        boss.y = boss.ty + Math.sin(boss.t * 0.03) * 14;
+        boss.dashT--;
+        if (boss.dashT <= 0) { boss.dashState = 1; boss.dashT = boss.phase === 2 ? 24 : 40; }
+      } else if (boss.dashState === 1) {   // ため（ふるえる）
+        boss.x += rand(-2, 2);
+        boss.dashT--;
+        if (boss.dashT <= 0) {
+          boss.dashState = 2;
+          boss.dashDir = P.x > boss.x ? 1 : -1;
+          beep(500, 0.1, "sawtooth", 0.06);
+        }
+      } else {                             // とっしん
+        boss.x += boss.dashDir * (boss.phase === 2 ? 15 : 8); // ★突進速度
+        if (boss.x < boss.r + 6 || boss.x > W - boss.r - 6) {
+          boss.x = clamp(boss.x, boss.r + 6, W - boss.r - 6);
+          boss.dashState = 0;
+          boss.dashT = boss.phase === 2 ? 46 : 70;
+        }
+      }
+    } else if (m === "orbit") {
+      boss.x = W / 2 + Math.cos(boss.t * 0.017) * 160;
+      boss.y = 210 + Math.sin(boss.t * 0.017) * 90;
+    } else if (m === "hunt") {
+      const k = boss.phase === 2 ? 0.03 : 0.02;
+      const mx = boss.phase === 2 ? 3.2 : 2.4;
+      boss.x += clamp((P.x - boss.x) * k, -mx, mx);
+      boss.y = boss.ty + Math.sin(boss.t * 0.025) * 24;
+    } else if (m === "teleport") {
+      boss.tpT--;
+      if (boss.tpT <= 0) {
+        sparks(boss.x, boss.y, boss.color, 16);
+        boss.x = rand(boss.r + 20, W - boss.r - 20);
+        boss.y = rand(110, 250);
+        boss.tpT = boss.phase === 2 ? 90 : 132; // ★テレポ間隔
+        sparks(boss.x, boss.y, "#ffffff", 12);
+        beep(700, 0.1, "triangle", 0.05);
+      }
+    }
+    boss.x = clamp(boss.x, boss.r + 4, W - boss.r - 4);
+  }
+
+  // ============ 被弾 ============
+  function hurt(dmg, continuous) {
+    if (!continuous) {
+      if (P.inv > 0) return;
+      P.inv = 30;
+      S.flash = 6;
+      sparks(P.x, P.y, "#ff5fa2", 14);
+      beep(140, 0.2, "sawtooth", 0.11);
+    }
+    S.edge = Math.max(S.edge, 3);
+    P.hp -= dmg;
+    if (P.hp <= 0) { P.hp = 0; gameOver(); }
+  }
+
+  // ============ こうしん ============
+  function update() {
+    S.frames++;
+    if (S.banner > 0) S.banner--;
+    if (S.flash > 0) S.flash--;
+    if (S.edge > 0) S.edge--;
+    if (S.shake > 0) S.shake--;
+    if (P.inv > 0) P.inv--;
+
+    // ステージ間トランジション
+    if (S.transition > 0) {
+      S.transition--;
+      if (S.transition === 0) nextStage();
+    }
+
+    // --- 自機いどう ---
+    P.focus = input.focus;
+    const sp = P.focus ? 0.45 : 1; // ★集中モード速度
+    if (touch.on) {
+      P.x += (touch.x - P.x) * 0.3;
+      P.y += (touch.y - 70 - P.y) * 0.3;
+    } else {
+      const a = 0.6 * sp;
+      if (input.l) P.vx -= a;
+      if (input.r) P.vx += a;
+      if (input.u) P.vy -= a;
+      if (input.d) P.vy += a;
+      P.vx *= 0.86; P.vy *= 0.86;
+      const mv = 4.8 * sp;
+      P.vx = clamp(P.vx, -mv, mv);
+      P.vy = clamp(P.vy, -mv, mv);
+      P.x += P.vx; P.y += P.vy;
+    }
+    P.x = clamp(P.x, 14, W - 14);
+    P.y = clamp(P.y, 46, H - 16);
+
+    // デバッグ用（テスト時のみ外から有効化）
+    if (window.__cbFollow && boss) P.x = boss.x;
+    const wantFire = input.fire || touch.on || !!window.__cbFire;
+
+    // --- エネルギーとレーザー ---
+    let firing = false;
+    if (wantFire && !P.overheat && P.en > 0 && S.running) {
+      firing = true;
+      P.en -= P.focus ? 0.50 : 0.62; // ★EN消費
+      if (P.en <= 0) { P.en = 0; P.overheat = true; beep(180, 0.25, "sawtooth", 0.08); }
+    } else {
+      P.en += P.overheat ? 0.55 : 0.80; // ★EN回復
+      if (P.en >= 100) P.en = 100;
+      if (P.overheat && P.en >= 35) P.overheat = false;
+    }
+    P.firing = firing;
+
+    if (firing && S.frames % 6 === 0) beep(P.focus ? 880 : 660, 0.03, "square", 0.015);
+
+    // --- レーザー命中 ---
+    if (firing && boss && !boss.entering && S.transition === 0) {
+      const halfW = P.focus ? 6 : 15;               // ★レーザー半幅
+      const base = P.focus ? 1.35 : 0.75;           // ★火力
+      const coreX = boss.x + Math.cos(boss.coreA) * boss.r * 0.52;
+      const coreY = boss.y + Math.sin(boss.coreA) * boss.r * 0.52;
+      const hitCore = Math.abs(coreX - P.x) < halfW + 11;
+      const hitBody = Math.abs(boss.x - P.x) < halfW + boss.r;
+      if (hitBody || hitCore) {
+        const dmg = base * (hitCore ? 3 : 1);       // ★コア倍率
+        boss.hp -= dmg;
+        S.score += dmg * 10;
+        if (S.frames % 4 === 0) sparks(P.x + rand(-6, 6), boss.y + boss.r * 0.7, hitCore ? "#ffd166" : "#8fd8ff", 2);
+        if (hitCore && S.frames % 10 === 0) ftext(coreX, coreY - 20, "CORE ×3", "#ffd166");
+      }
+      for (let i = minis.length - 1; i >= 0; i--) {
+        const mn = minis[i];
+        if (Math.abs(mn.x - P.x) < halfW + 17) {
+          mn.hp -= base;
+          if (mn.hp <= 0) {
+            S.score += 500;
+            ftext(mn.x, mn.y, "+500", "#53e0d8");
+            boom(mn.x, mn.y, boss.color);
+            minis.splice(i, 1);
+            beep(900, 0.12, "triangle", 0.07);
+          }
+        }
+      }
+    }
+
+    // --- ボス ---
+    if (boss && S.transition === 0) {
+      if (boss.entering) {
+        boss.y += 2.4;
+        if (boss.y >= boss.ty) { boss.y = boss.ty; boss.entering = false; }
+      } else {
+        boss.t++;
+        moveBoss();
+        boss.coreA += boss.phase === 2 ? 0.055 : 0.032; // ★コア回転速度
+
+        if (boss.phase === 1 && boss.hp <= boss.maxHp / 2) {
+          boss.phase = 2;
+          S.flash = 8;
+          sparks(boss.x, boss.y, boss.color, 30);
+          ftext(boss.x, boss.y - boss.r - 24, "PHASE 2", "#ff5fa2");
+          beep(400, 0.3, "sawtooth", 0.08);
+          if (boss.hasMinis) {
+            minis = [
+              { x: boss.x - 80, y: boss.y, hp: 160, a: 0, shootT: 80 },
+              { x: boss.x + 80, y: boss.y, hp: 160, a: Math.PI, shootT: 130 },
+            ];
+          }
+        }
+
+        boss.atkT--;
+        if (boss.atkT <= 0) {
+          bossAttack();
+          boss.atkT = Math.round((boss.rate / 16.7) * (boss.phase === 2 ? 0.72 : 1)); // ★攻撃間隔
+        }
+        if (boss.spiralT > 0) {
+          boss.spiralT--;
+          if (boss.spiralT % 4 === 0) {
+            for (let k = 0; k < boss.spiralN; k++) {
+              const an = boss.spiralA + (k * Math.PI * 2) / boss.spiralN;
+              ebul.push({ x: boss.x, y: boss.y, vx: Math.cos(an) * 3.1, vy: Math.sin(an) * 3.1, r: 5 });
+            }
+            boss.spiralA += 0.42;
+          }
+        }
+
+        // 接触（相互ダメージ）
+        if (hyp(boss.x - P.x, boss.y - P.y) < boss.r + 12 && S.frames % 2 === 0) {
+          hurt(0.55, true);   // ★接触ダメージ
+          boss.hp -= 0.5;
+        }
+
+        if (boss.hp <= 0) {
+          S.score += 5000 * S.stage;
+          ftext(boss.x, boss.y, "+" + 5000 * S.stage, "#ffd166");
+          boom(boss.x, boss.y, boss.color);
+          S.flash = 12; S.shake = 16;
+          ebul = []; warns = []; minis = [];
+          beep(200, 0.5, "sawtooth", 0.12);
+          if (S.stage >= 5) { boss = null; clearGame(); }
+          else { boss = null; S.transition = 80; }
+        }
+      }
+    }
+
+    // --- ボスの縦レーザー ---
+    for (let i = warns.length - 1; i >= 0; i--) {
+      const wr = warns[i];
+      if (wr.warn > 0) {
+        wr.warn--;
+        if (wr.warn === 0) beep(330, 0.12, "sawtooth", 0.07);
+      } else {
+        wr.fire--;
+        if (Math.abs(P.x - wr.x) < wr.w / 2 + 4 && S.frames % 2 === 0) hurt(0.9, true); // ★ボスレーザーダメージ
+        if (wr.fire <= 0) warns.splice(i, 1);
+      }
+    }
+
+    // --- 分身 ---
+    for (const mn of minis) {
+      if (!boss) break;
+      mn.a += 0.03;
+      mn.x = boss.x + Math.cos(mn.a) * (boss.r + 52);
+      mn.y = boss.y + Math.sin(mn.a) * (boss.r * 0.6 + 34);
+      mn.shootT--;
+      if (mn.shootT <= 0) {
+        const an = Math.atan2(P.y - mn.y, P.x - mn.x);
+        ebul.push({ x: mn.x, y: mn.y, vx: Math.cos(an) * 3.4, vy: Math.sin(an) * 3.4, r: 4 });
+        mn.shootT = 100;
+      }
+    }
+
+    // --- 敵弾 ---
+    for (let i = ebul.length - 1; i >= 0; i--) {
+      const b = ebul[i];
+      b.x += b.vx; b.y += b.vy;
+      if (b.x < -20 || b.x > W + 20 || b.y < -20 || b.y > H + 20) { ebul.splice(i, 1); continue; }
+      if (P.inv <= 0 && hyp(b.x - P.x, b.y - P.y) < b.r + 4) {
+        ebul.splice(i, 1);
+        hurt(rand(8, 10), false); // ★弾ダメージ
+      }
+    }
+
+    // --- パーティクル・テキスト ---
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life--;
+      if (p.life <= 0) parts.splice(i, 1);
+    }
+    for (let i = floats.length - 1; i >= 0; i--) {
+      floats[i].y -= 0.7; floats[i].life--;
+      if (floats[i].life <= 0) floats.splice(i, 1);
+    }
+  }
+
+  // ============ びょうが ============
+  function drawBg(t) {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#12122a");
+    g.addColorStop(1, "#1a1a3a");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "rgba(83, 224, 216, 0.05)";
+    ctx.lineWidth = 1;
+    for (let x = 40; x < W; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    // 自機の列ガイド
+    if (S && P) {
+      const overlap = boss && !boss.entering && Math.abs(boss.x - P.x) < 15 + boss.r;
+      ctx.fillStyle = overlap ? "rgba(255, 209, 102, 0.10)" : "rgba(83, 224, 216, 0.05)";
+      ctx.fillRect(P.x - 15, 0, 30, H);
+    }
+  }
+  function drawLaser() {
+    if (!P.firing) return;
+    const gw = P.focus ? 10 : 26;
+    const g = ctx.createLinearGradient(P.x - gw, 0, P.x + gw, 0);
+    g.addColorStop(0, "rgba(83, 180, 255, 0)");
+    g.addColorStop(0.5, "rgba(120, 200, 255, 0.55)");
+    g.addColorStop(1, "rgba(83, 180, 255, 0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(P.x - gw, 0, gw * 2, H);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    const cw = P.focus ? 3 : 8;
+    ctx.fillRect(P.x - cw / 2, 0, cw, H);
+  }
+  function drawPlayer() {
+    const blink = P.inv > 0 && Math.floor(P.inv / 3) % 2 === 0;
+    if (blink) return;
+    ctx.save();
+    ctx.translate(P.x, P.y);
+    ctx.strokeStyle = P.overheat ? "#ff9d3d" : "#bfe8ff";
+    ctx.lineWidth = 2.4;
+    ctx.lineCap = "round";
+    // 「卅」型
+    ctx.beginPath();
+    ctx.moveTo(-12, -8); ctx.lineTo(-12, 14);
+    ctx.moveTo(0, -16); ctx.lineTo(0, 14);
+    ctx.moveTo(12, -8); ctx.lineTo(12, 14);
+    ctx.moveTo(-16, -2); ctx.lineTo(16, -2);
+    ctx.moveTo(-14, 8); ctx.lineTo(14, 8);
+    ctx.stroke();
+    if (P.focus) {
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#ff5fa2";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(0, 0, 6.5, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawBoss(t) {
+    if (!boss) return;
+    const bx = boss.x, by = boss.y;
+    const g = ctx.createRadialGradient(bx - boss.r * 0.3, by - boss.r * 0.3, 4, bx, by, boss.r);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.25, boss.color);
+    g.addColorStop(1, "#1a1a3a");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(bx, by, boss.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = boss.color;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.arc(bx, by, boss.r + 6, 0, Math.PI * 2); ctx.stroke();
+    if (boss.phase === 2) {
+      ctx.setLineDash([10, 8]);
+      ctx.lineDashOffset = -t / 30;
+      ctx.beginPath(); ctx.arc(bx, by, boss.r + 14, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.globalAlpha = 1;
+    // コア
+    const coreX = bx + Math.cos(boss.coreA) * boss.r * 0.52;
+    const coreY = by + Math.sin(boss.coreA) * boss.r * 0.52;
+    const cg = ctx.createRadialGradient(coreX, coreY, 1, coreX, coreY, 14);
+    cg.addColorStop(0, "#fff7d1");
+    cg.addColorStop(0.5, "#ffd166");
+    cg.addColorStop(1, "rgba(255, 209, 102, 0)");
+    ctx.fillStyle = cg;
+    ctx.beginPath(); ctx.arc(coreX, coreY, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ffe9a8";
+    ctx.beginPath(); ctx.arc(coreX, coreY, 6, 0, Math.PI * 2); ctx.fill();
+    // 分身
+    for (const mn of minis) {
+      ctx.fillStyle = boss.color;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath(); ctx.arc(mn.x, mn.y, 17, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#1a1a3a";
+      ctx.beginPath(); ctx.arc(mn.x, mn.y, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#eeecfa";
+      ctx.font = "900 9px 'Zen Maru Gothic', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(String(Math.ceil(mn.hp)), mn.x, mn.y - 24);
+    }
+  }
+  function draw(t) {
+    ctx.save();
+    if (S && S.shake > 0) ctx.translate(rand(-S.shake / 3, S.shake / 3), rand(-S.shake / 3, S.shake / 3));
+    drawBg(t);
+
+    if (S) {
+      // ボスの縦レーザー（予告と発射）
+      for (const wr of warns) {
+        if (wr.warn > 0) {
+          ctx.fillStyle = "rgba(255, 61, 104, " + (0.12 + 0.12 * Math.abs(Math.sin(t / 60))) + ")";
+          ctx.fillRect(wr.x - wr.w / 2, 0, wr.w, H);
+          ctx.strokeStyle = "rgba(255, 61, 104, 0.8)";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(wr.x - wr.w / 2, 0, wr.w, H);
+        } else {
+          ctx.fillStyle = "rgba(255, 61, 104, 0.75)";
+          ctx.fillRect(wr.x - wr.w / 2, 0, wr.w, H);
+          ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+          ctx.fillRect(wr.x - 5, 0, 10, H);
+        }
+      }
+
+      drawLaser();
+      drawBoss(t);
+      drawPlayer();
+
+      // 敵弾
+      for (const b of ebul) {
+        const bg2 = ctx.createRadialGradient(b.x, b.y, 1, b.x, b.y, b.r + 3);
+        bg2.addColorStop(0, "#ffffff");
+        bg2.addColorStop(0.5, "#ff5fa2");
+        bg2.addColorStop(1, "rgba(255, 95, 162, 0)");
+        ctx.fillStyle = bg2;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r + 3, 0, Math.PI * 2); ctx.fill();
+      }
+      for (const p of parts) {
+        ctx.globalAlpha = Math.max(p.life / p.max, 0);
+        ctx.fillStyle = p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.textAlign = "center";
+      ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
+      for (const f of floats) {
+        ctx.globalAlpha = Math.max(f.life / 50, 0);
+        ctx.fillStyle = f.color;
+        ctx.fillText(f.text, f.x, f.y);
+      }
+      ctx.globalAlpha = 1;
+
+      // ===== HUD =====
+      if (boss) {
+        ctx.fillStyle = "#9d99c0";
+        ctx.font = "900 12px 'Zen Maru Gothic', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("STAGE " + S.stage + "　" + boss.name, W / 2, 16);
+        const bw = 360, bx0 = (W - bw) / 2;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+        ctx.fillRect(bx0, 24, bw, 6);
+        ctx.fillStyle = boss.color;
+        ctx.fillRect(bx0, 24, bw * clamp(boss.hp / boss.maxHp, 0, 1), 6);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(bx0 + bw / 2 - 1, 22, 2, 10); // 第2形態ライン
+      }
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#9d99c0";
+      ctx.font = "900 11px 'Zen Maru Gothic', sans-serif";
+      ctx.fillText("SCORE " + Math.floor(S.score), 12, 46);
+      ctx.fillText("TIME " + timeStr(S.frames), 12, 60);
+
+      // 下部 HP/EN
+      const gy = H - 26;
+      ctx.fillStyle = "rgba(19, 19, 34, 0.7)";
+      ctx.fillRect(0, gy - 12, W, 38);
+      ctx.fillStyle = "#9d99c0";
+      ctx.fillText("HP", 12, gy);
+      ctx.fillStyle = "rgba(255,255,255,0.12)";
+      ctx.fillRect(36, gy - 8, 160, 9);
+      ctx.fillStyle = P.hp < 30 ? "#ff3d68" : "#6ee87f";
+      ctx.fillRect(36, gy - 8, 160 * P.hp / 100, 9);
+      ctx.fillStyle = "#eeecfa";
+      ctx.fillText(String(Math.ceil(P.hp)), 202, gy);
+      ctx.fillStyle = P.overheat ? "#ff9d3d" : "#9d99c0";
+      ctx.fillText(P.overheat ? "OVERHEAT" : "EN", 248, gy);
+      ctx.fillStyle = "rgba(255,255,255,0.12)";
+      ctx.fillRect(316, gy - 8, 120, 9);
+      ctx.fillStyle = P.overheat ? "#ff5a3d" : "#53e0d8";
+      ctx.fillRect(316, gy - 8, 120 * P.en / 100, 9);
+      ctx.fillStyle = "#eeecfa";
+      ctx.fillText(String(Math.ceil(P.en)), 442, gy);
+
+      // バナー
+      if (S.banner > 0) {
+        ctx.globalAlpha = Math.min(1, S.banner / 40);
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#eeecfa";
+        ctx.font = "900 24px 'Mochiy Pop One', 'Zen Maru Gothic', sans-serif";
+        ctx.fillText(S.bannerText, W / 2, 300);
+        ctx.font = "900 13px 'Zen Maru Gothic', sans-serif";
+        ctx.fillStyle = "#53e0d8";
+        ctx.fillText("💡 " + S.tip, W / 2, 330);
+        ctx.globalAlpha = 1;
+      }
+
+      // フチの赤明滅・被弾
+      const lowHp = P.hp < 30 ? 0.10 + 0.10 * Math.abs(Math.sin(t / 200)) : 0;
+      const edge = Math.max(lowHp, S.edge > 0 ? 0.16 : 0);
+      if (edge > 0) {
+        const eg = ctx.createRadialGradient(W / 2, H / 2, H / 3, W / 2, H / 2, H / 1.35);
+        eg.addColorStop(0, "rgba(255, 61, 104, 0)");
+        eg.addColorStop(1, "rgba(255, 61, 104, " + edge + ")");
+        ctx.fillStyle = eg;
+        ctx.fillRect(0, 0, W, H);
+      }
+      if (S.flash > 0) {
+        ctx.fillStyle = "rgba(255, 255, 255, " + (S.flash / 18) + ")";
+        ctx.fillRect(0, 0, W, H);
+      }
+    }
+    ctx.restore();
+  }
+
+  // ============ メインループ（固定60fps） ============
+  let lastTime = 0, acc = 0;
+  function loop(t) {
+    const dt = Math.min((t - lastTime) / 1000, 0.1);
+    lastTime = t;
+    acc += dt;
+    while (acc >= 1 / 60) {
+      if (S && S.running && !paused) update();
+      acc -= 1 / 60;
+    }
+    draw(t);
+    requestAnimationFrame(loop);
+  }
+
+  // ============ 入力（かならず最後に初期化） ============
+  function togglePause() {
+    if (!S || !S.running) return;
+    paused = !paused;
+    $("pause-screen").classList.toggle("hidden", !paused);
+  }
+  document.addEventListener("keydown", function (e) {
+    const k = e.key;
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " "].indexOf(k) >= 0) e.preventDefault();
+    if (k === "a" || k === "A" || k === "ArrowLeft") input.l = true;
+    if (k === "d" || k === "D" || k === "ArrowRight") input.r = true;
+    if (k === "w" || k === "W" || k === "ArrowUp") input.u = true;
+    if (k === "s" || k === "S" || k === "ArrowDown") input.d = true;
+    if (k === " ") input.fire = true;
+    if (k === "Shift") input.focus = true;
+    if (k === "p" || k === "P" || k === "Escape") togglePause();
+  });
+  document.addEventListener("keyup", function (e) {
+    const k = e.key;
+    if (k === "a" || k === "A" || k === "ArrowLeft") input.l = false;
+    if (k === "d" || k === "D" || k === "ArrowRight") input.r = false;
+    if (k === "w" || k === "W" || k === "ArrowUp") input.u = false;
+    if (k === "s" || k === "S" || k === "ArrowDown") input.d = false;
+    if (k === " ") input.fire = false;
+    if (k === "Shift") input.focus = false;
+  });
+  function canvasPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    return { x: (cx / rect.width) * W, y: (cy / rect.height) * H };
+  }
+  canvas.addEventListener("pointerdown", function (e) {
+    const p = canvasPos(e);
+    if (e.pointerType === "mouse") { input.fire = true; }
+    else { touch.on = true; touch.x = p.x; touch.y = p.y; }
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse") {
+      const p = canvasPos(e);
+      touch.x = p.x; touch.y = p.y;
+    }
+  });
+  window.addEventListener("pointerup", function (e) {
+    if (e.pointerType === "mouse") input.fire = false;
+    else touch.on = false;
+  });
+  const focusBtn = $("focus-btn");
+  focusBtn.addEventListener("touchstart", function (e) { e.preventDefault(); input.focus = true; focusBtn.classList.add("on"); });
+  focusBtn.addEventListener("touchend", function (e) { e.preventDefault(); input.focus = false; focusBtn.classList.remove("on"); });
+  if (navigator.maxTouchPoints > 0) focusBtn.style.display = "block";
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && S && S.running && !paused) togglePause();
+  });
+
+  const muteBtn = $("mute-btn");
+  function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
+  muteBtn.addEventListener("click", function () {
+    muted = !muted;
+    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    updateMuteBtn();
+  });
+  updateMuteBtn();
+
+  $("start-btn").addEventListener("click", start);
+  $("retry-btn").addEventListener("click", start);
+  $("retry2-btn").addEventListener("click", start);
+  $("resume-btn").addEventListener("click", togglePause);
+
+  // デバッグフック
+  window.__CB = {
+    get S() { return S; }, get P() { return P; }, get boss() { return boss; },
+    start: start, nextStage: nextStage,
+  };
+
+  resetAll();
+  requestAnimationFrame(function (t) { lastTime = t; requestAnimationFrame(loop); });
+})();
+</script>
+</body>
+</html>
