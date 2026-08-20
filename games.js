@@ -18,6 +18,28 @@
 
 const GAMES = [
   {
+    id: "005",
+    title: "リコシェ・ワン",
+    emoji: "🎯",
+    author: "スタッフ",
+    date: "2026-08-20",
+    description:
+      "かべにはねかえるたまで、かくれたまとをうちぬけ！ワープ・じゅうりょく・うごくかべ、しかけいっぱいの全10ステージ。",
+    controls: "マウスでねらってクリック / ゆびでなぞってはなす",
+    path: "games/005-ricochet-one/index.html",
+  },
+  {
+    id: "004",
+    title: "アーセナル10",
+    emoji: "💥",
+    author: "ゲスト",
+    date: "2026-08-20",
+    description:
+      "ぶきを10しゅるいきりかえて、おしよせるてきをむかえうつ本かくアリーナシューティング！ウェーブをすすめてボスをたおそう。",
+    controls: "WASD＋マウス / スマホは左右スティック",
+    path: "games/004-arsenal-10/index.html",
+  },
+  {
     id: "003",
     title: "マーライオンシューター",
     emoji: "🦁",
