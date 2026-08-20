@@ -317,7 +317,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
     if (state !== "play" || dropCd > 0) return;
     const spec = FRUITS[currentTier];
     const x = Math.max(WALL_L + spec.r + 1, Math.min(WALL_R - spec.r - 1, aimX));
-    fruits.push({ x: x, y: 108, vx: 0, vy: 140, r: spec.r, tier: currentTier, grace: 1.3, overT: 0, flash: 0 });
+    fruits.push({ x: x, y: 108, vx: 0, vy: 140, r: spec.r, tier: currentTier, grace: 1.3, overT: 0, flash: 0, sndCd: 0 });
     currentTier = nextTier;
     nextTier = randTier();
     dropCd = 0.55;
@@ -329,6 +329,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
     for (const f of fruits) {
       f.grace -= dt;
       if (f.flash > 0) f.flash -= dt;
+      if (f.sndCd > 0) f.sndCd -= dt;
       f.vy += G * dt;
       f.vx *= 0.999;
       f.x += f.vx * dt;
@@ -342,7 +343,10 @@ const STORAGE_KEY = "yofukashi-suika-best";
         if (f.x + f.r > WALL_R) { f.x = WALL_R - f.r; f.vx = -Math.abs(f.vx) * 0.25; }
         if (f.y + f.r > FLOOR) {
           f.y = FLOOR - f.r;
-          if (f.vy > 40) beep(300 + f.tier * 20, 0.04, "sine", 0.015);
+          if (f.vy > 160 && !(f.sndCd > 0)) {
+            beep(300 + f.tier * 20, 0.04, "sine", 0.015);
+            f.sndCd = 0.3;
+          }
           f.vy = -Math.abs(f.vy) * 0.12;
           f.vx *= 0.96;
         }
@@ -403,7 +407,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
         fruits.push({
           x: mx, y: Math.min(my, FLOOR - spec.r),
           vx: (a.vx + b.vx) / 2, vy: Math.min((a.vy + b.vy) / 2, 0),
-          r: spec.r, tier: nt, grace: 0.6, overT: 0, flash: 0.25,
+          r: spec.r, tier: nt, grace: 0.6, overT: 0, flash: 0.25, sndCd: 0.3,
         });
         score += SCORES[tier];
         popup(mx, my - spec.r - 10, "+" + SCORES[tier], "#ffd166");
