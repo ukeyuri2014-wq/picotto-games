@@ -406,7 +406,7 @@
     rusher:  { hp: 14,   r: 7,  spd: 3.15, touch: 8,  score: 140,  color: "#ffe066", shape: "tri" },
     shooter: { hp: 34,   r: 11, spd: 0.95, touch: 6,  score: 200,  color: "#b07aff", shape: "square" },
     tank:    { hp: 165,  r: 19, spd: 0.72, touch: 16, score: 420,  color: "#6fe0e8", shape: "hex" },
-    boss:    { hp: 1250, r: 40, spd: 0.68, touch: 22, score: 3000, color: "#ffab4d", shape: "hex" },
+    boss:    { hp: 1100, r: 40, spd: 0.68, touch: 20, score: 3000, color: "#ffab4d", shape: "hex" },
   };
 
   // ---------- state ----------
@@ -603,15 +603,15 @@
   function nextWave() {
     S.wave++;
     const w = S.wave;
-    player.hp = Math.min(player.hpMax, player.hp + 14);
+    player.hp = Math.min(player.hpMax, player.hp + 18);
     player.en = Math.min(player.enMax, player.en + 30);
     // build spawn queue
     const q = [];
     const push = (t, n) => { for (let i = 0; i < n; i++) q.push(t); };
-    push("grunt", 3 + Math.floor(w * 1.2));
-    if (w >= 2) push("rusher", Math.floor(w * 0.8));
-    if (w >= 3) push("shooter", 1 + Math.floor(w * 0.55));
-    if (w >= 5) push("tank", Math.max(0, Math.floor((w - 3) / 2)));
+    push("grunt", 3 + Math.floor(w * 1.0));
+    if (w >= 2) push("rusher", Math.floor(w * 0.65));
+    if (w >= 3) push("shooter", 1 + Math.floor(w * 0.45));
+    if (w >= 5) push("tank", Math.max(0, Math.floor((w - 4) / 2)));
     for (let i = q.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [q[i], q[j]] = [q[j], q[i]]; }
     if (w % 5 === 0) { const n = Math.floor(w / 10) + 1; for (let i = 0; i < n; i++) q.push("boss"); }
     S.queue = q;
@@ -927,11 +927,11 @@
   function spawnEnemy(type) {
     const t = ENEMY_TYPES[type];
     const p = edgePos(t.r);
-    const hpS = t.hp * (1 + (S.wave - 1) * 0.08);
+    const hpS = t.hp * (1 + (S.wave - 1) * 0.06);
     enemies.push({
       type, x: p.x, y: p.y, r: t.r,
       hp: hpS, hpMax: hpS,
-      spd: t.spd * (1 + (S.wave - 1) * 0.015),
+      spd: t.spd * (1 + (S.wave - 1) * 0.010),
       touch: t.touch, score: t.score, color: t.color, shape: t.shape,
       kx: 0, ky: 0, flash: 0, stun: 0,
       shootT: rand(30, 90), t: rand(0, 1000), phase: Math.random() < 0.5 ? 1 : -1,
@@ -991,7 +991,7 @@
 
     // ----- fire & EN -----
     if (S.firing) tryFire();
-    player.en = Math.min(player.enMax, player.en + (S.firing ? 0.10 : 0.30));
+    player.en = Math.min(player.enMax, player.en + (S.firing ? 0.14 : 0.34));
     if (player.inv > 0) player.inv--;
     if (player.recoil > 0) player.recoil *= 0.8;
     if (player.swing > 0) player.swing--;
@@ -1001,7 +1001,7 @@
       S.spawnT--;
       if (S.spawnT <= 0 && enemies.length < 46) {
         spawnEnemy(S.queue.shift());
-        S.spawnT = Math.max(10, 30 - S.wave);
+        S.spawnT = Math.max(13, 34 - S.wave);
       }
     }
 
@@ -1026,7 +1026,7 @@
           mvy = dy / d * e.spd * f + Math.sin(oa) * e.spd * 0.4;
           e.shootT--;
           if (e.shootT <= 0 && d < 520) {
-            enemyShoot(e, Math.atan2(dy, dx), 3.1, 7);
+            enemyShoot(e, Math.atan2(dy, dx), 2.8, 6);
             e.shootT = 90;
           }
         }
@@ -1038,13 +1038,13 @@
           if (e.shootT <= 0) {
             if (e.ringNext) {
               const base = rand(0, TAU);
-              for (let k = 0; k < 14; k++) enemyShoot(e, base + k / 14 * TAU, 2.5, 10);
+              for (let k = 0; k < 14; k++) enemyShoot(e, base + k / 14 * TAU, 2.3, 8);
             } else {
               const pa = Math.atan2(dy, dx);
-              for (let k = -1; k <= 1; k++) enemyShoot(e, pa + k * 0.28, 3.1, 10);
+              for (let k = -1; k <= 1; k++) enemyShoot(e, pa + k * 0.28, 2.8, 8);
             }
             e.ringNext = !e.ringNext;
-            e.shootT = 27; // ring↔3way alternating: each pattern every 0.9s
+            e.shootT = 34; // ring↔3way alternating
           }
         }
       }
