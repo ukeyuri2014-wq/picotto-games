@@ -10,6 +10,7 @@
 //   emoji: "🎮",                        // カードに大きく出る絵文字
 //   color: "#3ff2e6",                   // カードのテーマカラー（省略可）
 //   genre: "ACTION",                    // ジャンル表記（省略可）
+//   age: "6歳〜",                       // 対象年齢の目安
 //   author: "ニックネーム",              // 本名は書かない！
 //   date: "2026-08-27",                 // 公開日
 //   description: "どんなゲームか1〜2文で。",
@@ -23,6 +24,7 @@ const GAMES = [
     id: "007",
     color: "#4db56a",
     genre: "MERGE",
+    age: "6歳〜",
     title: "よふかしスイカ",
     emoji: "🍉",
     author: "スタッフ",
@@ -35,6 +37,7 @@ const GAMES = [
   {
     id: "006",
     genre: "BOSS RUSH",
+    age: "10歳〜",
     color: "#ffe14d",
     title: "コラムブレイカー",
     emoji: "⚡",
@@ -48,6 +51,7 @@ const GAMES = [
   {
     id: "005",
     genre: "PUZZLE SHOT",
+    age: "8歳〜",
     color: "#ff4d6d",
     title: "リコシェ・ワン",
     emoji: "🎯",
@@ -61,6 +65,7 @@ const GAMES = [
   {
     id: "004",
     genre: "ARENA SHOOTER",
+    age: "10歳〜",
     color: "#ff7a3d",
     title: "アーセナル10",
     emoji: "💥",
@@ -74,6 +79,7 @@ const GAMES = [
   {
     id: "003",
     genre: "SHOOTER",
+    age: "7歳〜",
     color: "#3dd6ff",
     title: "マーライオンシューター",
     emoji: "🦁",
@@ -87,6 +93,7 @@ const GAMES = [
   {
     id: "002",
     genre: "MEMORY",
+    age: "6歳〜",
     color: "#b06bff",
     title: "よふかしペアさがし",
     emoji: "👻",
@@ -100,6 +107,7 @@ const GAMES = [
   {
     id: "001",
     genre: "ACTION",
+    age: "6歳〜",
     color: "#ff6fa8",
     title: "はなびらキャッチ",
     emoji: "🌸",

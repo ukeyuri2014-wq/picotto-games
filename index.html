@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ピコットゲームズ | PICOTTO GAMES</title>
 <meta name="description" content="その3分、ゲームにしよう。アプリも登録もいらない、スキマ時間にちょうどいい無料ミニゲーム PICOTTO GAMES。スマホ・PC対応。">
-<link rel="preload" as="image" href="assets/picotto-dream-arcade-hero.jpg">
+<link rel="preload" as="image" href="assets/picotto-pop-play-hero-v2.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Antique+B1&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
@@ -628,6 +628,222 @@
     .about { width: calc(100% - 36px); }
     .foot-inner .links { gap: 15px; }
   }
+
+  /* ============ v9 / POP PLAY : first viewport ============ */
+  .nav-outer {
+    background: linear-gradient(180deg, rgba(255,250,235,.96), rgba(255,250,235,.76) 75%, transparent);
+  }
+  .nav .logo { color: #17213d; text-shadow: none; }
+  .nav .logo span { color: #ff6572; }
+  .nav .links a { color: rgba(23,33,61,.62); }
+  .nav .links a:hover { color: #17213d; border-color: #ff6572; }
+  .hero-stage { min-height: min(900px, 100svh); background: #fff9e9; }
+  .hero-stage::before {
+    inset: -2%;
+    background-image: url("assets/picotto-pop-play-hero-v2.jpg");
+    background-position: center center;
+  }
+  .hero-stage::after {
+    background:
+      linear-gradient(90deg, rgba(255,250,234,.99) 0%, rgba(255,250,234,.93) 29%, rgba(255,250,234,.48) 51%, rgba(255,250,234,.06) 76%),
+      linear-gradient(0deg, #fff9e9 0%, transparent 20%);
+  }
+  .hero-glow { background: rgba(255,101,114,.14); }
+  .hero-stage .eyebrow { color: #ef5363; text-shadow: none; }
+  .hero-stage .hero h1 { color: #17213d; text-shadow: 0 9px 30px rgba(65,78,115,.11); }
+  .hero-stage .hero h1 em {
+    background: linear-gradient(100deg, #ff5f70 0%, #ff8a52 52%, #f0a900 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-stage .hero p.lead { color: rgba(23,33,61,.72); text-shadow: none; }
+  .hero-stage .hero p.lead b { color: #17213d; }
+  .hero-play { color: #fff; background: #17213d; box-shadow: 0 14px 32px rgba(23,33,61,.24); }
+  .hero-play:hover { color: #fff; background: #24345d; box-shadow: 0 18px 38px rgba(23,33,61,.3); }
+  .hero-browse { color: #17213d; background: rgba(255,255,255,.72); border-color: rgba(23,33,61,.12); box-shadow: 0 10px 28px rgba(65,78,115,.1); }
+  .hero-browse:hover { color: #17213d; background: #fff; }
+  .hero-stage .stat { color: rgba(23,33,61,.65); background: rgba(255,255,255,.72); border-color: rgba(23,33,61,.08); box-shadow: 0 8px 22px rgba(65,78,115,.08); }
+  .hero-credit { color: rgba(23,33,61,.32); }
+
+  @media (max-width: 720px) {
+    .hero-stage { min-height: 890px; background: #fff9e9; }
+    .hero-stage::before {
+      inset: 0;
+      background-color: #fff9e9;
+      background-size: auto 420px;
+      background-position: 74% top;
+      background-repeat: no-repeat;
+      animation: none;
+    }
+    .hero-stage::after {
+      background: linear-gradient(0deg, #fff9e9 0%, #fff9e9 52%, rgba(255,249,233,.78) 67%, rgba(255,249,233,.02) 100%);
+    }
+    .hero-stage .hero { padding: 410px 0 58px; }
+    .hero-stage .eyebrow { margin-bottom: 12px; }
+    .hero-stage .hero h1 { font-size: clamp(2.85rem, 14vw, 4.3rem); }
+    .hero-stage .stats { gap: 8px; }
+    .hero-stage .stat { padding-left: 13px; padding-right: 13px; }
+  }
+
+  /* ============ v9 / POP PLAY : collection ============ */
+  body { background: #fff9e9; color: #17213d; }
+  .showcase {
+    background:
+      radial-gradient(circle at 84% 12%, rgba(114,207,255,.22), transparent 27%),
+      radial-gradient(circle at 7% 82%, rgba(95,217,189,.14), transparent 25%),
+      #fff9e9;
+  }
+  .f-copy .f-tag { color: #fff; background: #ff6572; box-shadow: 0 10px 26px rgba(255,101,114,.24); }
+  .f-copy h2 { color: #17213d; }
+  .f-meta { color: rgba(23,33,61,.42); }
+  .f-copy p.desc { color: rgba(23,33,61,.68); }
+  .f-copy .ctrl { color: rgba(23,33,61,.42); }
+  .btn-primary { color: #fff; background: #17213d; box-shadow: 0 14px 30px rgba(23,33,61,.2); }
+  .btn-primary:hover { color: #fff; background: #26375f; box-shadow: 0 18px 38px rgba(23,33,61,.26); }
+  .btn-ghost { color: rgba(23,33,61,.62); border-color: rgba(23,33,61,.18); }
+  .btn-ghost:hover { color: #17213d; border-color: #ff6572; }
+  .f-art { box-shadow: 0 28px 65px rgba(55,74,116,.2), 0 0 0 1px rgba(23,33,61,.06); }
+  .f-art:hover { box-shadow: 0 34px 78px rgba(55,74,116,.26), 0 0 0 1px rgba(23,33,61,.08); }
+
+  body > .wrap {
+    background:
+      radial-gradient(circle at 1px 1px, rgba(51,81,120,.075) 1px, transparent 1.5px),
+      linear-gradient(180deg, #f2faff 0%, #fffdf6 56%, #fff8eb 100%);
+    background-size: 28px 28px, auto;
+  }
+  .ranking-head .label { color: #ef5363; }
+  .ranking-head h2 { color: #17213d; }
+  .ranking-note { color: rgba(23,33,61,.5); }
+  .ranking-note b { color: rgba(23,33,61,.78); }
+  .rank-card {
+    color: #17213d;
+    background: rgba(255,255,255,.88);
+    border-color: rgba(23,33,61,.08);
+    box-shadow: 0 14px 34px rgba(55,74,116,.11);
+  }
+  .rank-card:hover { border-color: color-mix(in srgb, var(--ac) 45%, rgba(23,33,61,.12)); box-shadow: 0 22px 48px rgba(55,74,116,.17), 0 0 30px color-mix(in srgb, var(--ac) 10%, transparent); }
+  .rank-art { box-shadow: 0 8px 22px rgba(55,74,116,.16); }
+  .rank-no { color: color-mix(in srgb, var(--ac) 14%, transparent); }
+  .rank-copy .rank-kicker { color: color-mix(in srgb, var(--ac) 72%, #17213d); }
+  .rank-copy h3 { color: #17213d; }
+  .rank-copy .rank-play { color: rgba(23,33,61,.46); }
+
+  .sec-head .label { color: #19a990; }
+  .sec-head h2 { color: #17213d; }
+  .sec-head .count { color: rgba(23,33,61,.38); }
+  .card {
+    background: rgba(255,255,255,.92);
+    border-color: rgba(23,33,61,.08);
+    box-shadow: 0 12px 30px rgba(55,74,116,.1);
+  }
+  .card:hover { border-color: color-mix(in srgb, var(--ac) 42%, rgba(23,33,61,.12)); box-shadow: 0 24px 48px rgba(55,74,116,.17), 0 0 32px color-mix(in srgb, var(--ac) 9%, transparent); }
+  .art { border-color: rgba(23,33,61,.06); }
+  .chip { background: color-mix(in srgb, var(--ac) 12%, #fff); color: color-mix(in srgb, var(--ac) 70%, #17213d); }
+  .chip.new { background: #17213d; color: #fff; box-shadow: none; }
+  .chip.age { color: #176b7b; background: rgba(205,244,250,.92); }
+  .chips .no { color: rgba(23,33,61,.34); }
+  .card-body h3 { color: #17213d; }
+  .desc { color: rgba(23,33,61,.64); }
+  .meta { color: rgba(23,33,61,.36); }
+  .card-foot { border-color: rgba(23,33,61,.07); }
+  .play { color: color-mix(in srgb, var(--ac) 72%, #17213d); }
+  .card-foot .free { color: rgba(23,33,61,.34); }
+
+  .about { border-color: rgba(23,33,61,.1); }
+  .about h2 { color: #17213d; }
+  .about .a-body p { color: rgba(23,33,61,.66); }
+  .about .a-body a { color: #119d86; border-color: rgba(17,157,134,.28); }
+  .point { background: rgba(255,255,255,.72); border-color: rgba(23,33,61,.08); box-shadow: 0 10px 26px rgba(55,74,116,.08); }
+  .point .num { color: #ff6572; }
+  .point h3 { color: #17213d; }
+  .point p { color: rgba(23,33,61,.58); }
+
+  footer { border-color: rgba(23,33,61,.06); background: #17213d; }
+  .foot-inner .logo { color: #fff; }
+  .foot-inner .logo span { color: #ffd84d; }
+  .foot-inner .tg, .foot-inner .links a, .foot-base { color: rgba(255,255,255,.48); }
+  .foot-inner .links a:hover { color: #fff; }
+  .foot-base { border-color: rgba(255,255,255,.1); }
+
+  /* ============ v9 / POP PLAY : fixed world backdrop ============ */
+  .showcase,
+  body > .wrap {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+  .hero-stage {
+    position: relative;
+    z-index: 2;
+  }
+  .showcase {
+    background:
+      radial-gradient(circle at 84% 12%, rgba(114,207,255,.18), transparent 28%),
+      radial-gradient(circle at 7% 82%, rgba(95,217,189,.12), transparent 26%),
+      rgba(255,249,233,.42);
+  }
+  body > .wrap {
+    background:
+      radial-gradient(circle at 1px 1px, rgba(51,81,120,.07) 1px, transparent 1.5px),
+      linear-gradient(180deg, rgba(242,250,255,.54) 0%, rgba(255,253,246,.52) 56%, rgba(255,248,235,.58) 100%);
+    background-size: 28px 28px, auto;
+  }
+  .showcase::before,
+  body > .wrap::before {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(105deg, rgba(250,252,246,.93) 0%, rgba(255,250,235,.76) 48%, rgba(236,249,255,.67) 100%),
+      url("assets/picotto-pop-play-hero-v2.jpg") 68% center / cover no-repeat;
+    filter: saturate(.82) contrast(.96);
+  }
+  .showcase::after,
+  body > .wrap::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 10% 22%, rgba(255,101,114,.09), transparent 22%),
+      radial-gradient(circle at 82% 72%, rgba(56,198,215,.1), transparent 28%);
+  }
+  .showcase > .wrap,
+  body > .wrap > * {
+    position: relative;
+    z-index: 1;
+  }
+  .rank-card,
+  .card,
+  .point {
+    background: rgba(255,255,255,.82);
+    -webkit-backdrop-filter: blur(13px) saturate(1.08);
+    backdrop-filter: blur(13px) saturate(1.08);
+  }
+  .featured {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 720px) {
+    .showcase::before,
+    body > .wrap::before {
+      background:
+        linear-gradient(180deg, rgba(255,250,235,.86), rgba(244,251,252,.78)),
+        url("assets/picotto-pop-play-hero-v2.jpg") 73% center / auto 100% no-repeat;
+    }
+    .rank-card,
+    .card,
+    .point {
+      background: rgba(255,255,255,.88);
+      -webkit-backdrop-filter: blur(10px) saturate(1.05);
+      backdrop-filter: blur(10px) saturate(1.05);
+    }
+  }
 </style>
 </head>
 <body>
@@ -649,11 +865,11 @@
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
     <header class="hero">
-      <div class="eyebrow">SMALL GAMES. BIG ESCAPES.</div>
-      <h1>その3分、<br><em>別世界へ。</em></h1>
+      <div class="eyebrow">HEY, GOT 3 MINUTES?</div>
+      <h1>ちょっと空いた？<br><em>ゲームしようぜ。</em></h1>
       <p class="lead">
-        アプリも、登録も、ダウンロードもなし。ひらいた瞬間、もうゲームの中。
-        すきま時間に飛びこめる<b>無料ミニゲーム</b>を集めました。
+        むずかしい準備はいらない。気になるやつを選んだら、すぐスタート。
+        すきま時間にちょうどいい<b>無料ミニゲーム</b>、いろいろあります。
       </p>
       <div class="hero-actions">
         <a class="hero-play" id="hero-play" href="#games">▶ おすすめをあそぶ</a>
@@ -667,7 +883,7 @@
     </header>
 
   </div>
-  <div class="hero-credit">ORIGINAL WORLD OF PICOTTO GAMES</div>
+  <div class="hero-credit">COME PLAY WITH PICOTTO GAMES</div>
 </div>
 
 <div class="showcase">
@@ -975,7 +1191,7 @@
       '<div class="f-copy" style="--ac:' + fac + '">' +
       '<div class="f-tag">PICK UP — 最新作</div>' +
       "<h2>" + f.title + "</h2>" +
-      '<div class="f-meta"><span class="genre">' + (f.genre || "GAME") + "</span><span>#" + f.id + "</span><span>" + f.date + "</span><span>by " + f.author + "</span></div>" +
+      '<div class="f-meta"><span class="genre">' + (f.genre || "GAME") + "</span><span>対象年齢の目安 " + (f.age || "全年齢") + "</span><span>#" + f.id + "</span><span>" + f.date + "</span><span>by " + f.author + "</span></div>" +
       '<p class="desc">' + f.description + "</p>" +
       '<div class="ctrl">そうさ：' + f.controls + "</div>" +
       '<div class="f-actions">' +
@@ -993,6 +1209,7 @@
           '<div class="art">' + artOf(g) + "</div>" +
           '<div class="card-body">' +
           '<div class="chips"><span class="chip">' + (g.genre || "GAME") + "</span>" +
+          '<span class="chip age">目安 ' + (g.age || "全年齢") + "</span>" +
           (g.date === latest ? '<span class="chip new">NEW</span>' : "") +
           '<span class="no">#' + g.id + "</span></div>" +
           "<h3>" + g.title + "</h3>" +
@@ -1029,7 +1246,7 @@
         const ac = g.color || "#7c5cff";
         return '<a class="rank-card" data-game-id="' + g.id + '" style="--ac:' + ac + '" href="' + g.path + '">' +
           '<span class="rank-no">0' + (i + 1) + '</span><div class="rank-art">' + artOf(g) + '</div>' +
-          '<div class="rank-copy"><span class="rank-kicker">NO.0' + (i + 1) + ' · ' + (g.genre || "GAME") +
+          '<div class="rank-copy"><span class="rank-kicker">NO.0' + (i + 1) + ' · ' + (g.genre || "GAME") + ' · ' + (g.age || "全年齢") +
           '</span><h3>' + g.title + '</h3><span class="rank-play">PLAY →</span></div></a>';
       }).join("") + '</div>';
 
