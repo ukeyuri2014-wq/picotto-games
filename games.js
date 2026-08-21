@@ -21,6 +21,20 @@
 
 const GAMES = [
   {
+    id: "011",
+    genre: "2P BATTLE",
+    age: "6歳〜",
+    color: "#ff5fa2",
+    title: "よふかしホッケー",
+    emoji: "🏒",
+    author: "スタッフ",
+    date: "2026-08-21",
+    description:
+      "ひとつの画面をふたりで取り合う対戦エアホッケー。光るパックを弾き合い、先に5点取ったほうが勝ち。ラリーが続くほどパックは加速する。",
+    controls: "2人用!タッチは画面を上下で分けてドラッグ / キーボードはWASDと矢印キー",
+    path: "games/011-yofukashi-hockey/index.html",
+  },
+  {
     id: "010",
     genre: "MINI RPG",
     age: "8歳〜",
