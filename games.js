@@ -21,6 +21,48 @@
 
 const GAMES = [
   {
+    id: "010",
+    genre: "MINI RPG",
+    age: "8歳〜",
+    color: "#8f7bff",
+    title: "よふかしクエスト",
+    emoji: "⚔️",
+    author: "スタッフ",
+    date: "2026-08-21",
+    description:
+      "草むらで戦ってレベルを上げ、洞窟にすむ「よるのおう」に挑む小さなRPG。宝箱・ポーション・セーブつき、クリアまで約15分の冒険。",
+    controls: "矢印キー＋Zキー / スマホはDパッド＋Aボタン",
+    path: "games/010-yofukashi-quest/index.html",
+  },
+  {
+    id: "009",
+    genre: "FIXED SHOOTER",
+    age: "7歳〜",
+    color: "#7dff6a",
+    title: "よふかしインベーダー",
+    emoji: "👾",
+    author: "スタッフ",
+    date: "2026-08-21",
+    description:
+      "夜の街に迫るUFO軍団を撃ち落とす固定画面シューティング。緑の盾に隠れつつ、金のUFOでボーナス。ウェーブは進むほど速く、激しく。",
+    controls: "←→＋スペース / スマホは指でなぞって自動連射",
+    path: "games/009-yofukashi-invader/index.html",
+  },
+  {
+    id: "008",
+    genre: "FALLING PUZZLE",
+    age: "7歳〜",
+    color: "#53e0d8",
+    title: "ネオンフォール",
+    emoji: "🧱",
+    author: "スタッフ",
+    date: "2026-08-21",
+    description:
+      "ネオンのブロックを積み、ヨコ1列そろえて消す落ちものパズル。落下地点のゴースト表示つきで初めてでも遊びやすい。10ラインごとに加速。",
+    controls: "←→↓＋↑で回転、スペースで一気に落とす / スマホはボタン",
+    path: "games/008-neon-fall/index.html",
+  },
+  {
     id: "007",
     color: "#4db56a",
     genre: "MERGE",
