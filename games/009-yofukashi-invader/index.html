@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>よふかしインベーダー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --green:#7dff6a; --pink:#ff5fa2; --gold:#ffd166; --cyan:#53e0d8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(520px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--green);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--green);border-color:var(--green)}
+  header{width:min(520px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--green);text-shadow:0 0 12px rgba(125,255,106,.45);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(125,255,106,.35);border-radius:999px;color:var(--green);background:rgba(125,255,106,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #hud{width:min(520px,100%);display:flex;justify-content:space-between;font-size:14px;color:var(--sub);margin-bottom:6px}
+  #hud b{color:var(--gold);font-weight:400}
+  #wrap{position:relative;width:min(520px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.86);
+    border-radius:6px;text-align:center;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--green);text-shadow:0 0 16px rgba(125,255,106,.5)}
+  #overlay .big.lose{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:14px;color:var(--ink);line-height:1.8}
+  #overlay button{
+    font-family:inherit;font-size:16px;margin-top:6px;background:var(--green);color:#052500;
+    border:none;border-radius:6px;padding:8px 24px;cursor:pointer;letter-spacing:2px;
+  }
+  #pads{display:flex;gap:8px;justify-content:center;margin-top:12px;width:min(520px,100%)}
+  #pads button{
+    flex:1;max-width:120px;font-family:inherit;font-size:22px;padding:12px 0;
+    background:var(--panel);color:var(--ink);border:1px solid var(--edge);border-radius:10px;cursor:pointer;
+    touch-action:none;user-select:none;-webkit-user-select:none;
+  }
+  #pads button:active{background:#26264a;border-color:var(--green)}
+  .help{width:min(520px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>よふかしインベーダー</h1>
+  <div class="age-badge">対象年齢の目安：7歳〜</div>
+</header>
+
+<div id="hud">
+  <div>スコア <b id="score">0</b></div>
+  <div>ウェーブ <b id="wave">1</b></div>
+  <div>のこり ❤ <b id="lives">3</b></div>
+  <div>ベスト <b id="best">0</b></div>
+</div>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="560"></canvas>
+  <div id="overlay" class="show">
+    <div class="big">よふかし<br>インベーダー</div>
+    <div class="note">よるの UFOぐんだんが せめてきた!<br>ぜんぶ うちおとして まちをまもろう🌙</div>
+    <button id="startBtn">スタート</button>
+  </div>
+</div>
+
+<div id="pads">
+  <button id="pLeft" aria-label="ひだり">◀</button>
+  <button id="pFire" aria-label="うつ">🔫</button>
+  <button id="pRight" aria-label="みぎ">▶</button>
+</div>
+
+<div class="help">
+  そうさ：←→でうごく、スペースでうつ。スマホは画面を指でなぞるといどう＆じどうれんしゃ。<br>
+  みどりのブロックはたて。こわれるまでかくれられる。ときどきとんでくる金のUFOはボーナス✨
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const BEST_KEY = 'picotto_yinvader_best';
+
+  // ---- sound -------------------------------------------------------------
+  let muted = localStorage.getItem('picotto_yinvader_mute') === '1';
+  let ac = null;
+  function beep(freq, dur = 0.06, type = 'square', gain = 0.04, slide = 0) {
+    if (muted) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = freq;
+      if (slide) o.frequency.linearRampToValueAtTime(Math.max(30, freq + slide), ac.currentTime + dur);
+      g.gain.value = gain;
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(); o.stop(ac.currentTime + dur);
+    } catch (e) {}
+  }
+  const muteBtn = document.getElementById('mute-btn');
+  function syncMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', () => {
+    muted = !muted;
+    localStorage.setItem('picotto_yinvader_mute', muted ? '1' : '0');
+    syncMute();
+  });
+  syncMute();
+
+  // ---- alien pixel art (2 frames each) --------------------------------------
+  const ART = {
+    a: [ // squid-ish (top row) 8x8
+      ['..#..#..','...##...','..####..','.##..##.','########','#.####.#','#.#..#.#','..#..#..'],
+      ['..#..#..','...##...','..####..','.##..##.','########','.######.','#..##..#','.#....#.'],
+    ],
+    b: [ // crab-ish 8x8
+      ['#......#','.#....#.','.######.','##.##.##','########','#.####.#','#......#','.#....#.'],
+      ['#......#','.#....#.','.######.','##.##.##','########','.######.','.#....#.','#......#'],
+    ],
+    c: [ // blob-ish 8x8
+      ['..####..','.######.','########','##.##.##','########','..#..#..','.#.##.#.','#.#..#.#'],
+      ['..####..','.######.','########','##.##.##','########','..#..#..','.#....#.','..#..#..'],
+    ],
+  };
+  const ROW_KIND = ['a', 'b', 'b', 'c'];
+  const ROW_PTS = [30, 20, 20, 10];
+  const ROW_COLOR = ['#b06bff', '#53e0d8', '#53e0d8', '#7dff6a'];
+
+  // ---- state ------------------------------------------------------------------
+  const COLSN = 8, ROWSN = 4, AW = 32, AH = 24, GAPX = 16, GAPY = 14;
+  let aliens, dir, stepTimer, stepInterval, frame, marchNote;
+  let player, pBullets, aBullets, shields, ufo, ufoTimer;
+  let score = 0, wave = 1, lives = 3;
+  let best = +(localStorage.getItem(BEST_KEY) || 0);
+  let over = true, freeze = 0;   // freeze: seconds of pause after player hit
+  let sparks = [];
+
+  function makeShields() {
+    shields = [];
+    const CW = 6, CH = 6, GW = 10, GH = 6;
+    const xs = [60, 210, 360];
+    for (const sx of xs) {
+      const cells = [];
+      for (let y = 0; y < GH; y++) for (let x = 0; x < GW; x++) {
+        // arch shape: cut bottom middle
+        if (y >= 4 && x >= 3 && x <= 6) continue;
+        cells.push({ x: sx + x * CW, y: 440 + y * CH, alive: true });
+      }
+      shields.push(cells);
+    }
+  }
+  function makeWave() {
+    aliens = [];
+    const top = 70 + Math.min(wave - 1, 4) * 16;
+    for (let r = 0; r < ROWSN; r++) for (let c = 0; c < COLSN; c++) {
+      aliens.push({ c, r, x: 40 + c * (AW + GAPX), y: top + r * (AH + GAPY), alive: true });
+    }
+    dir = 1; stepTimer = 0; frame = 0; marchNote = 0;
+    pBullets = []; aBullets = []; ufo = null; ufoTimer = 8 + Math.random() * 8;
+  }
+  function aliveCount() { return aliens.filter(a => a.alive).length; }
+  function intervalNow() {
+    const base = Math.max(0.65 - (wave - 1) * 0.05, 0.35);
+    return Math.max(base * aliveCount() / (COLSN * ROWSN), 0.05);
+  }
+  function start() {
+    score = 0; wave = 1; lives = 3; over = false; freeze = 0; sparks = [];
+    player = { x: W / 2, cd: 0 };
+    makeShields(); makeWave(); updateHud();
+    document.getElementById('overlay').classList.remove('show');
+  }
+  document.getElementById('startBtn').addEventListener('click', start);
+
+  function updateHud() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('wave').textContent = wave;
+    document.getElementById('lives').textContent = lives;
+    document.getElementById('best').textContent = best;
+  }
+  const overlay = document.getElementById('overlay');
+  function showOverlay(big, lose, note, btn) {
+    overlay.querySelector('.big').innerHTML = big;
+    overlay.querySelector('.big').className = 'big' + (lose ? ' lose' : '');
+    overlay.querySelector('.note').innerHTML = note;
+    document.getElementById('startBtn').textContent = btn;
+    overlay.classList.add('show');
+  }
+  function gameOver(msg) {
+    over = true;
+    if (score > best) { best = score; localStorage.setItem(BEST_KEY, best); }
+    updateHud();
+    beep(160, 0.5, 'sawtooth', 0.06, -120);
+    showOverlay('GAME OVER', true, `${msg}<br>スコア ${score}` + (score >= best && score > 0 ? ' ✨しんきろく!' : ''), 'もういちど');
+  }
+  function burst(x, y, color, n = 12) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 40 + Math.random() * 140;
+      sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.3 + Math.random() * 0.25, color });
+    }
+  }
+
+  // ---- input ---------------------------------------------------------------
+  const keys = {};
+  let touchAim = null, touchFire = false;
+  document.addEventListener('keydown', e => {
+    if (['ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+    keys[e.code] = true;
+  });
+  document.addEventListener('keyup', e => { keys[e.code] = false; });
+  cv.addEventListener('pointerdown', e => {
+    const r = cv.getBoundingClientRect();
+    touchAim = (e.clientX - r.left) * (W / r.width);
+    touchFire = true;
+  });
+  cv.addEventListener('pointermove', e => {
+    if (touchAim === null) return;
+    const r = cv.getBoundingClientRect();
+    touchAim = (e.clientX - r.left) * (W / r.width);
+  });
+  const endTouch = () => { touchAim = null; touchFire = false; };
+  cv.addEventListener('pointerup', endTouch);
+  cv.addEventListener('pointercancel', endTouch);
+  const padHold = {};
+  for (const [id, k] of [['pLeft','left'],['pRight','right'],['pFire','fire']]) {
+    const el = document.getElementById(id);
+    el.addEventListener('pointerdown', e => { e.preventDefault(); el.setPointerCapture(e.pointerId); padHold[k] = true; });
+    const stop = () => { padHold[k] = false; };
+    el.addEventListener('pointerup', stop);
+    el.addEventListener('pointercancel', stop);
+    el.addEventListener('lostpointercapture', stop);
+  }
+  function fire() {
+    if (player.cd > 0 || pBullets.length >= 2) return;
+    player.cd = 0.38;
+    pBullets.push({ x: player.x, y: H - 58 });
+    beep(880, 0.07, 'square', 0.035, -400);
+  }
+
+  // ---- update -----------------------------------------------------------------
+  function hitShield(b) {
+    for (const cells of shields) for (const s of cells) {
+      if (!s.alive) continue;
+      if (b.x > s.x - 2 && b.x < s.x + 8 && b.y > s.y - 2 && b.y < s.y + 8) {
+        // erode a little neighborhood
+        for (const t of cells) {
+          if (t.alive && Math.abs(t.x - s.x) <= 6 && Math.abs(t.y - s.y) <= 6 && Math.random() < 0.8) t.alive = false;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+  function update(dt) {
+    if (over) return;
+    if (freeze > 0) { freeze -= dt; return; }
+
+    // player move
+    let mv = 0;
+    if (keys.ArrowLeft || padHold.left) mv -= 1;
+    if (keys.ArrowRight || padHold.right) mv += 1;
+    if (touchAim !== null) {
+      const d = touchAim - player.x;
+      if (Math.abs(d) > 6) mv = Math.sign(d);
+    }
+    player.x = Math.max(24, Math.min(W - 24, player.x + mv * 280 * dt));
+    player.cd -= dt;
+    if (keys.Space || padHold.fire || touchFire) fire();
+
+    // aliens march
+    stepTimer += dt;
+    stepInterval = intervalNow();
+    if (stepTimer >= stepInterval) {
+      stepTimer = 0;
+      frame = 1 - frame;
+      marchNote = 1 - marchNote;
+      beep(marchNote ? 110 : 90, 0.05, 'square', 0.025);
+      const alive = aliens.filter(a => a.alive);
+      const minX = Math.min(...alive.map(a => a.x));
+      const maxX = Math.max(...alive.map(a => a.x)) + AW;
+      if ((dir > 0 && maxX + 12 > W - 16) || (dir < 0 && minX - 12 < 16)) {
+        dir = -dir;
+        for (const a of aliens) a.y += 18;
+      } else {
+        for (const a of aliens) a.x += dir * 12;
+      }
+      // reached the ground?
+      for (const a of alive) {
+        if (a.y + AH > H - 70) { gameOver('インベーダーが まちに とうたつ…'); return; }
+      }
+    }
+
+    // alien shots
+    if (aBullets.length < 2 + Math.min(wave, 3) && Math.random() < dt * (0.7 + wave * 0.15)) {
+      const alive = aliens.filter(a => a.alive);
+      if (alive.length) {
+        const cols = {};
+        for (const a of alive) if (!cols[a.c] || a.y > cols[a.c].y) cols[a.c] = a;
+        const arr = Object.values(cols);
+        const sh = arr[Math.floor(Math.random() * arr.length)];
+        aBullets.push({ x: sh.x + AW / 2, y: sh.y + AH, v: 130 + wave * 18 });
+      }
+    }
+
+    // UFO
+    ufoTimer -= dt;
+    if (!ufo && ufoTimer <= 0) {
+      const fromLeft = Math.random() < 0.5;
+      ufo = { x: fromLeft ? -40 : W + 40, v: (fromLeft ? 1 : -1) * 90 };
+      ufoTimer = 12 + Math.random() * 10;
+    }
+    if (ufo) {
+      ufo.x += ufo.v * dt;
+      if (Math.random() < dt * 6) beep(600 + Math.sin(performance.now() / 90) * 200, 0.04, 'triangle', 0.02);
+      if (ufo.x < -60 || ufo.x > W + 60) ufo = null;
+    }
+
+    // player bullets
+    for (const b of pBullets) {
+      b.y -= 460 * dt;
+      if (hitShield(b)) { b.dead = true; continue; }
+      for (const a of aliens) {
+        if (!a.alive) continue;
+        if (b.x > a.x && b.x < a.x + AW && b.y > a.y && b.y < a.y + AH) {
+          a.alive = false; b.dead = true;
+          score += ROW_PTS[a.r] * wave;
+          burst(a.x + AW / 2, a.y + AH / 2, ROW_COLOR[a.r]);
+          beep(300, 0.08, 'sawtooth', 0.04, -180);
+          updateHud();
+          break;
+        }
+      }
+      if (ufo && !b.dead && b.x > ufo.x - 24 && b.x < ufo.x + 24 && b.y > 30 && b.y < 56) {
+        b.dead = true;
+        const bonus = [100, 150, 200, 300][Math.floor(Math.random() * 4)];
+        score += bonus;
+        burst(ufo.x, 44, '#ffd166', 20);
+        beep(1000, 0.25, 'triangle', 0.06, -500);
+        ufo = null;
+        updateHud();
+      }
+    }
+    pBullets = pBullets.filter(b => !b.dead && b.y > -10);
+
+    // alien bullets
+    for (const b of aBullets) {
+      b.y += b.v * dt;
+      if (hitShield(b)) { b.dead = true; continue; }
+      if (b.y > H - 64 && b.y < H - 30 && Math.abs(b.x - player.x) < 18) {
+        b.dead = true;
+        lives--;
+        updateHud();
+        burst(player.x, H - 48, '#ff5fa2', 20);
+        beep(120, 0.35, 'sawtooth', 0.06, -80);
+        if (lives <= 0) { gameOver('きちが やられた…'); return; }
+        freeze = 1.0;
+      }
+    }
+    aBullets = aBullets.filter(b => !b.dead && b.y < H + 10);
+
+    // wave clear
+    if (aliveCount() === 0) {
+      wave++;
+      score += 200;
+      updateHud();
+      beep(700, 0.2, 'triangle', 0.06, 300);
+      makeWave();
+    }
+
+    sparks = sparks.filter(s => {
+      s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+      return s.life > 0;
+    });
+  }
+
+  // ---- draw ---------------------------------------------------------------------
+  function pixel(art, x, y, scale, color) {
+    ctx.fillStyle = color;
+    for (let r = 0; r < art.length; r++) for (let c = 0; c < art[r].length; c++)
+      if (art[r][c] === '#') ctx.fillRect(x + c * scale, y + r * scale, scale, scale);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // stars
+    ctx.fillStyle = 'rgba(238,236,250,.25)';
+    for (let i = 0; i < 40; i++) {
+      const sx = (i * 137) % W, sy = (i * 89) % (H - 120);
+      ctx.fillRect(sx, sy, i % 3 === 0 ? 2 : 1, i % 3 === 0 ? 2 : 1);
+    }
+    // ground line
+    ctx.strokeStyle = '#7dff6a';
+    ctx.beginPath(); ctx.moveTo(10, H - 26); ctx.lineTo(W - 10, H - 26); ctx.stroke();
+
+    if (!aliens) return;
+    // aliens
+    for (const a of aliens) {
+      if (!a.alive) continue;
+      pixel(ART[ROW_KIND[a.r]][frame], a.x, a.y, 3, ROW_COLOR[a.r]);
+    }
+    // ufo
+    if (ufo) {
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath(); ctx.ellipse(ufo.x, 44, 22, 9, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff3c4';
+      ctx.beginPath(); ctx.ellipse(ufo.x, 38, 10, 6, 0, Math.PI, 0); ctx.fill();
+    }
+    // shields
+    for (const cells of shields || []) {
+      ctx.fillStyle = '#3fae4f';
+      for (const s of cells) if (s.alive) ctx.fillRect(s.x, s.y, 5, 5);
+    }
+    // player
+    if (!over && player) {
+      const blink = freeze > 0 && Math.sin(performance.now() / 60) > 0;
+      if (!blink) {
+        ctx.fillStyle = '#53e0d8';
+        ctx.fillRect(player.x - 18, H - 44, 36, 10);
+        ctx.fillRect(player.x - 10, H - 52, 20, 8);
+        ctx.fillRect(player.x - 2, H - 58, 4, 6);
+      }
+    }
+    // bullets
+    ctx.fillStyle = '#ffd166';
+    for (const b of pBullets) ctx.fillRect(b.x - 1.5, b.y - 8, 3, 8);
+    ctx.fillStyle = '#ff5fa2';
+    for (const b of aBullets) {
+      const wob = Math.sin((b.y + performance.now() / 40) / 6) * 2;
+      ctx.fillRect(b.x - 1.5 + wob, b.y, 3, 9);
+    }
+    // sparks
+    for (const s of sparks) {
+      ctx.globalAlpha = Math.max(s.life * 2.5, 0);
+      ctx.fillStyle = s.color;
+      ctx.fillRect(s.x - 2, s.y - 2, 4, 4);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // ---- loop -----------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 0.04);
+    last = now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  updateHud();
+  requestAnimationFrame(loop);
+
+  // test hook: manual stepping + state peek
+  window.__test = {
+    start, fire,
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    state: () => ({ over, score, wave, lives, alive: aliens ? aliveCount() : -1,
+                    pBullets: pBullets ? pBullets.length : 0, playerX: player && player.x }),
+    setPlayerX: x => { player.x = x; },
+    killAllBut: n => { let k = aliveCount() - n; for (const a of aliens) { if (k <= 0) break; if (a.alive) { a.alive = false; k--; } } },
+  };
+})();
+</script>
+</body>
+</html>
