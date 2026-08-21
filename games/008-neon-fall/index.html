@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ネオンフォール</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --cyan:#53e0d8; --pink:#ff5fa2; --gold:#ffd166;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(560px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--cyan);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--cyan);border-color:var(--cyan)}
+  header{width:min(560px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #layout{display:flex;gap:12px;align-items:flex-start;justify-content:center;width:min(560px,100%)}
+  #boardwrap{position:relative;flex:0 1 auto}
+  canvas{display:block;background:#10101f;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  #board{width:min(300px,56vw);height:auto}
+  #side{display:flex;flex-direction:column;gap:10px;min-width:120px}
+  .box{background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:8px 10px;font-size:13px}
+  .box .label{color:var(--sub);font-size:11px;letter-spacing:1px}
+  .box .val{font-size:20px;color:var(--gold)}
+  #next{width:96px;height:96px;border-radius:6px}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.86);
+    border-radius:6px;text-align:center;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .big.title{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .note{font-size:14px;color:var(--ink)}
+  #overlay button{
+    font-family:inherit;font-size:16px;margin-top:6px;background:var(--cyan);color:#00201e;
+    border:none;border-radius:6px;padding:8px 24px;cursor:pointer;letter-spacing:2px;
+  }
+  #pads{display:flex;gap:8px;justify-content:center;margin-top:12px;width:min(560px,100%)}
+  #pads button{
+    flex:1;max-width:88px;font-family:inherit;font-size:22px;padding:12px 0;
+    background:var(--panel);color:var(--ink);border:1px solid var(--edge);border-radius:10px;cursor:pointer;
+    touch-action:none;user-select:none;-webkit-user-select:none;
+  }
+  #pads button:active{background:#26264a;border-color:var(--cyan)}
+  .help{width:min(560px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  @media (max-width:430px){ #side{min-width:96px} .box .val{font-size:16px} #next{width:72px;height:72px} }
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ネオンフォール</h1>
+  <div class="age-badge">対象年齢の目安：7歳〜</div>
+</header>
+
+<div id="layout">
+  <div id="boardwrap">
+    <canvas id="board" width="300" height="600"></canvas>
+    <div id="overlay" class="show">
+      <div class="big title">NEON FALL</div>
+      <div class="note">ブロックをそろえて<br>ヨコ1れつでけす！</div>
+      <button id="startBtn">スタート</button>
+    </div>
+  </div>
+  <div id="side">
+    <div class="box"><div class="label">つぎ</div><canvas id="next" width="96" height="96"></canvas></div>
+    <div class="box"><div class="label">スコア</div><div class="val" id="score">0</div></div>
+    <div class="box"><div class="label">ライン</div><div class="val" id="lines">0</div></div>
+    <div class="box"><div class="label">レベル</div><div class="val" id="level">1</div></div>
+    <div class="box"><div class="label">ベスト</div><div class="val" id="best">0</div></div>
+  </div>
+</div>
+
+<div id="pads">
+  <button id="pLeft" aria-label="ひだり">◀</button>
+  <button id="pRot" aria-label="かいてん">⟳</button>
+  <button id="pDown" aria-label="した">▼</button>
+  <button id="pDrop" aria-label="いっきにおとす">⤓</button>
+  <button id="pRight" aria-label="みぎ">▶</button>
+</div>
+
+<div class="help">
+  そうさ：←→でうごかす / ↑か⟳でかいてん / ↓でちょっとおとす / スペースか⤓でいっきにおとす。<br>
+  ヨコ1れつそろうとけえる。いちどにたくさんけすほど高とくてん！10ラインごとにスピードアップ⚡
+</div>
+
+<script>
+(() => {
+  const COLS = 10, ROWS = 20, CELL = 30;
+  const cv = document.getElementById('board'), ctx = cv.getContext('2d');
+  const ncv = document.getElementById('next'), nctx = ncv.getContext('2d');
+  const BEST_KEY = 'picotto_neonfall_best';
+
+  // ---- sound -------------------------------------------------------------
+  let muted = localStorage.getItem('picotto_neonfall_mute') === '1';
+  let ac = null;
+  function beep(freq, dur = 0.06, type = 'square', gain = 0.04, slide = 0) {
+    if (muted) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = freq;
+      if (slide) o.frequency.linearRampToValueAtTime(freq + slide, ac.currentTime + dur);
+      g.gain.value = gain;
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(); o.stop(ac.currentTime + dur);
+    } catch (e) {}
+  }
+  const muteBtn = document.getElementById('mute-btn');
+  function syncMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', () => {
+    muted = !muted;
+    localStorage.setItem('picotto_neonfall_mute', muted ? '1' : '0');
+    syncMute();
+  });
+  syncMute();
+
+  // ---- pieces --------------------------------------------------------------
+  const SHAPES = {
+    I: [[0,1],[1,1],[2,1],[3,1]],
+    O: [[1,0],[2,0],[1,1],[2,1]],
+    T: [[1,0],[0,1],[1,1],[2,1]],
+    S: [[1,0],[2,0],[0,1],[1,1]],
+    Z: [[0,0],[1,0],[1,1],[2,1]],
+    J: [[0,0],[0,1],[1,1],[2,1]],
+    L: [[2,0],[0,1],[1,1],[2,1]],
+  };
+  const COLORS = {
+    I: '#53e0d8', O: '#ffd166', T: '#b06bff', S: '#6ee77a',
+    Z: '#ff5fa2', J: '#5f8dff', L: '#ff9a4d',
+  };
+  const SIZE = { I: 4, O: 4, T: 3, S: 3, Z: 3, J: 3, L: 3 };
+
+  // ---- state -----------------------------------------------------------------
+  let grid, cur, next, bag = [];
+  let score = 0, lines = 0, level = 1;
+  let best = +(localStorage.getItem(BEST_KEY) || 0);
+  let over = true, paused = false;
+  let dropTimer = 0, lockTimer = -1, lockResets = 0;
+  let clearing = null;   // {rows:[..], t}
+  let simTime = 0;
+
+  function speedMs() {
+    const table = [800, 700, 610, 520, 440, 360, 290, 220, 160, 120, 90];
+    return table[Math.min(level - 1, table.length - 1)];
+  }
+  function bagNext() {
+    if (!bag.length) {
+      bag = Object.keys(SHAPES).slice();
+      for (let i = bag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bag[i], bag[j]] = [bag[j], bag[i]];
+      }
+    }
+    return bag.pop();
+  }
+  function newPiece(kind) {
+    const cells = SHAPES[kind].map(c => c.slice());
+    return { kind, cells, x: 3, y: -1, size: SIZE[kind] };
+  }
+  function eachCell(p, fn) { for (const [cx, cy] of p.cells) fn(p.x + cx, p.y + cy); }
+  function collides(p, dx = 0, dy = 0, cells = p.cells) {
+    for (const [cx, cy] of cells) {
+      const x = p.x + cx + dx, y = p.y + cy + dy;
+      if (x < 0 || x >= COLS || y >= ROWS) return true;
+      if (y >= 0 && grid[y][x]) return true;
+    }
+    return false;
+  }
+  function rotated(p) {
+    if (p.kind === 'O') return p.cells;
+    const n = p.size;
+    return p.cells.map(([x, y]) => [n - 1 - y, x]);
+  }
+  function tryRotate() {
+    const cells = rotated(cur);
+    for (const [dx, dy] of [[0,0],[-1,0],[1,0],[-2,0],[2,0],[0,-1]]) {
+      if (!collides(cur, dx, dy, cells)) {
+        cur.cells = cells; cur.x += dx; cur.y += dy;
+        resetLock(); beep(520, 0.05, 'square', 0.03);
+        return true;
+      }
+    }
+    return false;
+  }
+  function tryMove(dx, dy) {
+    if (collides(cur, dx, dy)) return false;
+    cur.x += dx; cur.y += dy;
+    if (dx) { resetLock(); beep(260, 0.03, 'square', 0.02); }
+    return true;
+  }
+  function resetLock() {
+    if (lockTimer >= 0 && lockResets < 10) { lockTimer = 0; lockResets++; }
+  }
+  function ghostY() {
+    let dy = 0;
+    while (!collides(cur, 0, dy + 1)) dy++;
+    return cur.y + dy;
+  }
+  function hardDrop() {
+    if (over || paused || clearing) return;
+    cur.y = ghostY();
+    beep(140, 0.08, 'square', 0.05);
+    lockNow();
+  }
+  function lockNow() {
+    eachCell(cur, (x, y) => { if (y >= 0) grid[y][x] = COLORS[cur.kind]; });
+    lockTimer = -1; lockResets = 0;
+    const full = [];
+    for (let y = 0; y < ROWS; y++) if (grid[y].every(v => v)) full.push(y);
+    if (full.length) {
+      clearing = { rows: full, t: 0 };
+      beep(660, 0.12, 'triangle', 0.06, 220);
+    } else spawn();
+  }
+  function finishClear() {
+    const rows = clearing.rows;
+    clearing = null;
+    for (const y of rows) { grid.splice(y, 1); grid.unshift(Array(COLS).fill(null)); }
+    lines += rows.length;
+    score += [0, 100, 300, 500, 800][rows.length] * level;
+    const nl = Math.floor(lines / 10) + 1;
+    if (nl > level) { level = nl; beep(880, 0.15, 'triangle', 0.06, 300); }
+    updateHud();
+    spawn();
+  }
+  function spawn() {
+    cur = next || newPiece(bagNext());
+    next = newPiece(bagNext());
+    drawNext();
+    dropTimer = 0;
+    if (collides(cur, 0, 0)) gameOver();
+  }
+  function gameOver() {
+    over = true;
+    beep(220, 0.4, 'sawtooth', 0.05, -160);
+    if (score > best) { best = score; localStorage.setItem(BEST_KEY, best); }
+    updateHud();
+    showOverlay('GAME OVER', `スコア ${score}` + (score >= best && score > 0 ? ' ✨しんきろく!' : ''), 'もういちど');
+  }
+  function updateHud() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('lines').textContent = lines;
+    document.getElementById('level').textContent = level;
+    document.getElementById('best').textContent = best;
+  }
+  function start() {
+    grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+    score = 0; lines = 0; level = 1; over = false; paused = false;
+    bag = []; next = null; clearing = null;
+    document.getElementById('overlay').classList.remove('show');
+    updateHud();
+    spawn();
+  }
+  const overlay = document.getElementById('overlay');
+  function showOverlay(bigText, note, btnText) {
+    overlay.querySelector('.big').textContent = bigText;
+    overlay.querySelector('.big').className = 'big';
+    overlay.querySelector('.note').innerHTML = note;
+    document.getElementById('startBtn').textContent = btnText;
+    overlay.classList.add('show');
+  }
+  document.getElementById('startBtn').addEventListener('click', start);
+
+  // ---- input ---------------------------------------------------------------
+  const held = {};
+  function press(action) {
+    if (over || clearing) return;
+    if (action === 'left') tryMove(-1, 0);
+    else if (action === 'right') tryMove(1, 0);
+    else if (action === 'down') { if (tryMove(0, 1)) dropTimer = 0; }
+    else if (action === 'rot') tryRotate();
+    else if (action === 'drop') hardDrop();
+  }
+  document.addEventListener('keydown', e => {
+    const map = { ArrowLeft: 'left', ArrowRight: 'right', ArrowDown: 'down', ArrowUp: 'rot',
+                  KeyX: 'rot', Space: 'drop', KeyZ: 'rot' };
+    const a = map[e.code];
+    if (!a) return;
+    e.preventDefault();
+    if (held[a]) return;
+    held[a] = { das: 0 };
+    press(a);
+  });
+  document.addEventListener('keyup', e => {
+    const map = { ArrowLeft: 'left', ArrowRight: 'right', ArrowDown: 'down', ArrowUp: 'rot',
+                  KeyX: 'rot', Space: 'drop', KeyZ: 'rot' };
+    if (map[e.code]) delete held[map[e.code]];
+  });
+  // key auto-repeat (DAS 170ms, then 45ms; down repeats at 45ms)
+  function repeatHeld(dt) {
+    for (const a of ['left', 'right', 'down']) {
+      const h = held[a];
+      if (!h) continue;
+      h.das += dt * 1000;
+      const das = a === 'down' ? 45 : 170;
+      while (h.das > das) { h.das -= 45; press(a); }
+    }
+  }
+  // pad buttons (hold to repeat)
+  const padMap = { pLeft: 'left', pRight: 'right', pDown: 'down', pRot: 'rot', pDrop: 'drop' };
+  for (const [id, a] of Object.entries(padMap)) {
+    const el = document.getElementById(id);
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault(); el.setPointerCapture(e.pointerId);
+      press(a);
+      if (a !== 'rot' && a !== 'drop') held[a] = { das: 0 };
+    });
+    const stop = () => { delete held[a]; };
+    el.addEventListener('pointerup', stop);
+    el.addEventListener('pointercancel', stop);
+    el.addEventListener('lostpointercapture', stop);
+  }
+
+  // ---- draw ------------------------------------------------------------------
+  function block(c, x, y, color, size = CELL) {
+    c.fillStyle = color;
+    c.fillRect(x + 1, y + 1, size - 2, size - 2);
+    c.fillStyle = 'rgba(255,255,255,.25)';
+    c.fillRect(x + 1, y + 1, size - 2, 4);
+    c.fillStyle = 'rgba(0,0,0,.25)';
+    c.fillRect(x + 1, y + size - 6, size - 2, 5);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    // grid dots
+    ctx.fillStyle = 'rgba(157,153,192,.12)';
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++)
+      ctx.fillRect(x * CELL + CELL / 2, y * CELL + CELL / 2, 2, 2);
+    if (!grid) return;
+    // settled
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++)
+      if (grid[y][x]) block(ctx, x * CELL, y * CELL, grid[y][x]);
+    // clearing flash
+    if (clearing) {
+      const a = Math.sin(clearing.t * 40) > 0 ? 0.85 : 0.3;
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      for (const y of clearing.rows) ctx.fillRect(0, y * CELL, cv.width, CELL);
+      return;
+    }
+    if (over || !cur) return;
+    // ghost
+    const gy = ghostY();
+    ctx.globalAlpha = 0.22;
+    eachCell({ ...cur, y: gy }, (x, y) => { if (y >= 0) block(ctx, x * CELL, y * CELL, COLORS[cur.kind]); });
+    ctx.globalAlpha = 1;
+    // current
+    eachCell(cur, (x, y) => { if (y >= 0) block(ctx, x * CELL, y * CELL, COLORS[cur.kind]); });
+  }
+  function drawNext() {
+    nctx.clearRect(0, 0, ncv.width, ncv.height);
+    if (!next) return;
+    const s = 20;
+    const xs = next.cells.map(c => c[0]), ys = next.cells.map(c => c[1]);
+    const w = (Math.max(...xs) - Math.min(...xs) + 1) * s;
+    const h = (Math.max(...ys) - Math.min(...ys) + 1) * s;
+    const ox = (ncv.width - w) / 2 - Math.min(...xs) * s;
+    const oy = (ncv.height - h) / 2 - Math.min(...ys) * s;
+    for (const [x, y] of next.cells) block(nctx, ox + x * s, oy + y * s, COLORS[next.kind], s);
+  }
+
+  // ---- loop -------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    step(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  function step(dt) {
+    if (over || paused) return;
+    simTime += dt;
+    if (clearing) {
+      clearing.t += dt;
+      if (clearing.t > 0.28) finishClear();
+      return;
+    }
+    repeatHeld(dt);
+    // gravity
+    dropTimer += dt * 1000;
+    const ms = held.down ? 45 : speedMs();
+    while (dropTimer > ms) {
+      dropTimer -= ms;
+      if (!tryMove(0, 1)) {
+        if (lockTimer < 0) lockTimer = 0;
+        break;
+      } else lockTimer = -1;
+    }
+    // lock delay
+    if (lockTimer >= 0) {
+      if (collides(cur, 0, 1)) {
+        lockTimer += dt * 1000;
+        if (lockTimer > 400) lockNow();
+      } else lockTimer = -1;
+    }
+  }
+  updateHud();
+  requestAnimationFrame(loop);
+
+  // test hook (headless-friendly): step simulation manually and inspect state
+  window.__test = {
+    start, press, hardDrop,
+    step: ms => step(ms / 1000),
+    state: () => ({ over, score, lines, level, grid, cur: cur && { kind: cur.kind, x: cur.x, y: cur.y }, clearing: !!clearing }),
+    setPiece: kind => { cur = newPiece(kind); },
+    fillRow: (y, gap) => { for (let x = 0; x < COLS; x++) grid[y][x] = x === gap ? null : '#888'; },
+  };
+})();
+</script>
+</body>
+</html>
