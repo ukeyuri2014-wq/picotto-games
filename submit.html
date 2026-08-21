@@ -90,6 +90,9 @@
     color: transparent;
   }
   .hero p.lead { margin-top: 20px; max-width: 620px; color: var(--sub); font-size: 0.98rem; font-weight: 500; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border: 1px solid var(--line2); border-radius: 999px; background: rgba(255,255,255,.78); color: var(--sub); font-size: .74rem; font-weight: 700; }
+  .hero-badge b { color: var(--ink); }
 
   .sec { padding: 40px 0 8px; }
   .sec .label {
@@ -193,6 +196,15 @@
   .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
   .cta .note { margin-top: 18px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; color: var(--faint); }
 
+  .review-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: review; }
+  .review-item { position: relative; min-height: 170px; padding: 22px 18px 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.86); }
+  .review-item::before { counter-increment: review; content: "0" counter(review); display: block; margin-bottom: 14px; font-family: var(--mono); font-size: .66rem; letter-spacing: .18em; color: var(--pink); }
+  .review-item h3 { margin-bottom: 8px; font-size: .98rem; font-weight: 900; }
+  .review-item p { color: var(--sub); font-size: .8rem; line-height: 1.75; font-weight: 500; }
+  .submit-list { display: grid; gap: 10px; margin-top: 18px; list-style: none; }
+  .submit-list li { display: flex; gap: 11px; align-items: flex-start; padding: 12px 15px; border-radius: 10px; background: rgba(14,194,180,.06); color: #4a4768; font-size: .84rem; font-weight: 500; }
+  .submit-list li::before { content: "✓"; flex: 0 0 auto; color: var(--cyan); font-weight: 900; }
+
   .faq { display: grid; gap: 14px; }
   .qa { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 16px 20px; }
   .qa .q { font-weight: 900; font-size: 0.92rem; display: flex; gap: 12px; }
@@ -218,6 +230,17 @@
   .foot-base a:hover { color: var(--ink); }
   a:focus-visible, button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
+  @media (max-width: 760px) {
+    .review-flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .nav { padding-left: 16px; padding-right: 16px; }
+    .nav .links { gap: 14px; }
+    .wrap { padding-left: 18px; padding-right: 18px; }
+    .review-flow { grid-template-columns: 1fr; }
+    .review-item { min-height: 0; }
+  }
+
 </style>
 </head>
 <body>
@@ -242,6 +265,11 @@
       AIと一緒に作った、1ファイルで動くブラウザゲームなら誰でも応募OK。
       審査のうえ、専用のキービジュアルを付けて掲載します。
     </p>
+    <div class="hero-badges">
+      <span class="hero-badge">✓ <b>GitHub操作なし</b></span>
+      <span class="hero-badge">✓ 投稿後は管理者へ自動通知</span>
+      <span class="hero-badge">✓ 掲載前に安全チェック</span>
+    </div>
   </div>
 </header>
 
@@ -266,8 +294,8 @@
       </div>
       <div class="step">
         <div class="num">04</div>
-        <h3>掲載</h3>
-        <p>内容を確認して、数日以内に公開。カードにはきみのニックネームが載る。</p>
+        <h3>チェック・掲載</h3>
+        <p>投稿が届くと管理者へ自動通知。内容と動作を確認して、OKならサイトに公開します。</p>
       </div>
     </div>
   </section>
@@ -303,10 +331,31 @@
   </section>
 
   <section class="cta">
-    <h2>準備ができたら、ここから。</h2>
-    <p>下のボタンから提出BOXが開きます。ファイルをドラッグして送るだけで応募完了。</p>
-    <a class="btn-primary" href="https://www.dropbox.com/request/vqmek7p8awh5w1w19vbt" target="_blank" rel="noopener">SUBMIT →</a>
-    <div class="note">FILE: ゲーム名_ニックネーム.html ／ 審査ののち掲載されます</div>
+    <h2>完成したゲームを、そのまま送ろう。</h2>
+    <p>提出BOXへファイルを入れたら応募完了。GitHubのアカウントや操作は必要ありません。新着は管理者へ自動で届きます。</p>
+    <a class="btn-primary" href="https://www.dropbox.com/request/vqmek7p8awh5w1w19vbt" target="_blank" rel="noopener">ゲームを投稿する →</a>
+    <div class="note">FILE: ゲーム名_ニックネーム.html ／ 投稿無料 ／ 掲載前に審査あり</div>
+  </section>
+
+  <section class="sec" id="after-submit">
+    <div class="label">AFTER SUBMIT</div>
+    <h2>投稿したあとは、こう進みます。</h2>
+    <div class="review-flow">
+      <div class="review-item"><h3>新着をお知らせ</h3><p>提出BOXにゲームが届くと、管理者へ自動で通知されます。</p></div>
+      <div class="review-item"><h3>安全チェック</h3><p>個人情報、外部通信、著作権、危険なコードがないか確認します。</p></div>
+      <div class="review-item"><h3>実際にプレイ</h3><p>スマホとパソコンで遊び、最後まで動くかを確認します。</p></div>
+      <div class="review-item"><h3>公開・お知らせ</h3><p>審査OKならゲームカードを作って掲載。修正が必要なら内容をお伝えします。</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="label">BEFORE YOU SEND</div>
+    <h2>送る前の3つだけチェック。</h2>
+    <ul class="submit-list">
+      <li>自分とスタッフで一度ずつ、最後まで遊んだ</li>
+      <li>本名・顔写真・住所・電話番号・メールアドレスを入れていない</li>
+      <li>ファイル名を「ゲーム名_ニックネーム.html」にした</li>
+    </ul>
   </section>
 
   <section class="sec">
@@ -327,6 +376,10 @@
       <div class="qa">
         <div class="q">あとから直せますか？</div>
         <div class="a">掲載後の差し替えもOK。直したファイルを同じ名前でもう一度提出BOXへ。</div>
+      </div>
+      <div class="qa">
+        <div class="q">GitHubの操作は必要ですか？</div>
+        <div class="a">必要ありません。提出BOXへ送ったあとの登録・公開作業は管理側で行います。</div>
       </div>
     </div>
   </section>
