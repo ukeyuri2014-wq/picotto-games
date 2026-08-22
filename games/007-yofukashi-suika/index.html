@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>よふかしスイカ | ピコットゲームズ</title>
+<title>よふかしアニマル | ピコットゲームズ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
@@ -114,7 +114,7 @@
 
 <div class="topbar">
   <a href="../../index.html">← いちらんへ</a>
-  <h1>🍉 よふかしスイカ</h1>
+  <h1>🐾 よふかしアニマル</h1>
   <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
 </div>
 
@@ -122,13 +122,13 @@
   <canvas id="game" width="480" height="640"></canvas>
 
   <div class="overlay" id="title-screen">
-    <div class="big">🍒🍇🍉</div>
-    <h2>よふかしスイカ</h2>
+    <div class="big">🐥🐺🐘</div>
+    <h2>よふかしアニマル</h2>
     <p class="age-badge">対象年齢の目安：6歳〜</p>
     <p>
-      フルーツをはこに落として、<br>
-      <b>同じフルーツ同士</b>をくっつけると…<b>大きく育つ！</b><br>
-      どんどん合体させて、よふかしの<b>スイカ</b>を目指そう。<br>
+      動物をフィールドに呼び出して、<br>
+      <b>同じ動物同士</b>をくっつけると…<b>強い動物に進化！</b><br>
+      どんどん大きくして、百獣をこえる<b>ゾウ</b>を目指そう。<br>
       上の<b>ラインをこえたら</b>ゲームオーバー。
     </p>
     <button class="btn" id="start-btn">スタート！</button>
@@ -148,22 +148,22 @@
 <script>
 // ================================================================
 // ★カスタマイズポイント★
-// FRUITS の色や大きさ、SCORES の点数をかえられるよ！
+// ANIMALS の見た目や大きさ、SCORES の点数をかえられるよ！
 // ================================================================
-const FRUITS = [
-  { r: 13, c1: "#ffb3cb", c2: "#ff6f9d" },  // 0 さくらんぼ
-  { r: 17, c1: "#ff8f7e", c2: "#e84b3c" },  // 1 いちご
-  { r: 22, c1: "#c99aff", c2: "#8b4de0" },  // 2 ぶどう
-  { r: 28, c1: "#ffcf85", c2: "#f29722" },  // 3 みかん
-  { r: 34, c1: "#ffa06e", c2: "#e05e20" },  // 4 かき
-  { r: 42, c1: "#ff7f96", c2: "#d92b4e" },  // 5 りんご
-  { r: 50, c1: "#e2f39b", c2: "#a7c93e" },  // 6 なし
-  { r: 58, c1: "#ffd9b8", c2: "#ff9e63" },  // 7 もも
-  { r: 68, c1: "#c4ecb0", c2: "#6fc45e" },  // 8 メロン
-  { r: 80, c1: "#63c97e", c2: "#2e8f4c" },  // 9 スイカ
+const ANIMALS = [
+  { r: 13, emoji: "🐥", name: "ひよこ",     c1: "#fff4a8", c2: "#f2b43b" },
+  { r: 17, emoji: "🐹", name: "ハムスター", c1: "#ffe0b5", c2: "#d9914e" },
+  { r: 22, emoji: "🐰", name: "うさぎ",     c1: "#f7eaff", c2: "#c6a3e8" },
+  { r: 28, emoji: "🐱", name: "ねこ",       c1: "#ffd5a1", c2: "#e78a3f" },
+  { r: 34, emoji: "🐶", name: "いぬ",       c1: "#f7c88b", c2: "#b96f35" },
+  { r: 42, emoji: "🐺", name: "オオカミ",   c1: "#dbe7f4", c2: "#7189a3" },
+  { r: 50, emoji: "🦍", name: "ゴリラ",     c1: "#b5b7c7", c2: "#4c5064" },
+  { r: 58, emoji: "🦁", name: "ライオン",   c1: "#ffd77a", c2: "#d98222" },
+  { r: 68, emoji: "🐻", name: "クマ",       c1: "#d9a76f", c2: "#74452d" },
+  { r: 80, emoji: "🐘", name: "ゾウ",       c1: "#a9c8dc", c2: "#4f7894" },
 ];
 const SCORES = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55];
-const STORAGE_KEY = "yofukashi-suika-best";
+const STORAGE_KEY = "yofukashi-animal-best";
 // ================================================================
 
 (function () {
@@ -184,7 +184,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
   const muteBtn = document.getElementById("mute-btn");
 
   let state = "title";
-  let fruits = [];
+  let animals = [];
   let sparks = [];
   let popups = [];
   let score = 0;
@@ -221,7 +221,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
     if (muted) return;
     try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.08); } catch (e) {}
   }
-  // 合体音：大きいフルーツほど低く豊かに
+  // 進化音：強い動物ほど低く豊かに
   function mergeSound(tier) {
     if (muted) return;
     try {
@@ -288,7 +288,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
   // ============ ゲームのながれ ============
   function randTier() { return Math.floor(Math.random() * 5); }
   function startGame() {
-    fruits = [];
+    animals = [];
     sparks = [];
     popups = [];
     score = 0;
@@ -315,11 +315,11 @@ const STORAGE_KEY = "yofukashi-suika-best";
   document.getElementById("start-btn").addEventListener("click", startGame);
   document.getElementById("retry-btn").addEventListener("click", startGame);
 
-  function dropFruit() {
+  function dropAnimal() {
     if (state !== "play" || dropCd > 0) return;
-    const spec = FRUITS[currentTier];
+    const spec = ANIMALS[currentTier];
     const x = Math.max(WALL_L + spec.r + 1, Math.min(WALL_R - spec.r - 1, aimX));
-    fruits.push({ x: x, y: 108, vx: 0, vy: 140, r: spec.r, tier: currentTier, grace: 1.3, overT: 0, flash: 0, sndCd: 0 });
+    animals.push({ x: x, y: 108, vx: 0, vy: 140, r: spec.r, tier: currentTier, grace: 1.3, overT: 0, flash: 0, sndCd: 0 });
     currentTier = nextTier;
     nextTier = randTier();
     dropCd = 0.55;
@@ -328,7 +328,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
 
   // ============ 物理 ============
   function physics(dt) {
-    for (const f of fruits) {
+    for (const f of animals) {
       f.grace -= dt;
       if (f.flash > 0) f.flash -= dt;
       if (f.sndCd > 0) f.sndCd -= dt;
@@ -340,7 +340,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
     const merges = [];
     for (let iter = 0; iter < 3; iter++) {
       // かべ・ゆか
-      for (const f of fruits) {
+      for (const f of animals) {
         if (f.x - f.r < WALL_L) { f.x = WALL_L + f.r; f.vx = Math.abs(f.vx) * 0.25; }
         if (f.x + f.r > WALL_R) { f.x = WALL_R - f.r; f.vx = -Math.abs(f.vx) * 0.25; }
         if (f.y + f.r > FLOOR) {
@@ -353,12 +353,12 @@ const STORAGE_KEY = "yofukashi-suika-best";
           f.vx *= 0.96;
         }
       }
-      // フルーツどうし
-      for (let i = 0; i < fruits.length; i++) {
-        const a = fruits[i];
+      // 動物どうし
+      for (let i = 0; i < animals.length; i++) {
+        const a = animals[i];
         if (a.dead) continue;
-        for (let j = i + 1; j < fruits.length; j++) {
-          const b = fruits[j];
+        for (let j = i + 1; j < animals.length; j++) {
+          const b = animals[j];
           if (b.dead) continue;
           const dx = b.x - a.x, dy = b.y - a.y;
           const min = a.r + b.r;
@@ -395,34 +395,34 @@ const STORAGE_KEY = "yofukashi-suika-best";
       const ma = a.r * a.r, mb = b.r * b.r, tm = ma + mb;
       const mx = (a.x * ma + b.x * mb) / tm;
       const my = (a.y * ma + b.y * mb) / tm;
-      if (tier >= FRUITS.length - 1) {
-        // スイカ同士 → だいばくはつボーナス
+      if (tier >= ANIMALS.length - 1) {
+        // ゾウ同士 → 王者ボーナス
         score += 100;
-        popup(mx, my - 40, "+100 🍉!!", "#6fd86a");
-        burst(mx, my, "#6fd86a", 40);
+        popup(mx, my - 40, "+100 🐘 王者!!", "#7fe7ff");
+        burst(mx, my, "#7fe7ff", 40);
         burst(mx, my, "#ffffff", 20);
         beep(784, 0.2, "triangle", 0.1);
         setTimeout(function () { beep(1047, 0.3, "triangle", 0.1); }, 130);
       } else {
         const nt = tier + 1;
-        const spec = FRUITS[nt];
-        fruits.push({
+        const spec = ANIMALS[nt];
+        animals.push({
           x: mx, y: Math.min(my, FLOOR - spec.r),
           vx: (a.vx + b.vx) / 2, vy: Math.min((a.vy + b.vy) / 2, 0),
           r: spec.r, tier: nt, grace: 0.6, overT: 0, flash: 0.25, sndCd: 0.3,
         });
         score += SCORES[tier];
-        popup(mx, my - spec.r - 10, "+" + SCORES[tier], "#ffd166");
-        burst(mx, my, FRUITS[tier].c2, 12);
+        popup(mx, my - spec.r - 10, spec.emoji + " " + spec.name + "!  +" + SCORES[tier], "#ffd166");
+        burst(mx, my, ANIMALS[tier].c2, 12);
         mergeSound(tier);
       }
     }
-    if (merges.length) fruits = fruits.filter(function (f) { return !f.dead; });
-    for (const f of fruits) f.merging = false;
+    if (merges.length) animals = animals.filter(function (f) { return !f.dead; });
+    for (const f of animals) f.merging = false;
 
     // ゲームオーバーライン
     let danger = false;
-    for (const f of fruits) {
+    for (const f of animals) {
       if (f.grace > 0) continue;
       if (f.y - f.r < LINE_Y) {
         f.overT += dt;
@@ -451,49 +451,29 @@ const STORAGE_KEY = "yofukashi-suika-best";
   }
 
   // ============ びょうが ============
-  function drawFruit(c, x, y, r, tier, flash) {
-    const spec = FRUITS[tier];
+  function drawAnimal(c, x, y, r, tier, flash) {
+    const spec = ANIMALS[tier];
+    c.save();
+    c.shadowColor = spec.c2;
+    c.shadowBlur = Math.max(5, r * 0.22);
     const g = c.createRadialGradient(x - r * 0.32, y - r * 0.38, r * 0.1, x, y, r);
     g.addColorStop(0, spec.c1);
     g.addColorStop(1, spec.c2);
     c.fillStyle = g;
     c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
-    // スイカのしましま
-    if (tier === 9) {
-      c.save();
-      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.clip();
-      c.strokeStyle = "rgba(30, 90, 50, 0.55)";
-      c.lineWidth = r * 0.16;
-      for (let k = -2; k <= 2; k++) {
-        c.beginPath();
-        c.moveTo(x + k * r * 0.38, y - r);
-        c.quadraticCurveTo(x + k * r * 0.55, y, x + k * r * 0.38, y + r);
-        c.stroke();
-      }
-      c.restore();
-    }
-    // ハイライト
+    c.shadowBlur = 0;
+    c.strokeStyle = "rgba(255,255,255,.45)";
+    c.lineWidth = Math.max(1.2, r * 0.045);
+    c.beginPath(); c.arc(x, y, r - 1, 0, Math.PI * 2); c.stroke();
+    // 夜の光
     c.fillStyle = "rgba(255, 255, 255, 0.4)";
     c.beginPath(); c.ellipse(x - r * 0.35, y - r * 0.45, r * 0.22, r * 0.13, -0.6, 0, Math.PI * 2); c.fill();
-    // かお（小さいのはシンプルに）
-    if (r >= 16) {
-      c.fillStyle = "#3a3355";
-      c.beginPath();
-      c.arc(x - r * 0.26, y - r * 0.06, Math.max(r * 0.07, 1.6), 0, Math.PI * 2);
-      c.arc(x + r * 0.26, y - r * 0.06, Math.max(r * 0.07, 1.6), 0, Math.PI * 2);
-      c.fill();
-      c.strokeStyle = "#3a3355";
-      c.lineWidth = Math.max(r * 0.05, 1.3);
-      c.lineCap = "round";
-      c.beginPath(); c.arc(x, y + r * 0.14, r * 0.2, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
-    }
-    // へた
-    c.strokeStyle = "#5f8136";
-    c.lineWidth = Math.max(r * 0.08, 1.6);
-    c.beginPath();
-    c.moveTo(x, y - r + r * 0.04);
-    c.quadraticCurveTo(x + r * 0.14, y - r - r * 0.14, x + r * 0.26, y - r - r * 0.1);
-    c.stroke();
+    // 動物そのもの
+    c.font = Math.max(14, r * 1.28) + "px 'Apple Color Emoji','Segoe UI Emoji',sans-serif";
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillStyle = "#fff";
+    c.fillText(spec.emoji, x, y + r * 0.05);
     if (flash > 0) {
       c.globalAlpha = flash * 2.4;
       c.strokeStyle = "#ffffff";
@@ -501,6 +481,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
       c.beginPath(); c.arc(x, y, r + 4, 0, Math.PI * 2); c.stroke();
       c.globalAlpha = 1;
     }
+    c.restore();
   }
 
   function draw(t) {
@@ -545,12 +526,12 @@ const STORAGE_KEY = "yofukashi-suika-best";
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // フルーツ
-    for (const f of fruits) drawFruit(ctx, f.x, f.y, f.r, f.tier, f.flash);
+    // 動物
+    for (const f of animals) drawAnimal(ctx, f.x, f.y, f.r, f.tier, f.flash);
 
     // ねらい（プレイ中）
     if (state === "play") {
-      const spec = FRUITS[currentTier];
+      const spec = ANIMALS[currentTier];
       const gx = Math.max(WALL_L + spec.r + 1, Math.min(WALL_R - spec.r - 1, aimX));
       ctx.globalAlpha = 0.35;
       ctx.strokeStyle = "#eeecfa";
@@ -558,7 +539,7 @@ const STORAGE_KEY = "yofukashi-suika-best";
       ctx.beginPath(); ctx.moveTo(gx, 118); ctx.lineTo(gx, FLOOR); ctx.stroke();
       ctx.setLineDash([]);
       ctx.globalAlpha = dropCd > 0 ? 0.35 : 0.9;
-      drawFruit(ctx, gx, 108, spec.r, currentTier, 0);
+      drawAnimal(ctx, gx, 108, spec.r, currentTier, 0);
       ctx.globalAlpha = 1;
     }
 
@@ -581,37 +562,35 @@ const STORAGE_KEY = "yofukashi-suika-best";
     ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
     roundRect(ctx, 12, 12, 150, 40, 12);
     roundRect(ctx, W - 118, 56, 106, 52, 12);
-    ctx.fillStyle = "#6fd86a";
+    ctx.fillStyle = "#7fe7ff";
     ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("🍉 " + score, 24, 33);
+    ctx.fillText("🐾 " + score, 24, 33);
     ctx.fillStyle = "#9d99c0";
     ctx.font = "900 11px 'Zen Maru Gothic', sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("つぎ", W - 65, 70);
     if (state === "play") {
-      const ns = FRUITS[nextTier];
+      const ns = ANIMALS[nextTier];
       const nr = Math.min(ns.r, 15);
-      drawFruit(ctx, W - 65, 90, nr, nextTier, 0);
+      drawAnimal(ctx, W - 65, 90, nr, nextTier, 0);
     }
 
     // しんかのじゅん（下のガイド）
     ctx.fillStyle = "rgba(19, 19, 34, 0.6)";
     ctx.fillRect(0, H - 32, W, 32);
-    let gx2 = 38;
-    for (let k = 0; k < FRUITS.length; k++) {
-      const rr = 4 + k * 1.15;
-      drawMini(ctx, gx2, H - 16, rr, k);
-      gx2 += rr * 2 + 14;
+    let gx2 = 28;
+    for (let k = 0; k < ANIMALS.length; k++) {
+      drawMini(ctx, gx2, H - 16, 8 + k * 0.55, k);
+      gx2 += 47;
     }
   }
   function drawMini(c, x, y, r, tier) {
-    const spec = FRUITS[tier];
-    const g = c.createRadialGradient(x - r * 0.3, y - r * 0.3, 0.5, x, y, r);
-    g.addColorStop(0, spec.c1);
-    g.addColorStop(1, spec.c2);
-    c.fillStyle = g;
-    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    const spec = ANIMALS[tier];
+    c.font = Math.max(12, r * 1.8) + "px 'Apple Color Emoji','Segoe UI Emoji',sans-serif";
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillText(spec.emoji, x, y + 1);
   }
   function roundRect(c, x, y, w, h, r) {
     c.beginPath();
@@ -647,16 +626,16 @@ const STORAGE_KEY = "yofukashi-suika-best";
   canvas.addEventListener("pointerdown", function (e) { aimX = canvasX(e); });
   canvas.addEventListener("pointerup", function (e) {
     aimX = canvasX(e);
-    dropFruit();
+    dropAnimal();
   });
 
   // デバッグフック
-  window.__SUIKA = {
-    get fruits() { return fruits; },
+  window.__ANIMAL = {
+    get animals() { return animals; },
     get score() { return score; },
     get state() { return state; },
     set aim(x) { aimX = x; },
-    drop: dropFruit,
+    drop: dropAnimal,
     forceTier: function (t) { currentTier = t; },
     start: startGame,
   };
