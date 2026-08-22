@@ -196,6 +196,33 @@
   .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
   .cta .note { margin-top: 18px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; color: var(--faint); }
 
+  .submit-panel { margin: 56px 0 10px; padding: clamp(24px, 6vw, 46px); border: 1px solid var(--line2); border-radius: 18px; background: var(--panel); box-shadow: 0 22px 60px rgba(63, 49, 105, .08); }
+  .submit-panel .intro { max-width: 640px; margin-bottom: 28px; }
+  .submit-panel .intro h2 { font-family: var(--disp); font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.15rem); }
+  .submit-panel .intro p { margin-top: 8px; color: var(--sub); font-size: .88rem; font-weight: 500; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: grid; gap: 7px; text-align: left; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: .76rem; font-weight: 900; color: #494461; }
+  .field label span { color: var(--pink); }
+  .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line2); border-radius: 10px; background: #fbfaff; color: var(--ink); padding: 12px 13px; font: inherit; font-size: .86rem; outline: none; transition: border-color .15s, box-shadow .15s; }
+  .field textarea { min-height: 96px; resize: vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(14,194,180,.1); }
+  .mini-grid { display: grid; grid-template-columns: 1.2fr 1fr .65fr; gap: 12px; }
+  .file-drop { position: relative; padding: 25px 18px; border: 1.5px dashed #b8b2d4; border-radius: 12px; background: #faf9ff; text-align: center; }
+  .file-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .file-drop b { display: block; font-size: .94rem; }
+  .file-drop small { display: block; margin-top: 5px; color: var(--sub); }
+  .submit-actions { display: flex; align-items: center; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+  .submit-button { border: 0; cursor: pointer; font-family: var(--mono); font-size: .86rem; letter-spacing: .16em; color: #fff; background: linear-gradient(95deg, var(--pink), #8b5bff); border-radius: 9px; padding: 15px 28px 13px; box-shadow: 0 12px 30px rgba(255,46,136,.24); }
+  .submit-button:disabled { opacity: .55; cursor: wait; }
+  .privacy-note { color: var(--sub); font-size: .72rem; line-height: 1.6; }
+  .form-status { display: none; margin-top: 18px; padding: 13px 15px; border-radius: 10px; font-size: .84rem; font-weight: 700; text-align: left; }
+  .form-status.show { display: block; }
+  .form-status.ok { color: #096a5f; background: #e9faf5; }
+  .form-status.error { color: #a72350; background: #fff0f5; }
+  .bot-field { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
+
   .review-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: review; }
   .review-item { position: relative; min-height: 170px; padding: 22px 18px 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.86); }
   .review-item::before { counter-increment: review; content: "0" counter(review); display: block; margin-bottom: 14px; font-family: var(--mono); font-size: .66rem; letter-spacing: .18em; color: var(--pink); }
@@ -239,6 +266,8 @@
     .wrap { padding-left: 18px; padding-right: 18px; }
     .review-flow { grid-template-columns: 1fr; }
     .review-item { min-height: 0; }
+    .form-grid, .mini-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: auto; }
   }
 
 </style>
@@ -266,9 +295,9 @@
       審査のうえ、専用のキービジュアルを付けて掲載します。
     </p>
     <div class="hero-badges">
-      <span class="hero-badge">✓ <b>GitHub操作なし</b></span>
-      <span class="hero-badge">✓ 投稿後は管理者へ自動通知</span>
-      <span class="hero-badge">✓ 掲載前に安全チェック</span>
+      <span class="hero-badge">✓ <b>このページから直接投稿</b></span>
+      <span class="hero-badge">✓ 個人のDropbox・Driveは不使用</span>
+      <span class="hero-badge">✓ 二重検査＋承認制</span>
     </div>
   </div>
 </header>
@@ -290,7 +319,7 @@
       <div class="step">
         <div class="num">03</div>
         <h3>おくる</h3>
-        <p>提出BOXにファイルをドラッグするだけ。アカウント登録は不要。</p>
+        <p>このページで作品情報とHTMLを選んで送信。外部の提出BOXやアカウント登録は不要。</p>
       </div>
       <div class="step">
         <div class="num">04</div>
@@ -311,7 +340,7 @@
       <pre id="prompt-text">◯◯なゲームを作って。（← すきなゲームの内容をここに書く。例：もぐらたたき、3たくクイズ、よけゲーム）
 
 条件：
-・1つのHTMLファイルだけで動くようにして（外部ライブラリやCDNは使わない）
+・1つのHTMLファイルだけで動くようにして（外部ライブラリ・CDN・Google Fonts・外部URLは使わない）
 ・スマホのタップとパソコンのマウス両対応
 ・カードめくり等の見た目に3D変形（rotateY等）は使わない
 ・さいしょに「スタート」ボタン、おわったら点数と「もういちど」ボタン
@@ -330,18 +359,38 @@
     </div>
   </section>
 
-  <section class="cta">
-    <h2>完成したゲームを、そのまま送ろう。</h2>
-    <p>提出BOXへファイルを入れたら応募完了。GitHubのアカウントや操作は必要ありません。新着は管理者へ自動で届きます。</p>
-    <a class="btn-primary" href="https://www.dropbox.com/request/vqmek7p8awh5w1w19vbt" target="_blank" rel="noopener">ゲームを投稿する →</a>
-    <div class="note">FILE: ゲーム名_ニックネーム.html ／ 投稿無料 ／ 掲載前に審査あり</div>
+  <section class="submit-panel" id="submit-form">
+    <div class="intro">
+      <div class="label">DIRECT SUBMISSION</div>
+      <h2>このページから、ゲームを直接投稿。</h2>
+      <p>投稿物は非公開の専用保管庫に入り、危険な通信を自動検査します。管理者が実際に遊んで「公開OK」を押すまで、外部には公開されません。</p>
+    </div>
+    <form id="game-submit-form" enctype="multipart/form-data" novalidate>
+      <div class="form-grid">
+        <div class="field"><label for="game-title">ゲーム名 <span>*</span></label><input id="game-title" name="title" maxlength="40" required placeholder="例：ほしぞらジャンプ"></div>
+        <div class="field"><label for="nickname">作者ニックネーム <span>*</span></label><input id="nickname" name="nickname" maxlength="24" required placeholder="本名は書かないでね"></div>
+        <div class="field full"><label for="description">ゲームの説明 <span>*</span></label><textarea id="description" name="description" maxlength="180" required placeholder="どんなゲームか、1〜2文で"></textarea></div>
+        <div class="field full"><label for="controls">操作方法 <span>*</span></label><input id="controls" name="controls" maxlength="100" required placeholder="例：矢印キー / スマホは左右ボタン"></div>
+        <div class="field full"><div class="mini-grid">
+          <div class="field"><label for="genre">ジャンル <span>*</span></label><input id="genre" name="genre" maxlength="24" required placeholder="ACTION / QUIZ など"></div>
+          <div class="field"><label for="age">対象年齢の目安 <span>*</span></label><select id="age" name="age" required><option>全年齢</option><option>6歳〜</option><option>7歳〜</option><option>8歳〜</option><option>10歳〜</option><option>12歳〜</option></select></div>
+          <div class="field"><label for="emoji">絵文字 <span>*</span></label><input id="emoji" name="emoji" maxlength="12" required value="🎮"></div>
+        </div></div>
+        <div class="field full"><label for="color">カードの色</label><input id="color" name="color" type="color" value="#ff2e88"></div>
+        <div class="field full"><label>完成したHTMLファイル <span>*</span></label><div class="file-drop"><input id="game-file" name="game" type="file" accept=".html,.htm,text/html" required><b id="file-label">ここを押してHTMLを選ぶ</b><small>1ファイル・1MBまで。ZIPや画像ファイルは送れません。</small></div></div>
+        <div class="bot-field" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      </div>
+      <input type="hidden" name="proofNonce" id="proof-nonce"><input type="hidden" name="proofCounter" id="proof-counter">
+      <div class="submit-actions"><button class="submit-button" id="submit-button" type="submit">安全確認して投稿する →</button><p class="privacy-note">メールアドレス・本名・住所は収集しません。<br>投稿HTMLを実行せずに検査してから保管します。</p></div>
+      <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+    </form>
   </section>
 
   <section class="sec" id="after-submit">
     <div class="label">AFTER SUBMIT</div>
     <h2>投稿したあとは、こう進みます。</h2>
     <div class="review-flow">
-      <div class="review-item"><h3>新着をお知らせ</h3><p>提出BOXにゲームが届くと、管理者へ自動で通知されます。</p></div>
+      <div class="review-item"><h3>非公開で受付</h3><p>投稿は個人ストレージを通らず、専用の非公開保管庫へ入ります。</p></div>
       <div class="review-item"><h3>安全チェック</h3><p>個人情報、外部通信、著作権、危険なコードがないか確認します。</p></div>
       <div class="review-item"><h3>実際にプレイ</h3><p>スマホとパソコンで遊び、最後まで動くかを確認します。</p></div>
       <div class="review-item"><h3>公開・お知らせ</h3><p>審査OKならゲームカードを作って掲載。修正が必要なら内容をお伝えします。</p></div>
@@ -375,11 +424,11 @@
       </div>
       <div class="qa">
         <div class="q">あとから直せますか？</div>
-        <div class="a">掲載後の差し替えもOK。直したファイルを同じ名前でもう一度提出BOXへ。</div>
+        <div class="a">掲載後の差し替えもOK。修正版として、このページからもう一度投稿してください。</div>
       </div>
       <div class="qa">
         <div class="q">GitHubの操作は必要ですか？</div>
-        <div class="a">必要ありません。提出BOXへ送ったあとの登録・公開作業は管理側で行います。</div>
+        <div class="a">必要ありません。このページから投稿したあとの登録・公開作業は管理側で行います。</div>
       </div>
     </div>
   </section>
@@ -393,6 +442,75 @@
 </footer>
 
 <script>
+  const SUBMISSION_API = "https://picotto-secure-submissions.edamame2025.chatgpt.site";
+  const submitForm = document.getElementById("game-submit-form");
+  const submitButton = document.getElementById("submit-button");
+  const formStatus = document.getElementById("form-status");
+  const fileInput = document.getElementById("game-file");
+  const fileLabel = document.getElementById("file-label");
+
+  fileInput.addEventListener("change", function () {
+    fileLabel.textContent = fileInput.files && fileInput.files[0] ? fileInput.files[0].name : "ここを押してHTMLを選ぶ";
+  });
+
+  function showStatus(message, kind) {
+    formStatus.className = "form-status show " + kind;
+    formStatus.textContent = message;
+  }
+
+  function hasLeadingZeroBits(bytes, difficulty) {
+    const full = Math.floor(difficulty / 8);
+    const rest = difficulty % 8;
+    for (let i = 0; i < full; i += 1) if (bytes[i] !== 0) return false;
+    return rest === 0 || (bytes[full] & (0xff << (8 - rest))) === 0;
+  }
+
+  async function solveProof(nonce, difficulty) {
+    const encoder = new TextEncoder();
+    for (let counter = 0; counter < 2000000; counter += 1) {
+      const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(nonce + ":" + counter)));
+      if (hasLeadingZeroBits(digest, difficulty)) return String(counter);
+    }
+    throw new Error("安全確認を完了できませんでした");
+  }
+
+  submitForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    if (!submitForm.reportValidity()) return;
+    const file = fileInput.files && fileInput.files[0];
+    if (!file || !/\.html?$/i.test(file.name) || file.size > 1024 * 1024) {
+      showStatus("1MB以下のHTMLファイルを選んでください。", "error");
+      return;
+    }
+    submitButton.disabled = true;
+    submitButton.textContent = "安全確認中…";
+    showStatus("投稿前の安全確認をしています。画面を閉じずにお待ちください。", "ok");
+    try {
+      const challengeResponse = await fetch(SUBMISSION_API + "/api/challenge", { method: "GET", mode: "cors", credentials: "omit", cache: "no-store" });
+      const challenge = await challengeResponse.json();
+      if (!challengeResponse.ok) throw new Error(challenge.error || "安全確認を開始できませんでした");
+      document.getElementById("proof-nonce").value = challenge.nonce;
+      document.getElementById("proof-counter").value = await solveProof(challenge.nonce, challenge.difficulty);
+      submitButton.textContent = "送信中…";
+      const response = await fetch(SUBMISSION_API + "/api/submit", { method: "POST", mode: "cors", credentials: "omit", body: new FormData(submitForm) });
+      const result = await response.json();
+      if (!response.ok) {
+        const detail = Array.isArray(result.details) && result.details.length ? "（" + result.details.join("、") + "）" : "";
+        throw new Error((result.error || "投稿できませんでした") + detail);
+      }
+      showStatus("投稿できました！受付番号：" + result.receipt + "。管理者の確認後、公開されます。", "ok");
+      submitForm.reset();
+      document.getElementById("color").value = "#ff2e88";
+      document.getElementById("emoji").value = "🎮";
+      fileLabel.textContent = "ここを押してHTMLを選ぶ";
+    } catch (error) {
+      showStatus(error && error.message ? error.message : "通信に失敗しました。時間をおいてお試しください。", "error");
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "安全確認して投稿する →";
+    }
+  });
+
   document.getElementById("copy-btn").addEventListener("click", function () {
     const text = document.getElementById("prompt-text").textContent;
     const btn = this;

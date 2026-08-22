@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ピコットゲームズ | PICOTTO GAMES</title>
 <meta name="description" content="その3分、ゲームにしよう。アプリも登録もいらない、スキマ時間にちょうどいい無料ミニゲーム PICOTTO GAMES。スマホ・PC対応。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/">
 <link rel="preload" as="image" href="assets/picotto-pop-play-hero-v3.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -308,7 +309,7 @@
   .foot-inner .logo { font-family: var(--mono); font-size: 1.3rem; letter-spacing: 0.14em; }
   .foot-inner .logo span { color: var(--pink); }
   .foot-inner .tg { font-size: 0.78rem; font-weight: 700; color: var(--faint); margin-top: 8px; }
-  .foot-inner .links { display: flex; gap: 24px; }
+  .foot-inner .links { display: flex; gap: 24px; flex-wrap: wrap; }
   .foot-inner .links a { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em; color: var(--sub); text-decoration: none; }
   .foot-inner .links a:hover { color: var(--ink); }
   .foot-base {
@@ -844,6 +845,40 @@
       backdrop-filter: blur(10px) saturate(1.05);
     }
   }
+
+  /* ============ PICOTTO MAGAZINE ============ */
+  .magazine-home {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 88px 24px 32px;
+  }
+  .magazine-home .mag-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 28px;
+    margin-bottom: 28px;
+  }
+  .magazine-home .mag-label { font-family: var(--mono); font-size: .68rem; letter-spacing: .32em; color: #ef5363; margin-bottom: 9px; }
+  .magazine-home h2 { margin: 0; color: #17213d; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.3; letter-spacing: -.04em; }
+  .magazine-home .mag-intro { max-width: 390px; margin: 0; color: rgba(23,33,61,.58); font-size: .84rem; }
+  .mag-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .mag-card { overflow: hidden; color: #17213d; background: rgba(255,255,255,.84); border: 1px solid rgba(23,33,61,.08); border-radius: 20px; box-shadow: 0 13px 32px rgba(55,74,116,.1); text-decoration: none; transition: transform .18s ease, box-shadow .18s ease; }
+  .mag-card:hover { transform: translateY(-6px); box-shadow: 0 22px 46px rgba(55,74,116,.17); }
+  .mag-emoji { min-height: 126px; display: grid; place-items: center; font-size: 3.25rem; background: linear-gradient(145deg, var(--m1), var(--m2)); }
+  .mag-copy { padding: 18px 18px 20px; }
+  .mag-copy .mag-tag { color: #ef5363; font-family: var(--mono); font-size: .6rem; letter-spacing: .14em; }
+  .mag-copy h3 { margin: 8px 0 9px; font-size: 1rem; line-height: 1.55; }
+  .mag-copy p { margin: 0; color: rgba(23,33,61,.58); font-size: .76rem; line-height: 1.7; }
+  .mag-all { display: inline-block; margin-top: 24px; color: #119d86; font-weight: 900; text-decoration: none; }
+  @media (max-width: 920px) { .mag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 580px) {
+    .magazine-home { padding-left: 18px; padding-right: 18px; }
+    .magazine-home .mag-head { align-items: flex-start; flex-direction: column; gap: 10px; }
+    .mag-grid { grid-template-columns: 1fr; }
+    .mag-card { display: grid; grid-template-columns: 112px minmax(0, 1fr); }
+    .mag-emoji { min-height: 100%; font-size: 2.6rem; }
+  }
 </style>
 </head>
 <body>
@@ -854,8 +889,8 @@
       <a class="logo" href="#">PICOTTO<span>_</span>GAMES</a>
       <div class="links">
         <a href="#games">GAMES</a>
+        <a href="blog/index.html">BLOG</a>
         <a href="submit.html">SUBMIT</a>
-        <a href="#about">ABOUT</a>
       </div>
     </nav>
   </div>
@@ -903,6 +938,17 @@
     <div class="grid" id="game-grid"><p class="empty">LOADING...</p></div>
   </main>
 
+  <section class="magazine-home" aria-labelledby="magazine-title">
+    <div class="mag-head"><div><div class="mag-label">PICOTTO MAGAZINE</div><h2 id="magazine-title">遊び方を知ると、<br>もっと面白い。</h2></div><p class="mag-intro">攻略の考え方、親子や友だちと楽しむコツを、ゲームの中身を確かめながら編集部が届けます。</p></div>
+    <div class="mag-grid">
+      <a class="mag-card" href="blog/yofukashi-quest-guide.html"><div class="mag-emoji" style="--m1:#cabdff;--m2:#ffe2a8">⚔️</div><div class="mag-copy"><span class="mag-tag">攻略 · 6分</span><h3>『よふかしクエスト』初心者ガイド</h3><p>育て方、回復とセーブ、洞窟、ボス戦の準備。</p></div></a>
+      <a class="mag-card" href="blog/ricochet-one-guide.html"><div class="mag-emoji" style="--m1:#ffb2bd;--m2:#ffd99c">🎯</div><div class="mag-copy"><span class="mag-tag">攻略 · 5分</span><h3>『リコシェ・ワン』反射の読み方</h3><p>全10面で使える、角度と仕掛けの考え方。</p></div></a>
+      <a class="mag-card" href="blog/yofukashi-hockey-guide.html"><div class="mag-emoji" style="--m1:#9cf1e6;--m2:#ffaaca">🏒</div><div class="mag-copy"><span class="mag-tag">遊び方 · 5分</span><h3>親子で盛り上がるホッケー対戦</h3><p>守りと強打、接戦をつくるローカルルール。</p></div></a>
+      <a class="mag-card" href="blog/browser-game-family-guide.html"><div class="mag-emoji" style="--m1:#b8e8ff;--m2:#fff0a6">👨‍👩‍👧‍👦</div><div class="mag-copy"><span class="mag-tag">コラム · 6分</span><h3>親子で遊ぶゲームの選び方</h3><p>年齢、操作、区切り、広告を見る6つの視点。</p></div></a>
+    </div>
+    <a class="mag-all" href="blog/index.html">攻略ノートをすべて見る →</a>
+  </section>
+
   <section class="about" id="about">
     <h2>3分で戻れる、<br>ちいさな別世界。</h2>
     <div class="a-body">
@@ -942,8 +988,10 @@
       </div>
       <div class="links">
         <a href="#games">GAMES</a>
+        <a href="blog/index.html">BLOG</a>
         <a href="submit.html">SUBMIT</a>
-        <a href="#about">ABOUT</a>
+        <a href="about.html">ABOUT</a>
+        <a href="privacy.html">PRIVACY</a>
         <a href="#">TOP</a>
       </div>
     </div>
@@ -1158,18 +1206,28 @@
   };
 
   // ============ 描画 ============
-  (function () {
+  (async function () {
     const grid = document.getElementById("game-grid");
     const count = document.getElementById("game-count");
     const statCount = document.getElementById("stat-count");
     const featured = document.getElementById("featured");
     const heroPlay = document.getElementById("hero-play");
     const ranking = document.getElementById("ranking");
-    if (typeof GAMES === "undefined" || !GAMES.length) {
+    let availableGames = typeof GAMES === "undefined" ? [] : [...GAMES];
+    try {
+      const remoteResponse = await fetch("https://picotto-secure-submissions.edamame2025.chatgpt.site/api/public/games", { mode: "cors", credentials: "omit" });
+      if (remoteResponse.ok) {
+        const remoteData = await remoteResponse.json();
+        if (remoteData && Array.isArray(remoteData.games)) availableGames = remoteData.games.concat(availableGames);
+      }
+    } catch (error) {
+      // 投稿サービスが一時停止していても、既存ゲームはそのまま表示する。
+    }
+    if (!availableGames.length) {
       grid.innerHTML = '<p class="empty">COMING SOON...</p>';
       return;
     }
-    const sorted = [...GAMES].sort(function (a, b) {
+    const sorted = availableGames.sort(function (a, b) {
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;
       return a.id < b.id ? 1 : -1;
     });

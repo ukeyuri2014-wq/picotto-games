@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ukeyuri2014-wq.github.io/picotto-games/sitemap.xml
