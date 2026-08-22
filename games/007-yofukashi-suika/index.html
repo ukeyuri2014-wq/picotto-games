@@ -453,27 +453,230 @@ const STORAGE_KEY = "yofukashi-animal-best";
   // ============ びょうが ============
   function drawAnimal(c, x, y, r, tier, flash) {
     const spec = ANIMALS[tier];
+    const ink = "#3a3355";
     c.save();
-    c.shadowColor = spec.c2;
-    c.shadowBlur = Math.max(5, r * 0.22);
+    c.lineJoin = "round";
+
+    // ---- うしろのパーツ（耳・たてがみ） ----
+    if (tier === 2) { // うさぎの長い耳
+      for (const s of [-1, 1]) {
+        c.save();
+        c.translate(x + s * r * 0.38, y - r * 0.72);
+        c.rotate(s * 0.22);
+        c.fillStyle = spec.c1;
+        c.beginPath(); c.ellipse(0, -r * 0.5, r * 0.24, r * 0.62, 0, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = spec.c2; c.lineWidth = Math.max(1, r * 0.05); c.stroke();
+        c.fillStyle = "#ffb3cb";
+        c.beginPath(); c.ellipse(0, -r * 0.46, r * 0.11, r * 0.4, 0, 0, Math.PI * 2); c.fill();
+        c.restore();
+      }
+    } else if (tier === 3 || tier === 5) { // ねこ・オオカミの三角耳
+      const sharp = tier === 5 ? 1.2 : 1;
+      for (const s of [-1, 1]) {
+        c.fillStyle = spec.c2;
+        c.beginPath();
+        c.moveTo(x + s * r * 0.30, y - r * 0.72);
+        c.lineTo(x + s * r * 0.8, y - r * (0.98 * sharp));
+        c.lineTo(x + s * r * 0.85, y - r * 0.32);
+        c.closePath(); c.fill();
+        c.fillStyle = tier === 3 ? "#ffb3cb" : "#c9d8e8";
+        c.beginPath();
+        c.moveTo(x + s * r * 0.46, y - r * 0.6);
+        c.lineTo(x + s * r * 0.7, y - r * (0.8 * sharp));
+        c.lineTo(x + s * r * 0.73, y - r * 0.44);
+        c.closePath(); c.fill();
+      }
+    } else if (tier === 1 || tier === 8) { // ハムスター・クマの丸耳
+      for (const s of [-1, 1]) {
+        c.fillStyle = spec.c2;
+        c.beginPath(); c.arc(x + s * r * 0.55, y - r * 0.72, r * 0.28, 0, Math.PI * 2); c.fill();
+        c.fillStyle = spec.c1;
+        c.beginPath(); c.arc(x + s * r * 0.55, y - r * 0.72, r * 0.15, 0, Math.PI * 2); c.fill();
+      }
+    } else if (tier === 6) { // ゴリラの小さい耳
+      for (const s of [-1, 1]) {
+        c.fillStyle = spec.c2;
+        c.beginPath(); c.arc(x + s * r * 0.92, y - r * 0.08, r * 0.18, 0, Math.PI * 2); c.fill();
+      }
+    } else if (tier === 7) { // ライオンのたてがみ＋耳
+      c.fillStyle = "#c2691f";
+      for (let k = 0; k < 12; k++) {
+        const a = (Math.PI * 2 / 12) * k + 0.13;
+        c.beginPath();
+        c.moveTo(x + Math.cos(a - 0.17) * r * 0.86, y + Math.sin(a - 0.17) * r * 0.86);
+        c.lineTo(x + Math.cos(a) * r * 1.26, y + Math.sin(a) * r * 1.26);
+        c.lineTo(x + Math.cos(a + 0.17) * r * 0.86, y + Math.sin(a + 0.17) * r * 0.86);
+        c.closePath(); c.fill();
+      }
+      for (const s of [-1, 1]) {
+        c.fillStyle = spec.c2;
+        c.beginPath(); c.arc(x + s * r * 0.6, y - r * 0.76, r * 0.2, 0, Math.PI * 2); c.fill();
+      }
+    } else if (tier === 9) { // ゾウの大きい耳
+      for (const s of [-1, 1]) {
+        c.fillStyle = spec.c2;
+        c.beginPath(); c.ellipse(x + s * r * 0.86, y - r * 0.04, r * 0.42, r * 0.56, s * 0.25, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#8fb3c9";
+        c.beginPath(); c.ellipse(x + s * r * 0.86, y - r * 0.04, r * 0.28, r * 0.4, s * 0.25, 0, Math.PI * 2); c.fill();
+      }
+    } else if (tier === 4) { // いぬのたれ耳
+      for (const s of [-1, 1]) {
+        c.save();
+        c.translate(x + s * r * 0.62, y - r * 0.4);
+        c.rotate(s * 0.5);
+        c.fillStyle = spec.c2;
+        c.beginPath(); c.ellipse(0, r * 0.28, r * 0.26, r * 0.52, 0, 0, Math.PI * 2); c.fill();
+        c.restore();
+      }
+    }
+
+    // ---- 顔のベース ----
     const g = c.createRadialGradient(x - r * 0.32, y - r * 0.38, r * 0.1, x, y, r);
     g.addColorStop(0, spec.c1);
     g.addColorStop(1, spec.c2);
     c.fillStyle = g;
     c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
-    c.shadowBlur = 0;
-    c.strokeStyle = "rgba(255,255,255,.45)";
-    c.lineWidth = Math.max(1.2, r * 0.045);
-    c.beginPath(); c.arc(x, y, r - 1, 0, Math.PI * 2); c.stroke();
-    // 夜の光
-    c.fillStyle = "rgba(255, 255, 255, 0.4)";
-    c.beginPath(); c.ellipse(x - r * 0.35, y - r * 0.45, r * 0.22, r * 0.13, -0.6, 0, Math.PI * 2); c.fill();
-    // 動物そのもの
-    c.font = Math.max(14, r * 1.28) + "px 'Apple Color Emoji','Segoe UI Emoji',sans-serif";
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillStyle = "#fff";
-    c.fillText(spec.emoji, x, y + r * 0.05);
+    c.fillStyle = "rgba(255,255,255,0.35)";
+    c.beginPath(); c.ellipse(x - r * 0.35, y - r * 0.45, r * 0.2, r * 0.12, -0.6, 0, Math.PI * 2); c.fill();
+
+    // ---- 種類ごとの顔パーツ ----
+    const eyeR = Math.max(r * 0.085, 1.5);
+    const eyeY = y - r * 0.08;
+    let eyeDX = r * 0.34;
+    let mouth = true;
+
+    if (tier === 0) { // ひよこ：くちばし＋あほ毛
+      c.strokeStyle = "#f2a43b"; c.lineWidth = Math.max(1.2, r * 0.09); c.lineCap = "round";
+      c.beginPath(); c.moveTo(x - r * 0.05, y - r * 0.98); c.quadraticCurveTo(x + r * 0.18, y - r * 1.28, x + r * 0.32, y - r * 1.12); c.stroke();
+      c.fillStyle = "#ff9d3d";
+      c.beginPath();
+      c.moveTo(x - r * 0.22, y + r * 0.1);
+      c.lineTo(x + r * 0.22, y + r * 0.1);
+      c.lineTo(x, y + r * 0.42);
+      c.closePath(); c.fill();
+      mouth = false;
+    } else if (tier === 1) { // ハムスター：ほっぺぶくろ
+      c.fillStyle = "rgba(255,255,255,0.55)";
+      c.beginPath();
+      c.ellipse(x - r * 0.42, y + r * 0.3, r * 0.3, r * 0.26, 0, 0, Math.PI * 2);
+      c.ellipse(x + r * 0.42, y + r * 0.3, r * 0.3, r * 0.26, 0, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = ink;
+      c.beginPath(); c.ellipse(x, y + r * 0.16, r * 0.09, r * 0.07, 0, 0, Math.PI * 2); c.fill();
+    } else if (tier === 2) { // うさぎ：ピンクのはな
+      c.fillStyle = "#ff8fb0";
+      c.beginPath(); c.ellipse(x, y + r * 0.12, r * 0.1, r * 0.08, 0, 0, Math.PI * 2); c.fill();
+    } else if (tier === 3) { // ねこ：マズル＋ヒゲ
+      c.fillStyle = "#ffe9d2";
+      c.beginPath(); c.ellipse(x, y + r * 0.3, r * 0.4, r * 0.3, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = "#e07a5f";
+      c.beginPath();
+      c.moveTo(x - r * 0.09, y + r * 0.14); c.lineTo(x + r * 0.09, y + r * 0.14); c.lineTo(x, y + r * 0.26);
+      c.closePath(); c.fill();
+      c.strokeStyle = "rgba(58,51,85,0.55)"; c.lineWidth = Math.max(1, r * 0.035); c.lineCap = "round";
+      for (const s of [-1, 1]) {
+        c.beginPath(); c.moveTo(x + s * r * 0.5, y + r * 0.2); c.lineTo(x + s * r * 0.95, y + r * 0.12); c.stroke();
+        c.beginPath(); c.moveTo(x + s * r * 0.5, y + r * 0.34); c.lineTo(x + s * r * 0.95, y + r * 0.38); c.stroke();
+      }
+    } else if (tier === 4) { // いぬ：マズル＋はな＋した
+      c.fillStyle = "#f5e0c4";
+      c.beginPath(); c.ellipse(x, y + r * 0.32, r * 0.42, r * 0.32, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = "#ff8fb0";
+      c.beginPath(); c.ellipse(x, y + r * 0.5, r * 0.12, r * 0.15, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = ink;
+      c.beginPath(); c.ellipse(x, y + r * 0.16, r * 0.14, r * 0.11, 0, 0, Math.PI * 2); c.fill();
+      mouth = false;
+    } else if (tier === 5) { // オオカミ：つりまゆ＋マズル
+      c.fillStyle = "#eef3f8";
+      c.beginPath(); c.ellipse(x, y + r * 0.34, r * 0.4, r * 0.3, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = ink;
+      c.beginPath(); c.ellipse(x, y + r * 0.2, r * 0.12, r * 0.09, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = ink; c.lineWidth = Math.max(1.2, r * 0.05); c.lineCap = "round";
+      for (const s of [-1, 1]) {
+        c.beginPath(); c.moveTo(x + s * r * 0.52, y - r * 0.36); c.lineTo(x + s * r * 0.18, y - r * 0.22); c.stroke();
+      }
+      mouth = false;
+    } else if (tier === 6) { // ゴリラ：フェイスプレート＋まゆ
+      c.fillStyle = "#8e93a8";
+      c.beginPath(); c.ellipse(x, y + r * 0.24, r * 0.52, r * 0.44, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = ink;
+      c.beginPath();
+      c.ellipse(x - r * 0.14, y + r * 0.32, r * 0.05, r * 0.07, 0, 0, Math.PI * 2);
+      c.ellipse(x + r * 0.14, y + r * 0.32, r * 0.05, r * 0.07, 0, 0, Math.PI * 2);
+      c.fill();
+      c.strokeStyle = ink; c.lineWidth = Math.max(1.4, r * 0.055); c.lineCap = "round";
+      c.beginPath(); c.moveTo(x - r * 0.48, y - r * 0.3); c.lineTo(x + r * 0.48, y - r * 0.3); c.stroke();
+      eyeDX = r * 0.26;
+      mouth = false;
+    } else if (tier === 7) { // ライオン：マズル＋ヒゲ
+      c.fillStyle = "#ffedc9";
+      c.beginPath(); c.ellipse(x, y + r * 0.32, r * 0.42, r * 0.32, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = "#b06a2c";
+      c.beginPath();
+      c.moveTo(x - r * 0.1, y + r * 0.14); c.lineTo(x + r * 0.1, y + r * 0.14); c.lineTo(x, y + r * 0.28);
+      c.closePath(); c.fill();
+      c.strokeStyle = "rgba(58,51,85,0.45)"; c.lineWidth = Math.max(1, r * 0.03); c.lineCap = "round";
+      for (const s of [-1, 1]) {
+        c.beginPath(); c.moveTo(x + s * r * 0.5, y + r * 0.24); c.lineTo(x + s * r * 0.9, y + r * 0.2); c.stroke();
+      }
+    } else if (tier === 8) { // クマ：マズル＋はな
+      c.fillStyle = "#f0cf9e";
+      c.beginPath(); c.ellipse(x, y + r * 0.3, r * 0.4, r * 0.32, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = ink;
+      c.beginPath(); c.ellipse(x, y + r * 0.18, r * 0.13, r * 0.1, 0, 0, Math.PI * 2); c.fill();
+    } else if (tier === 9) { // ゾウ：キバ＋ながい鼻
+      c.fillStyle = "#f2ede2";
+      for (const s of [-1, 1]) {
+        c.beginPath();
+        c.ellipse(x + s * r * 0.3, y + r * 0.5, r * 0.08, r * 0.18, s * 0.5, 0, Math.PI * 2);
+        c.fill();
+      }
+      const tg = c.createLinearGradient(x, y, x, y + r);
+      tg.addColorStop(0, spec.c1); tg.addColorStop(1, spec.c2);
+      c.fillStyle = tg;
+      c.beginPath();
+      c.moveTo(x - r * 0.16, y + r * 0.05);
+      c.quadraticCurveTo(x - r * 0.2, y + r * 0.55, x - r * 0.05, y + r * 0.8);
+      c.quadraticCurveTo(x + r * 0.05, y + r * 0.92, x + r * 0.22, y + r * 0.82);
+      c.quadraticCurveTo(x + r * 0.1, y + r * 0.6, x + r * 0.16, y + r * 0.05);
+      c.closePath(); c.fill();
+      c.strokeStyle = "rgba(58,51,85,0.25)"; c.lineWidth = Math.max(1, r * 0.03);
+      for (let k = 1; k <= 3; k++) {
+        c.beginPath();
+        c.moveTo(x - r * 0.14, y + r * (0.12 + k * 0.16));
+        c.quadraticCurveTo(x, y + r * (0.17 + k * 0.16), x + r * 0.14, y + r * (0.12 + k * 0.16));
+        c.stroke();
+      }
+      mouth = false;
+    }
+
+    // ---- 目（共通・ハイライト付き） ----
+    c.fillStyle = ink;
+    c.beginPath();
+    c.arc(x - eyeDX, eyeY, eyeR, 0, Math.PI * 2);
+    c.arc(x + eyeDX, eyeY, eyeR, 0, Math.PI * 2);
+    c.fill();
+    if (r >= 22) {
+      c.fillStyle = "rgba(255,255,255,0.85)";
+      c.beginPath();
+      c.arc(x - eyeDX + eyeR * 0.3, eyeY - eyeR * 0.32, eyeR * 0.32, 0, Math.PI * 2);
+      c.arc(x + eyeDX + eyeR * 0.3, eyeY - eyeR * 0.32, eyeR * 0.32, 0, Math.PI * 2);
+      c.fill();
+    }
+    if (mouth) {
+      c.strokeStyle = ink;
+      c.lineWidth = Math.max(1.2, r * 0.05);
+      c.lineCap = "round";
+      c.beginPath(); c.arc(x, y + r * 0.26, r * 0.16, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+    }
+    if (r >= 20 && tier !== 5 && tier !== 6) {
+      c.fillStyle = "rgba(255, 143, 176, 0.4)";
+      c.beginPath();
+      c.ellipse(x - r * 0.58, y + r * 0.14, r * 0.13, r * 0.09, 0, 0, Math.PI * 2);
+      c.ellipse(x + r * 0.58, y + r * 0.14, r * 0.13, r * 0.09, 0, 0, Math.PI * 2);
+      c.fill();
+    }
+
     if (flash > 0) {
       c.globalAlpha = flash * 2.4;
       c.strokeStyle = "#ffffff";
@@ -586,11 +789,7 @@ const STORAGE_KEY = "yofukashi-animal-best";
     }
   }
   function drawMini(c, x, y, r, tier) {
-    const spec = ANIMALS[tier];
-    c.font = Math.max(12, r * 1.8) + "px 'Apple Color Emoji','Segoe UI Emoji',sans-serif";
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillText(spec.emoji, x, y + 1);
+    drawAnimal(c, x, y, r, tier, 0);
   }
   function roundRect(c, x, y, w, h, r) {
     c.beginPath();
