@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>よふかし四目ならべ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn:disabled{opacity:.4;cursor:default}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.92);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.2}
+  #overlay .big.p1{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:6px;padding:9px 16px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .levels{display:flex;gap:6px;justify-content:center}
+  .levels button{font-family:inherit;font-size:13px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .levels button.on{border-color:var(--gold);color:var(--gold)}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>よふかし四目ならべ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / 2人用・CPU対戦</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="600"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">よふかし<br>四目ならべ</div>
+    <div class="note" id="ovNote">
+      コマを上からおとして、<b>タテ・ヨコ・ナナメに4つ</b>ならべたら かち！<br>
+      <i class="c1">P1（水色）</i> と <i class="c2">P2（ピンク）</i> が こうたいで おとすよ。<br><br>
+      📱 おとしたい列をタップ ／ ⌨️ 1〜7キー、←→＋Enter
+    </div>
+    <div class="modes">
+      <button id="btn2p">ふたりで たいせん</button>
+      <button id="btnCpu" class="alt">ひとりで（CPU）</button>
+    </div>
+    <div class="levels" id="levels">
+      <button data-l="1">CPU よわい</button><button data-l="2" class="on">CPU ふつう</button><button data-l="3">CPU つよい</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="undoBtn">1手もどす</button>
+  <button class="btn" id="menuBtn">モードをえらぶ</button>
+</div>
+
+<div class="help">
+  <b>コツ</b>：まんなかの列をとると強い。相手の「3つ」は先にふさごう。ナナメも見おとさないで！<br>
+  <i class="c1">P1</i> と <i class="c2">P2</i> の先手は ゲームごとに こうたい。「1手もどす」はCPU戦のときは 自分とCPUの2手分もどる。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const COLS = 7, ROWS = 6, CELL = 64, BX = 16, BY = 76;       // board 448 x 384
+  const MUTE_KEY = 'picotto_c4_mute', STAT_KEY = 'picotto_c4_stats';
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    drop(p) { tone('triangle', p === 1 ? 420 : 330, 120, 0.14, 0.08); },
+    land() { tone('square', 160, 90, 0.08, 0.06); },
+    win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, i * 0.1)); },
+    lose() { tone('sawtooth', 300, 80, 0.5, 0.07); },
+    draw() { tone('triangle', 440, 440, 0.15, 0.06); tone('triangle', 440, 440, 0.15, 0.06, 0.2); },
+    hover() { tone('square', 900, 900, 0.03, 0.02); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  drawMute();
+
+  // ---- state ---------------------------------------------------------------
+  let board = [];                 // board[r][c], r=0 bottom; 0 empty, 1 P1, 2 P2
+  let mode = '2p', level = 2, turn = 1, first = 1;
+  let state = 'title';            // title | play | drop | over
+  let falling = null, winCells = null, winner = 0, hoverCol = -1, cursorCol = 3;
+  let history = [], particles = [], anim = 0, cpuTimer = 0;
+  let tally = { 1: 0, 2: 0, d: 0 };
+  let stats = { 1: { w: 0, l: 0, d: 0 }, 2: { w: 0, l: 0, d: 0 }, 3: { w: 0, l: 0, d: 0 } };
+  try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) stats = Object.assign(stats, s); } catch (e) {}
+  const overlay = document.getElementById('overlay');
+  const COLORS = { 1: '#53e0d8', 2: '#ff5fa2' };
+  const GLOW = { 1: 'rgba(83,224,216,', 2: 'rgba(255,95,162,' };
+
+  function newBoard() { board = []; for (let r = 0; r < ROWS; r++) board.push(new Array(COLS).fill(0)); }
+  function landingRow(b, c) { for (let r = 0; r < ROWS; r++) if (!b[r][c]) return r; return -1; }
+  function checkWin(b, r, c, p) {
+    for (const [dr, dc] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+      const cells = [[r, c]];
+      for (const s of [1, -1]) {
+        let rr = r + dr * s, cc = c + dc * s;
+        while (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS && b[rr][cc] === p) { cells.push([rr, cc]); rr += dr * s; cc += dc * s; }
+      }
+      if (cells.length >= 4) return cells;
+    }
+    return null;
+  }
+  function boardFull(b) { for (let c = 0; c < COLS; c++) if (!b[ROWS - 1][c]) return false; return true; }
+
+  // ---- AI (minimax + alpha-beta) --------------------------------------------
+  function scoreWindow(a, b, c, d, me) {
+    const w = [a, b, c, d]; let m = 0, o = 0, e = 0;
+    for (const v of w) { if (v === me) m++; else if (v === 0) e++; else o++; }
+    if (m === 4) return 100000;
+    if (m === 3 && e === 1) return 6;
+    if (m === 2 && e === 2) return 2;
+    if (o === 3 && e === 1) return -5;
+    if (o === 4) return -100000;
+    return 0;
+  }
+  function evaluate(b, me) {
+    let s = 0;
+    for (let r = 0; r < ROWS; r++) if (b[r][3] === me) s += 3;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      if (c + 3 < COLS) s += scoreWindow(b[r][c], b[r][c + 1], b[r][c + 2], b[r][c + 3], me);
+      if (r + 3 < ROWS) s += scoreWindow(b[r][c], b[r + 1][c], b[r + 2][c], b[r + 3][c], me);
+      if (r + 3 < ROWS && c + 3 < COLS) s += scoreWindow(b[r][c], b[r + 1][c + 1], b[r + 2][c + 2], b[r + 3][c + 3], me);
+      if (r + 3 < ROWS && c - 3 >= 0) s += scoreWindow(b[r][c], b[r + 1][c - 1], b[r + 2][c - 2], b[r + 3][c - 3], me);
+    }
+    return s;
+  }
+  const ORDER = [3, 2, 4, 1, 5, 0, 6];
+  function minimax(b, depth, alpha, beta, maximizing, me) {
+    const opp = 3 - me;
+    let bestCol = -1, bestVal = maximizing ? -Infinity : Infinity;
+    let any = false;
+    for (const c of ORDER) {
+      const r = landingRow(b, c); if (r < 0) continue; any = true;
+      const p = maximizing ? me : opp;
+      b[r][c] = p;
+      let val;
+      if (checkWin(b, r, c, p)) val = maximizing ? 1000000 + depth : -1000000 - depth;
+      else if (depth <= 1 || boardFull(b)) val = evaluate(b, me);
+      else val = minimax(b, depth - 1, alpha, beta, !maximizing, me).val;
+      b[r][c] = 0;
+      if (maximizing) { if (val > bestVal) { bestVal = val; bestCol = c; } alpha = Math.max(alpha, val); }
+      else { if (val < bestVal) { bestVal = val; bestCol = c; } beta = Math.min(beta, val); }
+      if (alpha >= beta) break;
+    }
+    if (!any) return { val: 0, col: -1 };
+    return { val: bestVal, col: bestCol };
+  }
+  function aiMove(lv) {
+    const me = 2, opp = 1;
+    const valid = []; for (let c = 0; c < COLS; c++) if (landingRow(board, c) >= 0) valid.push(c);
+    if (!valid.length) return -1;
+    // immediate win / block are always taken (except "よわい" sometimes misses the block)
+    for (const c of valid) { const r = landingRow(board, c); board[r][c] = me; const w = checkWin(board, r, c, me); board[r][c] = 0; if (w) return c; }
+    for (const c of valid) { const r = landingRow(board, c); board[r][c] = opp; const w = checkWin(board, r, c, opp); board[r][c] = 0; if (w && (lv > 1 || Math.random() < 0.6)) return c; }
+    if (lv === 1) { return Math.random() < 0.5 && valid.includes(3) ? 3 : valid[Math.floor(Math.random() * valid.length)]; }
+    const depth = lv === 2 ? 4 : 8;
+    const res = minimax(board, depth, -Infinity, Infinity, true, me);
+    if (res.col >= 0) return res.col;
+    return valid[Math.floor(Math.random() * valid.length)];
+  }
+
+  // ---- game flow --------------------------------------------------------------
+  function startGame(m) {
+    if (m) mode = m;
+    newBoard(); history = []; winCells = null; winner = 0; particles = []; falling = null;
+    turn = first; state = 'play'; overlay.classList.remove('show');
+    document.getElementById('undoBtn').disabled = true;
+    if (mode === 'cpu' && turn === 2) scheduleCpu();
+  }
+  function scheduleCpu() {
+    clearTimeout(cpuTimer);
+    cpuTimer = setTimeout(() => { if (state === 'play' && mode === 'cpu' && turn === 2) { const c = aiMove(level); if (c >= 0) dropPiece(c); } }, 420 + Math.random() * 380);
+  }
+  function dropPiece(c) {
+    if (state !== 'play') return false;
+    const r = landingRow(board, c); if (r < 0) return false;
+    falling = { c, r, p: turn, y: BY - CELL / 2, vy: 0, t: 0 };
+    state = 'drop'; SFX.drop(turn);
+    return true;
+  }
+  function landPiece() {
+    const { c, r, p } = falling; falling = null;
+    board[r][c] = p; history.push(c); SFX.land();
+    const w = checkWin(board, r, c, p);
+    document.getElementById('undoBtn').disabled = false;
+    if (w) { finish(p, w); return; }
+    if (boardFull(board)) { finish(0, null); return; }
+    turn = 3 - turn; state = 'play';
+    if (mode === 'cpu' && turn === 2) scheduleCpu();
+  }
+  function finish(p, cells) {
+    state = 'over'; winner = p; winCells = cells;
+    if (p) tally[p]++; else tally.d++;
+    if (mode === 'cpu') { const s = stats[level]; if (p === 1) s.w++; else if (p === 2) s.l++; else s.d++; try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {} }
+    first = 3 - first;
+    if (p) { for (const [r, c] of cells) burst(BX + c * CELL + CELL / 2, BY + (ROWS - 1 - r) * CELL + CELL / 2, GLOW[p]); }
+    if (p === 1 || (p === 2 && mode !== 'cpu')) SFX.win(); else if (p === 2) SFX.lose(); else SFX.draw();
+    setTimeout(showResult, 1300);
+  }
+  function showResult() {
+    const big = document.getElementById('ovBig'), note = document.getElementById('ovNote');
+    if (winner === 1) { big.textContent = 'PLAYER 1 WIN!'; big.className = 'big p1'; }
+    else if (winner === 2) { big.textContent = mode === 'cpu' ? 'CPU WIN…' : 'PLAYER 2 WIN!'; big.className = 'big p2'; }
+    else { big.textContent = 'DRAW'; big.className = 'big'; }
+    note.innerHTML = 'こんかいの せいせき： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">' + (mode === 'cpu' ? 'CPU ' : 'P2 ') + tally[2] + '</i>（ひきわけ ' + tally.d + '）<br>つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + (first === 1 ? 'P1' : (mode === 'cpu' ? 'CPU' : 'P2')) + '</i> が先手';
+    document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど（ふたりで）' : 'ふたりで たいせん';
+    document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど（CPU）' : 'ひとりで（CPU）';
+    renderStats(); overlay.classList.add('show');
+  }
+  function renderStats() {
+    const s = stats[level];
+    document.getElementById('ovStats').textContent = 'CPU' + ['', 'よわい', 'ふつう', 'つよい'][level] + ' との せいせき： ' + s.w + '勝 ' + s.l + '敗 ' + s.d + '分';
+  }
+  function undo() {
+    if (state !== 'play' || !history.length) return;
+    const n = (mode === 'cpu' && history.length >= 2) ? 2 : 1;
+    for (let i = 0; i < n; i++) { const c = history.pop(); for (let r = ROWS - 1; r >= 0; r--) if (board[r][c]) { board[r][c] = 0; break; } turn = 3 - turn; }
+    if (mode === 'cpu') turn = 1;
+    clearTimeout(cpuTimer);
+    document.getElementById('undoBtn').disabled = !history.length;
+  }
+  function burst(x, y, glow) { for (let i = 0; i < 16; i++) { const a = Math.random() * Math.PI * 2, sp = 40 + Math.random() * 180; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 60, life: 0.5 + Math.random() * 0.6, c: glow }); } }
+
+  // ---- input -----------------------------------------------------------------
+  function colAt(e) {
+    const rc = cv.getBoundingClientRect(); const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    if (x < BX || x > BX + COLS * CELL || y < 20 || y > BY + ROWS * CELL + 20) return -1;
+    return Math.floor((x - BX) / CELL);
+  }
+  function humanTurn() { return state === 'play' && !(mode === 'cpu' && turn === 2); }
+  cv.addEventListener('pointermove', e => { const c = colAt(e); if (c !== hoverCol) { hoverCol = c; if (c >= 0) cursorCol = c; } });
+  cv.addEventListener('pointerleave', () => { hoverCol = -1; });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); const c = colAt(e); hoverCol = c; if (c >= 0) cursorCol = c; });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); const c = colAt(e); if (c >= 0 && humanTurn()) dropPiece(c); hoverCol = -1; });
+  document.addEventListener('keydown', e => {
+    if (overlay.classList.contains('show')) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audio(); startGame(); } return; }
+    if (e.key >= '1' && e.key <= '7') { if (humanTurn()) dropPiece(+e.key - 1); return; }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); cursorCol = Math.max(0, cursorCol - 1); hoverCol = cursorCol; SFX.hover(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); cursorCol = Math.min(COLS - 1, cursorCol + 1); hoverCol = cursorCol; SFX.hover(); }
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); if (humanTurn()) dropPiece(cursorCol); }
+    if (e.key === 'z' || e.key === 'Backspace') { e.preventDefault(); undo(); }
+  });
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startGame('cpu'); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { level = +b.dataset.l; document.querySelectorAll('#levels button').forEach(x => x.classList.toggle('on', x === b)); renderStats(); }));
+  document.getElementById('undoBtn').addEventListener('click', undo);
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    clearTimeout(cpuTimer); state = 'title';
+    document.getElementById('ovBig').innerHTML = 'よふかし<br>四目ならべ'; document.getElementById('ovBig').className = 'big';
+    document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>こんかいの せいせき： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">P2/CPU ' + tally[2] + '</i>';
+    document.getElementById('btn2p').textContent = 'ふたりで たいせん'; document.getElementById('btnCpu').textContent = 'ひとりで（CPU）';
+    renderStats(); overlay.classList.add('show');
+  });
+
+  // ---- update / draw ------------------------------------------------------------
+  function update(dt) {
+    anim += dt;
+    if (falling) {
+      falling.vy += 2600 * dt; falling.y += falling.vy * dt;
+      const targetY = BY + (ROWS - 1 - falling.r) * CELL + CELL / 2;
+      if (falling.y >= targetY) {
+        if (falling.vy > 260 && !falling.bounced) { falling.y = targetY; falling.vy = -falling.vy * 0.28; falling.bounced = true; }
+        else { falling.y = targetY; landPiece(); }
+      }
+    }
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 300 * dt; s.life -= dt; return s.life > 0; });
+  }
+  function piece(x, y, p, r, alpha = 1) {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = COLORS[p]; ctx.shadowColor = COLORS[p]; ctx.shadowBlur = 14;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.32, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 3, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // status
+    ctx.textAlign = 'center'; ctx.font = '20px DotGothic16, monospace';
+    if (state === 'play' || state === 'drop') {
+      const p = state === 'drop' && falling ? falling.p : turn;
+      ctx.fillStyle = COLORS[p]; ctx.shadowColor = COLORS[p]; ctx.shadowBlur = 10;
+      ctx.fillText((p === 1 ? 'P1（水色）' : (mode === 'cpu' ? 'CPU（ピンク）' : 'P2（ピンク）')) + ' のばん' + (mode === 'cpu' && p === 2 && state === 'play' ? '…かんがえ中' : ''), W / 2, 40);
+      ctx.shadowBlur = 0;
+    } else if (state === 'over') {
+      ctx.fillStyle = winner ? COLORS[winner] : '#ffd166';
+      ctx.fillText(winner ? ((winner === 1 ? 'P1' : (mode === 'cpu' ? 'CPU' : 'P2')) + ' の かち！') : 'ひきわけ', W / 2, 40);
+    } else { ctx.fillStyle = '#9d99c0'; ctx.fillText('CONNECT FOUR', W / 2, 40); }
+    // hover indicator + ghost
+    const hc = (state === 'play' && humanTurn()) ? (hoverCol >= 0 ? hoverCol : cursorCol) : -1;
+    if (hc >= 0) {
+      const x = BX + hc * CELL + CELL / 2;
+      ctx.fillStyle = COLORS[turn]; ctx.beginPath(); ctx.moveTo(x - 9, BY - 16); ctx.lineTo(x + 9, BY - 16); ctx.lineTo(x, BY - 5); ctx.closePath(); ctx.fill();
+      const r = landingRow(board, hc); if (r >= 0) piece(x, BY + (ROWS - 1 - r) * CELL + CELL / 2, turn, 22, 0.18);
+    }
+    // board frame
+    ctx.fillStyle = '#1b1b38'; ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 16;
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(BX - 6, BY - 6, COLS * CELL + 12, ROWS * CELL + 12, 14) : ctx.rect(BX - 6, BY - 6, COLS * CELL + 12, ROWS * CELL + 12); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const x = BX + c * CELL + CELL / 2, y = BY + (ROWS - 1 - r) * CELL + CELL / 2;
+      ctx.fillStyle = '#0a0a18'; ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,107,255,.25)'; ctx.lineWidth = 1.5; ctx.stroke();
+      if (board[r][c]) piece(x, y, board[r][c], 24);
+    }
+    if (falling) { piece(BX + falling.c * CELL + CELL / 2, falling.y, falling.p, 24); }
+    if (winCells) {
+      const t = (Math.sin(anim * 6) + 1) / 2;
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4 + t * 3; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 20;
+      for (const [r, c] of winCells) { ctx.beginPath(); ctx.arc(BX + c * CELL + CELL / 2, BY + (ROWS - 1 - r) * CELL + CELL / 2, 27, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.shadowBlur = 0;
+    }
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.5)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - 3, s.y - 3, 6, 6); }
+    ctx.globalAlpha = 1;
+    // tally + column numbers
+    ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.7)';
+    for (let c = 0; c < COLS; c++) ctx.fillText(c + 1, BX + c * CELL + CELL / 2, BY + ROWS * CELL + 26);
+    ctx.font = '16px DotGothic16, monospace';
+    ctx.fillStyle = COLORS[1]; ctx.textAlign = 'left'; ctx.fillText('P1  ' + tally[1], BX + 4, H - 28);
+    ctx.fillStyle = COLORS[2]; ctx.textAlign = 'right'; ctx.fillText((mode === 'cpu' ? 'CPU  ' : 'P2  ') + tally[2], BX + COLS * CELL - 4, H - 28);
+    ctx.fillStyle = 'rgba(157,153,192,.7)'; ctx.textAlign = 'center'; ctx.fillText('ひきわけ ' + tally.d + (mode === 'cpu' ? '  ・  CPU ' + ['', 'よわい', 'ふつう', 'つよい'][level] : ''), W / 2, H - 28);
+    ctx.textAlign = 'left';
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+  newBoard(); renderStats(); requestAnimationFrame(loop);
+
+  window.__test = {
+    start: (m, lv) => { if (lv) level = lv; startGame(m); },
+    drop: dropPiece,
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    state: () => ({ state, mode, level, turn, winner, winCells, history: history.slice(), tally: Object.assign({}, tally), board: board.map(r => r.join('')).reverse() }),
+    ai: lv => aiMove(lv || level), undo, setBoard: rows => { newBoard(); rows.forEach((row, i) => { const r = ROWS - 1 - i; row.split('').forEach((ch, c) => { board[r][c] = +ch; }); }); },
+    skipCpu: () => { clearTimeout(cpuTimer); if (state === 'play' && mode === 'cpu' && turn === 2) { const c = aiMove(level); if (c >= 0) dropPiece(c); } },
+  };
+})();
+</script>
+</body>
+</html>
