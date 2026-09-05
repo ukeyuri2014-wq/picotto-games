@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ぬりぬりバトル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--pink);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--pink);border-color:var(--pink)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--pink);text-shadow:0 0 12px rgba(255,95,162,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,95,162,.35);border-radius:999px;color:var(--pink);background:rgba(255,95,162,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#101024;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.9);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6);line-height:1.2}
+  #overlay .big.p1{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.draw{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  .resbar{width:min(320px,90%);height:22px;border-radius:999px;overflow:hidden;background:#2a2a48;display:flex;border:1px solid var(--edge)}
+  .resbar i{display:block;height:100%}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:6px;padding:9px 18px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .opt{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px;justify-content:center;cursor:pointer;user-select:none}
+  .opt input{accent-color:var(--gold);margin:0}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ぬりぬりバトル</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / 2人用・CPU対戦</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="640"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">ぬりぬり<br>バトル</div>
+    <div class="note" id="ovNote">
+      <b>60びょう</b>で ゆかを じぶんの色に ぬりまくれ！<br>
+      おおく ぬったほうの かち🏆 相手の色の上も ぬりかえOK<br><br>
+      💣 ペイントボム＝まわりを一気にぬる ／ ⚡ ダッシュ＝はやく・ふとく<br>
+      📱 タッチ：<i class="c2">うえの人は うえ半分</i>、<i class="c1">したの人は した半分</i>を ドラッグ（スティック）<br>
+      ⌨️ キーボード：<i class="c1">した WASD</i> ／ <i class="c2">うえ 矢印キー</i>
+    </div>
+    <div class="modes">
+      <button id="btn2p">ふたりで たいせん</button>
+      <button id="btnCpu" class="alt">ひとりで（CPU）</button>
+    </div>
+    <label class="opt"><input type="checkbox" id="chkHard"> CPUを つよくする</label>
+    <div class="rule">かべは ぬれない。ぶつかると おしあいになるよ</div>
+  </div>
+</div>
+
+<div class="help">
+  <i class="c1">P1（水色）＝した側</i> / <i class="c2">P2（ピンク）＝うえ側</i>。うえのバーで いまの ぬり合いが わかる。<br>
+  <b>コツ</b>：まっさらな場所を ひろく ぬる → のこり10秒は 相手の色の上を ぬりかえす！
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const CELL = 16, GC = W / CELL, GR = H / CELL;       // 30 x 40
+  const MATCH_TIME = 60, R = 15, SPEED = 175;
+  const MUTE_KEY = 'picotto_nuri_mute';
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function noise(dur, vol, f) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = a.createBufferSource(); s.buffer = buf; const g = a.createGain(); g.gain.value = vol;
+    const fl = a.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = f;
+    s.connect(fl); fl.connect(g); g.connect(a.destination); s.start();
+  }
+  let blipT = 0;
+  const SFX = {
+    blip(p) { const now = performance.now(); if (now - blipT < 90) return; blipT = now; tone('sine', p === 1 ? 700 + Math.random() * 200 : 500 + Math.random() * 200, 300, 0.05, 0.02); },
+    item() { tone('square', 660, 1320, 0.12, 0.07); tone('square', 880, 1760, 0.12, 0.05, 0.08); },
+    bomb() { noise(0.4, 0.3, 900); tone('sine', 260, 40, 0.5, 0.15); },
+    bump() { tone('square', 240, 120, 0.06, 0.05); },
+    count() { tone('square', 440, 440, 0.08, 0.05); },
+    go() { tone('square', 880, 1320, 0.16, 0.06); },
+    tick() { tone('square', 1200, 1200, 0.04, 0.04); },
+    end() { tone('square', 700, 700, 0.35, 0.08); },
+    win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, i * 0.1)); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  drawMute();
+
+  // ---- state ---------------------------------------------------------------
+  const paint = new Uint8Array(GC * GR);          // 0 none, 1 P1, 2 P2, 3 wall
+  let p1, p2, items = [], particles = [], splashes = [];
+  let mode = '2p', hard = false, state = 'title', countT = 0, timeLeft = MATCH_TIME, spawnT = 0, anim = 0, lastTick = 0;
+  let counts = { 1: 0, 2: 0 }, paintable = 0;
+  const overlay = document.getElementById('overlay');
+  const WALLS = [[12, 19, 6, 2], [4, 8, 4, 2], [22, 30, 4, 2], [22, 8, 4, 2], [4, 30, 4, 2], [1, 19, 3, 2], [26, 19, 3, 2]];
+  const COLORS = { 1: '#53e0d8', 2: '#ff5fa2' }, GLOW = { 1: 'rgba(83,224,216,', 2: 'rgba(255,95,162,' }, PAINT = { 1: '#2fb7b0', 2: '#d9448a' };
+
+  function mkPlayer(n) {
+    return { n, x: W / 2, y: n === 1 ? H - 50 : 50, vx: 0, vy: 0, jx: 0, jy: 0, boost: 0, brush: R + 8, face: n === 1 ? -Math.PI / 2 : Math.PI / 2, stuck: 0, tgt: null, tgtT: 0, blip: 0 };
+  }
+  function resetArena() {
+    paint.fill(0); paintable = 0;
+    for (const [x, y, w, h] of WALLS) for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) paint[yy * GC + xx] = 3;
+    for (let i = 0; i < paint.length; i++) if (paint[i] !== 3) paintable++;
+    counts = { 1: 0, 2: 0 };
+    p1 = mkPlayer(1); p2 = mkPlayer(2);
+    items = []; particles = []; splashes = []; spawnT = 4; timeLeft = MATCH_TIME; lastTick = Math.ceil(MATCH_TIME);
+  }
+  function startMatch(m) {
+    mode = m; hard = document.getElementById('chkHard').checked;
+    resetArena(); overlay.classList.remove('show');
+    state = 'count'; countT = 3;
+  }
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startMatch('2p'); });
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startMatch('cpu'); });
+
+  // ---- paint helpers ---------------------------------------------------------
+  function isWall(px, py) { const cx = Math.floor(px / CELL), cy = Math.floor(py / CELL); if (cx < 0 || cy < 0 || cx >= GC || cy >= GR) return true; return paint[cy * GC + cx] === 3; }
+  function paintCircle(x, y, rad, n) {
+    const c0 = Math.max(0, Math.floor((x - rad) / CELL)), c1 = Math.min(GC - 1, Math.floor((x + rad) / CELL));
+    const r0 = Math.max(0, Math.floor((y - rad) / CELL)), r1 = Math.min(GR - 1, Math.floor((y + rad) / CELL));
+    let changed = 0;
+    for (let cy = r0; cy <= r1; cy++) for (let cx = c0; cx <= c1; cx++) {
+      const i = cy * GC + cx; if (paint[i] === 3 || paint[i] === n) continue;
+      const dx = cx * CELL + CELL / 2 - x, dy = cy * CELL + CELL / 2 - y;
+      if (dx * dx + dy * dy <= rad * rad) { if (paint[i]) counts[paint[i]]--; paint[i] = n; counts[n]++; changed++; }
+    }
+    return changed;
+  }
+  function nonOwnAround(cx, cy, n, rad) { let s = 0; for (let y = cy - rad; y <= cy + rad; y++) for (let x = cx - rad; x <= cx + rad; x++) { if (x < 0 || y < 0 || x >= GC || y >= GR) continue; const v = paint[y * GC + x]; if (v === 3) continue; if (v === 0) s += 1; else if (v !== n) s += 1.4; } return s; }
+
+  // ---- input ---------------------------------------------------------------
+  const keys = {};
+  document.addEventListener('keydown', e => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
+    keys[e.code] = true;
+    if ((e.code === 'Space' || e.code === 'Enter') && overlay.classList.contains('show')) { audio(); startMatch(mode); }
+  });
+  document.addEventListener('keyup', e => { keys[e.code] = false; });
+  const sticks = {};   // pointerId -> {who, ox, oy}
+  function cpos(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) }; }
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault(); cv.setPointerCapture(e.pointerId); audio();
+    const p = cpos(e); const who = p.y > H / 2 ? 1 : 2;
+    if (who === 2 && mode === 'cpu') return;
+    sticks[e.pointerId] = { who, ox: p.x, oy: p.y, x: p.x, y: p.y };
+  });
+  cv.addEventListener('pointermove', e => {
+    const s = sticks[e.pointerId]; if (!s) return;
+    const p = cpos(e); s.x = p.x; s.y = p.y;
+    let dx = p.x - s.ox, dy = p.y - s.oy; const d = Math.hypot(dx, dy);
+    const pl = s.who === 1 ? p1 : p2; if (!pl) return;
+    if (d < 6) { pl.jx = 0; pl.jy = 0; return; }
+    const m = Math.min(1, d / 34); pl.jx = dx / d * m; pl.jy = dy / d * m;
+    // let the stick origin follow so long drags stay responsive
+    if (d > 60) { s.ox = p.x - dx / d * 60; s.oy = p.y - dy / d * 60; }
+  });
+  function endPointer(e) { const s = sticks[e.pointerId]; if (s) { const pl = s.who === 1 ? p1 : p2; if (pl) { pl.jx = 0; pl.jy = 0; } } delete sticks[e.pointerId]; }
+  cv.addEventListener('pointerup', endPointer);
+  cv.addEventListener('pointercancel', endPointer);
+
+  // ---- CPU ------------------------------------------------------------------
+  function cpuThink(p, dt) {
+    p.tgtT -= dt;
+    const near = items.find(it => Math.hypot(it.x - p.x, it.y - p.y) < (hard ? 260 : 150));
+    if (near && (hard || Math.random() < 0.6)) { p.tgt = { x: near.x, y: near.y, item: true }; }
+    else if (!p.tgt || p.tgtT <= 0 || Math.hypot(p.tgt.x - p.x, p.tgt.y - p.y) < 22) {
+      let best = null, bs = -1;
+      const tries = hard ? 24 : 10;
+      for (let i = 0; i < tries; i++) {
+        const cx = 1 + Math.floor(Math.random() * (GC - 2)), cy = 1 + Math.floor(Math.random() * (GR - 2));
+        if (paint[cy * GC + cx] === 3) continue;
+        const x = cx * CELL + CELL / 2, y = cy * CELL + CELL / 2;
+        const d = Math.hypot(x - p.x, y - p.y);
+        let s = nonOwnAround(cx, cy, p.n, hard ? 3 : 2) - d * (hard ? 0.02 : 0.03) + Math.random() * (hard ? 2 : 8);
+        if (timeLeft < 15) { const o = 3 - p.n; if (paint[cy * GC + cx] === o) s += 6; }
+        if (s > bs) { bs = s; best = { x, y }; }
+      }
+      p.tgt = best; p.tgtT = hard ? 1.1 : 1.8;
+    }
+    if (p.tgt) {
+      const dx = p.tgt.x - p.x, dy = p.tgt.y - p.y, d = Math.hypot(dx, dy) || 1;
+      let jx = dx / d, jy = dy / d;
+      // wall avoidance: probe ahead
+      if (isWall(p.x + jx * 34, p.y + jy * 34)) { const a = Math.atan2(jy, jx) + (p.n % 2 ? 1 : -1) * Math.PI / 2; jx = Math.cos(a); jy = Math.sin(a); p.stuck += dt; if (p.stuck > 0.9) { p.tgt = null; p.stuck = 0; } }
+      p.jx = jx; p.jy = jy;
+    }
+  }
+
+  // ---- update -----------------------------------------------------------------
+  function movePlayer(p, dt, kb) {
+    let dx = 0, dy = 0;
+    if (kb) { if (keys[kb[0]]) dy -= 1; if (keys[kb[1]]) dy += 1; if (keys[kb[2]]) dx -= 1; if (keys[kb[3]]) dx += 1; }
+    if (dx || dy) { const l = Math.hypot(dx, dy); dx /= l; dy /= l; } else { dx = p.jx; dy = p.jy; }
+    const sp = SPEED * (p.boost > 0 ? 1.45 : 1);
+    p.vx = dx * sp; p.vy = dy * sp;
+    if (dx || dy) p.face = Math.atan2(dy, dx);
+    const nx = p.x + p.vx * dt, ny = p.y + p.vy * dt;
+    const clear = (x, y) => !isWall(x - R, y) && !isWall(x + R, y) && !isWall(x, y - R) && !isWall(x, y + R) && !isWall(x - R * 0.7, y - R * 0.7) && !isWall(x + R * 0.7, y - R * 0.7) && !isWall(x - R * 0.7, y + R * 0.7) && !isWall(x + R * 0.7, y + R * 0.7);
+    if (clear(nx, p.y)) p.x = Math.max(R, Math.min(W - R, nx));
+    if (clear(p.x, ny)) p.y = Math.max(R, Math.min(H - R, ny));
+    if (p.boost > 0) p.boost -= dt;
+    const painted = paintCircle(p.x, p.y, p.boost > 0 ? p.brush + 8 : p.brush, p.n);
+    if (painted && (dx || dy)) { SFX.blip(p.n); if (Math.random() < 0.3) particles.push({ x: p.x + (Math.random() - 0.5) * 20, y: p.y + (Math.random() - 0.5) * 20, vx: (Math.random() - 0.5) * 60, vy: (Math.random() - 0.5) * 60, life: 0.35, c: GLOW[p.n] }); }
+  }
+  function spawnItem() {
+    for (let t = 0; t < 30; t++) {
+      const x = 30 + Math.random() * (W - 60), y = 60 + Math.random() * (H - 120);
+      if (isWall(x, y) || Math.hypot(x - p1.x, y - p1.y) < 60 || Math.hypot(x - p2.x, y - p2.y) < 60) continue;
+      items.push({ x, y, type: Math.random() < 0.55 ? 'bomb' : 'dash', t: 0 }); return;
+    }
+  }
+  function update(dt) {
+    anim += dt;
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt; return s.life > 0; });
+    splashes = splashes.filter(s => { s.t += dt; return s.t < 0.5; });
+    if (state === 'count') {
+      const b = Math.ceil(countT); countT -= dt; const a = Math.ceil(countT);
+      if (a !== b && a > 0) SFX.count();
+      if (countT <= 0) { state = 'play'; SFX.go(); }
+      return;
+    }
+    if (state !== 'play') return;
+    timeLeft -= dt;
+    if (timeLeft <= 10 && Math.ceil(timeLeft) !== lastTick) { lastTick = Math.ceil(timeLeft); if (lastTick > 0) SFX.tick(); }
+    if (timeLeft <= 0) { timeLeft = 0; finish(); return; }
+    if (mode === 'cpu') cpuThink(p2, dt);
+    movePlayer(p1, dt, ['KeyW', 'KeyS', 'KeyA', 'KeyD']);
+    movePlayer(p2, dt, mode === 'cpu' ? null : ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+    // bump
+    const dx = p2.x - p1.x, dy = p2.y - p1.y, d = Math.hypot(dx, dy);
+    if (d < R * 2 && d > 0) {
+      const push = (R * 2 - d) / 2 + 0.5, nx = dx / d, ny = dy / d;
+      if (!isWall(p1.x - nx * push, p1.y - ny * push)) { p1.x -= nx * push; p1.y -= ny * push; }
+      if (!isWall(p2.x + nx * push, p2.y + ny * push)) { p2.x += nx * push; p2.y += ny * push; }
+      p1.x = Math.max(R, Math.min(W - R, p1.x)); p2.x = Math.max(R, Math.min(W - R, p2.x)); p1.y = Math.max(R, Math.min(H - R, p1.y)); p2.y = Math.max(R, Math.min(H - R, p2.y));
+      if (!p1.bumpCd) { SFX.bump(); p1.bumpCd = 0.3; }
+    }
+    if (p1.bumpCd) p1.bumpCd = Math.max(0, p1.bumpCd - dt);
+    // items
+    spawnT -= dt; if (spawnT <= 0 && items.length < 3) { spawnItem(); spawnT = 5 + Math.random() * 3; }
+    for (const it of items) it.t += dt;
+    items = items.filter(it => {
+      for (const p of [p1, p2]) {
+        if (Math.hypot(it.x - p.x, it.y - p.y) < R + 12) {
+          if (it.type === 'bomb') { paintCircle(p.x, p.y, 62, p.n); splashes.push({ x: p.x, y: p.y, n: p.n, t: 0 }); SFX.bomb(); for (let i = 0; i < 24; i++) { const a = Math.random() * Math.PI * 2, sp = 80 + Math.random() * 200; particles.push({ x: p.x, y: p.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.5, c: GLOW[p.n] }); } }
+          else { p.boost = 5; SFX.item(); }
+          return false;
+        }
+      }
+      return it.t < 12;
+    });
+  }
+  function finish() {
+    state = 'over'; SFX.end();
+    const a = counts[1], b = counts[2];
+    const pa = Math.round(a / paintable * 1000) / 10, pb = Math.round(b / paintable * 1000) / 10;
+    const winner = a > b ? 1 : b > a ? 2 : 0;
+    setTimeout(() => {
+      const big = document.getElementById('ovBig'), note = document.getElementById('ovNote');
+      if (winner === 1) { big.textContent = 'PLAYER 1 WIN!'; big.className = 'big p1'; SFX.win(); }
+      else if (winner === 2) { big.textContent = mode === 'cpu' ? 'CPU WIN…' : 'PLAYER 2 WIN!'; big.className = 'big'; if (mode !== 'cpu') SFX.win(); }
+      else { big.textContent = 'DRAW'; big.className = 'big draw'; }
+      note.innerHTML = '<i class="c1">P1 ' + pa + '%</i> ／ <i class="c2">' + (mode === 'cpu' ? 'CPU ' : 'P2 ') + pb + '%</i><br>' +
+        '<div class="resbar" style="margin:8px auto 0"><i style="width:' + pa + '%;background:#53e0d8"></i><i style="flex:1"></i><i style="width:' + pb + '%;background:#ff5fa2"></i></div>' +
+        '<br>もういちど？ モードをえらんでね';
+      overlay.classList.add('show');
+    }, 1200);
+  }
+
+  // ---- draw -------------------------------------------------------------------
+  function drawPlayer(p) {
+    ctx.save(); ctx.translate(p.x, p.y);
+    ctx.shadowColor = COLORS[p.n]; ctx.shadowBlur = p.boost > 0 ? 24 : 12;
+    ctx.fillStyle = COLORS[p.n]; ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(-5, -6, 6, 0, Math.PI * 2); ctx.fill();
+    // eyes facing move direction
+    const ex = Math.cos(p.face) * 5, ey = Math.sin(p.face) * 5;
+    ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(ex - 4, ey - 1, 2.6, 0, Math.PI * 2); ctx.arc(ex + 4, ey - 1, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex - 3.2, ey - 2, 1, 0, Math.PI * 2); ctx.arc(ex + 4.8, ey - 2, 1, 0, Math.PI * 2); ctx.fill();
+    // brush / roller
+    ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, R + 4, p.face - 0.7, p.face + 0.7); ctx.stroke();
+    ctx.restore();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // paint grid
+    for (let cy = 0; cy < GR; cy++) for (let cx = 0; cx < GC; cx++) {
+      const v = paint[cy * GC + cx]; if (!v) continue;
+      ctx.fillStyle = v === 3 ? '#2b2b4a' : PAINT[v];
+      ctx.fillRect(cx * CELL, cy * CELL, CELL, CELL);
+    }
+    // subtle grid + walls edge
+    ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = 1; ctx.beginPath();
+    for (let x = 0; x <= W; x += CELL * 2) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
+    for (let y = 0; y <= H; y += CELL * 2) { ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
+    ctx.stroke();
+    for (const [x, y, w, h] of WALLS) { ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 2; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 8; ctx.strokeRect(x * CELL + 1, y * CELL + 1, w * CELL - 2, h * CELL - 2); ctx.shadowBlur = 0; }
+    ctx.strokeStyle = 'rgba(157,153,192,.3)'; ctx.setLineDash([6, 8]); ctx.beginPath(); ctx.moveTo(0, H / 2 + 0.5); ctx.lineTo(W, H / 2 + 0.5); ctx.stroke(); ctx.setLineDash([]);
+    for (const s of splashes) { ctx.globalAlpha = 1 - s.t * 2; ctx.strokeStyle = COLORS[s.n]; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(s.x, s.y, 20 + s.t * 120, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; }
+    for (const it of items) {
+      const bob = Math.sin(anim * 5 + it.x) * 3;
+      ctx.fillStyle = 'rgba(255,255,255,.12)'; ctx.beginPath(); ctx.arc(it.x, it.y, 18, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.font = '22px "Apple Color Emoji","Segoe UI Emoji",sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+      ctx.fillText(it.type === 'bomb' ? '💣' : '⚡', it.x, it.y + 8 + bob);
+    }
+    if (p1) { drawPlayer(p2); drawPlayer(p1); }
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 3)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - 3, s.y - 3, 6, 6); }
+    ctx.globalAlpha = 1;
+    // HUD bar
+    const a = counts[1] / paintable, b = counts[2] / paintable;
+    ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, 30);
+    ctx.fillStyle = '#2a2a48'; ctx.fillRect(10, 8, W - 20, 14);
+    ctx.fillStyle = COLORS[1]; ctx.fillRect(10, 8, (W - 20) * a, 14);
+    ctx.fillStyle = COLORS[2]; ctx.fillRect(W - 10 - (W - 20) * b, 8, (W - 20) * b, 14);
+    ctx.font = '13px DotGothic16, monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#fff';
+    ctx.fillText(Math.round(a * 100) + '%', 14, 20); ctx.textAlign = 'right'; ctx.fillText(Math.round(b * 100) + '%', W - 14, 20);
+    ctx.textAlign = 'center';
+    if (state === 'play' || state === 'over') {
+      ctx.font = (timeLeft <= 10 ? '30px' : '24px') + ' DotGothic16, monospace';
+      ctx.fillStyle = timeLeft <= 10 ? '#ffd166' : '#ffffff'; ctx.shadowColor = '#000'; ctx.shadowBlur = 6;
+      ctx.fillText(Math.ceil(timeLeft), W / 2, H / 2 + 9); ctx.shadowBlur = 0;
+    }
+    if (state === 'count') { ctx.fillStyle = '#ffd166'; ctx.font = '58px DotGothic16, monospace'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 18; ctx.fillText(Math.ceil(countT), W / 2, H / 2 + 20); ctx.shadowBlur = 0; }
+    if (state === 'over') { ctx.fillStyle = '#ffd166'; ctx.font = '40px DotGothic16, monospace'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16; ctx.fillText('FINISH!', W / 2, H / 2 - 40); ctx.shadowBlur = 0; }
+    // joystick visuals
+    for (const id in sticks) { const s = sticks[id]; ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(s.ox, s.oy, 34, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(s.x, s.y, 12, 0, Math.PI * 2); ctx.fill(); }
+    ctx.textAlign = 'left';
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+  resetArena(); requestAnimationFrame(loop);
+
+  window.__test = {
+    start: startMatch,
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    state: () => ({ state, mode, hard, timeLeft: +timeLeft.toFixed(1), counts: Object.assign({}, counts), paintable, items: items.length, p1: p1 && { x: +p1.x.toFixed(1), y: +p1.y.toFixed(1), boost: +p1.boost.toFixed(1) }, p2: p2 && { x: +p2.x.toFixed(1), y: +p2.y.toFixed(1) } }),
+    stick: (n, x, y) => { const p = n === 1 ? p1 : p2; p.jx = x; p.jy = y; },
+    skipCount: () => { if (state === 'count') countT = 0; },
+    setTime: t => { timeLeft = t; },
+    addItem: (x, y, type) => { items.push({ x, y, type, t: 0 }); },
+  };
+})();
+</script>
+</body>
+</html>
