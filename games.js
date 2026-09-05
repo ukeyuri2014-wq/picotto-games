@@ -21,6 +21,20 @@
 
 const GAMES = [
   {
+    id: "017",
+    genre: "CARD GAME",
+    age: "8歳〜",
+    color: "#ffd166",
+    title: "よふかし大富豪",
+    emoji: "🃏",
+    author: "スタッフ",
+    date: "2026-09-05",
+    description:
+      "CPU3人と対戦する定番トランプゲーム。8切り・革命・階段・縛り・11バック・都落ち・禁止上がり・カード交換などのローカルルールを設定画面でON/OFFできる。迷ったら「おすすめ」ボタン。",
+    controls: "カードをタップして「出す」か「パス」 / PCはEnter・P・H",
+    path: "games/017-yofukashi-daifugo/index.html",
+  },
+  {
     id: "016",
     genre: "2P BATTLE",
     age: "6歳〜",
