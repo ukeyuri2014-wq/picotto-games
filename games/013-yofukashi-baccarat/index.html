@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>よふかしバカラ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166;
+    --pl:#4fa3ff; --bk:#ff4d6d; --tie:#3ddc84;
+    --felt1:#12634a; --felt2:#083527;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 40px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.45);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+
+  /* bank */
+  .bankbar{display:grid;grid-template-columns:1fr auto;gap:2px 10px;background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:8px 12px 9px;margin-bottom:8px;font-size:11px;color:var(--sub);letter-spacing:1px}
+  .bankbar .bank{font-size:26px;color:#fff;letter-spacing:1px;line-height:1.1}
+  .bankbar .bank.up{color:var(--gold)} .bankbar .bank.down{color:var(--bk)}
+  .bankbar .goal{text-align:right;align-self:end}
+  .bankbar .goal b{display:block;color:var(--ink);font-size:14px;font-weight:400}
+  .bar{grid-column:1/-1;height:6px;background:#0d0d1c;border-radius:3px;overflow:hidden;margin-top:4px}
+  .bar i{display:block;height:100%;width:10%;background:linear-gradient(90deg,var(--gold),#ff9d4d);transition:width .6s ease}
+  .bankbar .sub{grid-column:1/-1;display:flex;justify-content:space-between;margin-top:3px}
+
+  /* table */
+  .table{position:relative;background:radial-gradient(ellipse at 50% 20%,var(--felt1),var(--felt2) 78%);border:3px solid #8a6a2b;box-shadow:inset 0 0 44px rgba(0,0,0,.5),0 0 0 1px #3a2c10,0 6px 20px rgba(0,0,0,.4);border-radius:16px;padding:8px 6px 10px;cursor:default}
+  .table .deco{position:absolute;left:0;right:0;top:6px;text-align:center;font-size:9px;letter-spacing:3px;color:rgba(255,255,255,.35)}
+  .table .limits{position:absolute;left:0;right:0;bottom:5px;text-align:center;font-size:9px;letter-spacing:1px;color:rgba(255,255,255,.35)}
+  .hands{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
+  .hand{text-align:center}
+  .hand .lbl{font-size:13px;letter-spacing:2px;line-height:1.1}
+  .hand .lbl small{display:block;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;margin-top:2px}
+  .hand.banker .lbl{color:#ff8fa3}
+  .hand.player .lbl{color:#8ec4ff}
+  .slots{display:flex;justify-content:center;align-items:center;gap:6px;min-height:84px;margin:6px 0 2px}
+  .tot{font-size:20px;min-height:24px;letter-spacing:2px;color:#fff}
+  .tot.nat{color:var(--gold);text-shadow:0 0 10px rgba(255,209,102,.7)}
+  .tot.winner{color:var(--gold)}
+  .cw{width:52px;height:74px;position:relative;flex:none}
+  .cw.in{animation:dealIn .32s ease-out}
+  .cw.third{transform:rotate(90deg);margin:0 11px}
+  .cw.third.in{animation:dealIn3 .32s ease-out}
+  @keyframes dealIn{from{transform:translate(110px,-120px) rotate(25deg);opacity:0}to{transform:none;opacity:1}}
+  @keyframes dealIn3{from{transform:translate(110px,-120px) rotate(115deg);opacity:0}to{transform:rotate(90deg);opacity:1}}
+  .card{position:absolute;inset:0;border-radius:6px;background:#fff;color:#151515;box-shadow:0 3px 8px rgba(0,0,0,.5);transition:transform .16s ease-in;overflow:hidden}
+  .card.red{color:#d7263d}
+  .card.flip{transform:scaleX(0)}
+  .card .rk{position:absolute;top:4px;left:6px;font-size:15px;line-height:1}
+  .card .rk small{display:block;font-size:11px;line-height:1.1}
+  .card .su{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;padding-top:8px}
+  .card .rk2{position:absolute;bottom:4px;right:6px;font-size:12px;line-height:1;transform:rotate(180deg)}
+  .card.down{background:repeating-linear-gradient(45deg,#1b2a6b 0 4px,#26398c 4px 8px);border:3px solid #f2f2f2}
+  .card.down > *{visibility:hidden}
+  .cw.peek .card.down{animation:peekPulse .9s ease-in-out infinite;cursor:pointer}
+  @keyframes peekPulse{0%,100%{box-shadow:0 3px 8px rgba(0,0,0,.5)}50%{box-shadow:0 0 0 4px var(--gold),0 0 18px var(--gold)}}
+  .hint{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);font-size:12px;color:var(--gold);background:rgba(0,0,0,.55);padding:3px 12px;border-radius:999px;display:none;white-space:nowrap;pointer-events:none}
+  .hint.show{display:block}
+  .banner{min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:2px 0 12px;text-align:center;visibility:hidden;pointer-events:none}
+  .banner.show{visibility:visible;animation:pop .32s ease-out}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+  .banner .res{display:inline-block;font-size:20px;letter-spacing:3px;padding:4px 16px;border-radius:999px;background:rgba(0,0,0,.6);border:1px solid;white-space:nowrap}
+  .banner .res.P{color:var(--pl)} .banner .res.B{color:var(--bk)} .banner .res.T{color:var(--tie)} .banner .res.S{color:var(--gold)}
+  .banner .net{margin-top:3px;font-size:17px;letter-spacing:1px;text-shadow:0 0 8px rgba(0,0,0,.9)}
+  .banner .net.plus{color:var(--gold)} .banner .net.minus{color:#ff8fa3} .banner .net.zero{color:#cfd3ff}
+  .banner .pair{margin-top:1px;font-size:11px;color:#fff;text-shadow:0 0 6px #000}
+
+  /* bets */
+  .bets{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:8px}
+  .spot{border:2px solid;border-radius:10px;padding:7px 4px 6px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);position:relative;min-height:60px;user-select:none;-webkit-user-select:none;transition:box-shadow .2s,opacity .2s}
+  .spot:active{filter:brightness(1.3)}
+  .spot .nm{font-size:14px;letter-spacing:1px;line-height:1.1}
+  .spot .odds{font-size:10px;color:var(--sub);margin-top:2px}
+  .spot .amt{font-size:14px;color:var(--gold);min-height:17px;margin-top:3px;line-height:1.1}
+  .spot.PP,.spot.T,.spot.BP{grid-column:span 2}
+  .spot.P,.spot.B{grid-column:span 3;min-height:70px}
+  .spot.P .nm,.spot.B .nm{font-size:18px}
+  .spot.P,.spot.PP{border-color:var(--pl);color:var(--pl)}
+  .spot.B,.spot.BP{border-color:var(--bk);color:var(--bk)}
+  .spot.T{border-color:var(--tie);color:var(--tie)}
+  .spot.win{box-shadow:0 0 0 2px #fff inset,0 0 16px currentColor;background:rgba(255,255,255,.1)}
+  .spot.lose{opacity:.42}
+  .locked .spot{cursor:default}
+
+  /* chips */
+  .chips{display:flex;gap:6px;justify-content:center;margin-top:10px}
+  .chip{width:54px;height:54px;border-radius:50%;border:4px dashed #fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;color:#fff;box-shadow:0 3px 6px rgba(0,0,0,.5);font-family:inherit;letter-spacing:0;transition:transform .12s;padding:0;line-height:1}
+  .chip[data-v="10000"]{background:#2f6fd6}
+  .chip[data-v="50000"]{background:#d9483f}
+  .chip[data-v="100000"]{background:#2b2b2b}
+  .chip[data-v="500000"]{background:#7a3fd6}
+  .chip[data-v="1000000"]{background:#e0a21a;color:#2b1a00;border-color:#fff2c4}
+  .chip.sel{transform:scale(1.14);box-shadow:0 0 0 3px var(--gold),0 0 18px var(--gold)}
+  .chip:disabled{opacity:.3;cursor:default;transform:none}
+  .row{display:flex;gap:6px;margin-top:8px}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:11px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn:disabled{opacity:.38;cursor:default}
+  .btn.deal{flex:2;background:linear-gradient(180deg,#ffd166,#ff9d4d);color:#2b1a00;border:none;font-size:19px;letter-spacing:3px;box-shadow:0 4px 16px rgba(255,157,77,.35)}
+  .btn.deal:hover:not(:disabled){color:#000;filter:brightness(1.08)}
+  .opts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .opt{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--sub);border:1px solid var(--edge);border-radius:999px;padding:6px 8px;cursor:pointer;user-select:none;-webkit-user-select:none;white-space:nowrap}
+  .opt input{accent-color:var(--gold);margin:0}
+  .opt.on{color:var(--gold);border-color:rgba(255,209,102,.5)}
+  .toast{position:absolute;left:50%;top:44%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:var(--gold);border:1px solid var(--gold);padding:8px 16px;border-radius:999px;font-size:13px;display:none;z-index:5;white-space:nowrap}
+  .toast.show{display:block;animation:toastIn .25s}
+  @keyframes toastIn{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%);opacity:1}}
+
+  /* roads */
+  .roads{margin-top:12px;background:#f7f7fb;border-radius:12px;padding:8px;color:#222;border:1px solid #d8d8e6}
+  .road-head{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:#555;margin:0 2px 4px;letter-spacing:1px}
+  .road-head b{font-weight:400;color:#222}
+  .road-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .road{display:grid;grid-auto-flow:column;grid-template-rows:repeat(6,19px);grid-auto-columns:19px;gap:1px;background:#d9d9e6;padding:1px;border:1px solid #c9c9dc;width:max-content}
+  .c{width:19px;height:19px;background:#fff;position:relative;display:flex;align-items:center;justify-content:center}
+  .c i{display:block;width:15px;height:15px;border-radius:50%;font-style:normal;font-size:10px;line-height:15px;text-align:center;color:#fff;position:relative}
+  .bead .c.P i{background:var(--pl)} .bead .c.B i{background:#e33d5b} .bead .c.T i{background:#25b569}
+  .big .c.P i{border:2px solid var(--pl);width:14px;height:14px} .big .c.B i{border:2px solid #e33d5b;width:14px;height:14px}
+  .c .tie{position:absolute;left:2px;top:2px;width:15px;height:15px;pointer-events:none}
+  .c .tie::before{content:"";position:absolute;left:-1px;top:6px;width:17px;height:2px;background:#25b569;transform:rotate(-45deg)}
+  .c .tn{position:absolute;right:-1px;bottom:-2px;font-size:8px;color:#25b569;background:#fff;line-height:1;padding:0 1px}
+  .c .pb{position:absolute;left:1px;top:1px;width:5px;height:5px;border-radius:50%;background:#e33d5b;border:1px solid #fff}
+  .c .pp{position:absolute;right:1px;bottom:1px;width:5px;height:5px;border-radius:50%;background:var(--pl);border:1px solid #fff}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+  .stat{background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:6px 4px;text-align:center;font-size:10px;color:var(--sub);letter-spacing:1px}
+  .stat b{display:block;font-weight:400;color:var(--ink);font-size:15px;margin-top:2px;letter-spacing:0}
+
+  /* overlay */
+  #overlay{position:absolute;inset:0;display:none;flex-direction:column;gap:12px;align-items:center;justify-content:center;background:rgba(19,19,34,.94);border-radius:12px;text-align:center;padding:16px;z-index:10}
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.2}
+  #overlay .big.bad{color:var(--bk);text-shadow:0 0 16px rgba(255,77,109,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9;max-width:380px}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--pl)} #overlay .note .c2{color:var(--bk)} #overlay .note .c3{color:var(--tie)} #overlay .note .c4{color:var(--gold)}
+  #overlay button{font-family:inherit;font-size:16px;background:var(--gold);color:#2b1a00;border:none;border-radius:8px;padding:10px 26px;cursor:pointer;letter-spacing:2px;min-width:240px}
+  #overlay button.ghost{background:none;border:1px solid var(--edge);color:var(--sub);font-size:14px}
+  #overlay button.ghost:hover{border-color:var(--gold);color:var(--gold)}
+  #overlay .rule{font-size:11px;color:var(--sub);line-height:1.7}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:14px;line-height:1.75}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--pl);font-style:normal} .help .c2{color:var(--bk);font-style:normal} .help .c3{color:var(--tie);font-style:normal} .help .c4{color:var(--gold);font-style:normal}
+  .help table{border-collapse:collapse;margin:6px 0;font-size:12px}
+  .help td{border:1px solid var(--edge);padding:3px 8px}
+  @media (max-width:400px){
+    .chip{width:48px;height:48px;font-size:11px}
+    .cw{width:46px;height:66px}.card .su{font-size:26px}
+    .spot .nm{font-size:12px}.spot.P .nm,.spot.B .nm{font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>よふかしバカラ</h1>
+  <div class="age-badge">対象年齢の目安：15歳〜 / 韓国カジノルール</div>
+</header>
+
+<div id="wrap">
+  <div class="bankbar">
+    <div><div>もちきん BANKROLL</div><div class="bank" id="bank">¥1,000,000</div></div>
+    <div class="goal">もくひょう GOAL<b>¥10,000,000</b></div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="sub"><span id="handCount">HAND 0</span><span id="shoeInfo">SHOE ---</span></div>
+  </div>
+
+  <div class="table" id="table">
+    <div class="deco">PICOTTO BACCARAT ・ KOREAN CASINO RULES</div>
+    <div class="hands">
+      <div class="hand banker">
+        <div class="lbl">BANKER<small>뱅커 ・ バンカー</small></div>
+        <div class="slots" id="slotsB"></div>
+        <div class="tot" id="totB"></div>
+      </div>
+      <div class="hand player">
+        <div class="lbl">PLAYER<small>플레이어 ・ プレイヤー</small></div>
+        <div class="slots" id="slotsP"></div>
+        <div class="tot" id="totP"></div>
+      </div>
+    </div>
+    <div class="banner" id="banner"><div class="res" id="bannerRes"></div><div class="net" id="bannerNet"></div><div class="pair" id="bannerPair"></div></div>
+    <div class="limits">MIN ¥10,000 ・ MAX ¥1,000,000 / 1ハンド合計</div>
+    <div class="hint" id="hint">👆 カードをタップして めくる（しぼり）</div>
+  </div>
+
+  <div class="bets" id="bets">
+    <div class="spot PP" data-spot="PP"><div class="nm">P PAIR</div><div class="odds">11倍</div><div class="amt"></div></div>
+    <div class="spot T" data-spot="T"><div class="nm">TIE</div><div class="odds">8倍</div><div class="amt"></div></div>
+    <div class="spot BP" data-spot="BP"><div class="nm">B PAIR</div><div class="odds">11倍</div><div class="amt"></div></div>
+    <div class="spot P" data-spot="P"><div class="nm">PLAYER</div><div class="odds">1倍</div><div class="amt"></div></div>
+    <div class="spot B" data-spot="B"><div class="nm">BANKER</div><div class="odds" id="oddsB">1倍（6で勝ちは0.5倍）</div><div class="amt"></div></div>
+  </div>
+
+  <div class="chips" id="chips">
+    <button class="chip" data-v="10000">1万</button>
+    <button class="chip sel" data-v="50000">5万</button>
+    <button class="chip" data-v="100000">10万</button>
+    <button class="chip" data-v="500000">50万</button>
+    <button class="chip" data-v="1000000">100万</button>
+  </div>
+
+  <div class="row">
+    <button class="btn" id="undoBtn">もどす</button>
+    <button class="btn" id="clearBtn">クリア</button>
+    <button class="btn" id="rebetBtn">まえと同じ</button>
+  </div>
+  <div class="row">
+    <button class="btn deal" id="dealBtn">DEAL</button>
+  </div>
+  <div class="opts">
+    <label class="opt" id="optSqueeze"><input type="checkbox" id="chkSqueeze"> しぼり（自分でめくる）</label>
+    <label class="opt" id="optFast"><input type="checkbox" id="chkFast"> はやい</label>
+  </div>
+
+  <div class="roads">
+    <div class="road-head"><span>珠盤路 BEAD PLATE</span><b id="roadCount">P 0 / B 0 / T 0</b></div>
+    <div class="road-wrap" id="beadWrap"><div class="road bead" id="bead"></div></div>
+    <div class="road-head" style="margin-top:8px"><span>大路 BIG ROAD</span><span>● 連勝は下へ、切りかわると次の列</span></div>
+    <div class="road-wrap" id="bigWrap"><div class="road big" id="big"></div></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">かち<b id="stWin">0</b></div>
+    <div class="stat">まけ<b id="stLose">0</b></div>
+    <div class="stat">れんしょう<b id="stStreak">0</b></div>
+    <div class="stat">さいこう<b id="stBest">¥1,000,000</b></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">よふかし<br>バカラ</div>
+    <div class="note" id="ovNote">
+      <i class="c4">100万円</i> を <i class="c4">1,000万円</i> にできたら クリア！<br>
+      1ハンドの上限は <i class="c4">100万円</i>（ミニマム1万円）<br><br>
+      <i class="c1">PLAYER 1倍</i> ／ <i class="c2">BANKER 1倍</i>（6で勝ちは0.5倍）／ <i class="c3">TIE 8倍</i> ／ PAIR 11倍<br>コミッション（0.95倍）なしの ノーコミッション卓<br>
+      チップをえらんで ベット枠をタップ → <b>DEAL</b>
+    </div>
+    <button id="startBtn">スタート（100万円から）</button>
+    <button id="contBtn" class="ghost" style="display:none">つづきから</button>
+    <div class="rule">ゲームの中だけの架空のお金です。実際のお金は使いません。</div>
+  </div>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：<i class="c1">PLAYER</i> と <i class="c2">BANKER</i> のどちらが「9に近い」かを予想してベット。カードの数え方は A=1、2〜9=そのまま、10・J・Q・K=0。合計の一の位だけ見る（7+8=15→5）。3枚目を引くかどうかはカジノの決まりどおり自動で進む。<br>
+  <b>配当（韓国カジノの一般的なルール）</b>：
+  <table>
+    <tr><td><i class="c1">PLAYER</i></td><td>1倍</td><td>プレイヤーが勝ち</td></tr>
+    <tr><td><i class="c2">BANKER</i></td><td>1倍</td><td>バンカーが勝ち。ただし合計「6」で勝ったときだけ0.5倍</td></tr>
+    <tr><td><i class="c3">TIE</i></td><td>8倍</td><td>引き分け。PLAYER・BANKERのベットは返ってくる</td></tr>
+    <tr><td>P PAIR / B PAIR</td><td>11倍</td><td>最初の2枚が同じ数字（10とJは別の数字なのでペアじゃない）</td></tr>
+  </table>
+  <b>コミッションなし</b>：韓国のノーコミッション卓と同じルール。バンカーの0.95倍（5%コミッション）はなく、そのかわりバンカーが「6」で勝ったときだけ配当が半分（0.5倍）になる。<br>
+  <b>しぼり</b>：カードを自分でタップしてめくる、本場スタイルのドキドキモード。<br>
+  <b>罫線</b>：珠盤路は出た順、大路は連勝が縦にのびる。8デッキのシュー、残り14枚でシャッフル。<br>
+  <b>PC</b>：Enter=DEAL / 1〜5=チップ / P・B・T=ベット / Z=もどす / C=クリア / R=まえと同じ<br>
+  <i class="c4">※ ゲームの中だけの架空のお金です。実際のお金は使いません。</i>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const START = 1000000, GOAL = 10000000, MIN_BET = 10000, MAX_TOTAL = 1000000, DECKS = 8, CUT = 14;
+  const SAVE_KEY = 'picotto_baccarat_v1', MUTE_KEY = 'picotto_baccarat_mute';
+  const $ = id => document.getElementById(id);
+  const fmt = n => '¥' + Math.round(n).toLocaleString('ja-JP');
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const SPOTS = ['P', 'B', 'T', 'PP', 'BP'];
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() {
+    if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (ac && ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function noise(dur, vol, f, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = a.createBufferSource(); s.buffer = buf;
+    const g = a.createGain(); g.gain.value = vol;
+    const fl = a.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = f;
+    s.connect(fl); fl.connect(g); g.connect(a.destination); s.start(a.currentTime + delay);
+  }
+  const SFX = {
+    chip() { tone('square', 1500, 1100, 0.05, 0.05); tone('square', 2100, 1700, 0.04, 0.03, 0.04); },
+    card() { noise(0.08, 0.2, 3200); },
+    flip() { noise(0.05, 0.12, 5000); tone('triangle', 520, 760, 0.07, 0.035); },
+    win() { [523, 659, 784, 1046].forEach((f, i) => tone('square', f, f, 0.14, 0.06, i * 0.09)); },
+    lose() { tone('sawtooth', 220, 100, 0.4, 0.06); },
+    tie() { tone('triangle', 660, 660, 0.12, 0.06); tone('triangle', 660, 660, 0.12, 0.06, 0.17); },
+    shuffle() { for (let i = 0; i < 7; i++) noise(0.06, 0.12, 2600, i * 0.07); },
+    clear() { [523, 659, 784, 1046, 1318, 1568, 2093].forEach((f, i) => tone('square', f, f, 0.22, 0.07, i * 0.11)); },
+    bust() { tone('sawtooth', 320, 50, 1.1, 0.08); },
+  };
+  const muteBtn = $('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  drawMute();
+
+  // ---- state ---------------------------------------------------------------
+  let bank = START;
+  let bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 };
+  let undoStack = [], lastBets = null, chipVal = 50000;
+  let results = [];            // {r:'P'|'B'|'T', pp, bp}
+  let stats = { hands: 0, runHands: 0, win: 0, lose: 0, push: 0, best: START, streak: 0, bestStreak: 0, clears: 0, bestClear: null };
+  let opts = { squeeze: false, fast: false };
+  let shoe = [], pos = 0;
+  let busy = false, started = false, pendingReveal = null;
+
+  // ---- cards / shoe --------------------------------------------------------
+  const SUITS = ['♠', '♥', '♦', '♣'];
+  const cardVal = c => (c.r >= 10 ? 0 : c.r);
+  const total = cs => cs.reduce((a, c) => a + cardVal(c), 0) % 10;
+  const rankLabel = r => (r === 1 ? 'A' : r === 11 ? 'J' : r === 12 ? 'Q' : r === 13 ? 'K' : String(r));
+  function newShoe() {
+    shoe = [];
+    for (let d = 0; d < DECKS; d++) for (let s = 0; s < 4; s++) for (let r = 1; r <= 13; r++) shoe.push({ r, s });
+    for (let i = shoe.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shoe[i], shoe[j]] = [shoe[j], shoe[i]]; }
+    pos = 0;
+    // burn: first card decides how many to burn (10/絵札 = 10 枚)
+    const first = shoe[pos++];
+    pos += cardVal(first) || 10;
+    updateShoe();
+  }
+  function drawCard() { if (pos >= shoe.length) newShoe(); return shoe[pos++]; }
+  function updateShoe() { $('shoeInfo').textContent = 'SHOE のこり ' + Math.max(0, shoe.length - pos) + '枚'; }
+
+  // 3枚目のルール（プント・バンコ標準／韓国カジノ共通）
+  const playerDraws = pv => pv <= 5;
+  function bankerDraws(bv, p3) {   // p3: プレイヤー3枚目の値、引いてなければ null
+    if (p3 === null) return bv <= 5;
+    if (bv <= 2) return true;
+    if (bv === 3) return p3 !== 8;
+    if (bv === 4) return p3 >= 2 && p3 <= 7;
+    if (bv === 5) return p3 >= 4 && p3 <= 7;
+    if (bv === 6) return p3 === 6 || p3 === 7;
+    return false;
+  }
+
+  // ---- bets ----------------------------------------------------------------
+  const totalBet = () => SPOTS.reduce((a, k) => a + bets[k], 0);
+  function place(spot, amt = chipVal) {
+    if (busy || !started) return false;
+    if (totalBet() + amt > MAX_TOTAL) { toast('1ハンドの合計は100万円まで'); return false; }
+    if (amt > bank) { toast('もちきんが たりない…'); return false; }
+    bets[spot] += amt; bank -= amt; undoStack.push({ spot, amt });
+    SFX.chip(); renderBets(); renderBank(); return true;
+  }
+  function undoBet() {
+    if (busy) return; const u = undoStack.pop(); if (!u) return;
+    bets[u.spot] -= u.amt; bank += u.amt; renderBets(); renderBank();
+  }
+  function clearBets() { if (busy) return; while (undoStack.length) undoBet(); }
+  function rebet() {
+    if (!lastBets || busy || !started) return;
+    clearBets();
+    let placed = false;
+    for (const k of SPOTS) {
+      let a = Math.min(lastBets[k] || 0, bank, MAX_TOTAL - totalBet());
+      a = Math.floor(a / MIN_BET) * MIN_BET;
+      if (a > 0) { bets[k] += a; bank -= a; undoStack.push({ spot: k, amt: a }); placed = true; }
+    }
+    if (placed) SFX.chip();
+    renderBets(); renderBank();
+  }
+
+  // ---- render --------------------------------------------------------------
+  const bankEl = $('bank');
+  let bankShown = START, bankAnim = null;
+  function renderBank(animateFrom) {
+    if (animateFrom === undefined) { bankShown = bank; bankEl.textContent = fmt(bank); }
+    else {
+      if (bankAnim) cancelAnimationFrame(bankAnim);
+      const from = animateFrom, to = bank, t0 = performance.now(), dur = opts.fast ? 250 : 600;
+      const step = now => {
+        const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        bankShown = from + (to - from) * e; bankEl.textContent = fmt(bankShown);
+        if (k < 1) bankAnim = requestAnimationFrame(step); else bankAnim = null;
+      };
+      bankAnim = requestAnimationFrame(step);
+    }
+    $('bar').style.width = Math.max(0, Math.min(100, bank / GOAL * 100)) + '%';
+    $('handCount').textContent = 'HAND ' + stats.runHands;
+    renderChips();
+  }
+  function renderChips() {
+    document.querySelectorAll('.chip').forEach(b => {
+      const v = +b.dataset.v;
+      b.disabled = busy || !started || v > bank || totalBet() + v > MAX_TOTAL;
+      b.classList.toggle('sel', v === chipVal);
+    });
+  }
+  function renderBets() {
+    document.querySelectorAll('.spot').forEach(s => {
+      const k = s.dataset.spot; s.querySelector('.amt').textContent = bets[k] ? fmt(bets[k]) : '';
+    });
+    $('dealBtn').disabled = busy || !started || totalBet() < MIN_BET;
+    $('undoBtn').disabled = busy || !undoStack.length;
+    $('clearBtn').disabled = busy || !undoStack.length;
+    $('rebetBtn').disabled = busy || !started || !lastBets || !SPOTS.some(k => lastBets[k] > 0);
+    renderChips();
+  }
+  function renderStats() {
+    $('stWin').textContent = stats.win; $('stLose').textContent = stats.lose;
+    $('stStreak').textContent = stats.streak; $('stBest').textContent = fmt(stats.best);
+  }
+  function setLocked(v) { $('wrap').classList.toggle('locked', v); renderBets(); }
+  let toastT = 0;
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1400); }
+
+  function makeCard(c, third) {
+    const cw = document.createElement('div'); cw.className = 'cw in' + (third ? ' third' : '');
+    const red = c.s === 1 || c.s === 2;
+    const card = document.createElement('div'); card.className = 'card down' + (red ? ' red' : '');
+    card.innerHTML = '<div class="rk">' + rankLabel(c.r) + '<small>' + SUITS[c.s] + '</small></div><div class="su">' + SUITS[c.s] + '</div><div class="rk2">' + rankLabel(c.r) + '</div>';
+    cw.appendChild(card);
+    return cw;
+  }
+  function flipCard(cw) {
+    const c = cw.querySelector('.card'); c.classList.add('flip'); SFX.flip();
+    return wait(160).then(() => { c.classList.remove('down'); c.classList.remove('flip'); return wait(170); });
+  }
+  function reveal(cw) {
+    if (opts.squeeze && !opts.fast) {
+      cw.classList.add('peek'); $('hint').classList.add('show');
+      return new Promise(res => {
+        pendingReveal = async () => {
+          pendingReveal = null; cw.classList.remove('peek'); $('hint').classList.remove('show');
+          await flipCard(cw); res();
+        };
+      });
+    }
+    return wait(opts.fast ? 50 : 240).then(() => flipCard(cw));
+  }
+  $('table').addEventListener('click', () => { if (pendingReveal) pendingReveal(); });
+
+  function clearHands() {
+    $('slotsP').innerHTML = ''; $('slotsB').innerHTML = '';
+    $('totP').textContent = ''; $('totB').textContent = '';
+    $('totP').className = 'tot'; $('totB').className = 'tot';
+  }
+  function showTotal(side, cards) {
+    const el = $(side === 'P' ? 'totP' : 'totB'); const v = total(cards);
+    el.textContent = v; if (cards.length === 2 && v >= 8) { el.classList.add('nat'); el.textContent = v + ' NATURAL'; }
+  }
+  function hideBanner() { $('banner').classList.remove('show'); }
+  function showBanner(cls, res, net, pairTxt) {
+    const b = $('banner'); $('bannerRes').textContent = res; $('bannerRes').className = 'res ' + cls;
+    const n = $('bannerNet');
+    if (net === null) { n.textContent = ''; n.className = 'net'; }
+    else { n.textContent = net > 0 ? '+' + fmt(net) : net < 0 ? '−' + fmt(-net) : '±¥0'; n.className = 'net ' + (net > 0 ? 'plus' : net < 0 ? 'minus' : 'zero'); }
+    $('bannerPair').textContent = pairTxt || '';
+    b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+  }
+  function clearSpotMarks() { document.querySelectorAll('.spot').forEach(s => s.classList.remove('win', 'lose')); }
+  function markSpots(r, pp, bp) {
+    const winners = new Set([r]); if (r === 'T') { winners.add('P'); winners.add('B'); }
+    if (pp) winners.add('PP'); if (bp) winners.add('BP');
+    document.querySelectorAll('.spot').forEach(s => {
+      const k = s.dataset.spot;
+      if (!bets[k]) return;
+      if (r === 'T' && (k === 'P' || k === 'B')) { s.classList.add('win'); return; }   // 返却
+      s.classList.add(winners.has(k) ? 'win' : 'lose');
+    });
+  }
+
+  // ---- roads ---------------------------------------------------------------
+  function cell(entry, hollow) {
+    const d = document.createElement('div'); d.className = 'c' + (entry ? ' ' + entry.r : '');
+    if (!entry) return d;
+    if (entry.r !== 'T' || !hollow) { const i = document.createElement('i'); i.textContent = hollow ? '' : entry.r; d.appendChild(i); }
+    if (entry.ties) { const t = document.createElement('span'); t.className = 'tie'; d.appendChild(t); if (entry.ties > 1) { const n = document.createElement('span'); n.className = 'tn'; n.textContent = entry.ties; d.appendChild(n); } }
+    if (entry.bp) { const s = document.createElement('span'); s.className = 'pb'; d.appendChild(s); }
+    if (entry.pp) { const s = document.createElement('span'); s.className = 'pp'; d.appendChild(s); }
+    return d;
+  }
+  function buildBigRoad(res) {
+    const grid = {}; let col = -1, row = 0, last = null, maxCol = -1, lastKey = null, pendingTies = 0;
+    for (const e of res) {
+      if (e.r === 'T') { if (lastKey) grid[lastKey].ties++; else pendingTies++; continue; }
+      if (e.r !== last) { col = maxCol + 1; row = 0; last = e.r; }
+      else {
+        let nr = row + 1, nc = col;
+        if (nr > 5 || grid[nr + ',' + nc]) { nr = row; nc = col + 1; while (grid[nr + ',' + nc]) nc++; }
+        row = nr; col = nc;
+      }
+      lastKey = row + ',' + col;
+      grid[lastKey] = { r: e.r, ties: pendingTies, pp: e.pp, bp: e.bp }; pendingTies = 0;
+      maxCol = Math.max(maxCol, col);
+    }
+    return { grid, maxCol };
+  }
+  function renderRoads() {
+    const bead = $('bead'); bead.innerHTML = '';
+    const cols = Math.max(14, Math.ceil(results.length / 6) + 1);
+    for (let c = 0; c < cols; c++) for (let r = 0; r < 6; r++) {
+      const i = c * 6 + r; bead.appendChild(cell(i < results.length ? results[i] : null, false));
+    }
+    const big = $('big'); big.innerHTML = '';
+    const br = buildBigRoad(results);
+    const bcols = Math.max(14, br.maxCol + 2);
+    for (let c = 0; c < bcols; c++) for (let r = 0; r < 6; r++) big.appendChild(cell(br.grid[r + ',' + c] || null, true));
+    const cnt = { P: 0, B: 0, T: 0 }; results.forEach(e => cnt[e.r]++);
+    $('roadCount').textContent = 'P ' + cnt.P + ' / B ' + cnt.B + ' / T ' + cnt.T;
+    $('beadWrap').scrollLeft = 1e6; $('bigWrap').scrollLeft = 1e6;
+  }
+
+  // ---- save ----------------------------------------------------------------
+  function save() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ bank, results, stats, opts, lastBets })); } catch (e) {}
+  }
+  function load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { return null; } }
+
+  // ---- deal ----------------------------------------------------------------
+  async function dealTo(side, arr, third) {
+    const c = drawCard(); arr.push(c);
+    const cw = makeCard(c, third); $(side === 'P' ? 'slotsP' : 'slotsB').appendChild(cw);
+    SFX.card(); updateShoe();
+    await wait(opts.fast ? 60 : 300);
+    await reveal(cw);
+    showTotal(side, arr);
+    return c;
+  }
+  async function deal() {
+    if (busy || !started) return;
+    if (totalBet() < MIN_BET) { toast('ミニマムは 1万円'); return; }
+    busy = true; setLocked(true); hideBanner(); clearSpotMarks();
+    if (shoe.length - pos <= CUT) {
+      showBanner('S', 'SHUFFLE', null, '新しいシュー（8デッキ）'); SFX.shuffle();
+      await wait(opts.fast ? 300 : 1100); hideBanner(); newShoe();
+    }
+    clearHands();
+    const P = [], B = [];
+    const gap = opts.fast ? 70 : 360;
+    await dealTo('P', P); await wait(gap);
+    await dealTo('B', B); await wait(gap);
+    await dealTo('P', P); await wait(gap);
+    await dealTo('B', B);
+    let pv = total(P), bv = total(B);
+    const natural = pv >= 8 || bv >= 8;
+    let p3 = null;
+    if (!natural) {
+      if (playerDraws(pv)) { await wait(opts.fast ? 120 : 620); p3 = cardVal(await dealTo('P', P, true)); pv = total(P); }
+      if (bankerDraws(bv, p3)) { await wait(opts.fast ? 120 : 620); await dealTo('B', B, true); bv = total(B); }
+    }
+    settle(P, B, pv, bv);
+  }
+  function settle(P, B, pv, bv) {
+    const r = pv > bv ? 'P' : bv > pv ? 'B' : 'T';
+    const pp = P[0].r === P[1].r, bp = B[0].r === B[1].r;
+    const tb = totalBet();
+    let ret = 0;
+    if (r === 'P') ret += bets.P * 2;
+    else if (r === 'B') ret += bets.B + (bv === 6 ? bets.B * 0.5 : bets.B);   // ノーコミッション：6勝ちだけ半額
+    else ret += bets.P + bets.B + bets.T * 9;
+    if (pp) ret += bets.PP * 12;
+    if (bp) ret += bets.BP * 12;
+    ret = Math.round(ret);
+    const net = ret - tb;
+    markSpots(r, pp, bp);
+    $(r === 'P' ? 'totP' : 'totB').classList.add('winner');
+    const from = bank; bank += ret; renderBank(from);
+    results.push({ r, pp, bp }); renderRoads();
+    stats.hands++; stats.runHands++;
+    if (net > 0) { stats.win++; stats.streak++; stats.bestStreak = Math.max(stats.bestStreak, stats.streak); SFX.win(); }
+    else if (net < 0) { stats.lose++; stats.streak = 0; SFX.lose(); }
+    else { stats.push++; SFX.tie(); }
+    stats.best = Math.max(stats.best, bank);
+    const pairTxt = [pp ? 'PLAYER PAIR!' : '', bp ? 'BANKER PAIR!' : ''].filter(Boolean).join('  ');
+    const label = r === 'P' ? 'PLAYER WIN ' + pv + '-' + bv : r === 'B' ? 'BANKER WIN ' + bv + '-' + pv : 'TIE ' + pv + '-' + bv;
+    showBanner(r, label, net, pairTxt);
+    lastBets = Object.assign({}, bets); bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 }; undoStack = [];
+    renderBets(); renderStats(); save();
+    setTimeout(() => {
+      busy = false; setLocked(false); $('handCount').textContent = 'HAND ' + stats.runHands;
+      if (bank >= GOAL) showClear(); else if (bank < MIN_BET) showBust();
+    }, opts.fast ? 450 : 1300);
+  }
+
+  // ---- overlay / runs ------------------------------------------------------
+  const overlay = $('overlay');
+  function newRun() {
+    bank = START; results = []; bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 }; undoStack = []; lastBets = null;
+    stats.runHands = 0; stats.streak = 0; stats.best = START;
+    newShoe(); started = true; busy = false;
+    clearHands(); hideBanner(); clearSpotMarks(); overlay.classList.remove('show');
+    renderBank(); renderBets(); renderStats(); renderRoads(); save();
+  }
+  function continueRun(s) {
+    bank = s.bank; results = Array.isArray(s.results) ? s.results : []; lastBets = s.lastBets || null;
+    bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 }; undoStack = [];
+    newShoe(); started = true; busy = false;
+    clearHands(); hideBanner(); clearSpotMarks(); overlay.classList.remove('show');
+    renderBank(); renderBets(); renderStats(); renderRoads();
+  }
+  function showClear() {
+    stats.clears++;
+    if (stats.bestClear === null || stats.runHands < stats.bestClear) stats.bestClear = stats.runHands;
+    save(); SFX.clear();
+    $('ovBig').className = 'big'; $('ovBig').innerHTML = '🎉 CLEAR!';
+    $('ovNote').innerHTML = '<i class="c4">1,000万円</i> たっせい！！<br>' + stats.runHands + ' ハンドで ' + fmt(START) + ' → ' + fmt(bank) + '<br><br>さいそくクリア：' + stats.bestClear + ' ハンド ／ クリアかいすう：' + stats.clears + '<br>さいこう連勝：' + stats.bestStreak;
+    $('startBtn').textContent = 'もういちど（100万円から）'; $('contBtn').style.display = 'none';
+    overlay.classList.add('show');
+  }
+  function showBust() {
+    save(); SFX.bust();
+    $('ovBig').className = 'big bad'; $('ovBig').innerHTML = '💸 BUST…';
+    $('ovNote').innerHTML = 'もちきんが ミニマム（1万円）を 下回った…<br>' + stats.runHands + ' ハンド ／ さいこう ' + fmt(stats.best) + '<br><br>つぎは いけるさ。';
+    $('startBtn').textContent = 'もういちど（100万円から）'; $('contBtn').style.display = 'none';
+    overlay.classList.add('show');
+  }
+
+  // ---- input ---------------------------------------------------------------
+  document.querySelectorAll('.spot').forEach(s => s.addEventListener('click', () => place(s.dataset.spot)));
+  document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { chipVal = +b.dataset.v; renderChips(); }));
+  $('undoBtn').addEventListener('click', undoBet);
+  $('clearBtn').addEventListener('click', clearBets);
+  $('rebetBtn').addEventListener('click', rebet);
+  $('dealBtn').addEventListener('click', () => { audio(); deal(); });
+  $('startBtn').addEventListener('click', () => { audio(); newRun(); });
+  $('contBtn').addEventListener('click', () => { audio(); const s = load(); if (s) continueRun(s); else newRun(); });
+  function bindOpt(id, chk, key, after) {
+    const box = $(chk);
+    box.checked = !!opts[key]; $(id).classList.toggle('on', box.checked);
+    box.addEventListener('change', () => { opts[key] = box.checked; $(id).classList.toggle('on', box.checked); if (after) after(); save(); });
+  }
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    const k = e.key.toLowerCase();
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (overlay.classList.contains('show')) { $('startBtn').click(); return; }
+      if (pendingReveal) { pendingReveal(); return; }
+      if (!$('dealBtn').disabled) { audio(); deal(); }
+      return;
+    }
+    if (busy) return;
+    const chips = [10000, 50000, 100000, 500000, 1000000];
+    if (k >= '1' && k <= '5') { chipVal = chips[+k - 1]; renderChips(); }
+    else if (k === 'p') place('P'); else if (k === 'b') place('B'); else if (k === 't') place('T');
+    else if (k === 'z' || e.key === 'Backspace') { e.preventDefault(); undoBet(); }
+    else if (k === 'c') clearBets(); else if (k === 'r') rebet();
+    else if (k === 'm') muteBtn.click();
+  });
+
+  // ---- init (最後に実行) ----------------------------------------------------
+  const saved = load();
+  if (saved) {
+    if (saved.stats) stats = Object.assign(stats, saved.stats);
+    if (saved.opts) opts = Object.assign(opts, saved.opts);
+    if (typeof saved.bank === 'number' && saved.bank >= MIN_BET && saved.bank < GOAL && Array.isArray(saved.results)) {
+      $('contBtn').style.display = ''; $('contBtn').textContent = 'つづきから（' + fmt(saved.bank) + ' / ' + (saved.stats ? saved.stats.runHands : 0) + 'ハンド）';
+    }
+  }
+  bindOpt('optSqueeze', 'chkSqueeze', 'squeeze');
+  bindOpt('optFast', 'chkFast', 'fast');
+  renderBank(); renderBets(); renderStats(); renderRoads();
+
+  // ---- test hooks ------------------------------------------------------------
+  const parseCard = s => {
+    s = String(s).toUpperCase(); const su = '♠SHDC'.indexOf(s.slice(-1));
+    const rs = s.slice(0, -1); const r = rs === 'A' ? 1 : rs === 'J' ? 11 : rs === 'Q' ? 12 : rs === 'K' ? 13 : rs === 'T' ? 10 : +rs;
+    return { r, s: 'SHDC'.indexOf(s.slice(-1)) < 0 ? 0 : 'SHDC'.indexOf(s.slice(-1)) };
+  };
+  window.__test = {
+    state: () => ({ bank, bets: Object.assign({}, bets), busy, started, results: results.slice(-8), stats: Object.assign({}, stats), remaining: shoe.length - pos, opts: Object.assign({}, opts), lastBets }),
+    start: newRun, deal, place, undo: undoBet, clearBets, rebet,
+    setShoe: codes => { shoe.splice(pos, 0, ...codes.map(parseCard)); updateShoe(); },
+    setBank: n => { bank = n; renderBank(); renderBets(); },
+    setRemaining: n => { pos = Math.max(0, shoe.length - n); updateShoe(); },
+    bankerDraws, playerDraws, buildBigRoad, reveal: () => { if (pendingReveal) pendingReveal(); },
+    setOpts: o => { Object.assign(opts, o); ['squeeze', 'fast'].forEach(k => { const c = $('chk' + k[0].toUpperCase() + k.slice(1)); c.checked = !!opts[k]; $('opt' + k[0].toUpperCase() + k.slice(1)).classList.toggle('on', c.checked); }); },
+    wipe: () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} },
+  };
+})();
+</script>
+</body>
+</html>
