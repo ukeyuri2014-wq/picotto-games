@@ -21,6 +21,48 @@
 
 const GAMES = [
   {
+    id: "016",
+    genre: "2P BATTLE",
+    age: "6歳〜",
+    color: "#ff5fa2",
+    title: "ぬりぬりバトル",
+    emoji: "🎨",
+    author: "スタッフ",
+    date: "2026-09-05",
+    description:
+      "60秒で床を自分の色に塗りまくる陣取りバトル。相手の色の上も塗り替えOK、ペイントボムとダッシュで逆転を狙え。ひとつの画面をふたりで取り合うか、CPUと対戦。",
+    controls: "2人用!タッチは上下半分をドラッグ（スティック） / キーボードはWASD・矢印キー",
+    path: "games/016-nurinuri-battle/index.html",
+  },
+  {
+    id: "015",
+    genre: "BOARD",
+    age: "6歳〜",
+    color: "#ffd166",
+    title: "よふかし四目ならべ",
+    emoji: "🔵",
+    author: "スタッフ",
+    date: "2026-09-05",
+    description:
+      "コマを上から落として、タテ・ヨコ・ナナメに4つならべたら勝ちの定番ボードゲーム。ふたりで交代でも、3段階のCPU（よわい／ふつう／つよい）相手でも。落下アニメ・1手もどす・成績記録つき。",
+    controls: "落としたい列をタップ / キーボードは1〜7、←→＋Enter",
+    path: "games/015-yofukashi-connect4/index.html",
+  },
+  {
+    id: "014",
+    genre: "2P BATTLE",
+    age: "6歳〜",
+    color: "#53e0d8",
+    title: "ネオンサイクル",
+    emoji: "🏍️",
+    author: "スタッフ",
+    date: "2026-09-05",
+    description:
+      "光の線をのばして相手を囲む対戦ライトサイクル。線・壁・ブロックにぶつかったら負け、先に3ラウンド取れば勝ち。ゲージがたまればブーストで一気に加速。ひとりならCPU対戦（つよいCPUも）。",
+    controls: "2人用!タッチは上下半分をスワイプ＋2回タップでブースト / キーボードはWASD＋F・矢印＋Enter",
+    path: "games/014-neon-cycle/index.html",
+  },
+  {
     id: "013",
     genre: "CASINO",
     age: "15歳〜",
