@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ネオンサイクル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--cyan);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--cyan);border-color:var(--cyan)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0b0b1a;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.9);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6);line-height:1.2}
+  #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .big.draw{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{
+    font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;
+    border:none;border-radius:6px;padding:9px 18px;cursor:pointer;letter-spacing:1px;
+  }
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .opt{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px;justify-content:center;cursor:pointer;user-select:none}
+  .opt input{accent-color:var(--gold);margin:0}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal}
+  .help .c2{color:var(--pink);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ネオンサイクル</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / 2人用・CPU対戦</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="640"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">ネオン<br>サイクル</div>
+    <div class="note" id="ovNote">
+      光の線をのばして 相手をかこめ！<br>
+      線・かべ・ブロックに ぶつかったら まけ。<br>
+      さきに <b>3ラウンド</b> とったほうの かち🏆<br><br>
+      📱 タッチ：<i class="c2">うえの人は うえ半分</i>、<i class="c1">したの人は した半分</i>を スワイプで方向転換、<b>2回タップでブースト</b><br>
+      ⌨️ キーボード：<i class="c1">した WASD＋F</i> ／ <i class="c2">うえ 矢印＋Enter</i>
+    </div>
+    <div class="modes">
+      <button id="btn2p">ふたりで たいせん</button>
+      <button id="btnCpu" class="alt">ひとりで（CPU）</button>
+    </div>
+    <label class="opt"><input type="checkbox" id="chkHard"> CPUを つよくする</label>
+    <div class="rule">ブーストは ゲージがたまると使える⚡</div>
+  </div>
+</div>
+
+<div class="help">
+  <i class="c1">P1（水色）＝した側</i> / <i class="c2">P2（ピンク）＝うえ側</i>。うしろには曲がれない。<br>
+  <b>ブースト</b>：みじかい時間だけ2倍速。ゲージ（画面のはし）がいっぱいのとき、2回タップ・画面すみの⚡ボタン・キーで発動。<br>
+  ラウンドごとに ネオンブロックの配置が変わる。両方同時にぶつかったら そのラウンドは引き分け。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const CELL = 8, COLS = W / CELL, ROWS = H / CELL;   // 60 x 80
+  const WIN_ROUNDS = 3;
+  const BASE_INTERVAL = 1000 / 15;                     // 15 cells / sec
+  const BOOST_TIME = 0.9, BOOST_REGEN = 0.22;
+  const MUTE_KEY = 'picotto_ncycle_mute';
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function noise(dur, vol, f) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = a.createBufferSource(); s.buffer = buf; const g = a.createGain(); g.gain.value = vol;
+    const fl = a.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = f;
+    s.connect(fl); fl.connect(g); g.connect(a.destination); s.start();
+  }
+  const SFX = {
+    turn(p) { tone('square', p === 1 ? 660 : 520, p === 1 ? 880 : 700, 0.05, 0.035); },
+    boost() { tone('sawtooth', 200, 900, 0.25, 0.05); },
+    crash() { noise(0.35, 0.3, 1400); tone('sawtooth', 220, 40, 0.4, 0.12); },
+    count() { tone('square', 440, 440, 0.08, 0.05); },
+    go() { tone('square', 880, 1320, 0.16, 0.06); },
+    round() { [523, 659, 784].forEach((f, i) => tone('square', f, f, 0.12, 0.06, i * 0.09)); },
+    win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, i * 0.1)); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  drawMute();
+
+  // ---- state ---------------------------------------------------------------
+  const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
+  const LEFT = { up: 'left', left: 'down', down: 'right', right: 'up' };
+  const RIGHT = { up: 'right', right: 'down', down: 'left', left: 'up' };
+  let grid = new Uint8Array(COLS * ROWS);           // 0 free, 1 block, 2 p1 trail, 3 p2 trail
+  let p1, p2, score1 = 0, score2 = 0, round = 0;
+  let mode = '2p', hard = false;
+  let state = 'title';                              // title | count | play | crash | over
+  let countT = 0, crashT = 0, roundWinner = 0;
+  let particles = [], blocks = [], anim = 0;
+  const overlay = document.getElementById('overlay');
+
+  function mkPlayer(n) {
+    return {
+      n, x: 0, y: 0, dir: n === 1 ? 'up' : 'down', next: null, alive: true,
+      acc: 0, energy: 1, boostT: 0, trail: [], color: n === 1 ? '#53e0d8' : '#ff5fa2', glow: n === 1 ? 'rgba(83,224,216,' : 'rgba(255,95,162,',
+      cpuTick: 0,
+    };
+  }
+  function idx(x, y) { return y * COLS + x; }
+  function free(x, y) { return x >= 0 && y >= 0 && x < COLS && y < ROWS && grid[idx(x, y)] === 0; }
+
+  function genBlocks() {
+    blocks = []; grid.fill(0);
+    const n = 3 + Math.floor(Math.random() * 2);
+    let tries = 0;
+    while (blocks.length < n * 2 && tries++ < 200) {
+      const w = 2 + Math.floor(Math.random() * 6), h = 2 + Math.floor(Math.random() * 6);
+      const x = 4 + Math.floor(Math.random() * (COLS - 8 - w)), y = 12 + Math.floor(Math.random() * (ROWS / 2 - 14 - h));
+      // keep the start columns clear
+      if (x <= COLS / 2 + 2 && x + w >= COLS / 2 - 2 && y + h > ROWS / 2 - 26 && y < ROWS / 2) continue;
+      const mx = COLS - x - w, my = ROWS - y - h;       // point-symmetric twin
+      const rects = [[x, y, w, h], [mx, my, w, h]];
+      let ok = true;
+      for (const [rx, ry, rw, rh] of rects) for (const [bx, by, bw, bh] of blocks) if (rx < bx + bw + 2 && rx + rw + 2 > bx && ry < by + bh + 2 && ry + rh + 2 > by) ok = false;
+      if (!ok) continue;
+      for (const r of rects) { blocks.push(r); for (let yy = r[1]; yy < r[1] + r[3]; yy++) for (let xx = r[0]; xx < r[0] + r[2]; xx++) grid[idx(xx, yy)] = 1; }
+    }
+  }
+  function resetRound() {
+    genBlocks();
+    p1 = mkPlayer(1); p2 = mkPlayer(2);
+    p1.x = COLS / 2; p1.y = ROWS - 8; p2.x = COLS / 2 - 1; p2.y = 7;
+    grid[idx(p1.x, p1.y)] = 2; grid[idx(p2.x, p2.y)] = 3;
+    p1.trail.push([p1.x, p1.y]); p2.trail.push([p2.x, p2.y]);
+    particles = []; roundWinner = 0;
+    state = 'count'; countT = 3;
+  }
+  function startMatch(m) {
+    mode = m; hard = document.getElementById('chkHard').checked;
+    score1 = 0; score2 = 0; round = 0;
+    overlay.classList.remove('show');
+    resetRound();
+  }
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startMatch('2p'); });
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startMatch('cpu'); });
+
+  function showOver(winner) {
+    const big = document.getElementById('ovBig');
+    const note = document.getElementById('ovNote');
+    if (winner === 1) { big.textContent = 'PLAYER 1 WIN!'; big.className = 'big'; }
+    else { big.textContent = mode === 'cpu' ? 'CPU WIN…' : 'PLAYER 2 WIN!'; big.className = 'big p2'; }
+    note.innerHTML = '<i class="' + (winner === 1 ? 'c1' : 'c2') + '">' + (winner === 1 ? 'した側（水色）' : (mode === 'cpu' ? 'CPU（ピンク）' : 'うえ側（ピンク）')) + '</i> のかち！ ' + score1 + ' - ' + score2 + '<br><br>もういちど？ モードをえらんでね';
+    overlay.classList.add('show');
+  }
+
+  // ---- input ---------------------------------------------------------------
+  function turn(p, dir) {
+    if (!p || !p.alive) return;
+    if (dir === OPP[p.dir] || dir === p.dir) return;
+    if (p.next !== dir) { p.next = dir; SFX.turn(p.n); }
+  }
+  function boost(p) {
+    if (!p || !p.alive || state !== 'play') return;
+    if (p.energy < 0.999 || p.boostT > 0) return;
+    p.energy = 0; p.boostT = BOOST_TIME; SFX.boost();
+  }
+  const keyMap = { KeyW: [1, 'up'], KeyS: [1, 'down'], KeyA: [1, 'left'], KeyD: [1, 'right'], ArrowUp: [2, 'up'], ArrowDown: [2, 'down'], ArrowLeft: [2, 'left'], ArrowRight: [2, 'right'] };
+  document.addEventListener('keydown', e => {
+    if (keyMap[e.code]) { e.preventDefault(); const [n, d] = keyMap[e.code]; if (n === 2 && mode === 'cpu') return; turn(n === 1 ? p1 : p2, d); return; }
+    if (e.code === 'KeyF' || e.code === 'ShiftLeft') { boost(p1); }
+    if ((e.code === 'Enter' || e.code === 'ShiftRight') && mode !== 'cpu') { boost(p2); }
+    if (e.code === 'Space' || e.code === 'Enter') { if (overlay.classList.contains('show')) { e.preventDefault(); audio(); startMatch(mode); } }
+  });
+  // touch: pointers owned by the half they start in; swipe = absolute direction, double tap = boost
+  const pts = {}; const lastTap = { 1: 0, 2: 0 };
+  function cpos(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) }; }
+  function boostBtn(n) { return n === 1 ? { x: W - 78, y: H - 78, s: 70 } : { x: 8, y: 8, s: 70 }; }
+  function inBtn(p, n) { const b = boostBtn(n); return p.x >= b.x && p.x <= b.x + b.s && p.y >= b.y && p.y <= b.y + b.s; }
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault(); cv.setPointerCapture(e.pointerId); audio();
+    const p = cpos(e); const who = p.y > H / 2 ? 1 : 2;
+    if (who === 2 && mode === 'cpu') { pts[e.pointerId] = null; return; }
+    if (inBtn(p, who)) { boost(who === 1 ? p1 : p2); pts[e.pointerId] = null; return; }
+    pts[e.pointerId] = { who, x: p.x, y: p.y, sx: p.x, sy: p.y, moved: false, t: performance.now() };
+  });
+  cv.addEventListener('pointermove', e => {
+    const s = pts[e.pointerId]; if (!s) return;
+    const p = cpos(e); const dx = p.x - s.x, dy = p.y - s.y;
+    if (Math.abs(dx) < 18 && Math.abs(dy) < 18) return;
+    const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    turn(s.who === 1 ? p1 : p2, dir);
+    s.x = p.x; s.y = p.y; s.moved = true;
+  });
+  function endPointer(e) {
+    const s = pts[e.pointerId];
+    if (s && !s.moved) {
+      const now = performance.now();
+      if (now - lastTap[s.who] < 320) { boost(s.who === 1 ? p1 : p2); lastTap[s.who] = 0; } else lastTap[s.who] = now;
+    }
+    delete pts[e.pointerId];
+  }
+  cv.addEventListener('pointerup', endPointer);
+  cv.addEventListener('pointercancel', endPointer);
+
+  // ---- CPU ------------------------------------------------------------------
+  function areaFrom(x, y, limit) {
+    if (!free(x, y)) return 0;
+    const seen = new Uint8Array(COLS * ROWS); const stack = [[x, y]]; seen[idx(x, y)] = 1; let n = 0;
+    while (stack.length && n < limit) {
+      const [cx, cy] = stack.pop(); n++;
+      for (const k in DIRS) { const nx = cx + DIRS[k][0], ny = cy + DIRS[k][1]; if (free(nx, ny) && !seen[idx(nx, ny)]) { seen[idx(nx, ny)] = 1; stack.push([nx, ny]); } }
+    }
+    return n;
+  }
+  function straightFree(x, y, dir, max) { let n = 0; while (n < max && free(x + DIRS[dir][0] * (n + 1), y + DIRS[dir][1] * (n + 1))) n++; return n; }
+  function cpuThink(p) {
+    p.cpuTick++;
+    const look = hard ? 10 : 4;
+    const ahead = straightFree(p.x, p.y, p.dir, look + 1);
+    const periodic = p.cpuTick % (hard ? 5 : 9) === 0;
+    if (ahead > look && !periodic) return;
+    const opts = [p.dir, LEFT[p.dir], RIGHT[p.dir]];
+    let best = null, bestScore = -1;
+    for (const d of opts) {
+      const nx = p.x + DIRS[d][0], ny = p.y + DIRS[d][1];
+      if (!free(nx, ny)) continue;
+      let score = areaFrom(nx, ny, hard ? 900 : 350) + straightFree(nx, ny, d, 20) * (hard ? 1.5 : 0.8) + (d === p.dir ? 4 : 0) + Math.random() * (hard ? 3 : 14);
+      // avoid the opponent's head neighbourhood
+      const o = p1; if (Math.abs(nx - o.x) + Math.abs(ny - o.y) <= 2) score -= 60;
+      if (score > bestScore) { bestScore = score; best = d; }
+    }
+    if (!hard && Math.random() < 0.05) { const d = opts[Math.floor(Math.random() * 3)]; if (free(p.x + DIRS[d][0], p.y + DIRS[d][1])) best = d; }
+    if (best && best !== p.dir) p.next = best;
+    if (hard && p.energy >= 1 && straightFree(p.x, p.y, best || p.dir, 24) > 18) boost(p);
+  }
+
+  // ---- update ---------------------------------------------------------------
+  function step(p) {
+    if (p.next) { p.dir = p.next; p.next = null; }
+    const nx = p.x + DIRS[p.dir][0], ny = p.y + DIRS[p.dir][1];
+    if (!free(nx, ny)) { p.alive = false; return; }
+    p.x = nx; p.y = ny; grid[idx(nx, ny)] = p.n === 1 ? 2 : 3; p.trail.push([nx, ny]);
+  }
+  function explode(p) {
+    const cx = p.x * CELL + CELL / 2, cy = p.y * CELL + CELL / 2;
+    for (let i = 0; i < 40; i++) { const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 260; particles.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.4 + Math.random() * 0.5, c: p.glow }); }
+  }
+  function update(dt) {
+    anim += dt;
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vx *= 0.98; s.vy *= 0.98; s.life -= dt; return s.life > 0; });
+    if (state === 'count') {
+      const before = Math.ceil(countT); countT -= dt; const after = Math.ceil(countT);
+      if (after !== before && after > 0) SFX.count();
+      if (countT <= 0) { state = 'play'; SFX.go(); }
+      return;
+    }
+    if (state === 'crash') {
+      crashT -= dt;
+      if (crashT <= 0) {
+        if (score1 >= WIN_ROUNDS) { state = 'over'; SFX.win(); showOver(1); return; }
+        if (score2 >= WIN_ROUNDS) { state = 'over'; SFX.win(); showOver(2); return; }
+        resetRound();
+      }
+      return;
+    }
+    if (state !== 'play') return;
+    for (const p of [p1, p2]) {
+      if (p.boostT > 0) p.boostT -= dt; else p.energy = Math.min(1, p.energy + BOOST_REGEN * dt);
+    }
+    if (mode === 'cpu') { /* decide right before each move */ }
+    // per-player movement timers (boost = double speed)
+    for (const p of [p1, p2]) {
+      p.acc += dt * 1000;
+      const interval = p.boostT > 0 ? BASE_INTERVAL / 2 : BASE_INTERVAL;
+      while (p.acc >= interval && p.alive && state === 'play') {
+        p.acc -= interval;
+        if (mode === 'cpu' && p === p2) cpuThink(p);
+        step(p);
+        if (!p.alive) { explode(p); SFX.crash(); }
+      }
+    }
+    // head-on: both moved into the same cell this frame
+    if (p1.alive && p2.alive && p1.x === p2.x && p1.y === p2.y) { p1.alive = false; p2.alive = false; explode(p1); SFX.crash(); }
+    if (!p1.alive || !p2.alive) {
+      round++;
+      if (p1.alive) { score1++; roundWinner = 1; SFX.round(); }
+      else if (p2.alive) { score2++; roundWinner = 2; SFX.round(); }
+      else roundWinner = 0;
+      state = 'crash'; crashT = 1.6;
+    }
+  }
+
+  // ---- draw -----------------------------------------------------------------
+  function drawTrail(p) {
+    if (p.trail.length < 1) return;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    for (const [w, a] of [[9, 0.18], [4.5, 0.55], [2.4, 1]]) {
+      ctx.strokeStyle = p.glow + a + ')'; ctx.lineWidth = w;
+      ctx.beginPath();
+      const t = p.trail;
+      ctx.moveTo(t[0][0] * CELL + CELL / 2, t[0][1] * CELL + CELL / 2);
+      for (let i = 1; i < t.length; i++) ctx.lineTo(t[i][0] * CELL + CELL / 2, t[i][1] * CELL + CELL / 2);
+      ctx.stroke();
+    }
+    // head
+    const hx = p.x * CELL + CELL / 2, hy = p.y * CELL + CELL / 2;
+    ctx.fillStyle = '#ffffff'; ctx.shadowColor = p.color; ctx.shadowBlur = p.boostT > 0 ? 22 : 12;
+    ctx.beginPath(); ctx.arc(hx, hy, p.boostT > 0 ? 5 : 4, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  function drawEnergy(p) {
+    const n = p.n; const w = 120, h = 6;
+    const x = n === 1 ? W - w - 10 : 10, y = n === 1 ? H - 14 : 8;
+    ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = p.energy >= 1 ? p.color : p.glow + '.5)'; ctx.fillRect(x, y, w * p.energy, h);
+    // boost button (touch)
+    const b = boostBtn(n);
+    ctx.strokeStyle = p.energy >= 1 ? p.color : 'rgba(157,153,192,.35)'; ctx.lineWidth = 2;
+    ctx.fillStyle = p.energy >= 1 ? p.glow + '.16)' : 'rgba(255,255,255,.03)';
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(b.x, b.y, b.s, b.s, 10) : ctx.rect(b.x, b.y, b.s, b.s); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = p.energy >= 1 ? '#ffffff' : 'rgba(157,153,192,.5)'; ctx.font = '26px DotGothic16, monospace'; ctx.textAlign = 'center';
+    ctx.fillText('⚡', b.x + b.s / 2, b.y + b.s / 2 + 9);
+    ctx.textAlign = 'left';
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // grid
+    ctx.strokeStyle = 'rgba(120,110,200,.09)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += CELL * 5) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
+    for (let y = 0; y <= H; y += CELL * 5) { ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
+    ctx.stroke();
+    // halves tint + center line
+    ctx.fillStyle = 'rgba(255,95,162,.03)'; ctx.fillRect(0, 0, W, H / 2);
+    ctx.fillStyle = 'rgba(83,224,216,.03)'; ctx.fillRect(0, H / 2, W, H / 2);
+    ctx.strokeStyle = 'rgba(157,153,192,.25)'; ctx.setLineDash([6, 8]); ctx.beginPath(); ctx.moveTo(0, H / 2 + 0.5); ctx.lineTo(W, H / 2 + 0.5); ctx.stroke(); ctx.setLineDash([]);
+    // blocks
+    for (const [bx, by, bw, bh] of blocks) {
+      const x = bx * CELL, y = by * CELL, w = bw * CELL, h = bh * CELL;
+      ctx.fillStyle = 'rgba(160,107,255,.18)'; ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 2; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 10; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2); ctx.shadowBlur = 0;
+    }
+    // scores
+    ctx.font = '34px DotGothic16, monospace'; ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,95,162,.7)'; ctx.fillText(score2, W - 40, H / 2 - 18);
+    ctx.fillStyle = 'rgba(83,224,216,.7)'; ctx.fillText(score1, W - 40, H / 2 + 44);
+    ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.6)';
+    ctx.fillText('ROUND ' + Math.min(round + 1, 99) + ' ・ さきに' + WIN_ROUNDS + '本', 60, H / 2 + 4);
+    ctx.textAlign = 'left';
+    if (p1) { drawTrail(p2); drawTrail(p1); drawEnergy(p1); if (mode !== 'cpu') drawEnergy(p2); }
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - 2, s.y - 2, 4, 4); }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'center';
+    if (state === 'count') {
+      ctx.fillStyle = '#ffd166'; ctx.font = '58px DotGothic16, monospace'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 18;
+      ctx.fillText(Math.ceil(countT), W / 2, H / 2 + 20); ctx.shadowBlur = 0;
+    }
+    if (state === 'play' && anim < 0.8 + countT) { /* GO flash handled by count end */ }
+    if (state === 'crash') {
+      ctx.font = '36px DotGothic16, monospace';
+      if (roundWinner === 0) { ctx.fillStyle = '#ffd166'; ctx.fillText('DRAW', W / 2, H / 2 + 14); }
+      else { ctx.fillStyle = roundWinner === 1 ? '#53e0d8' : '#ff5fa2'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 16; ctx.fillText((roundWinner === 1 ? 'P1' : (mode === 'cpu' ? 'CPU' : 'P2')) + ' ROUND!', W / 2, H / 2 + (roundWinner === 1 ? 60 : -40)); ctx.shadowBlur = 0; }
+    }
+    ctx.textAlign = 'left';
+  }
+
+  // ---- loop -------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now; update(dt); draw(); requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  draw();
+
+  window.__test = {
+    start: startMatch,
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    state: () => ({ state, mode, hard, score1, score2, round, p1: p1 && { x: p1.x, y: p1.y, dir: p1.dir, alive: p1.alive, energy: +p1.energy.toFixed(2), boostT: +p1.boostT.toFixed(2), len: p1.trail.length }, p2: p2 && { x: p2.x, y: p2.y, dir: p2.dir, alive: p2.alive, len: p2.trail.length }, blocks: blocks.length }),
+    turn: (n, d) => turn(n === 1 ? p1 : p2, d),
+    boost: n => boost(n === 1 ? p1 : p2),
+    skipCount: () => { if (state === 'count') { countT = 0; } },
+    setHard: v => { document.getElementById('chkHard').checked = v; hard = v; },
+  };
+})();
+</script>
+</body>
+</html>
