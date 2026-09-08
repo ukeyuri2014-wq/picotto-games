@@ -34,7 +34,10 @@
 
   /* bank */
   .bankbar{display:grid;grid-template-columns:1fr auto;gap:2px 10px;background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:8px 12px 9px;margin-bottom:8px;font-size:11px;color:var(--sub);letter-spacing:1px}
-  .bankbar .bank{font-size:26px;color:#fff;letter-spacing:1px;line-height:1.1}
+  .bankbar .bank{font-size:clamp(16px,5vw,26px);color:#fff;letter-spacing:1px;line-height:1.1;overflow-wrap:anywhere}
+  .bankbar>div{min-width:0}.spot .amt{overflow-wrap:anywhere}
+  .table-picker{display:flex;gap:6px;margin-bottom:8px}.table-picker button{flex:1;font:inherit;font-size:13px;padding:10px 4px;color:var(--ink);background:var(--panel);border:1px solid var(--edge);border-radius:9px;cursor:pointer}
+  .table-picker button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}.table-picker button:disabled{opacity:.5;cursor:default}.table-note{font-size:12px;line-height:1.6;color:var(--sub);margin:4px 0 8px}
   .bankbar .bank.up{color:var(--gold)} .bankbar .bank.down{color:var(--bk)}
   .bankbar .goal{text-align:right;align-self:end}
   .bankbar .goal b{display:block;color:var(--ink);font-size:14px;font-weight:400}
@@ -181,6 +184,10 @@
 </header>
 
 <div id="wrap">
+  <div class="table-picker" role="group" aria-label="台を選ぶ">
+    <button data-table="0" aria-pressed="true">台 A</button><button data-table="1" aria-pressed="false">台 B</button><button data-table="2" aria-pressed="false">台 C</button>
+  </div>
+  <div class="table-note" id="tableNote">入場前30回はゲーム内の模擬履歴です。過去の結果は次の勝敗を予測するものではありません。</div>
   <div class="bankbar">
     <div><div>もちきん BANKROLL</div><div class="bank" id="bank">¥1,000,000</div></div>
     <div class="goal">もくひょう GOAL<b>¥10,000,000</b></div>
@@ -292,7 +299,8 @@
   const START = 1000000, GOAL = 10000000, MIN_BET = 10000, DECKS = 8, CUT = 14;   // 1ハンドの上限なし（もちきんまで）
   const SAVE_KEY = 'picotto_baccarat_v1', MUTE_KEY = 'picotto_baccarat_mute';
   const $ = id => document.getElementById(id);
-  const fmt = n => '¥' + Math.round(n).toLocaleString('ja-JP');
+  const validMoney = n => typeof n === 'number' && Number.isSafeInteger(n) && n >= 0;
+  const fmt = n => '¥' + (Number.isFinite(n) ? Math.round(n) : 0).toLocaleString('ja-JP');
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const SPOTS = ['P', 'B', 'T', 'PP', 'BP'];
 
@@ -346,6 +354,7 @@
   let opts = { squeeze: false, fast: false };
   let shoe = [], pos = 0;
   let busy = false, started = false, pendingReveal = null;
+  let tables = [], activeTable = 0;
 
   // ---- cards / shoe --------------------------------------------------------
   const SUITS = ['♠', '♥', '♦', '♣'];
@@ -377,11 +386,42 @@
     return false;
   }
 
+  // Simulate actual card deals for each table, without bets or personal statistics.
+  function seedTable() {
+    newShoe(); results = [];
+    for (let i = 0; i < 30; i++) {
+      const P = [drawCard()], B = [drawCard()]; P.push(drawCard()); B.push(drawCard());
+      let pv = total(P), bv = total(B), p3 = null;
+      if (pv < 8 && bv < 8) {
+        if (playerDraws(pv)) { const c = drawCard(); P.push(c); p3 = cardVal(c); pv = total(P); }
+        if (bankerDraws(bv, p3)) { B.push(drawCard()); bv = total(B); }
+      }
+      results.push({r:pv>bv?'P':bv>pv?'B':'T',pp:P[0].r===P[1].r,bp:B[0].r===B[1].r,pv,bv,simulated:true});
+    }
+    return {shoe, pos, results};
+  }
+  function storeTable() { if (tables.length) tables[activeTable] = {shoe, pos, results}; }
+  function useTable(i) { activeTable=i; ({shoe,pos,results}=tables[i]); updateShoe(); renderRoads(); renderTables(); }
+  function renderTables() {
+    storeTable();
+    document.querySelectorAll('[data-table]').forEach(button=>{
+      const i=Number(button.dataset.table), recent=tables[i]?.results.slice(-30)||[];
+      const p=recent.filter(r=>r.r==='P').length,b=recent.filter(r=>r.r==='B').length;
+      button.textContent='台 '+String.fromCharCode(65+i)+' · P'+p+' / B'+b;
+      button.setAttribute('aria-pressed',String(i===activeTable));button.disabled=busy||totalBet()>0;
+    });
+  }
+  function switchTable(i) {
+    if (busy || totalBet()>0 || !Number.isInteger(i) || i<0 || i>2) return false;
+    storeTable(); useTable(i); clearHands(); hideBanner(); clearSpotMarks(); save(); return true;
+  }
+
   // ---- bets ----------------------------------------------------------------
   const totalBet = () => SPOTS.reduce((a, k) => a + bets[k], 0);
   function place(spot, amt = chipVal) {
     if (busy || !started) return false;
     if (amt === 'all') amt = bank;                       // ALL IN：のこり全部
+    if (!SPOTS.includes(spot) || !validMoney(amt) || !validMoney(bank) || !Number.isSafeInteger((totalBet()+amt)*12+bank)) { toast('金額を確認してください'); return false; }
     if (amt < MIN_BET) { toast('ミニマムは 1万円'); return false; }
     if (amt > bank) { toast('もちきんが たりない…'); return false; }
     bets[spot] += amt; bank -= amt; undoStack.push({ spot, amt });
@@ -409,6 +449,7 @@
   const bankEl = $('bank');
   let bankShown = START, bankAnim = null;
   function renderBank(animateFrom) {
+    if (bankAnim) { cancelAnimationFrame(bankAnim); bankAnim=null; }
     if (animateFrom === undefined) { bankShown = bank; bankEl.textContent = fmt(bank); }
     else {
       if (bankAnim) cancelAnimationFrame(bankAnim);
@@ -432,6 +473,7 @@
     });
   }
   function renderBets() {
+    renderTables();
     document.querySelectorAll('.spot').forEach(s => {
       const k = s.dataset.spot; s.querySelector('.amt').textContent = bets[k] ? fmt(bets[k]) : '';
     });
@@ -583,9 +625,19 @@
 
   // ---- save ----------------------------------------------------------------
   function save() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ bank, results, stats, opts, lastBets })); } catch (e) {}
+    storeTable();
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ bank:bank+totalBet(), results, stats, opts, lastBets, tables, activeTable })); } catch (e) {}
   }
-  function load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { return null; } }
+  function load() {
+    try {
+      const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null'); if(!s||typeof s!=='object')return null;
+      if(!validMoney(s.bank)){s.bank=START;s.moneyRecovered=true;}
+      s.results=Array.isArray(s.results)?s.results.filter(e=>e&&['P','B','T'].includes(e.r)&&Number.isInteger(e.pv)&&Number.isInteger(e.bv)&&e.pv>=0&&e.pv<=9&&e.bv>=0&&e.bv<=9):[];
+      s.lastBets=s.lastBets&&SPOTS.every(k=>validMoney(s.lastBets[k]))?s.lastBets:null;
+      if(s.stats)for(const k of Object.keys(stats))if(!validMoney(s.stats[k]))delete s.stats[k];
+      return s;
+    }catch(e){return null;}
+  }
 
   // ---- deal ----------------------------------------------------------------
   async function dealTo(side, arr, third) {
@@ -656,16 +708,16 @@
   // ---- overlay / runs ------------------------------------------------------
   const overlay = $('overlay');
   function newRun() {
-    bank = START; results = []; bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 }; undoStack = []; lastBets = null;
+    bank = START; bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 }; undoStack = []; lastBets = null;
     stats.runHands = 0; stats.streak = 0; stats.best = START;
-    newShoe(); started = true; busy = false;
+    started = true; busy = false;
     clearHands(); hideBanner(); clearSpotMarks(); overlay.classList.remove('show');
     renderBank(); renderBets(); renderStats(); renderRoads(); save();
   }
   function continueRun(s) {
-    bank = s.bank; results = Array.isArray(s.results) ? s.results : []; lastBets = s.lastBets || null;
+    bank = s.bank; lastBets = s.lastBets || null;
     bets = { P: 0, B: 0, T: 0, PP: 0, BP: 0 }; undoStack = [];
-    newShoe(); started = true; busy = false;
+    started = true; busy = false;
     clearHands(); hideBanner(); clearSpotMarks(); overlay.classList.remove('show');
     renderBank(); renderBets(); renderStats(); renderRoads();
   }
@@ -688,7 +740,8 @@
 
   // ---- input ---------------------------------------------------------------
   document.querySelectorAll('.spot').forEach(s => s.addEventListener('click', () => place(s.dataset.spot)));
-  document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { chipVal = +b.dataset.v; renderChips(); }));
+  document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { chipVal = b.dataset.v === 'all' ? 'all' : Number(b.dataset.v); renderChips(); }));
+  document.querySelectorAll('[data-table]').forEach(b=>b.addEventListener('click',()=>switchTable(Number(b.dataset.table))));
   $('undoBtn').addEventListener('click', undoBet);
   $('clearBtn').addEventListener('click', clearBets);
   $('rebetBtn').addEventListener('click', rebet);
@@ -721,6 +774,11 @@
 
   // ---- init (最後に実行) ----------------------------------------------------
   const saved = load();
+  const validTable=t=>t&&Array.isArray(t.shoe)&&t.shoe.length===DECKS*52&&t.shoe.every(c=>c&&Number.isInteger(c.r)&&c.r>=1&&c.r<=13&&Number.isInteger(c.s)&&c.s>=0&&c.s<4)&&Number.isInteger(t.pos)&&t.pos>=0&&t.pos<=t.shoe.length&&Array.isArray(t.results)&&t.results.length>=30&&t.results.length<10000&&t.results.every(e=>e&&['P','B','T'].includes(e.r)&&Number.isInteger(e.pv)&&Number.isInteger(e.bv)&&e.pv>=0&&e.pv<=9&&e.bv>=0&&e.bv<=9);
+  tables=[0,1,2].map(i=>validTable(saved?.tables?.[i])?saved.tables[i]:seedTable());
+  if(!saved?.tables&&saved?.results.length)tables[0].results.push(...saved.results);
+  activeTable=Number.isInteger(saved?.activeTable)&&saved.activeTable>=0&&saved.activeTable<3?saved.activeTable:0;
+  useTable(activeTable);
   if (saved) {
     if (saved.stats) stats = Object.assign(stats, saved.stats);
     if (saved.opts) opts = Object.assign(opts, saved.opts);
@@ -729,6 +787,7 @@
     }
   }
   bindOpt('optSqueeze', 'chkSqueeze', 'squeeze');
+  if(saved?.moneyRecovered)$('ovNote').textContent='以前の保存金額が壊れていたため、100万円から再開できます。過去の正確な残高は復元できません。';
   bindOpt('optFast', 'chkFast', 'fast');
   renderBank(); renderBets(); renderStats(); renderRoads();
 
@@ -740,8 +799,9 @@
   };
   window.__test = {
     state: () => ({ bank, bets: Object.assign({}, bets), busy, started, results: results.slice(-8), stats: Object.assign({}, stats), remaining: shoe.length - pos, opts: Object.assign({}, opts), lastBets }),
-    start: newRun, deal, place, undo: undoBet, clearBets, rebet,
-    setShoe: codes => { shoe.splice(pos, 0, ...codes.map(parseCard)); updateShoe(); },
+    start: newRun, deal, place, undo: undoBet, clearBets, rebet, switchTable,
+    tables:()=>({activeTable,tables:tables.map((t,i)=>({id:i,results:t.results.slice(),pos:i===activeTable?pos:t.pos}))}),
+    setShoe: codes => { shoe.splice(pos, codes.length, ...codes.map(parseCard)); updateShoe(); },
     setBank: n => { bank = n; renderBank(); renderBets(); },
     setRemaining: n => { pos = Math.max(0, shoe.length - n); updateShoe(); },
     bankerDraws, playerDraws, buildBigRoad, reveal: () => { if (pendingReveal) pendingReveal(); },
