@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ドキドキスイーパー｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:480px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px; overflow-x:hidden;
+  }
+  .backbar,header,#wrap,.row,.help,.scroll-hint{width:min(var(--w),100%)}
+  .backbar{margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--violet);text-shadow:0 0 12px rgba(160,107,255,.65);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid var(--edge);border-radius:8px;background:#0e0e1c;overflow:hidden}
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--edge)}
+  .lcd{font-size:22px;letter-spacing:1px;padding:3px 8px;border:1px solid var(--edge);border-radius:8px;background:#0a0a17;min-width:98px;text-align:center;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .lcd.pink{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.8)}
+  .lcd.pink.neg{color:#ff8c42;text-shadow:0 0 8px rgba(255,140,66,.8)}
+  .lcd.cyan{color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.8)}
+  .mid{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+  .face{width:44px;height:44px;border-radius:50%;font-size:24px;line-height:1;background:var(--bg);border:1px solid var(--edge);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;font-family:inherit;box-shadow:0 0 10px rgba(160,107,255,.25);transition:transform .12s}
+  .face:hover{border-color:var(--gold);transform:scale(1.06)}
+  .face:active{transform:scale(.94)}
+  #hudLevel{font-size:11px;color:var(--sub);white-space:nowrap;letter-spacing:.5px}
+  #scroller{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .scroll-hint{display:none;font-size:11px;color:var(--sub);text-align:center;margin-top:4px;letter-spacing:1px}
+
+  .row{display:flex;gap:6px;margin-top:8px}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;transition:box-shadow .15s}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  #modeOpen.on{border-color:var(--cyan);color:var(--cyan);background:rgba(83,224,216,.12);box-shadow:0 0 12px rgba(83,224,216,.35)}
+  #modeFlag.on{border-color:var(--pink);color:var(--pink);background:rgba(255,95,162,.12);box-shadow:0 0 12px rgba(255,95,162,.35)}
+
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.93);
+    text-align:center;padding:12px;overflow:auto;z-index:2;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--violet);text-shadow:0 0 16px rgba(160,107,255,.7);line-height:1.2}
+  #overlay .big.win{color:var(--gold);text-shadow:0 0 18px rgba(255,209,102,.75)}
+  #overlay .big.lose{color:var(--pink);text-shadow:0 0 18px rgba(255,95,162,.75)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.8}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note i{font-style:normal}
+  #overlay .note .rec{color:var(--cyan)}
+  .levels{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .levels button{font-family:inherit;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:10px;padding:7px 6px;cursor:pointer;min-width:104px;display:flex;flex-direction:column;gap:2px;align-items:center}
+  .levels button b{font-weight:400;font-size:14px;color:var(--ink);letter-spacing:1px}
+  .levels button small{font-size:10px}
+  .levels button em{font-style:normal;font-size:10px;color:var(--gold)}
+  .levels button.on{border-color:var(--violet);background:rgba(160,107,255,.12);box-shadow:0 0 10px rgba(160,107,255,.4)}
+  .levels button.on b{color:var(--violet)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--violet);color:#160a2e;border:none;border-radius:6px;padding:9px 20px;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(160,107,255,.45)}
+  .modes button.alt{background:none;color:var(--sub);border:1px solid var(--edge);font-size:13px;box-shadow:none}
+  .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
+  #overlay .rule{font-size:11px;color:var(--sub)}
+
+  .help{color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="ネオンに光る格子で遊ぶ地雷探しパズル。数字は「まわり8マスにある地雷の数」、最初の1タップは必ず安全。やさしい（9×9）・ふつう（16×16）・むずかしい（16×30）の3レベルで、レベルごとのベストタイムを記録。数字をタップしてまわりを一気に開く「コード」、波紋のように広がる連鎖オープン、クリア時の花火つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/025-dokidoki-sweeper/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ドキドキスイーパー","description":"ネオンに光る格子で遊ぶ地雷探しパズル。数字は「まわり8マスにある地雷の数」、最初の1タップは必ず安全。やさしい（9×9）・ふつう（16×16）・むずかしい（16×30）の3レベルで、レベルごとのベストタイムを記録。数字をタップしてまわりを一気に開く「コード」、波紋のように広がる連鎖オープン、クリア時の花火つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/025-dokidoki-sweeper/index.html","inLanguage":"ja","genre":"LOGIC","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="025"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ドキドキスイーパー</h1>
+  <div class="age-badge">対象年齢の目安：8歳〜 / ひとり用・3レベル</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div class="lcd pink" id="hudFlags">🚩 010</div>
+    <div class="mid">
+      <button class="face" id="faceBtn" aria-label="やりなおし">🙂</button>
+      <div id="hudLevel">やさしい 9×9・💣10</div>
+    </div>
+    <div class="lcd cyan" id="hudTime">⏱ 000</div>
+  </div>
+  <div id="scroller"><canvas id="cv" width="480" height="460"></canvas></div>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">ネオン<br>スイーパー</div>
+    <div class="note" id="ovNote"></div>
+    <div class="levels" id="levels">
+      <button data-l="easy" class="on"><b>やさしい</b><small>9×9・💣10</small><em>🏆 --</em></button>
+      <button data-l="normal"><b>ふつう</b><small>16×16・💣40</small><em>🏆 --</em></button>
+      <button data-l="hard"><b>むずかしい</b><small>16×30・💣99</small><em>🏆 --</em></button>
+    </div>
+    <div class="modes">
+      <button id="startBtn">スタート</button>
+      <button id="toTitleBtn" class="alt" style="display:none">レベルをえらぶ</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="scroll-hint" id="scrollHint">← ばんが広いので よこに スクロールしてね →</div>
+<div class="row">
+  <button class="btn mode on" id="modeOpen">👆 ひらく</button>
+  <button class="btn mode" id="modeFlag">🚩 はた</button>
+</div>
+<div class="row">
+  <button class="btn" id="resetBtn">🔄 やりなおし</button>
+  <button class="btn" id="menuBtn">レベルをえらぶ</button>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：マスをひらいて、じらい💣いがいを <b>ぜんぶ ひらけたら クリア</b>！ すうじは「そのマスの まわり8マスにある じらいの数」。じらいだと思うマスには <i class="c2">はた🚩</i> をたてよう。さいしょの1タップは ぜったいに安全。<br>
+  📱 タップで ひらく／<b>ながおし</b> か「🚩はた」モードで はた。ひらいた すうじをタップすると、まわりの はたの数が すうじと同じなら まわりを <i class="c1">いっきに ひらける</i>よ（コード）。<br>
+  🖱 左クリックで ひらく／右クリックで はた／すうじをクリックで いっきに ひらく。⌨️ 矢印キーでカーソル、Enter・スペースでひらく、Fではた、Cでいっきに、Rでやりなおし。<br>
+  <i class="c3">コツ</i>：「1」のとなりに とじたマスが1つだけなら、そこが じらい。まよったら はたを たてて 数字と つきあわせよう。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  const scroller = $('scroller'), overlay = $('overlay');
+  const hudFlags = $('hudFlags'), hudTime = $('hudTime'), hudLevel = $('hudLevel'), faceBtn = $('faceBtn');
+  const RS = Math.min(2, window.devicePixelRatio || 1);
+  const KEY = 'picotto_neon-sweeper_';
+  const LEVELS = {
+    easy:   { name: 'やさしい',   rows: 9,  cols: 9,  mines: 10 },
+    normal: { name: 'ふつう',     rows: 16, cols: 16, mines: 40 },
+    hard:   { name: 'むずかしい', rows: 16, cols: 30, mines: 99 },
+  };
+  const LEVEL_IDS = ['easy', 'normal', 'hard'];
+  const NUM_COLORS = [null, '#53e0d8', '#7cff7c', '#ff5fa2', '#a06bff', '#ffd166', '#4db8ff', '#ff8c42', '#ffffff'];
+  const PALETTE = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#7cff7c', '#ffffff'];
+  const PAD = 14, RIPPLE = 32, REVEAL_MS = 190, FLAG_MS = 180, LONG_MS = 380;
+  const TITLE_NOTE = 'すうじは <b>まわり8マスにある じらい💣の数</b>。<br>じらいを ふまずに、じらいいがいのマスを<br><b>ぜんぶ ひらけたら クリア</b>！<br>さいしょの 1タップは ぜったいに安全だよ。<br>📱 タップで ひらく／ながおしで 🚩<br>🖱 左クリックで ひらく／右クリックで 🚩';
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function noise(dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+    const s = a.createBufferSource(), g = a.createGain(), f = a.createBiquadFilter(); const t = a.currentTime + delay;
+    s.buffer = buf; f.type = 'lowpass'; f.frequency.setValueAtTime(1400, t); f.frequency.exponentialRampToValueAtTime(120, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(a.destination); s.start(t); s.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    open() { tone('square', 640, 420, 0.06, 0.05); },
+    ripple(layers) { const n = Math.min(layers, 22); for (let i = 0; i < n; i++) tone('square', 460 + i * 36, 520 + i * 36, 0.05, 0.035, i * RIPPLE / 1000); },
+    flag() { tone('triangle', 820, 1180, 0.09, 0.07); },
+    unflag() { tone('triangle', 700, 420, 0.09, 0.05); },
+    deny() { tone('square', 210, 150, 0.09, 0.05); },
+    boom() { noise(0.7, 0.4); tone('sawtooth', 140, 26, 0.7, 0.18); tone('square', 90, 30, 0.45, 0.12); },
+    pop(d) { tone('sawtooth', 240, 60, 0.12, 0.06, d); noise(0.12, 0.08, d); },
+    win() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.18, 0.07, i * 0.09)); },
+    record() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.22, 0.08, 0.75 + i * 0.09)); },
+    fw() { tone('sine', 900, 220, 0.4, 0.045); },
+    burst() { noise(0.28, 0.14); tone('triangle', 520, 180, 0.25, 0.04); },
+    click() { tone('square', 1000, 1000, 0.03, 0.03); },
+    autoflag(i) { tone('triangle', 900 + i * 40, 1200 + i * 40, 0.07, 0.04, 0.2 + i * 0.04); },
+  };
+  const muteBtn = $('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ---------------------------------------------------------------
+  let level = 'easy', rows = 9, cols = 9, mines = 10, grid = [];
+  let phase = 'title';                       // title | play | over
+  let placed = false, over = false, won = false, started = false;
+  let elapsed = 0, lastSec = -1, flagsUsed = 0, openCount = 0, T = 0;
+  let mode = 'open';                         // open | flag
+  let best = { easy: null, normal: null, hard: null };
+  try { const b = JSON.parse(localStorage.getItem(KEY + 'best') || 'null'); if (b && typeof b === 'object') best = Object.assign(best, b); } catch (e) {}
+  let cell = 48, BX = 24, BY = PAD, W = 480, H = 460;
+  let particles = [], rockets = [], rings = [], fxList = [], hint = null;
+  let shake = 0, shakeX = 0, shakeY = 0, popCount = 0;
+  let boom = null, resultAt = Infinity, resultShown = false, newRecord = false, lastTime = 0, winAt = 0, rippleEnd = 0;
+  let fwQueue = 0, fwNext = 0;
+  let hover = null, cursor = { r: 4, c: 4 }, kb = false, press = null, pressTimer = 0, pressing = null, suppressUp = false;
+  let face = '🙂';
+
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+  const inb = (r, c) => r >= 0 && r < rows && c >= 0 && c < cols;
+  const pad3 = n => n < 0 ? '-' + String(Math.min(99, -n)).padStart(2, '0') : String(Math.min(999, n)).padStart(3, '0');
+  const fmt = t => t == null ? '--' : (Math.round(t * 10) / 10).toFixed(1);
+  function rrPath(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r); c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath(); }
+
+  function makeGrid() {
+    grid = [];
+    for (let r = 0; r < rows; r++) { const row = []; for (let c = 0; c < cols; c++) row.push({ mine: false, open: false, flag: false, n: 0, rt: -1, ft: -1, mt: -1, wt: -1, wrong: false, boom: false }); grid.push(row); }
+  }
+  function neighbors(r, c) {
+    const out = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { if (!dr && !dc) continue; const rr = r + dr, cc = c + dc; if (inb(rr, cc)) out.push([rr, cc]); }
+    return out;
+  }
+  function computeNumbers() {
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { let n = 0; for (const [rr, cc] of neighbors(r, c)) if (grid[rr][cc].mine) n++; grid[r][c].n = n; }
+  }
+  function placeMines(sr, sc) {
+    let cand = [];
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) if (Math.abs(r - sr) > 1 || Math.abs(c - sc) > 1) cand.push(r * cols + c);
+    if (cand.length < mines) { cand = []; for (let i = 0; i < rows * cols; i++) if (i !== sr * cols + sc) cand.push(i); }
+    const need = Math.min(mines, cand.length);
+    for (let i = 0; i < need; i++) { const j = i + Math.floor(Math.random() * (cand.length - i)); const t = cand[i]; cand[i] = cand[j]; cand[j] = t; grid[Math.floor(cand[i] / cols)][cand[i] % cols].mine = true; }
+    computeNumbers(); placed = true;
+  }
+  function setLevel(lv) { if (!LEVELS[lv]) lv = 'easy'; level = lv; const L = LEVELS[lv]; rows = L.rows; cols = L.cols; mines = L.mines; }
+
+  // ---- layout ----------------------------------------------------------------
+  const sprites = new Map();
+  function layout() {
+    cell = cols <= 9 ? 48 : 28;
+    W = Math.max(480, cols * cell + 2 * PAD);
+    H = rows * cell + 2 * PAD;
+    BX = Math.round((W - cols * cell) / 2); BY = PAD;
+    cv.width = Math.round(W * RS); cv.height = Math.round(H * RS);
+    document.documentElement.style.setProperty('--w', W + 'px');
+    document.body.classList.toggle('wide', W > 480);
+    sprites.clear();
+    fitCanvas();
+  }
+  function fitCanvas() {
+    const avail = scroller.clientWidth || 480;
+    // wide board: keep the cells the same physical size as a 480px board and let #scroller scroll sideways.
+    // If the container (minus its border) can nearly hold the whole board, just fill it.
+    if (W <= 480 || avail >= W - 8) { cv.style.width = '100%'; cv.style.touchAction = 'none'; }
+    else { const px = Math.round(W * Math.min(480, avail) / 480); cv.style.width = px + 'px'; cv.style.touchAction = px > avail + 2 ? 'pan-x' : 'none'; }
+    $('scrollHint').style.display = (scroller.scrollWidth > scroller.clientWidth + 2) ? 'block' : 'none';
+  }
+
+  // ---- game flow ---------------------------------------------------------------
+  function newGame() {
+    makeGrid(); placed = false; over = false; won = false; started = false; elapsed = 0; lastSec = -1; flagsUsed = 0; openCount = 0;
+    particles = []; rockets = []; rings = []; fxList = []; hint = null; shake = 0; popCount = 0; boom = null;
+    resultAt = Infinity; resultShown = false; newRecord = false; fwQueue = 0; rippleEnd = 0; face = '🙂'; pressing = null; press = null; clearTimeout(pressTimer);
+    cursor = { r: Math.floor(rows / 2), c: Math.floor(cols / 2) };
+    phase = 'play'; overlay.classList.remove('show'); updateHud();
+  }
+  function startGame(lv) { setLevel(lv || level); layout(); newGame(); syncLevelButtons(); try { localStorage.setItem(KEY + 'level', level); } catch (e) {} }
+  function resetGame() { if (phase === 'title') return; SFX.click(); newGame(); }
+  function openCell(r, c, fromChord) {
+    if (phase !== 'play' || over || !inb(r, c)) return false;
+    const g = grid[r][c]; if (g.open || g.flag) return false;
+    if (!placed) placeMines(r, c);
+    started = true;
+    if (g.mine) { explode(r, c); return true; }
+    const q = [[r, c, 0]]; g.open = true; g.rt = T; openCount++; let head = 0, maxL = 0;
+    while (head < q.length) {
+      const [rr, cc, L] = q[head++]; if (L > maxL) maxL = L;
+      if (grid[rr][cc].n !== 0) continue;
+      for (const [nr, nc] of neighbors(rr, cc)) { const ng = grid[nr][nc]; if (ng.open || ng.flag || ng.mine) continue; ng.open = true; ng.rt = T + (L + 1) * RIPPLE; openCount++; q.push([nr, nc, L + 1]); }
+    }
+    const cx = BX + c * cell + cell / 2, cy = BY + r * cell + cell / 2;
+    if (q.length > 1) { SFX.ripple(maxL + 1); rings.push({ x: cx, y: cy, t: T, dur: maxL * RIPPLE + 260, rad: (maxL + 1.2) * cell }); rippleEnd = Math.max(rippleEnd, T + maxL * RIPPLE + REVEAL_MS); burst(cx, cy, ['#53e0d8', '#ffffff'], 10, false, 0.5); }
+    else { if (!fromChord) SFX.open(); burst(cx, cy, ['#53e0d8', '#ffffff'], 4, false, 0.4); }
+    checkWin();
+    return true;
+  }
+  function flagCell(r, c) {
+    if (phase !== 'play' || over || !inb(r, c)) return false;
+    const g = grid[r][c]; if (g.open) return false;
+    g.flag = !g.flag; flagsUsed += g.flag ? 1 : -1; g.ft = T;
+    if (g.flag) SFX.flag(); else SFX.unflag();
+    burst(BX + c * cell + cell / 2, BY + r * cell + cell / 2, ['#ff5fa2', '#ffffff'], 5, false, 0.4);
+    updateHud(); return true;
+  }
+  function chord(r, c) {
+    if (phase !== 'play' || over || !inb(r, c)) return false;
+    const g = grid[r][c]; if (!g.open || g.n === 0) return false;
+    let f = 0; const closed = [];
+    for (const [nr, nc] of neighbors(r, c)) { const ng = grid[nr][nc]; if (ng.flag) f++; else if (!ng.open) closed.push([nr, nc]); }
+    if (!closed.length) return false;
+    if (f !== g.n) { hint = { cells: closed, t: T, col: '#ffd166' }; SFX.deny(); return false; }
+    for (const [nr, nc] of closed) { if (over) break; openCell(nr, nc, true); }
+    if (!over) SFX.open();
+    return true;
+  }
+  function act(kind, r, c) {
+    if (!inb(r, c)) return;
+    const g = grid[r][c];
+    if (g.open) { if (g.n > 0) chord(r, c); return; }
+    if (kind === 'flag') { flagCell(r, c); return; }
+    if (g.flag) { hint = { cells: [[r, c]], t: T, col: '#ff5fa2' }; return; }
+    openCell(r, c);
+  }
+  function explode(r, c) {
+    over = true; won = false; phase = 'over'; boom = { r, c }; face = '😵';
+    const g = grid[r][c]; g.open = true; g.mt = T; g.boom = true;
+    let maxT = T; fxList = [];
+    for (let rr = 0; rr < rows; rr++) for (let cc = 0; cc < cols; cc++) {
+      const cg = grid[rr][cc]; if (rr === r && cc === c) continue;
+      const d = Math.max(Math.abs(rr - r), Math.abs(cc - c)); const t = T + 260 + d * 55;
+      if (cg.mine && !cg.flag) { cg.mt = t; fxList.push({ t, r: rr, c: cc, kind: 'mine' }); maxT = Math.max(maxT, t); }
+      else if (!cg.mine && cg.flag) { cg.wrong = true; cg.wt = t; fxList.push({ t, r: rr, c: cc, kind: 'wrong' }); maxT = Math.max(maxT, t); }
+    }
+    fxList.sort((a, b) => a.t - b.t);
+    shake = 1; SFX.boom();
+    burst(BX + c * cell + cell / 2, BY + r * cell + cell / 2, ['#ff5fa2', '#ffd166', '#ffffff', '#ff8c42'], 60, true, 1);
+    resultAt = maxT + 950;
+    updateHud();
+  }
+  function checkWin() {
+    if (openCount !== rows * cols - mines) return;
+    over = true; won = true; phase = 'over'; face = '😎'; lastTime = elapsed; winAt = T;
+    let i = 0;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const g = grid[r][c]; if (g.mine && !g.flag) { g.flag = true; flagsUsed++; g.ft = T + 200 + i * 40; if (i < 20) SFX.autoflag(i); i++; } }
+    const t = Math.round(elapsed * 10) / 10, b = best[level];
+    if (b == null || t < b) { best[level] = t; newRecord = true; try { localStorage.setItem(KEY + 'best', JSON.stringify(best)); } catch (e) {} }
+    resultAt = Math.max(T + 2000, rippleEnd + 1100);
+    fwQueue = 8; fwNext = T + 150; SFX.win(); if (newRecord) SFX.record();
+    renderBest(); updateHud();
+  }
+  function toTitle() {
+    phase = 'title'; face = '🙂'; clearTimeout(pressTimer); press = null; pressing = null;
+    resultShown = true;   // a pending result screen must not overwrite the title overlay
+    $('ovBig').innerHTML = 'ネオン<br>スイーパー'; $('ovBig').className = 'big';
+    $('ovNote').innerHTML = TITLE_NOTE; $('levels').style.display = 'flex'; $('startBtn').textContent = 'スタート'; $('toTitleBtn').style.display = 'none';
+    $('ovStats').textContent = '1・2・3キーで レベルをえらべるよ';
+    renderBest(); syncLevelButtons(); overlay.classList.add('show'); updateHud();
+  }
+  function showResult() {
+    resultShown = true;
+    const big = $('ovBig'), note = $('ovNote');
+    if (won) {
+      big.textContent = 'CLEAR!'; big.className = 'big win';
+      note.innerHTML = 'タイム <b>' + fmt(lastTime) + 'びょう</b>' + (newRecord ? '　<i class="rec">🏆 しんきろく！</i>' : '') + '<br>' + LEVELS[level].name + ' のベスト：' + fmt(best[level]) + 'びょう';
+    } else {
+      big.textContent = 'ドカーン…'; big.className = 'big lose';
+      note.innerHTML = 'じらいを ふんじゃった！<br>ひらけたマス：' + openCount + ' / ' + (rows * cols - mines) + (best[level] != null ? '<br>' + LEVELS[level].name + ' のベスト：' + fmt(best[level]) + 'びょう' : '');
+    }
+    $('levels').style.display = 'none'; $('startBtn').textContent = 'もういちど'; $('toTitleBtn').style.display = ''; $('ovStats').textContent = '';
+    overlay.classList.add('show');
+  }
+  function selectLevel(lv) {
+    if (!LEVELS[lv]) return;
+    setLevel(lv); syncLevelButtons(); renderBest(); SFX.click();
+    if (phase === 'title') { layout(); makeGrid(); cursor = { r: Math.floor(rows / 2), c: Math.floor(cols / 2) }; }
+    updateHud();
+  }
+  function syncLevelButtons() { document.querySelectorAll('#levels button').forEach(b => b.classList.toggle('on', b.dataset.l === level)); }
+  function renderBest() { document.querySelectorAll('#levels button').forEach(b => { b.querySelector('em').textContent = '🏆 ' + (best[b.dataset.l] == null ? '--' : fmt(best[b.dataset.l]) + 'びょう'); }); }
+  function setMode(m) { mode = m; $('modeOpen').classList.toggle('on', m === 'open'); $('modeFlag').classList.toggle('on', m === 'flag'); try { localStorage.setItem(KEY + 'mode', m); } catch (e) {} }
+  function updateHud() {
+    const left = mines - flagsUsed;
+    hudFlags.textContent = '🚩 ' + pad3(left); hudFlags.classList.toggle('neg', left < 0);
+    hudTime.textContent = '⏱ ' + pad3(Math.floor(elapsed)); lastSec = Math.min(999, Math.floor(elapsed));
+    faceBtn.textContent = face;
+    hudLevel.textContent = LEVELS[level].name + ' ' + rows + '×' + cols + '・💣' + mines;
+  }
+  function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+  // ---- fx ----------------------------------------------------------------------
+  function burst(x, y, col, n, fw, scale) {
+    if (particles.length > 1400) return;
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = ((fw ? 70 : 30) + Math.random() * (fw ? 200 : 140)) * (scale || 1);
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (fw ? 20 : 40), life: (fw ? 0.7 : 0.35) + Math.random() * (fw ? 0.8 : 0.4), col: Array.isArray(col) ? col[i % col.length] : col, size: fw ? 2.2 : 1.8, g: fw ? 170 : 260, tw: Math.random() * 10 });
+    }
+  }
+  function visibleRange() { const cw = cv.clientWidth || W; const k = W / cw; return { x0: scroller.scrollLeft * k, x1: (scroller.scrollLeft + scroller.clientWidth) * k, cx: (scroller.scrollLeft + scroller.clientWidth / 2) * k }; }
+  function launchRocket() {
+    fwQueue--; fwNext = T + 170 + Math.random() * 260;
+    const v = visibleRange(); const x0 = Math.max(BX + cell, v.x0 + 24), x1 = Math.min(BX + cols * cell - cell, v.x1 - 24);
+    const x = x0 + Math.random() * Math.max(1, x1 - x0);
+    rockets.push({ x, y: BY + rows * cell + 8, vx: (Math.random() - 0.5) * 50, vy: -(430 + Math.random() * 190), ty: BY + cell * 0.6 + Math.random() * rows * cell * 0.45, col: PALETTE[Math.floor(Math.random() * PALETTE.length)], trail: [] });
+    SFX.fw();
+  }
+
+  // ---- update ------------------------------------------------------------------
+  function update(dt) {
+    T += dt * 1000;
+    if (phase === 'play' && started && !over) elapsed += dt;
+    const sec = Math.min(999, Math.floor(elapsed));
+    if (sec !== lastSec) { lastSec = sec; hudTime.textContent = '⏱ ' + pad3(sec); }
+    if (shake > 0) { shake = Math.max(0, shake - dt * 2.4); const a = shake * shake * 10; shakeX = (Math.random() * 2 - 1) * a; shakeY = (Math.random() * 2 - 1) * a; } else { shakeX = shakeY = 0; }
+    while (fxList.length && T >= fxList[0].t) {
+      const f = fxList.shift(); const x = BX + f.c * cell + cell / 2, y = BY + f.r * cell + cell / 2;
+      if (f.kind === 'mine') { burst(x, y, ['#ff5fa2', '#ff8c42', '#ffffff'], 14, false, 0.9); shake = Math.max(shake, 0.32); if (popCount < 12) SFX.pop(0); popCount++; }
+      else { burst(x, y, ['#ff3b5c', '#ffffff'], 8, false, 0.6); }
+    }
+    if (won) {
+      if (fwQueue > 0 && T >= fwNext) launchRocket();
+      rockets = rockets.filter(k => {
+        k.x += k.vx * dt; k.y += k.vy * dt; k.vy += 260 * dt; k.trail.push({ x: k.x, y: k.y }); if (k.trail.length > 12) k.trail.shift();
+        if (k.y <= k.ty || k.vy > -30) { burst(k.x, k.y, k.col, 46, true, 1); burst(k.x, k.y, '#ffffff', 10, true, 0.6); SFX.burst(); return false; }
+        return true;
+      });
+    }
+    particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.vx *= (1 - 1.2 * dt); p.life -= dt; return p.life > 0; });
+    rings = rings.filter(k => T - k.t < k.dur);
+    if (hint && T - hint.t > 380) hint = null;
+    if (over && !resultShown && T >= resultAt) showResult();
+  }
+
+  // ---- sprites -----------------------------------------------------------------
+  const SPR = {
+    closed(c, s) {
+      const r = Math.max(3, s * 0.14); const g = c.createLinearGradient(0, 0, 0, s); g.addColorStop(0, '#2f2f5e'); g.addColorStop(1, '#1c1c3b');
+      c.fillStyle = g; rrPath(c, 1, 1, s - 2, s - 2, r); c.fill();
+      c.strokeStyle = 'rgba(160,107,255,.55)'; c.lineWidth = 1; rrPath(c, 1.5, 1.5, s - 3, s - 3, r); c.stroke();
+      c.strokeStyle = 'rgba(255,255,255,.10)'; c.beginPath(); c.moveTo(3.5, s - 4); c.lineTo(3.5, 3.5); c.lineTo(s - 4, 3.5); c.stroke();
+      c.strokeStyle = 'rgba(0,0,0,.38)'; c.beginPath(); c.moveTo(s - 3.5, 4); c.lineTo(s - 3.5, s - 3.5); c.lineTo(4, s - 3.5); c.stroke();
+    },
+    open(c, s) {
+      c.fillStyle = '#0b0b19'; c.fillRect(0, 0, s, s);
+      c.strokeStyle = 'rgba(0,0,0,.65)'; c.lineWidth = 2; c.beginPath(); c.moveTo(1, s); c.lineTo(1, 1); c.lineTo(s, 1); c.stroke();
+      c.strokeStyle = 'rgba(160,107,255,.10)'; c.lineWidth = 1; c.strokeRect(0.5, 0.5, s - 1, s - 1);
+    },
+    boomcell(c, s) { const g = c.createRadialGradient(s / 2, s / 2, 2, s / 2, s / 2, s * 0.75); g.addColorStop(0, '#ff4d8a'); g.addColorStop(1, '#4a0c26'); c.fillStyle = g; c.fillRect(0, 0, s, s); },
+    flash(c, s) { c.fillStyle = '#ffffff'; rrPath(c, 1, 1, s - 2, s - 2, Math.max(3, s * 0.14)); c.fill(); },
+    flag(c, s) {
+      c.shadowColor = '#ff5fa2'; c.shadowBlur = s * 0.22; c.fillStyle = '#ff5fa2';
+      c.beginPath(); c.moveTo(s * 0.38, s * 0.17); c.lineTo(s * 0.79, s * 0.36); c.lineTo(s * 0.38, s * 0.55); c.closePath(); c.fill(); c.shadowBlur = 0;
+      c.strokeStyle = '#e6e3ff'; c.lineWidth = Math.max(1.5, s * 0.06); c.lineCap = 'round'; c.beginPath(); c.moveTo(s * 0.38, s * 0.17); c.lineTo(s * 0.38, s * 0.8); c.stroke();
+      c.fillStyle = '#9d99c0'; c.fillRect(s * 0.24, s * 0.78, s * 0.3, Math.max(2, s * 0.07));
+    },
+    mine(c, s) {
+      const cx = s / 2, cy = s / 2, R = s * 0.25;
+      c.shadowColor = '#ff5fa2'; c.shadowBlur = s * 0.35; c.strokeStyle = '#ff9cc6'; c.lineWidth = Math.max(1.5, s * 0.07); c.lineCap = 'round';
+      c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.moveTo(cx + Math.cos(a) * R * 0.8, cy + Math.sin(a) * R * 0.8); c.lineTo(cx + Math.cos(a) * s * 0.4, cy + Math.sin(a) * s * 0.4); } c.stroke();
+      const g = c.createRadialGradient(cx - R * 0.35, cy - R * 0.35, 1, cx, cy, R); g.addColorStop(0, '#6f6f96'); g.addColorStop(1, '#0c0c18');
+      c.fillStyle = g; c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.fill(); c.shadowBlur = 0;
+      c.strokeStyle = '#ff5fa2'; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = 'rgba(255,255,255,.75)'; c.beginPath(); c.arc(cx - R * 0.35, cy - R * 0.35, R * 0.22, 0, Math.PI * 2); c.fill();
+    },
+    cross(c, s) {
+      c.strokeStyle = '#ff3b5c'; c.lineWidth = Math.max(2, s * 0.1); c.lineCap = 'round'; c.shadowColor = '#ff3b5c'; c.shadowBlur = s * 0.25;
+      c.beginPath(); c.moveTo(s * 0.2, s * 0.2); c.lineTo(s * 0.8, s * 0.8); c.moveTo(s * 0.8, s * 0.2); c.lineTo(s * 0.2, s * 0.8); c.stroke();
+    },
+  };
+  for (let n = 1; n <= 8; n++) SPR['n' + n] = (c, s) => {
+    const col = NUM_COLORS[n]; c.font = Math.round(s * 0.68) + 'px DotGothic16, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillStyle = col; c.shadowColor = col; c.shadowBlur = s * 0.3; c.fillText(String(n), s / 2, s / 2 + s * 0.05);
+    c.shadowBlur = s * 0.1; c.fillText(String(n), s / 2, s / 2 + s * 0.05); c.shadowBlur = 0;
+  };
+  function sprite(key) {
+    let s = sprites.get(key);
+    if (!s) { s = document.createElement('canvas'); s.width = Math.ceil(cell * RS); s.height = Math.ceil(cell * RS); const c2 = s.getContext('2d'); c2.scale(RS, RS); SPR[key](c2, cell); sprites.set(key, s); }
+    return s;
+  }
+  function blit(key, x, y) { ctx.drawImage(sprite(key), x, y, cell, cell); }
+  function blitScaled(key, x, y, k) { const d = cell * k; ctx.drawImage(sprite(key), x + (cell - d) / 2, y + (cell - d) / 2, d, d); }
+
+  // ---- draw --------------------------------------------------------------------
+  function drawCell(r, c) {
+    const g = grid[r][c], x = BX + c * cell, y = BY + r * cell;
+    if (g.open) {
+      const p = g.rt < 0 ? 1 : clamp((T - g.rt) / REVEAL_MS, 0, 1);
+      if (p <= 0) { blit('closed', x, y); return; }
+      if (g.boom) blit('boomcell', x, y); else blit('open', x, y);
+      if (g.mine) { const mp = clamp((T - g.mt) / 250, 0, 1); blitScaled('mine', x, y, 0.4 + 0.6 * easeOutBack(mp)); }
+      else if (g.n > 0) blit('n' + g.n, x, y);
+      if (p < 1) { blitScaled('closed', x, y, 1 - p); ctx.globalAlpha = (1 - p) * 0.55; blit('flash', x, y); ctx.globalAlpha = 1; }
+      return;
+    }
+    if (pressing && pressing.r === r && pressing.c === c && !g.flag) { blit('open', x, y); return; }
+    blit('closed', x, y);
+    if (over && !won && g.mine && !g.flag) {
+      if (g.mt >= 0 && T >= g.mt) { const mp = clamp((T - g.mt) / 250, 0, 1); if (mp < 1) { ctx.globalAlpha = 1 - mp; blit('flash', x, y); ctx.globalAlpha = 1; } blitScaled('mine', x, y, 0.3 + 0.7 * easeOutBack(mp)); }
+      return;
+    }
+    if (g.flag) {
+      if (g.ft >= 0 && T < g.ft) return;
+      const fp = g.ft < 0 ? 1 : clamp((T - g.ft) / FLAG_MS, 0, 1);
+      if (over && g.wrong && g.wt >= 0 && T >= g.wt) { blit('flag', x, y); const wp = clamp((T - g.wt) / 250, 0, 1); ctx.globalAlpha = wp; blitScaled('cross', x, y, 0.6 + 0.4 * easeOutBack(wp)); ctx.globalAlpha = 1; }
+      else blitScaled('flag', x, y, 0.5 + 0.5 * easeOutBack(fp));
+    } else if (g.ft >= 0 && T - g.ft < FLAG_MS) {
+      const fp = (T - g.ft) / FLAG_MS; ctx.globalAlpha = 1 - fp; blitScaled('flag', x, y, 1 + fp * 0.4); ctx.globalAlpha = 1;
+    }
+  }
+  function outline(cells, col, lw, blur) {
+    ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.shadowColor = col; ctx.shadowBlur = blur;
+    for (const [r, c] of cells) { const x = BX + c * cell, y = BY + r * cell; rrPath(ctx, x + 1.5, y + 1.5, cell - 3, cell - 3, Math.max(3, cell * 0.14)); ctx.stroke(); }
+    ctx.shadowBlur = 0;
+  }
+  function draw() {
+    ctx.setTransform(RS, 0, 0, RS, 0, 0); ctx.clearRect(0, 0, W, H);
+    const bw = cols * cell, bh = rows * cell;
+    ctx.save(); ctx.translate(shakeX, shakeY);
+    const frameCol = over ? (won ? '#ffd166' : '#ff5fa2') : (mode === 'flag' ? '#ff5fa2' : '#a06bff');
+    ctx.fillStyle = '#14142a'; ctx.strokeStyle = frameCol; ctx.lineWidth = 3; ctx.shadowColor = frameCol; ctx.shadowBlur = 16 + 6 * Math.sin(T / 600);
+    rrPath(ctx, BX - 7, BY - 7, bw + 14, bh + 14, 10); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.fillStyle = '#0a0a17'; ctx.fillRect(BX, BY, bw, bh);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) drawCell(r, c);
+    // neon lattice
+    ctx.strokeStyle = 'rgba(160,107,255,.20)'; ctx.lineWidth = 1; ctx.beginPath();
+    for (let c = 0; c <= cols; c++) { const x = BX + c * cell + 0.5; ctx.moveTo(x, BY); ctx.lineTo(x, BY + bh); }
+    for (let r = 0; r <= rows; r++) { const y = BY + r * cell + 0.5; ctx.moveTo(BX, y); ctx.lineTo(BX + bw, y); }
+    ctx.stroke();
+    // ripple rings
+    if (rings.length) {
+      ctx.save(); ctx.beginPath(); ctx.rect(BX, BY, bw, bh); ctx.clip();
+      for (const k of rings) { const p = clamp((T - k.t) / k.dur, 0, 1); ctx.globalAlpha = (1 - p) * 0.6; ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 3; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 12; ctx.beginPath(); ctx.arc(k.x, k.y, Math.max(1, k.rad * easeOutCubic(p)), 0, Math.PI * 2); ctx.stroke(); }
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0; ctx.restore();
+    }
+    if (hint) { const a = 1 - (T - hint.t) / 380; ctx.globalAlpha = Math.max(0, a); outline(hint.cells, hint.col, 2.5, 10); ctx.globalAlpha = 1; }
+    if (phase === 'play' && !over) {
+      if (kb) { outline([[cursor.r, cursor.c]], '#ffd166', 3, 12); }
+      else if (hover && inb(hover.r, hover.c)) {
+        const g = grid[hover.r][hover.c];
+        if (g.open && g.n > 0) { const cs = neighbors(hover.r, hover.c).filter(([r, c]) => !grid[r][c].open && !grid[r][c].flag); ctx.globalAlpha = 0.7; outline(cs, '#ffd166', 1.5, 6); ctx.globalAlpha = 1; }
+        else if (!g.open) outline([[hover.r, hover.c]], '#ffd166', 2, 8);
+      }
+    }
+    ctx.restore();
+    // particles / rockets (additive)
+    if (particles.length || rockets.length) {
+      ctx.globalCompositeOperation = 'lighter';
+      for (const k of rockets) {
+        for (let i = 1; i < k.trail.length; i++) { ctx.globalAlpha = i / k.trail.length * 0.8; ctx.strokeStyle = k.col; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(k.trail[i - 1].x, k.trail[i - 1].y); ctx.lineTo(k.trail[i].x, k.trail[i].y); ctx.stroke(); }
+        ctx.globalAlpha = 1; ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(k.x, k.y, 2.5, 0, Math.PI * 2); ctx.fill();
+      }
+      for (const p of particles) { const a = clamp(p.life / 0.5, 0, 1) * (0.7 + 0.3 * Math.sin(T * 0.02 + p.tw)); ctx.globalAlpha = a; ctx.fillStyle = p.col; ctx.fillRect(p.x - p.size, p.y - p.size, p.size * 2, p.size * 2); }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+    if (won && !resultShown) {
+      const v = visibleRange(); const cx = clamp(v.cx, 120, W - 120), cy = BY + bh / 2; const s = 1 + 0.05 * Math.sin((T - winAt) / 110);
+      ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s);
+      ctx.fillStyle = 'rgba(10,10,23,.72)'; rrPath(ctx, -118, -46, 236, newRecord ? 92 : 70, 12); ctx.fill();
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '44px DotGothic16, monospace'; ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 22; ctx.fillText('CLEAR!', 0, -10);
+      if (newRecord) { ctx.font = '18px DotGothic16, monospace'; ctx.fillStyle = '#53e0d8'; ctx.shadowColor = '#53e0d8'; ctx.fillText('NEW RECORD!', 0, 28); }
+      ctx.shadowBlur = 0; ctx.restore();
+    }
+  }
+
+  // ---- input -------------------------------------------------------------------
+  function cellAt(e) {
+    const rc = cv.getBoundingClientRect(); if (!rc.width || !rc.height) return null;
+    const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    const c = Math.floor((x - BX) / cell), r = Math.floor((y - BY) / cell);
+    return inb(r, c) ? { r, c } : null;
+  }
+  function setFace(f) { if (face !== f) { face = f; faceBtn.textContent = f; } }
+  function ensureCursorVisible() {
+    const cw = cv.clientWidth || W; if (cw <= scroller.clientWidth + 2) return; const k = cw / W;
+    const x0 = (BX + cursor.c * cell) * k, x1 = x0 + cell * k;
+    if (x0 < scroller.scrollLeft) scroller.scrollLeft = x0 - 12; else if (x1 > scroller.scrollLeft + scroller.clientWidth) scroller.scrollLeft = x1 - scroller.clientWidth + 12;
+  }
+  function onPointerDown(e) {
+    audio();
+    if (phase !== 'play') return;
+    const cl = cellAt(e); if (!cl) return;
+    if (e.pointerType === 'mouse') {
+      kb = false;
+      if (e.button === 2 || (e.button === 0 && e.ctrlKey)) { e.preventDefault(); flagCell(cl.r, cl.c); suppressUp = true; return; }
+      if (e.button === 1) { e.preventDefault(); chord(cl.r, cl.c); suppressUp = true; return; }
+      if (e.button === 0) { suppressUp = false; pressing = cl; if (!grid[cl.r][cl.c].open) setFace('😮'); }
+      return;
+    }
+    clearTimeout(pressTimer);
+    press = { cl, x: e.clientX, y: e.clientY, long: false, cancel: false };
+    if (!grid[cl.r][cl.c].open) setFace('😮');
+    pressTimer = setTimeout(() => {
+      if (!press || press.cancel || phase !== 'play') return;
+      press.long = true; const g = grid[cl.r][cl.c];
+      if (g.open) { if (g.n > 0) chord(cl.r, cl.c); } else { flagCell(cl.r, cl.c); vibrate(25); }
+      if (!over) setFace('🙂');
+    }, LONG_MS);
+  }
+  function onPointerMove(e) {
+    if (e.pointerType === 'mouse') { hover = cellAt(e); if (hover) kb = false; return; }
+    if (press && !press.cancel && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 12) { press.cancel = true; clearTimeout(pressTimer); if (!over) setFace('🙂'); }
+  }
+  function onPointerUp(e) {
+    if (e.pointerType === 'mouse') {
+      const was = pressing; pressing = null; if (!over && face === '😮') setFace('🙂');
+      if (suppressUp) { suppressUp = false; return; }
+      if (e.button !== 0 || phase !== 'play') return;
+      const cl = cellAt(e); if (!cl || !was || cl.r !== was.r || cl.c !== was.c) return;
+      act(mode, cl.r, cl.c);
+      return;
+    }
+    clearTimeout(pressTimer);
+    if (!over && face === '😮') setFace('🙂');
+    if (!press) return; const p = press; press = null;
+    if (p.long || p.cancel || phase !== 'play') return;
+    const cl = cellAt(e); if (!cl || cl.r !== p.cl.r || cl.c !== p.cl.c) return;
+    act(mode, cl.r, cl.c);
+  }
+  function onPointerCancel() { clearTimeout(pressTimer); press = null; pressing = null; if (!over && face === '😮') setFace('🙂'); }
+  function onKey(e) {
+    if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    const k = e.key;
+    if (overlay.classList.contains('show')) {
+      if (phase === 'title') {
+        if (k === '1' || k === '2' || k === '3') { selectLevel(LEVEL_IDS[+k - 1]); return; }
+        if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); startGame(); }
+      } else if (k === 'Enter' || k === ' ' || k === 'r' || k === 'R') { e.preventDefault(); audio(); startGame(); }
+      else if (k === 'Escape') toTitle();
+      return;
+    }
+    if (phase !== 'play') { if (k === 'r' || k === 'R') startGame(); return; }
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      e.preventDefault(); kb = true; hover = null;
+      if (k === 'ArrowLeft') cursor.c = Math.max(0, cursor.c - 1);
+      if (k === 'ArrowRight') cursor.c = Math.min(cols - 1, cursor.c + 1);
+      if (k === 'ArrowUp') cursor.r = Math.max(0, cursor.r - 1);
+      if (k === 'ArrowDown') cursor.r = Math.min(rows - 1, cursor.r + 1);
+      ensureCursorVisible(); return;
+    }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); kb = true; audio(); act('open', cursor.r, cursor.c); }
+    else if (k === 'f' || k === 'F' || k === 'x' || k === 'X') { e.preventDefault(); kb = true; audio(); flagCell(cursor.r, cursor.c); }
+    else if (k === 'c' || k === 'C') { kb = true; audio(); chord(cursor.r, cursor.c); }
+    else if (k === 'r' || k === 'R') { audio(); resetGame(); }
+    else if (k === 'm' || k === 'M') { setMode(mode === 'open' ? 'flag' : 'open'); }
+    else if (k === 'Escape') { toTitle(); }
+  }
+
+  // ---- loop --------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- init (last, to avoid TDZ issues) ------------------------------------------
+  try { const lv = localStorage.getItem(KEY + 'level'); if (lv && LEVELS[lv]) level = lv; } catch (e) {}
+  try { const m = localStorage.getItem(KEY + 'mode'); if (m === 'flag' || m === 'open') mode = m; } catch (e) {}
+  setLevel(level); layout(); makeGrid(); setMode(mode); drawMute(); toTitle();
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(KEY + 'mute', muted ? '1' : '0'); } catch (e) {} drawMute(); muteBtn.blur(); });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  cv.addEventListener('pointerdown', onPointerDown);
+  cv.addEventListener('pointermove', onPointerMove);
+  cv.addEventListener('pointerup', onPointerUp);
+  cv.addEventListener('pointercancel', onPointerCancel);
+  cv.addEventListener('pointerleave', () => { hover = null; });
+  document.addEventListener('keydown', onKey);
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); selectLevel(b.dataset.l); b.blur(); }));
+  $('startBtn').addEventListener('click', () => { audio(); startGame(); $('startBtn').blur(); });
+  $('toTitleBtn').addEventListener('click', () => { audio(); toTitle(); });
+  $('modeOpen').addEventListener('click', () => { audio(); SFX.click(); setMode('open'); $('modeOpen').blur(); });
+  $('modeFlag').addEventListener('click', () => { audio(); SFX.click(); setMode('flag'); $('modeFlag').blur(); });
+  $('resetBtn').addEventListener('click', () => { audio(); if (phase === 'title') startGame(); else resetGame(); $('resetBtn').blur(); });
+  $('menuBtn').addEventListener('click', () => { audio(); toTitle(); $('menuBtn').blur(); });
+  faceBtn.addEventListener('click', () => { audio(); if (phase === 'title') startGame(); else resetGame(); faceBtn.blur(); });
+  window.addEventListener('resize', fitCanvas);
+  document.addEventListener('visibilitychange', () => { last = performance.now(); });
+  if (document.fonts) { if (document.fonts.ready) document.fonts.ready.then(() => sprites.clear()).catch(() => {}); if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', () => sprites.clear()); }
+  requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      level, rows, cols, mines, phase, mode, over, won, started, placed,
+      time: elapsed, flagsLeft: mines - flagsUsed, openCount, best: Object.assign({}, best),
+      overlay: overlay.classList.contains('show'), cursor: { r: cursor.r, c: cursor.c }, canvasW: W, canvasH: H, cell, bx: BX, by: BY,
+      grid: grid.map(row => row.map(g => ({ mine: g.mine, open: g.open, flag: g.flag, n: g.n, wrong: g.wrong }))),
+    }),
+    open: (r, c) => openCell(r, c, false),
+    flag: flagCell,
+    chord,
+    setBoard: arr => {
+      rows = arr.length; cols = arr[0].length; mines = 0;
+      for (const row of arr) for (const v of row) if (v) mines++;
+      layout(); newGame();
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) grid[r][c].mine = !!arr[r][c];
+      computeNumbers(); placed = true; updateHud();
+    },
+    start: lv => startGame(typeof lv === 'number' ? LEVEL_IDS[lv] : lv),
+    reset: () => { if (phase === 'title') startGame(); else newGame(); },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    setMode,
+    toTitle,
+  };
+})();
+</script>
+</body>
+</html>
