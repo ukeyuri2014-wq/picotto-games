@@ -11,6 +11,9 @@ const games = context.games;
 let home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const cards = games.map(g => `<a class="card" data-game-id="${esc(g.id)}" href="${esc(g.path)}"><div class="art"><div class="fallback">${esc(g.emoji)}</div></div><div class="card-body"><div class="chips"><span class="chip">${esc(g.genre || 'GAME')}</span></div><h3>${esc(g.title)}</h3><p class="desc">${esc(g.description)}</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>`).join('\n');
 home = home.replace(/<!-- STATIC-GAMES-START -->[\s\S]*?<!-- STATIC-GAMES-END -->/, `<!-- STATIC-GAMES-START -->\n${cards}\n<!-- STATIC-GAMES-END -->`);
+const newest = [...games].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id.localeCompare(a.id)).slice(0, 6);
+const newCards = newest.map(g => `<a class="card" data-game-id="${esc(g.id)}" href="${esc(g.path)}"><div class="art"><div class="fallback">${esc(g.emoji)}</div></div><div class="card-body"><div class="chips"><span class="chip">${esc(g.genre || 'GAME')}</span></div><h3>${esc(g.title)}</h3><time datetime="${esc(g.date)}">${esc(g.date.replace(/-/g, '.'))}</time></div></a>`).join('\n');
+home = home.replace(/<!-- STATIC-NEW-START -->[\s\S]*?<!-- STATIC-NEW-END -->/, `<!-- STATIC-NEW-START -->\n<div class="label">NEW ARRIVALS</div><h2 id="new-arrivals-title">新着ゲーム</h2><p class="new-arrivals-note">あたらしい順にならんでいます。</p><div class="new-arrivals-grid">${newCards}</div>\n<!-- STATIC-NEW-END -->`);
 fs.writeFileSync(path.join(root, 'index.html'), home);
 for (const g of games) {
   if (!/^games\/[\w-]+\/index\.html$/.test(g.path)) throw Error('Unexpected game path');
