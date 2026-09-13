@@ -76,7 +76,7 @@
 <div id="wrap">
   <canvas id="cv" width="480" height="656"></canvas>
   <div id="overlay" class="show">
-    <div class="big" id="ovBig">よふかし<br>ブロック</div>
+    <div class="big" id="ovBig">ぴたっと<br>ブロック</div>
     <div class="score-line" id="ovScore" style="display:none"></div>
     <div class="reason" id="ovReason" style="display:none"></div>
     <div class="note" id="ovNote">
@@ -336,7 +336,7 @@
   }
   function showTitle() {
     phase = 'title';
-    $('ovBig').innerHTML = 'よふかし<br>ブロック'; $('ovBig').className = 'big';
+    $('ovBig').innerHTML = 'ぴたっと<br>ブロック'; $('ovBig').className = 'big';
     $('ovScore').style.display = 'none'; $('ovReason').style.display = 'none';
     $('btnStart').textContent = hasSave ? 'つづきから あそぶ' : 'スタート';
     $('btnNew').style.display = hasSave ? '' : 'none';
