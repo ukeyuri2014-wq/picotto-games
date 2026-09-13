@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>そろえて2048｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px; overflow-x:hidden;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none;user-select:none;-webkit-user-select:none}
+  .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.warn{border-color:var(--pink);color:var(--pink)}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:12px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.92);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay.light{background:rgba(19,19,34,.72)}
+  #overlay .big{font-size:32px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.2}
+  #overlay .big.pink{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .big.cyan{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note i{font-style:normal;color:var(--cyan)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--gold);color:#2b1a00;border:none;border-radius:6px;padding:9px 18px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:none;color:var(--sub);border:1px solid var(--edge)}
+  .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
+  .modes button.hide{display:none}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help i{font-style:normal;color:var(--gold)}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="4×4のマスでタイルをすべらせ、同じ数字をぶつけて合体させる定番の数字パズル。2048を作ったらクリア、そのあとも続けてハイスコアを狙える。数字が大きいほど光って音も高くなり、2048達成で紙吹雪。ベスト記録と途中の盤面は自動セーブ、1手もどす機能つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/018-soroete-2048/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"そろえて2048","description":"4×4のマスでタイルをすべらせ、同じ数字をぶつけて合体させる定番の数字パズル。2048を作ったらクリア、そのあとも続けてハイスコアを狙える。数字が大きいほど光って音も高くなり、2048達成で紙吹雪。ベスト記録と途中の盤面は自動セーブ、1手もどす機能つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/018-soroete-2048/index.html","inLanguage":"ja","genre":"NUMBER PUZZLE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="018"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>そろえて2048</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとり用</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="568"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">よふかし<br>2048</div>
+    <div class="note" id="ovNote">
+      タイルを ぜんぶ いっぺんに うごかして、<b>おなじ数字</b>を ぶつけると 合体して 2倍！<br>
+      <b>2048</b> を つくったら クリア！<br>（そのあとも つづけられるよ）<br><br>
+      📱 上下左右に スワイプ ／ ⌨️ 矢印キー・WASD
+    </div>
+    <div class="modes">
+      <button id="btnMain">はじめる</button>
+      <button id="btnSub" class="alt hide">あたらしく はじめる</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="undoBtn" disabled>1手もどす</button>
+  <button class="btn" id="resetBtn">はじめから</button>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：スワイプ（📱）か 矢印キー・WASD（⌨️）で、タイルが ぜんぶ 同じ方向に すべるよ。おなじ数字が ぶつかると 合体して <i>2倍</i>！ 1回の うごきで 合体できるのは 1つの タイルにつき 1回だけ。<br>
+  <b>コツ</b>：いちばん大きい数字を <i>すみっこ</i>に おいて、うごかす方向を 2〜3方向に しぼると 長生きできるよ。「1手もどす」は 1回ぶんだけ（Zキーでも OK）。<br>
+  とちゅうで やめても、つぎに ひらいたとき <i>つづきから</i> あそべるよ。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const N = 4, CELL = 100, GAP = 12, BX = 10, BY = 96;
+  const BOARD = N * CELL + (N + 1) * GAP;   // 460
+  const KEY = 'picotto_yofukashi-2048_';
+  const MUTE_KEY = KEY + 'mute', BEST_KEY = KEY + 'best', SAVE_KEY = KEY + 'save';
+  const SLIDE = 0.11, POP = 0.15;           // seconds
+  const overlay = document.getElementById('overlay');
+  const ovBig = document.getElementById('ovBig'), ovNote = document.getElementById('ovNote'), ovStats = document.getElementById('ovStats');
+  const btnMain = document.getElementById('btnMain'), btnSub = document.getElementById('btnSub');
+  const undoBtn = document.getElementById('undoBtn'), resetBtn = document.getElementById('resetBtn');
+  const muteBtn = document.getElementById('mute-btn');
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') { try { ac.resume(); } catch (e) {} } return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    try {
+      const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+      o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) {}
+  }
+  const SFX = {
+    slide() { tone('triangle', 210, 130, 0.07, 0.035); },
+    // 数字が大きいほど根音が高くなり、和音の数もふえる
+    merge(v) {
+      const n = Math.log2(v);                       // 4→2 … 2048→11
+      const root = 220 * Math.pow(2, (n - 1) / 6);  // 4:246Hz … 2048:698Hz
+      tone('triangle', root, root, 0.16, 0.06);
+      if (n >= 4) tone('triangle', root * 1.5, root * 1.5, 0.16, 0.045);           // 16〜: 5度
+      if (n >= 6) tone('square', root * 2, root * 2, 0.18, 0.028, 0.015);          // 64〜: オクターブ
+      if (n >= 8) tone('triangle', root * 2.52, root * 2.52, 0.22, 0.03, 0.03);    // 256〜: 長10度
+      if (n >= 10) tone('sine', root * 3, root * 3, 0.3, 0.03, 0.05);              // 1024〜: 12度
+    },
+    spawn() { tone('sine', 900, 1200, 0.045, 0.018); },
+    undo() { tone('triangle', 520, 260, 0.14, 0.05); },
+    click() { tone('square', 900, 900, 0.03, 0.02); },
+    win() {
+      [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.18, 0.055, i * 0.09));
+      [262, 330, 392, 523].forEach(f => tone('triangle', f, f, 1.0, 0.035, 0.55));
+    },
+    over() { tone('sawtooth', 320, 70, 0.6, 0.06); tone('triangle', 200, 60, 0.7, 0.05, 0.1); },
+  };
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ---------------------------------------------------------------
+  let board = empty(), score = 0, best = 0, won = false, keepPlaying = false, over = false, newBest = false;
+  let state = 'title';                 // title | play | over
+  let ovMode = 'title';                // title | over | won
+  let hasResume = false;
+  let undoState = null;                // 1手ぶんだけ
+  let anim = null, particles = [], confetti = [], pops = [], shake = 0, wonFlash = 0, time = 0;
+  let overTimer = 0, wonTimer = 0, resetArm = 0, ptr = null;
+  try { best = Math.max(0, parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0); } catch (e) {}
+
+  function empty() { const b = []; for (let r = 0; r < N; r++) b.push(new Array(N).fill(0)); return b; }
+  function copy(b) { return b.map(r => r.slice()); }
+  function emptyCells(b) { const l = []; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!b[r][c]) l.push([r, c]); return l; }
+  function canMove(b) {
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      if (!b[r][c]) return true;
+      if (c < N - 1 && b[r][c] === b[r][c + 1]) return true;
+      if (r < N - 1 && b[r][c] === b[r + 1][c]) return true;
+    }
+    return false;
+  }
+  function maxTile(b) { let m = 0; for (const row of b) for (const v of row) if (v > m) m = v; return m; }
+  function spawnTile(b) {
+    const cells = emptyCells(b); if (!cells.length) return null;
+    const [r, c] = cells[Math.floor(Math.random() * cells.length)];
+    const v = Math.random() < 0.9 ? 2 : 4; b[r][c] = v; return { r, c, v };
+  }
+  // 方向ごとに「うごく先の端」を i=0 とした座標
+  function lineCoords(dir, k, i) {
+    if (dir === 'left') return [k, i];
+    if (dir === 'right') return [k, N - 1 - i];
+    if (dir === 'up') return [i, k];
+    return [N - 1 - i, k];
+  }
+  // 1列ぶんをつめて合体（1手につき各タイル1回だけ）
+  function slideLine(line) {
+    const out = [], moves = [], mergedIdx = []; let gained = 0, lastMerge = -1;
+    for (let i = 0; i < N; i++) {
+      const v = line[i]; if (!v) continue;
+      const j = out.length - 1;
+      if (j >= 0 && out[j] === v && lastMerge !== j) {
+        out[j] = v * 2; gained += v * 2; lastMerge = j; mergedIdx.push(j);
+        moves.push({ from: i, to: j, merged: true });
+      } else {
+        out.push(v); moves.push({ from: i, to: out.length - 1, merged: false });
+      }
+    }
+    while (out.length < N) out.push(0);
+    return { out, moves, mergedIdx, gained };
+  }
+  function applyMove(b, dir) {
+    const nb = empty(), moves = [], merges = []; let gained = 0, changed = false;
+    for (let k = 0; k < N; k++) {
+      const line = [];
+      for (let i = 0; i < N; i++) { const [r, c] = lineCoords(dir, k, i); line.push(b[r][c]); }
+      const res = slideLine(line);
+      for (let i = 0; i < N; i++) { const [r, c] = lineCoords(dir, k, i); nb[r][c] = res.out[i]; }
+      for (const m of res.moves) {
+        const [fr, fc] = lineCoords(dir, k, m.from), [tr, tc] = lineCoords(dir, k, m.to);
+        moves.push({ v: line[m.from], fr, fc, tr, tc });
+        if (m.from !== m.to || m.merged) changed = true;
+      }
+      for (const j of res.mergedIdx) { const [r, c] = lineCoords(dir, k, j); merges.push({ r, c, v: res.out[j] }); }
+      gained += res.gained;
+    }
+    return { board: nb, moves, merges, gained, changed };
+  }
+
+  // ---- persistence -----------------------------------------------------------
+  function save() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ b: board, s: score, w: won, k: keepPlaying, o: over, nb: newBest, u: undoState })); } catch (e) {}
+  }
+  function load() {
+    try {
+      const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (d && Array.isArray(d.b) && d.b.length === N && d.b.every(r => Array.isArray(r) && r.length === N)) {
+        board = d.b.map(r => r.map(v => Math.max(0, parseInt(v, 10) || 0)));
+        score = Math.max(0, parseInt(d.s, 10) || 0); won = !!d.w; keepPlaying = !!d.k; over = !!d.o; newBest = !!d.nb;
+        undoState = (d.u && Array.isArray(d.u.board) && d.u.board.length === N) ? { board: d.u.board.map(r => r.map(v => Math.max(0, parseInt(v, 10) || 0))), score: Math.max(0, parseInt(d.u.score, 10) || 0), won: !!d.u.won, keepPlaying: !!d.u.keepPlaying } : null;
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+  function saveBest() { if (score > best) { best = score; newBest = true; try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} } }
+
+  // ---- game flow --------------------------------------------------------------
+  function clearTimers() { clearTimeout(overTimer); clearTimeout(wonTimer); overTimer = 0; wonTimer = 0; }
+  function hideOverlay() { overlay.classList.remove('show', 'light'); }
+  function flushAnim() {   // アニメを飛ばすとき、合体エフェクトだけは出しておく
+    if (anim && !anim.fx) { anim.fx = true; fireMergeFx(anim); }
+    anim = null;
+  }
+  function fireMergeFx(a) {
+    let maxv = 0;
+    for (const m of a.merges) {
+      burst(m.r, m.c, m.v); if (m.v > maxv) maxv = m.v;
+      pops.push({ x: cellX(m.c) + CELL / 2, y: cellY(m.r) + 18, text: '+' + m.v, life: 0.85, big: m.v >= 128 });
+    }
+    if (maxv) { SFX.merge(maxv); if (maxv >= 128) shake = Math.max(shake, Math.min(7, Math.log2(maxv) - 5)); }
+    if (a.spawns.length && !a.merges.length) SFX.spawn();
+  }
+  function doMove(dir, spawn = true) {
+    if (over) return false;
+    const res = applyMove(board, dir);
+    if (!res.changed) return false;
+    flushAnim();
+    undoState = { board: copy(board), score, won, keepPlaying };
+    board = res.board; score += res.gained; saveBest();
+    const sp = spawn ? spawnTile(board) : null;
+    anim = { t: 0, moves: res.moves, merges: res.merges, spawns: sp ? [sp] : [], fx: false };
+    SFX.slide();
+    if (!won && maxTile(board) >= 2048) { won = true; triggerWin(); }
+    if (!canMove(board)) triggerOver();
+    undoBtn.disabled = false;
+    save();
+    return true;
+  }
+  function triggerWin() {
+    wonFlash = 1.6; confettiBurst(); SFX.win(); shake = Math.max(shake, 6);
+    clearTimeout(wonTimer); wonTimer = setTimeout(showWon, 1500);
+  }
+  function triggerOver() {
+    over = true; state = 'over'; SFX.over();
+    clearTimeout(overTimer); overTimer = setTimeout(showOver, wonFlash > 0 ? 2600 : 900);
+  }
+  function newGame() {
+    clearTimers(); flushAnim();
+    board = empty(); const a = spawnTile(board), b = spawnTile(board);
+    score = 0; won = false; keepPlaying = false; over = false; undoState = null; newBest = false;
+    anim = { t: SLIDE, moves: [], merges: [], spawns: [a, b], fx: true };
+    particles = []; confetti = []; pops = []; wonFlash = 0; shake = 0;
+    state = 'play'; hideOverlay(); undoBtn.disabled = true; save();
+  }
+  function resumeGame() { state = over ? 'over' : 'play'; hideOverlay(); undoBtn.disabled = !undoState; if (over) showOver(); }
+  function continueGame() { keepPlaying = true; hideOverlay(); if (over) showOver(); else state = 'play'; save(); }
+  function undo() {
+    if (!undoState || state === 'title') return false;
+    clearTimers(); flushAnim();
+    board = copy(undoState.board); score = undoState.score; won = undoState.won; keepPlaying = undoState.keepPlaying;
+    undoState = null; over = false; wonFlash = 0; state = 'play'; hideOverlay();
+    SFX.undo(); undoBtn.disabled = true; save(); return true;
+  }
+  function resetTap() {
+    if (state === 'title') return;
+    audio(); SFX.click();
+    if (resetArm) { clearTimeout(resetArm); resetArm = 0; resetBtn.textContent = 'はじめから'; resetBtn.classList.remove('warn'); newGame(); return; }
+    resetBtn.textContent = 'ほんとに？（もう1回おす）'; resetBtn.classList.add('warn');
+    resetArm = setTimeout(() => { resetArm = 0; resetBtn.textContent = 'はじめから'; resetBtn.classList.remove('warn'); }, 2500);
+  }
+
+  // ---- overlays ---------------------------------------------------------------
+  function showTitle() {
+    ovMode = 'title'; state = 'title';
+    hasResume = !over && maxTile(board) > 0;
+    ovBig.innerHTML = 'よふかし<br>2048'; ovBig.className = 'big';
+    ovNote.innerHTML = 'タイルを ぜんぶ いっぺんに うごかして、<b>おなじ数字</b>を ぶつけると 合体して 2倍！<br><b>2048</b> を つくったら クリア！<br>（そのあとも つづけられるよ）<br><br>📱 上下左右に スワイプ ／ ⌨️ 矢印キー・WASD';
+    btnMain.textContent = hasResume ? 'つづきから（スコア ' + score + '）' : 'はじめる';
+    btnSub.textContent = 'あたらしく はじめる'; btnSub.classList.toggle('hide', !hasResume);
+    ovStats.textContent = best ? 'ベスト：' + best : 'ベストは まだ ないよ。がんばって！';
+    undoBtn.disabled = true; overlay.classList.remove('light'); overlay.classList.add('show');
+  }
+  function showOver() {
+    if (!over) return;
+    ovMode = 'over'; state = 'over';
+    ovBig.textContent = 'GAME OVER'; ovBig.className = 'big pink';
+    ovNote.innerHTML = 'スコア <b>' + score + '</b> ／ ベスト <b>' + best + '</b><br>いちばん大きい数字：<i>' + maxTile(board) + '</i>' + (newBest && score > 0 ? '<br>✨ ベスト記録 こうしん！' : '');
+    btnMain.textContent = 'もういちど'; btnSub.textContent = '1手もどして つづける'; btnSub.classList.toggle('hide', !undoState);
+    ovStats.textContent = 'うごかせる場所が なくなったよ';
+    overlay.classList.remove('light'); overlay.classList.add('show');
+  }
+  function showWon() {
+    if (!won || keepPlaying) return;
+    ovMode = 'won';
+    ovBig.textContent = '2048 たっせい！'; ovBig.className = 'big';
+    ovNote.innerHTML = 'おめでとう！ スコア <b>' + score + '</b><br>このまま つづけて、もっと大きい数字を めざそう！';
+    btnMain.textContent = 'つづける'; btnSub.textContent = 'はじめから'; btnSub.classList.remove('hide');
+    ovStats.textContent = 'ベスト：' + best;
+    overlay.classList.add('show', 'light');
+  }
+
+  // ---- fx -----------------------------------------------------------------------
+  const STYLES = {
+    2: ['#3b3b66', '#eeecfa', 0], 4: ['#4a4a8c', '#eeecfa', 0], 8: ['#6260d0', '#ffffff', 8], 16: ['#a06bff', '#ffffff', 12],
+    32: ['#d45ed8', '#ffffff', 14], 64: ['#ff5fa2', '#ffffff', 16], 128: ['#ff7d5f', '#2a1200', 18], 256: ['#ff9c3d', '#2a1200', 20],
+    512: ['#ffb830', '#2a1200', 22], 1024: ['#ffd166', '#2a1200', 26], 2048: ['#fff1a8', '#3a2600', 32],
+  };
+  function styleOf(v) { return STYLES[v] || ['#53e0d8', '#03302e', 34]; }
+  function cellX(c) { return BX + GAP + c * (CELL + GAP); }
+  function cellY(r) { return BY + GAP + r * (CELL + GAP); }
+  function burst(r, c, v) {
+    const st = styleOf(v), x = cellX(c) + CELL / 2, y = cellY(r) + CELL / 2, n = 10 + Math.min(20, Math.log2(v) * 2);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * (120 + Math.log2(v) * 14);
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c: st[0], s: 3 + Math.random() * 3 });
+    }
+  }
+  function confettiBurst() {
+    const cols = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#ffffff'];
+    for (let i = 0; i < 150; i++) confetti.push({
+      x: W / 2 + (Math.random() - 0.5) * 240, y: BY + BOARD / 2 + (Math.random() - 0.5) * 60,
+      vx: (Math.random() - 0.5) * 760, vy: -Math.random() * 700 - 120, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 16,
+      w: 6 + Math.random() * 6, h: 4 + Math.random() * 5, c: cols[i % cols.length], life: 2.2 + Math.random() * 1.4,
+    });
+  }
+
+  // ---- update / draw ------------------------------------------------------------
+  function update(dt) {
+    time += dt;
+    if (anim) {
+      anim.t += dt;
+      if (anim.t >= SLIDE && !anim.fx) { anim.fx = true; fireMergeFx(anim); }
+      if (anim.t >= SLIDE + POP) anim = null;
+    }
+    shake = Math.max(0, shake - dt * 22);
+    wonFlash = Math.max(0, wonFlash - dt);
+    particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 320 * dt; p.life -= dt; return p.life > 0; });
+    confetti = confetti.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 620 * dt; p.vx *= (1 - 1.4 * dt); p.rot += p.vr * dt; p.life -= dt; return p.life > 0 && p.y < H + 20; });
+    pops = pops.filter(p => { p.y -= 40 * dt; p.life -= dt; return p.life > 0; });
+  }
+  function rr(x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r); ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r); ctx.lineTo(x + r, y + h); ctx.arcTo(x, y + h, x, y + h - r, r); ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r); ctx.closePath();
+  }
+  const ease = p => 1 - Math.pow(1 - p, 3);
+  const backOut = p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+  const lerp = (a, b, p) => a + (b - a) * p;
+  function drawTile(x, y, size, v, scale = 1, alpha = 1) {
+    const st = styleOf(v), s = size * scale, k = s / CELL;
+    const px = x + (size - s) / 2, py = y + (size - s) / 2, rad = 12 * k;
+    ctx.save(); ctx.globalAlpha = alpha;
+    if (st[2]) { ctx.shadowColor = st[0]; ctx.shadowBlur = st[2] * (size / CELL) * (1 + (scale - 1) * 2.5); }
+    ctx.fillStyle = st[0]; rr(px, py, s, s, rad); ctx.fill(); ctx.shadowBlur = 0;
+    const g = ctx.createLinearGradient(0, py, 0, py + s);
+    g.addColorStop(0, 'rgba(255,255,255,.2)'); g.addColorStop(0.55, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,.14)');
+    ctx.fillStyle = g; rr(px, py, s, s, rad); ctx.fill();
+    if (st[2] >= 18) { ctx.strokeStyle = 'rgba(255,255,255,' + (v >= 2048 ? '.85' : '.5') + ')'; ctx.lineWidth = 2 * k; rr(px + 1, py + 1, s - 2, s - 2, rad); ctx.stroke(); }
+    const str = String(v), base = str.length <= 2 ? 46 : str.length === 3 ? 38 : str.length === 4 ? 30 : 24;
+    ctx.fillStyle = st[1]; ctx.font = Math.max(8, Math.round(base * k)) + 'px DotGothic16, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(str, px + s / 2, py + s / 2 + 2 * k);
+    ctx.restore();
+  }
+  function panel(x, y, w, h, label, value, color) {
+    ctx.fillStyle = '#1c1c33'; ctx.strokeStyle = '#2c2c4d'; ctx.lineWidth = 2; rr(x, y, w, h, 12); ctx.fill(); ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0'; ctx.fillText(label, x + w / 2, y + 22);
+    ctx.font = (String(value).length > 6 ? 22 : 28) + 'px DotGothic16, monospace'; ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 10;
+    ctx.fillText(String(value), x + w / 2, y + 55); ctx.shadowBlur = 0;
+  }
+  function drawHud() {
+    panel(12, 10, 150, 68, 'スコア', score, '#53e0d8');
+    panel(318, 10, 150, 68, 'ベスト', best, '#ffd166');
+    const mx = maxTile(board);
+    if (mx) drawTile(213, 8, 54, mx, 1 + 0.04 * Math.sin(time * 3));
+    else { ctx.fillStyle = '#1c1c33'; rr(213, 8, 54, 54, 8); ctx.fill(); }
+    ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(mx >= 2048 ? 'CLEAR!' : 'いちばん大きい', 240, 78);
+  }
+  function drawBoard() {
+    ctx.fillStyle = '#1b1b38'; ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 16;
+    rr(BX, BY, BOARD, BOARD, 16); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      ctx.fillStyle = '#12122a'; rr(cellX(c), cellY(r), CELL, CELL, 12); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,107,255,.14)'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    const a = anim;
+    if (a && a.t < SLIDE) {
+      const p = ease(a.t / SLIDE);
+      for (const m of a.moves) drawTile(lerp(cellX(m.fc), cellX(m.tc), p), lerp(cellY(m.fr), cellY(m.tr), p), CELL, m.v);
+    } else {
+      let mergedSet = null, spawnSet = null, q = 1;
+      if (a) {
+        q = Math.min(1, (a.t - SLIDE) / POP);
+        mergedSet = new Set(a.merges.map(m => m.r * N + m.c)); spawnSet = new Set(a.spawns.map(m => m.r * N + m.c));
+      }
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        const v = board[r][c]; if (!v) continue;
+        let sc = 1;
+        if (a) { if (mergedSet.has(r * N + c)) sc = 1 + 0.22 * Math.sin(Math.PI * q); else if (spawnSet.has(r * N + c)) sc = Math.max(0.01, backOut(q)); }
+        drawTile(cellX(c), cellY(r), CELL, v, sc);
+      }
+    }
+  }
+  function drawFx() {
+    for (const p of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 2)); ctx.fillStyle = p.c; ctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); }
+    ctx.globalAlpha = 1;
+    for (const p of confetti) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, p.life)); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    for (const p of pops) {
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.8)); ctx.font = (p.big ? 24 : 20) + 'px DotGothic16, monospace';
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(19,19,34,.85)'; ctx.strokeText(p.text, p.x, p.y);
+      ctx.fillStyle = p.big ? '#ffd166' : '#ffffff'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = p.big ? 12 : 0; ctx.fillText(p.text, p.x, p.y); ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+    if (wonFlash > 0) {
+      const t = 1.6 - wonFlash, sc = t < 0.25 ? backOut(t / 0.25) : 1 + 0.06 * Math.sin(time * 9), al = Math.min(1, wonFlash * 2.5);
+      ctx.save(); ctx.globalAlpha = al; ctx.translate(W / 2, BY + BOARD / 2); ctx.scale(sc, sc);
+      ctx.font = '76px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(19,19,34,.9)'; ctx.strokeText('2048!', 0, 0);
+      ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 30; ctx.fillText('2048!', 0, 0);
+      ctx.shadowBlur = 0; ctx.font = '22px DotGothic16, monospace'; ctx.fillStyle = '#ffffff'; ctx.fillText('クリア！', 0, 58);
+      ctx.restore();
+    }
+  }
+  function draw() {
+    ctx.save(); ctx.clearRect(0, 0, W, H);
+    if (shake > 0) ctx.translate((Math.random() - 0.5) * shake * 2, (Math.random() - 0.5) * shake * 2);
+    drawHud(); drawBoard(); drawFx();
+    ctx.restore();
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- input -----------------------------------------------------------------
+  const KEYMAP = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down', a: 'left', d: 'right', w: 'up', s: 'down', A: 'left', D: 'right', W: 'up', S: 'down' };
+  function onKey(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (overlay.classList.contains('show')) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnMain.click(); } return; }
+    const dir = KEYMAP[e.key];
+    if (dir) { e.preventDefault(); audio(); if (state === 'play') doMove(dir); return; }
+    if (e.key === 'z' || e.key === 'Z' || e.key === 'Backspace') { e.preventDefault(); audio(); undo(); return; }
+    if (e.key === 'r' || e.key === 'R') { e.preventDefault(); resetTap(); }
+  }
+  function swipeDir(dx, dy, min) {
+    const ax = Math.abs(dx), ay = Math.abs(dy);
+    if (Math.max(ax, ay) < min) return null;
+    return ax > ay ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+  }
+  function onPointerDown(e) { e.preventDefault(); audio(); ptr = { x: e.clientX, y: e.clientY, id: e.pointerId }; try { cv.setPointerCapture(e.pointerId); } catch (_) {} }
+  function onPointerMove(e) {
+    if (!ptr || e.pointerId !== ptr.id) return;
+    const dir = swipeDir(e.clientX - ptr.x, e.clientY - ptr.y, 32);
+    if (dir) { ptr = null; if (state === 'play') doMove(dir); }
+  }
+  function onPointerUp(e) {
+    if (!ptr || e.pointerId !== ptr.id) return;
+    e.preventDefault();
+    const dir = swipeDir(e.clientX - ptr.x, e.clientY - ptr.y, 18); ptr = null;
+    if (dir && state === 'play') doMove(dir);
+  }
+
+  // ---- init（宣言がぜんぶ終わってから）-------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  drawMute();
+  btnMain.addEventListener('click', () => {
+    audio(); SFX.click();
+    if (ovMode === 'title') { if (hasResume) resumeGame(); else newGame(); }
+    else if (ovMode === 'over') newGame();
+    else continueGame();
+  });
+  btnSub.addEventListener('click', () => {
+    audio(); SFX.click();
+    if (ovMode === 'title') newGame();
+    else if (ovMode === 'over') { hideOverlay(); undo(); }
+    else newGame();
+  });
+  undoBtn.addEventListener('click', () => { audio(); undo(); });
+  resetBtn.addEventListener('click', resetTap);
+  document.addEventListener('keydown', onKey);
+  cv.addEventListener('pointerdown', onPointerDown);
+  cv.addEventListener('pointermove', onPointerMove);
+  cv.addEventListener('pointerup', onPointerUp);
+  cv.addEventListener('pointercancel', () => { ptr = null; });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { ptr = null; } else { last = performance.now(); } });
+
+  load(); showTitle(); requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({ board: copy(board), score, best, over, won, keepPlaying, state, ovMode, overlay: overlay.classList.contains('show'), canUndo: !!undoState }),
+    move: (dir, spawn = true) => { if (state === 'title') { state = over ? 'over' : 'play'; hideOverlay(); } return doMove(dir, spawn); },
+    setBoard: rows => {
+      clearTimers(); flushAnim();
+      board = rows.map(r => r.map(v => Math.max(0, parseInt(v, 10) || 0)));
+      undoState = null; over = !canMove(board); won = maxTile(board) >= 2048; keepPlaying = won; wonFlash = 0;
+      particles = []; confetti = []; pops = []; shake = 0;
+      state = over ? 'over' : 'play'; hideOverlay(); undoBtn.disabled = true; save();
+    },
+    undo, reset: newGame, start: newGame, resume: resumeGame, continue: continueGame,
+    canMove: () => canMove(board), spawn: () => spawnTile(board),
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+  };
+})();
+</script>
+</body>
+</html>
