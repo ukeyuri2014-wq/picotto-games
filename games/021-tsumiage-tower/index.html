@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>つみあげタワー｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--violet);text-shadow:0 0 12px rgba(160,107,255,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(160,107,255,.4);border-radius:999px;color:var(--violet);background:rgba(160,107,255,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn.primary{flex:2;font-size:18px;background:var(--violet);color:#1a0b33;border-color:var(--violet);letter-spacing:3px}
+  .btn.primary:hover{background:#b98bff;color:#1a0b33}
+  .btn.primary:active{transform:translateY(1px)}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.92);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--violet);text-shadow:0 0 16px rgba(160,107,255,.6);line-height:1.2}
+  #overlay .big.gold{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .big.pink{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)} #overlay .note .c3{color:var(--gold)}
+  #overlay .note .num{font-size:30px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);line-height:1}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--violet);color:#1a0b33;border:none;border-radius:6px;padding:9px 18px;cursor:pointer;letter-spacing:1px}
+  .modes button:hover{background:#b98bff}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  /* result screen: leave the left side open so the zoomed-out tower stays visible */
+  #overlay.result{align-items:flex-end;justify-content:center;padding-right:12px;
+    background:linear-gradient(90deg,rgba(19,19,34,.02) 0%,rgba(19,19,34,.25) 42%,rgba(19,19,34,.86) 56%,rgba(19,19,34,.9) 100%)}
+  #overlay.result > *{width:min(230px,50%)}
+  #overlay.result .big{font-size:26px;letter-spacing:2px}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal} .help .c3{color:var(--gold);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="左右に往復するブロックをタイミングよく止めて、どこまでも高くつみあげるタイミングゲーム。はみ出た部分は切り落とされて落下し、ブロックはどんどん細く・はやくなる。ぴったり止めればPERFECTで幅が少し回復、コンボが続くほど音が高くなる。虹色に変わるタワーと、ゲームオーバー時の全景ズームアウト、ベスト記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/021-tsumiage-tower/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"つみあげタワー","description":"左右に往復するブロックをタイミングよく止めて、どこまでも高くつみあげるタイミングゲーム。はみ出た部分は切り落とされて落下し、ブロックはどんどん細く・はやくなる。ぴったり止めればPERFECTで幅が少し回復、コンボが続くほど音が高くなる。虹色に変わるタワーと、ゲームオーバー時の全景ズームアウト、ベスト記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/021-tsumiage-tower/index.html","inLanguage":"ja","genre":"TIMING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="021"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>つみあげタワー</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとり用</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="640"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">つみあげ<br>タワー</div>
+    <div class="note" id="ovNote">
+      左右にうごくブロックを<br>タイミングよく止めて つみあげよう！<br>
+      はみ出たところは 切れて 落ちちゃう。<br>
+      ぴったり止めると <i class="c3">PERFECT</i>！<br>少しふとくなって、音も高くなるよ。<br><br>
+      📱 画面をタップ ／ ⌨️ スペース・Enter
+    </div>
+    <div class="modes"><button id="startBtn">スタート！</button></div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn primary" id="placeBtn">つむ！</button>
+  <button class="btn" id="menuBtn">メニュー</button>
+</div>
+
+<div class="help">
+  <b>コツ</b>：下のブロックの <b>はし</b> をよく見て、かさなる しゅんかんに おそう。<br>
+  ぴったりが つづくと <i class="c2">コンボ</i>で 音が どんどん高くなる。ブロックは 上にいくほど はやくなるよ。<br>
+  細くなっても あきらめないで。<i class="c3">PERFECT</i> で 少しずつ ふとさを とりもどそう！
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const SLUG = 'tsumiage-tower';
+  const MUTE_KEY = 'picotto_' + SLUG + '_mute', BEST_KEY = 'picotto_' + SLUG + '_best';
+  // world units = canvas px at zoom 1. x: 0 = tower center. y: up is positive, 0 = ground.
+  const W0 = 180, BH = 26, DX = 30, DY = 18;       // base width, block height, oblique depth offsets
+  const HOVER = 22, DROP_T = 0.09;                  // moving block floats above the tower, then drops in
+  const BASE_Y = H - 62;                            // screen y of the ground line (zoom anchor)
+  const PERFECT_TOL = 7, RECOVER = 6;               // px tolerance for PERFECT / width recovered per PERFECT
+  const MISS_MARGIN = 12, MIN_AMP = 90, MIN_SWEEP = 0.55;
+  const CAM_KEEP = 250;                             // keep the moving block about this high above the ground line
+  const overlay = document.getElementById('overlay');
+  const ovBig = document.getElementById('ovBig'), ovNote = document.getElementById('ovNote'), ovStats = document.getElementById('ovStats');
+  const startBtn = document.getElementById('startBtn'), placeBtn = document.getElementById('placeBtn'), menuBtn = document.getElementById('menuBtn');
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    place() { tone('triangle', 260, 130, 0.1, 0.09); tone('square', 130, 60, 0.08, 0.05, 0.01); },
+    perfect(c) {
+      const f = 523.25 * Math.pow(2, Math.min(c - 1, 19) / 12);   // pitch rises with the combo
+      tone('sine', f, f, 0.22, 0.11); tone('sine', f * 1.5, f * 1.5, 0.3, 0.06, 0.06); tone('triangle', f * 2, f * 2, 0.2, 0.03, 0.1);
+    },
+    over() { tone('sawtooth', 240, 45, 0.7, 0.08); tone('square', 100, 40, 0.5, 0.06, 0.12); },
+    start() { [392, 523, 659].forEach((f, i) => tone('square', f, f, 0.1, 0.06, i * 0.07)); },
+    best() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, 0.5 + i * 0.1)); },
+    click() { tone('square', 900, 900, 0.03, 0.02); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ---------------------------------------------------------------
+  let stack = [], cur = null, debris = [], parts = [], rings = [], pops = [];
+  let phase = 'title';                  // title | play | over
+  let score = 0, best = 0, combo = 0, maxCombo = 0, over = false, newBest = false;
+  let camY = 0, camX = 0, zoom = 1, overT = 0, overlayShown = false, anim = 0, scoreBump = 0;
+  let shakeT = 0, shakeD = 1, shakeAmp = 0, shX = 0, shY = 0;
+  try { best = Math.max(0, parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0); } catch (e) {}
+
+  // ---- scenery (deterministic) ----------------------------------------------
+  let seed = 20260913;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const stars = []; for (let i = 0; i < 90; i++) stars.push({ x: rnd() * W, y: rnd() * H, r: 0.6 + rnd() * 1.4, tw: rnd() * 6.28, f: 0.08 + rnd() * 0.14 });
+  const clouds = []; for (let i = 0; i < 16; i++) clouds.push({ x: rnd() * W, y: 450 + i * 400 + rnd() * 220, w: 120 + rnd() * 150, a: 0.09 + rnd() * 0.1 });
+  const cloudSpr = document.createElement('canvas'); cloudSpr.width = 200; cloudSpr.height = 90;
+  { const c = cloudSpr.getContext('2d');
+    for (const [x, y, r] of [[100, 52, 58], [52, 58, 38], [150, 58, 40], [78, 40, 32], [126, 38, 34]]) {
+      const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(255,255,255,.85)'); g.addColorStop(0.55, 'rgba(255,255,255,.28)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2);
+    } }
+  const city = []; { let x = -10; while (x < W + 10) { const w = 16 + rnd() * 34, h = 26 + rnd() * 110; const win = []; for (let k = 0; k < 3; k++) win.push([rnd(), rnd()]); city.push({ x, w, h, win }); x += w + 3 + rnd() * 9; } }
+
+  const hueAt = i => (200 + i * 11) % 360;
+  const hsl = (h, s, l, a = 1) => 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
+  function mix(a, b, t) { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); const c = s => ((A >> s) & 255) + (((B >> s) & 255) - ((A >> s) & 255)) * t; return 'rgb(' + (c(16) | 0) + ',' + (c(8) | 0) + ',' + (c(0) | 0) + ')'; }
+  const SX = x => W / 2 + camX + x * zoom;
+  const SY = y => BASE_Y - (y - camY) * zoom;
+
+  // ---- game logic ------------------------------------------------------------
+  function makeBase() { return { x: -W0 / 2, w: W0, hue: hueAt(0), age: 9, landed: true, perfect: false, level: 0 }; }
+  function levelSpeed(n) { return Math.min(170 + n * 7, 380); }
+  function spawnNext() {
+    const prev = stack[stack.length - 1], n = stack.length;
+    const w = prev.w, c = prev.x + w / 2;
+    const amp = Math.max(w + MISS_MARGIN, MIN_AMP);              // center offset at which the block fully clears the tower
+    const dir = n % 2 ? 1 : -1;                                   // odd levels enter from the left, even from the right
+    const speed = Math.min(levelSpeed(n - 1), 2 * amp / MIN_SWEEP);
+    cur = { x: c - dir * amp - w / 2, w, hue: hueAt(n), dir, speed, min: c - amp - w / 2, max: c + amp - w / 2, level: n, age: 0 };
+  }
+  function place() {
+    if (phase !== 'play' || !cur) return false;
+    for (let i = 0; i < stack.length - 1; i++) if (!stack[i].landed) { stack[i].landed = true; landEffects(stack[i]); }
+    const prev = stack[stack.length - 1], n = cur.level;
+    const d = cur.x - prev.x;
+    let result;
+    if (Math.abs(d) <= PERFECT_TOL) {
+      combo++; if (combo > maxCombo) maxCombo = combo;
+      const grow = Math.min(RECOVER, W0 - prev.w);
+      stack.push({ x: prev.x - grow / 2, w: prev.w + grow, hue: cur.hue, age: 0, landed: false, perfect: true, combo, level: n });
+      SFX.perfect(combo); result = 'perfect';
+    } else {
+      const left = Math.max(cur.x, prev.x), right = Math.min(cur.x + cur.w, prev.x + prev.w);
+      const ov = right - left;
+      if (ov <= 0) { gameOver(); return 'over'; }
+      combo = 0;
+      const side = d > 0 ? 1 : -1;
+      debris.push({ x: side > 0 ? right : cur.x, w: cur.w - ov, y: n * BH + HOVER, vy: 40, vx: side * 28, rot: 0, rotV: side * (2.2 + Math.random() * 1.6), hue: cur.hue, life: 0 });
+      stack.push({ x: left, w: ov, hue: cur.hue, age: 0, landed: false, perfect: false, level: n });
+      SFX.place(); shake(0.15, 2); result = 'cut';
+    }
+    score++; scoreBump = 1;
+    cur = null; spawnNext();
+    return result;
+  }
+  function gameOver() {
+    over = true; phase = 'over'; overT = 0; overlayShown = false;
+    const prev = stack[stack.length - 1];
+    const side = (cur.x + cur.w / 2) > (prev.x + prev.w / 2) ? 1 : -1;
+    debris.push({ x: cur.x, w: cur.w, y: cur.level * BH + HOVER, vy: 0, vx: side * 22, rot: 0, rotV: side * (1.6 + Math.random()), hue: cur.hue, life: 0 });
+    cur = null;
+    newBest = score > best;
+    if (newBest) { best = score; try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} }
+    SFX.over(); if (newBest) SFX.best(); shake(0.5, 7);
+  }
+  function fitZoom() { return Math.min(1, (BASE_Y - 130) / (stack.length * BH + HOVER + 40)); }
+  function shake(d, a) { shakeT = shakeD = d; shakeAmp = a; }
+  function landEffects(b) {
+    const yb = b.level * BH, cx = b.x + b.w / 2;
+    for (let i = 0; i < 10; i++) { const s = i % 2 ? 1 : -1; parts.push({ x: s > 0 ? b.x + b.w : b.x, y: yb + Math.random() * 4, vx: s * (40 + Math.random() * 90), vy: 20 + Math.random() * 70, life: 0.3 + Math.random() * 0.3, hue: -1, size: 3 }); }
+    if (b.perfect) {
+      rings.push({ x: cx, y: yb, w: b.w, hue: b.hue, t: 0 }); rings.push({ x: cx, y: yb, w: b.w, hue: b.hue, t: -0.13 });
+      for (let i = 0; i < 18; i++) { const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 170; parts.push({ x: cx, y: yb + BH / 2, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp + 90, life: 0.5 + Math.random() * 0.5, hue: b.hue, size: 3.5 }); }
+      pops.push({ x: cx, y: yb + BH + 12, text: 'PERFECT!', t: 0, col: '#ffd166', size: 22 });
+      if (b.combo >= 2) pops.push({ x: cx, y: yb + BH - 14, text: b.combo + ' COMBO', t: -0.1, col: '#ff5fa2', size: 16 });
+      shake(0.12, 1.5);
+    }
+  }
+
+  // ---- flow -----------------------------------------------------------------------
+  function clearWorld() {
+    stack = [makeBase()]; cur = null; debris = []; parts = []; rings = []; pops = [];
+    score = 0; combo = 0; maxCombo = 0; over = false; newBest = false;
+    camY = 0; camX = 0; zoom = 1; overT = 0; overlayShown = false; scoreBump = 0; shakeT = 0; shX = shY = 0;
+  }
+  function start() {
+    clearWorld(); phase = 'play';
+    overlay.classList.remove('show'); overlay.classList.remove('result');
+    spawnNext(); SFX.start();
+  }
+  function reset() { clearWorld(); phase = 'title'; showTitle(); }
+  function showTitle() {
+    overlay.classList.remove('result');
+    ovBig.innerHTML = 'つみあげ<br>タワー'; ovBig.className = 'big';
+    ovNote.innerHTML = '左右にうごくブロックを<br>タイミングよく止めて つみあげよう！<br>はみ出たところは 切れて 落ちちゃう。<br>ぴったり止めると <i class="c3">PERFECT</i>！<br>少しふとくなって、音も高くなるよ。<br><br>📱 画面をタップ ／ ⌨️ スペース・Enter';
+    startBtn.textContent = 'スタート！';
+    ovStats.textContent = best > 0 ? 'ベスト：' + best + ' だん' : 'なんだん つめるかな？';
+    overlay.classList.add('show');
+  }
+  function showResult() {
+    overlay.classList.add('result');
+    if (newBest) { ovBig.textContent = 'NEW RECORD!'; ovBig.className = 'big gold'; }
+    else { ovBig.textContent = 'GAME OVER'; ovBig.className = 'big pink'; }
+    ovNote.innerHTML = 'たかさ<br><i class="num">' + score + '</i> だん<br>ベスト ' + best + ' だん<br>さいだいコンボ ' + maxCombo;
+    startBtn.textContent = 'もういちど';
+    ovStats.textContent = 'スペース か Enter でも OK';
+    overlay.classList.add('show');
+  }
+
+  // ---- update ----------------------------------------------------------------------
+  function update(dt) {
+    anim += dt;
+    if (phase === 'play' && cur) {
+      cur.age += dt;
+      cur.x += cur.dir * cur.speed * dt;
+      if (cur.x > cur.max) { cur.x = cur.max - (cur.x - cur.max); cur.dir = -1; }
+      else if (cur.x < cur.min) { cur.x = cur.min + (cur.min - cur.x); cur.dir = 1; }
+    }
+    let tCam = 0, tZoom = 1, tCamX = 0;
+    if (phase === 'over') {
+      overT += dt; tZoom = fitZoom(); tCamX = -115;
+      if (!overlayShown && overT >= 1.9) { overlayShown = true; showResult(); }
+    } else tCam = Math.max(0, stack.length * BH - CAM_KEEP);
+    camY += (tCam - camY) * Math.min(1, dt * (phase === 'over' ? 3 : 6));
+    camX += (tCamX - camX) * Math.min(1, dt * 3);
+    zoom += (tZoom - zoom) * Math.min(1, dt * 3);
+    for (let i = Math.max(0, stack.length - 6); i < stack.length; i++) { const b = stack[i]; b.age += dt; if (!b.landed && b.age >= DROP_T) { b.landed = true; landEffects(b); } }
+    for (const d of debris) { d.life += dt; d.vy -= 1500 * dt; d.y += d.vy * dt; d.x += d.vx * dt; d.rot += d.rotV * dt; }
+    debris = debris.filter(d => d.y > -BH * 2 && d.life < 8);
+    parts = parts.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy -= 420 * dt; p.life -= dt; return p.life > 0; });
+    rings = rings.filter(r => { r.t += dt; return r.t < 0.75; });
+    pops = pops.filter(p => { p.t += dt; return p.t < 1.1; });
+    scoreBump = Math.max(0, scoreBump - dt * 5);
+    if (shakeT > 0) { shakeT -= dt; const k = shakeAmp * Math.max(0, shakeT / shakeD); shX = (Math.random() * 2 - 1) * k; shY = (Math.random() * 2 - 1) * k; }
+    else { shX = shY = 0; }
+  }
+
+  // ---- draw ----------------------------------------------------------------------------
+  function drawSky() {
+    const k = Math.min(1, camY / 2600);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, mix('#0b0b1a', '#1b0d3c', k)); g.addColorStop(1, mix('#1b1636', '#2e1454', k));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    for (const s of stars) {
+      const y = ((s.y + camY * s.f) % H + H) % H;
+      ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(anim * 1.4 + s.tw));
+      ctx.fillStyle = '#e8e4ff'; ctx.fillRect(s.x, y, s.r, s.r);
+    }
+    ctx.globalAlpha = 1;
+    // moon
+    const my = 84 + camY * 0.04;
+    if (my < H + 40) {
+      ctx.fillStyle = '#f6f1d6'; ctx.shadowColor = '#fff3b0'; ctx.shadowBlur = 26;
+      ctx.beginPath(); ctx.arc(W - 74, my, 22, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(0,0,0,.08)'; ctx.beginPath(); ctx.arc(W - 82, my - 6, 5, 0, Math.PI * 2); ctx.arc(W - 66, my + 7, 4, 0, Math.PI * 2); ctx.fill();
+    }
+    // clouds (slow parallax)
+    for (const c of clouds) {
+      const y = BASE_Y - (c.y - camY) * 0.55 * zoom, h = c.w * 0.45;
+      if (y + h < -10 || y - h > H + 10) continue;
+      ctx.globalAlpha = c.a; ctx.drawImage(cloudSpr, c.x - c.w / 2, y - h / 2, c.w, h);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function drawCity() {
+    const y0 = BASE_Y + camY * 0.5 * zoom;
+    if (y0 - 150 > H) return;
+    for (const b of city) {
+      const h = b.h * zoom;
+      ctx.fillStyle = '#12122a'; ctx.fillRect(b.x, y0 - h, b.w, h + 4);
+      ctx.fillStyle = 'rgba(255,209,102,.35)';
+      for (const [u, v] of b.win) ctx.fillRect(b.x + 3 + u * (b.w - 8), y0 - h + 4 + v * (h - 10), 2, 3);
+    }
+  }
+  function drawMarkers() {
+    const step = 10; let n = Math.max(step, Math.floor((camY - 60) / (BH * step)) * step);
+    ctx.font = '13px DotGothic16, monospace'; ctx.textAlign = 'left';
+    for (let guard = 0; guard < 40; guard++, n += step) {
+      const y = SY(n * BH); if (y < -20) break; if (y > H + 20) continue;
+      const a = Math.max(0, Math.min(1, (y - 120) / 60));   // fade out under the HUD
+      if (a <= 0) continue;
+      ctx.strokeStyle = 'rgba(157,153,192,' + (0.22 * a) + ')'; ctx.lineWidth = 1; ctx.setLineDash([4, 7]);
+      ctx.beginPath(); ctx.moveTo(14, y); ctx.lineTo(W - 14, y); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(157,153,192,' + (0.75 * a) + ')'; ctx.fillText(n + 'だん', 16, y - 6);
+    }
+  }
+  function drawGroundTop() {
+    const z = zoom, y = SY(0), gw = 150, x1 = SX(-gw), x2 = SX(gw), dx = DX * z * 1.5, dy = DY * z * 1.5;
+    if (y - dy > H + 10) return;
+    ctx.fillStyle = '#2b2b52'; ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x1 + dx, y - dy); ctx.lineTo(x2 + dx, y - dy); ctx.lineTo(x2, y); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(160,107,255,.55)'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+  function drawGroundFront() {
+    const z = zoom, y = SY(0); if (y > H) return;
+    const ug = ctx.createLinearGradient(0, y, 0, H); ug.addColorStop(0, '#1a1a33'); ug.addColorStop(1, '#0c0c18');
+    ctx.fillStyle = ug; ctx.fillRect(0, y, W, H - y + 2);
+    const x1 = SX(-150), x2 = SX(150), dx = DX * z * 1.5, dy = DY * z * 1.5, gh = 16 * z;
+    ctx.fillStyle = '#1f1f40'; ctx.fillRect(x1, y, x2 - x1, gh);
+    ctx.fillStyle = '#17173a'; ctx.beginPath(); ctx.moveTo(x2, y); ctx.lineTo(x2 + dx, y - dy); ctx.lineTo(x2 + dx, y + gh - dy); ctx.lineTo(x2, y + gh); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#a06bff'; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 12; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, y + gh + 6); ctx.lineTo(W, y + gh + 6); ctx.stroke(); ctx.shadowBlur = 0;
+  }
+  function box(r, hue, glow) {
+    const { x, y, w, h, dx, dy } = r;
+    if (glow) { ctx.shadowColor = hsl(hue, 90, 65); ctx.shadowBlur = 18; }
+    ctx.fillStyle = hsl(hue, 70, 50); ctx.fillRect(x, y, w, h);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = hsl(hue, 70, 33); ctx.beginPath(); ctx.moveTo(x + w, y); ctx.lineTo(x + w + dx, y - dy); ctx.lineTo(x + w + dx, y + h - dy); ctx.lineTo(x + w, y + h); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = hsl(hue, 72, 67); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx, y - dy); ctx.lineTo(x + w + dx, y - dy); ctx.lineTo(x + w, y); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,.3)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, y + h); ctx.lineTo(x, y); ctx.lineTo(x + dx, y - dy); ctx.lineTo(x + w + dx, y - dy); ctx.lineTo(x + w + dx, y + h - dy); ctx.lineTo(x + w, y + h); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + w, y); ctx.lineTo(x + w, y + h); ctx.moveTo(x + w, y); ctx.lineTo(x + w + dx, y - dy); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.stroke();
+  }
+  function blockRect(b, isCur) {
+    const z = zoom; let yb = b.level * BH;
+    if (isCur) yb += HOVER; else if (!b.landed) yb += HOVER * (1 - Math.min(1, b.age / DROP_T));
+    return { x: SX(b.x), y: SY(yb + BH), w: b.w * z, h: BH * z, dx: DX * z, dy: DY * z };
+  }
+  function drawBlock(b, isCur) {
+    const r = blockRect(b, isCur);
+    if (r.y > H + 80 || r.y + r.h < -80) return;
+    box(r, b.hue, isCur);
+    if (!isCur && b.landed && b.age < DROP_T + 0.22) {
+      const a = Math.min(0.7, (DROP_T + 0.22 - b.age) * 3.2);
+      ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
+      ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.beginPath(); ctx.moveTo(r.x, r.y); ctx.lineTo(r.x + r.dx, r.y - r.dy); ctx.lineTo(r.x + r.w + r.dx, r.y - r.dy); ctx.lineTo(r.x + r.w, r.y); ctx.closePath(); ctx.fill();
+    }
+  }
+  function drawShadow() {
+    const prev = stack[stack.length - 1];
+    const l = Math.max(cur.x, prev.x), r = Math.min(cur.x + cur.w, prev.x + prev.w);
+    if (r <= l) return;
+    const z = zoom, y = SY(cur.level * BH), x1 = SX(l), x2 = SX(r), dx = DX * z, dy = DY * z;
+    ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x1 + dx, y - dy); ctx.lineTo(x2 + dx, y - dy); ctx.lineTo(x2, y); ctx.closePath(); ctx.fill();
+  }
+  function drawDebris() {
+    const z = zoom;
+    for (const d of debris) {
+      const cx = SX(d.x + d.w / 2), cy = SY(d.y + BH / 2);
+      if (cy > H + 120 || cy < -120) continue;
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(d.rot);
+      box({ x: -d.w * z / 2, y: -BH * z / 2, w: d.w * z, h: BH * z, dx: DX * z, dy: DY * z }, d.hue, false);
+      ctx.restore();
+    }
+  }
+  function drawParts() {
+    for (const p of parts) {
+      const a = Math.max(0, Math.min(1, p.life * 2)), s = p.size * zoom;
+      ctx.fillStyle = p.hue < 0 ? 'rgba(230,226,255,' + a + ')' : hsl(p.hue, 90, 75, a);
+      ctx.fillRect(SX(p.x) - s / 2, SY(p.y) - s / 2, s, s);
+    }
+  }
+  function drawRings() {
+    const z = zoom;
+    for (const r of rings) {
+      if (r.t < 0) continue; const k = r.t / 0.75;
+      const ex = (r.w / 2 + k * 100) * z, ey = (DY / 2 + k * 44) * z, cx = SX(r.x) + DX * z / 2, cy = SY(r.y) - DY * z / 2;
+      ctx.strokeStyle = hsl(r.hue, 90, 72, 1 - k); ctx.lineWidth = 1 + 3 * (1 - k); ctx.shadowColor = hsl(r.hue, 90, 65); ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.ellipse(cx, cy, ex, ey, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+  }
+  function drawPops() {
+    ctx.textAlign = 'center';
+    for (const p of pops) {
+      if (p.t < 0) continue; const k = p.t / 1.1, sc = 1 + Math.max(0, 0.15 - p.t) * 4;
+      ctx.save(); ctx.translate(SX(p.x) + DX * zoom / 2, SY(p.y) - k * 48); ctx.scale(sc, sc); ctx.globalAlpha = Math.min(1, (1 - k) * 2.2);
+      ctx.font = p.size + 'px DotGothic16, monospace'; ctx.fillStyle = p.col; ctx.shadowColor = p.col; ctx.shadowBlur = 10; ctx.fillText(p.text, 0, 0); ctx.restore();
+    }
+  }
+  function drawHUD() {
+    ctx.textAlign = 'center';
+    ctx.save(); ctx.translate(W / 2, 70); const sc = 1 + scoreBump * 0.25; ctx.scale(sc, sc);
+    ctx.font = '50px DotGothic16, monospace'; ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16; ctx.fillText(String(score), 0, 0);
+    const tw = ctx.measureText(String(score)).width; ctx.shadowBlur = 0;
+    ctx.font = '16px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0'; ctx.textAlign = 'left'; ctx.fillText('だん', tw / 2 + 8, -2);
+    ctx.restore();
+    ctx.font = '14px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.95)';
+    ctx.textAlign = 'right'; ctx.fillText('ベスト ' + best, W - 14, 26);
+    if (cur) { const lv = Math.min(9, 1 + Math.floor((cur.speed - 170) / 30)); ctx.textAlign = 'left'; ctx.fillText('はやさ Lv' + lv, 14, 26); }
+    if (combo >= 2 && phase === 'play') {
+      const pulse = 1 + 0.08 * Math.sin(anim * 12);
+      ctx.save(); ctx.translate(W / 2, 106); ctx.scale(pulse, pulse); ctx.textAlign = 'center';
+      ctx.font = '20px DotGothic16, monospace'; ctx.fillStyle = '#ff5fa2'; ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = 12; ctx.fillText(combo + ' COMBO!', 0, 0); ctx.restore();
+    }
+    ctx.textAlign = 'left';
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawSky();
+    ctx.save(); ctx.translate(shX, shY);
+    drawCity(); drawMarkers(); drawGroundTop();
+    for (let i = 0; i < stack.length; i++) drawBlock(stack[i], false);
+    if (cur) { drawShadow(); drawBlock(cur, true); }
+    drawDebris(); drawGroundFront(); drawParts(); drawRings(); drawPops();
+    ctx.restore();
+    drawHUD();
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; if (!document.hidden) update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- input (registered last) -----------------------------------------------------------
+  function tryStart() { if (phase !== 'over' || overlayShown) start(); }
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (phase === 'play') place(); });
+  placeBtn.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (overlay.classList.contains('show')) tryStart(); else if (phase === 'play') place(); });
+  placeBtn.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') e.preventDefault(); });
+  startBtn.addEventListener('click', () => { audio(); tryStart(); });
+  menuBtn.addEventListener('click', () => { audio(); SFX.click(); reset(); });
+  document.addEventListener('keydown', e => {
+    if (e.repeat || e.target === muteBtn) return;
+    if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault(); audio();
+      if (overlay.classList.contains('show')) tryStart(); else if (phase === 'play') place();
+    } else if (e.key === 'Escape') { reset(); }
+  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) last = performance.now(); });
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  drawMute(); reset(); requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      phase, over, score, best, combo, maxCombo,
+      width: cur ? cur.w : stack[stack.length - 1].w,
+      speed: cur ? cur.speed : 0, camY, zoom, debris: debris.length,
+      current: cur ? { x: cur.x, w: cur.w, dir: cur.dir, level: cur.level, hue: cur.hue } : null,
+      stack: stack.map(b => ({ x: b.x, w: b.w, hue: b.hue, perfect: !!b.perfect })),
+      overlay: overlay.classList.contains('show'),
+    }),
+    place, setCurrentX: x => { if (cur) cur.x = x; }, start, reset,
+    step: ms => { const n = Math.max(1, Math.ceil(ms / 16)); for (let i = 0; i < n; i++) update(0.016); },
+    perfectTol: PERFECT_TOL, baseWidth: W0, recover: RECOVER,
+  };
+})();
+</script>
+</body>
+</html>
