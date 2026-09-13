@@ -99,7 +99,7 @@
 <div id="wrap">
   <canvas id="cv" width="480" height="520"></canvas>
   <div id="overlay" class="show">
-    <div class="big" id="ovBig">ネオン<br>スネーク</div>
+    <div class="big" id="ovBig">ぐんぐん<br>スネーク</div>
     <div class="note" id="ovNote">
       光るヘビを うごかして <b>エサを たべよう！</b><br>
       たべるほど ながく・はやく なるよ。<br>
@@ -317,7 +317,7 @@
   }
   function goTitle() {
     phase = 'title'; paused = false; queue = [];
-    ovBig.innerHTML = 'ネオン<br>スネーク'; ovBig.className = 'big';
+    ovBig.innerHTML = 'ぐんぐん<br>スネーク'; ovBig.className = 'big';
     ovNote.innerHTML = '光るヘビを うごかして <b>エサを たべよう！</b><br>たべるほど ながく・はやく なるよ。<br><i class="c2">かべ</i>や <i class="c1">じぶんの からだ</i>に ぶつかったら おわり。<br>点滅する <i class="gold">★ボーナス</i>は 時間内に たべると <i class="gold">50点</i>！<br><br class="sp">📱 スワイプ か 画面下の 十字ボタン ／ ⌨️ 矢印キー・WASD、Pでポーズ';
     btnWalls.textContent = 'かべあり で あそぶ'; btnWarp.textContent = 'ワープ で あそぶ';
     renderStats(); syncPauseBtn(); overlay.classList.add('show');
