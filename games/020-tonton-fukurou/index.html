@@ -76,7 +76,7 @@
   <canvas id="cv" width="480" height="640"></canvas>
   <div id="overlay" class="show">
     <div class="medal-big" id="ovMedal" style="display:none"></div>
-    <div class="big" id="ovBig">よふかし<br>バード</div>
+    <div class="big" id="ovBig">トントン<br>ふくろう</div>
     <div class="newbest" id="ovNew" style="display:none">★ NEW BEST! ★</div>
     <div class="note" id="ovNote">
       タップすると フクロウが <b>はばたいて</b> 上にあがる。<br>
@@ -288,7 +288,7 @@
   function renderTitle() {
     const m = medalFor(best);
     if (m) { ovMedal.textContent = m.emoji; ovMedal.style.display = ''; } else ovMedal.style.display = 'none';
-    ovBig.innerHTML = 'よふかし<br>バード'; ovBig.className = 'big'; ovNew.style.display = 'none';
+    ovBig.innerHTML = 'トントン<br>ふくろう'; ovBig.className = 'big'; ovNew.style.display = 'none';
     ovNote.innerHTML = INTRO_HTML; startBtn.textContent = 'スタート！';
     ovStats.innerHTML = 'ベスト <span style="color:var(--gold)">' + best + '</span>' + (m ? ' ・ ' + m.emoji + ' ' + m.name : '') + '<br>メダル：10てん🥉 ／ 25てん🥈 ／ 50てん🥇';
   }
