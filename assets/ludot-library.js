@@ -43,7 +43,7 @@
   }
   function updateButton(b,g) {
     const saved = state.favorites.some(x => x.id === g.id);
-    b.textContent = saved ? '★ 保存済み' : '☆ 保存';
+    b.textContent = b.classList.contains('library-save') ? (saved ? '★' : '☆') : (saved ? '★ 保存済み' : '☆ 保存');
     b.setAttribute('aria-pressed', String(saved));
     b.setAttribute('aria-label', g.title + (saved ? 'をお気に入りから外す' : 'をお気に入りに保存'));
   }
@@ -51,12 +51,24 @@
     const container = document.getElementById(id);
     if (!container) return;
     container.replaceChildren();
-    if (!entries.length) { const p = document.createElement('p'); p.textContent = empty; container.append(p); return; }
+    if (!entries.length) {
+      const recent = id === 'recent-games';
+      const box = document.createElement('div'); box.className = 'library-empty';
+      const title = document.createElement('p'); title.textContent = recent ? '気になるゲームを、ひとつ遊ぼう。' : '好きなゲームを、自分のコレクションに。';
+      const note = document.createElement('span'); note.textContent = recent ? '遊んだゲームがここに並びます。' : 'ゲームの「☆ 保存」で追加できます。';
+      const link = document.createElement('a'); link.href = '#games'; link.textContent = recent ? 'ゲーム一覧へ ↗' : 'お気に入りを見つける ↗';
+      box.append(title,note,link); container.append(box); return;
+    }
     entries.forEach(old => {
       const g = catalog.get(old.id) || old;
       const row = document.createElement('div'); row.className = 'library-item';
-      const a = document.createElement('a'); a.href = new URL(g.path, root).href; a.dataset.gameId = g.id; a.textContent = g.title + ' →';
-      row.append(a,button(g)); container.append(row);
+      const a = document.createElement('a'); a.href = new URL(g.path, root).href; a.dataset.gameId = g.id;
+      const icon = document.createElement('span'); icon.className = 'library-game-icon'; icon.textContent = g.emoji || '🎮'; icon.setAttribute('aria-hidden','true');
+      const title = document.createElement('span'); title.className = 'library-game-title'; title.textContent = g.title;
+      const arrow = document.createElement('span'); arrow.className = 'library-play-arrow'; arrow.textContent = '↗'; arrow.setAttribute('aria-hidden','true');
+      a.append(icon,title,arrow);
+      const favorite = button(g); favorite.classList.add('library-save'); updateButton(favorite,g);
+      row.append(a,favorite); container.append(row);
     });
   }
   function render() {
@@ -66,6 +78,10 @@
       const g = catalog.get(b.dataset.favoriteId) || [...state.favorites,...state.recent].find(x => x.id === b.dataset.favoriteId);
       if (g) updateButton(b,g);
     });
+    const favoriteCount = document.getElementById('favorite-count');
+    const recentCount = document.getElementById('recent-count');
+    if (favoriteCount) favoriteCount.textContent = state.favorites.length;
+    if (recentCount) recentCount.textContent = state.recent.length;
     const clear = document.getElementById('clear-recent');
     if (clear) clear.hidden = !state.recent.length;
   }
@@ -82,7 +98,7 @@
   function setGames(games) {
     // Renderer may supply HTML-escaped remote metadata. Decode once into text, never into markup.
     const decode = s => { const t = document.createElement('textarea'); t.innerHTML = s; return t.value; };
-    catalog = new Map(games.filter(validGame).map(g => [g.id,{id:g.id,title:decode(g.title),path:new URL(g.path,root).href}]));
+    catalog = new Map(games.filter(validGame).map(g => [g.id,{id:g.id,title:decode(g.title),path:new URL(g.path,root).href,emoji:typeof g.emoji === 'string' ? decode(g.emoji).slice(0,16) : '🎮'}]));
     document.querySelectorAll('#game-grid a[data-game-id]').forEach(a => {
       const g = catalog.get(a.dataset.gameId); if (!g || a.parentElement.classList.contains('game-tile')) return;
       const tile = document.createElement('div'); tile.className = 'game-tile';
