@@ -109,7 +109,7 @@
   </div>
   <div id="scroller"><canvas id="cv" width="480" height="460"></canvas></div>
   <div id="overlay" class="show">
-    <div class="big" id="ovBig">ネオン<br>スイーパー</div>
+    <div class="big" id="ovBig">ドキドキ<br>スイーパー</div>
     <div class="note" id="ovNote"></div>
     <div class="levels" id="levels">
       <button data-l="easy" class="on"><b>やさしい</b><small>9×9・💣10</small><em>🏆 --</em></button>
@@ -352,7 +352,7 @@
   function toTitle() {
     phase = 'title'; face = '🙂'; clearTimeout(pressTimer); press = null; pressing = null;
     resultShown = true;   // a pending result screen must not overwrite the title overlay
-    $('ovBig').innerHTML = 'ネオン<br>スイーパー'; $('ovBig').className = 'big';
+    $('ovBig').innerHTML = 'ドキドキ<br>スイーパー'; $('ovBig').className = 'big';
     $('ovNote').innerHTML = TITLE_NOTE; $('levels').style.display = 'flex'; $('startBtn').textContent = 'スタート'; $('toTitleBtn').style.display = 'none';
     $('ovStats').textContent = '1・2・3キーで レベルをえらべるよ';
     renderBest(); syncLevelButtons(); overlay.classList.add('show'); updateHud();
