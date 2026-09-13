@@ -80,7 +80,7 @@
 <div id="wrap">
   <canvas id="cv" width="480" height="600"></canvas>
   <div id="overlay" class="show">
-    <div class="big" id="ovBig">よふかし<br>リバーシ</div>
+    <div class="big" id="ovBig">くるりん<br>リバーシ</div>
     <div class="note" id="ovNote">
       じぶんの石で あいての石を <b>はさむと ぜんぶ ひっくりかえる</b>！<br>
       さいごに 石が多いほうの かち。<i class="c1">P1</i> と <i class="c2">P2</i> が こうたいで おくよ。<br>
@@ -457,7 +457,7 @@
   function burst(x, y, glow, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c: glow, s: 3 + Math.random() * 3 }); } }
   function goMenu() {
     gameSeq++; clearTimeout(cpuTimer); thinking = false; phase = 'title';
-    document.getElementById('ovBig').innerHTML = 'よふかし<br>リバーシ'; document.getElementById('ovBig').className = 'big';
+    document.getElementById('ovBig').innerHTML = 'くるりん<br>リバーシ'; document.getElementById('ovBig').className = 'big';
     document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>こんかいの せいせき： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">P2/CPU ' + tally[2] + '</i>（ひきわけ ' + tally.d + '）<br>⚫ くろ が先手（つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + (first === 1 ? 'P1' : 'P2/CPU') + '</i>）';
     document.getElementById('btn2p').textContent = 'ふたりで たいせん'; document.getElementById('btnCpu').textContent = 'ひとりで（CPU）';
     renderStats(); overlay.classList.add('show'); updateButtons();
