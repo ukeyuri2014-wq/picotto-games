@@ -879,6 +879,21 @@
     .mag-card { display: grid; grid-template-columns: 112px minmax(0, 1fr); }
     .mag-emoji { min-height: 100%; font-size: 2.6rem; }
   }
+
+  .new-arrivals { max-width:1120px; margin:0 auto; padding:56px 24px 28px; min-width:0; }
+  .new-arrivals[hidden] { display:none; }
+  .new-arrivals .label { font-family:var(--mono); font-size:.68rem; letter-spacing:.28em; color:#ef5363; margin-bottom:9px; }
+  .new-arrivals h2 { font-size:clamp(2rem,4vw,3rem); color:#17213d; letter-spacing:-.035em; }
+  .new-arrivals-note { color:#647088; font-size:.85rem; margin:10px 0 24px; }
+  .new-arrivals-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+  .new-arrivals .card { min-width:0; }
+  .new-arrivals .card h3 { overflow-wrap:anywhere; }
+  .new-arrivals time { display:block; margin-top:14px; font-family:var(--mono); font-size:.75rem; color:#647088; }
+  @media(max-width:640px) {
+    .new-arrivals { padding:40px 20px 24px; }
+    .new-arrivals-grid { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:16px; padding:4px 2px 20px; }
+    .new-arrivals .card { flex:0 0 72vw; scroll-snap-align:start; }
+  }
 </style>
 <meta name="google-site-verification" content="phPPCuL0M-oXA27EPZqe92ctgHxwwvjLBnGJCQ-ECVY">
 <meta name="application-name" content="ルドット">
@@ -943,6 +958,16 @@
     <noscript><p>お気に入り・履歴を使うにはJavaScriptを有効にしてください。ゲーム一覧は下から選べます。</p></noscript>
   </section>
   <section class="ranking" id="ranking" aria-live="polite"></section>
+  <section class="new-arrivals" id="new-arrivals" aria-labelledby="new-arrivals-title">
+<!-- STATIC-NEW-START -->
+<div class="label">NEW ARRIVALS</div><h2 id="new-arrivals-title">新着ゲーム</h2><p class="new-arrivals-note">あたらしい順にならんでいます。</p><div class="new-arrivals-grid"><a class="card" data-game-id="027" href="games/027-kururin-reversi/index.html"><div class="art"><div class="fallback">⚫</div></div><div class="card-body"><div class="chips"><span class="chip">BOARD</span></div><h3>くるりんリバーシ</h3><time datetime="2026-09-13">2026.09.13</time></div></a>
+<a class="card" data-game-id="026" href="games/026-bound-breaker/index.html"><div class="art"><div class="fallback">🧱</div></div><div class="card-body"><div class="chips"><span class="chip">ARCADE</span></div><h3>バウンドブレイカー</h3><time datetime="2026-09-13">2026.09.13</time></div></a>
+<a class="card" data-game-id="025" href="games/025-dokidoki-sweeper/index.html"><div class="art"><div class="fallback">💣</div></div><div class="card-body"><div class="chips"><span class="chip">LOGIC</span></div><h3>ドキドキスイーパー</h3><time datetime="2026-09-13">2026.09.13</time></div></a>
+<a class="card" data-game-id="024" href="games/024-sanmai-soroe/index.html"><div class="art"><div class="fallback">🀄</div></div><div class="card-body"><div class="chips"><span class="chip">TILE MATCH</span></div><h3>3まいそろえ</h3><time datetime="2026-09-13">2026.09.13</time></div></a>
+<a class="card" data-game-id="023" href="games/023-irowake-bottle/index.html"><div class="art"><div class="fallback">🧪</div></div><div class="card-body"><div class="chips"><span class="chip">SORT PUZZLE</span></div><h3>いろわけボトル</h3><time datetime="2026-09-13">2026.09.13</time></div></a>
+<a class="card" data-game-id="022" href="games/022-pitatto-block/index.html"><div class="art"><div class="fallback">🧩</div></div><div class="card-body"><div class="chips"><span class="chip">BLOCK PUZZLE</span></div><h3>ぴたっとブロック</h3><time datetime="2026-09-13">2026.09.13</time></div></a></div>
+<!-- STATIC-NEW-END -->
+  </section>
 
   <main id="games">
     <div class="sec-head">
@@ -950,6 +975,16 @@
       <h2>今日は、どこへ行く？ <span class="count" id="game-count"></span></h2>
     </div>
     <div class="grid" id="game-grid"><!-- STATIC-GAMES-START -->
+<a class="card" data-game-id="027" href="games/027-kururin-reversi/index.html"><div class="art"><div class="fallback">⚫</div></div><div class="card-body"><div class="chips"><span class="chip">BOARD</span></div><h3>くるりんリバーシ</h3><p class="desc">8×8の盤で相手の石をはさんでひっくり返す定番ボードゲーム。ふたりで交代でも、3段階のCPU（よわい／ふつう／つよい＝先読み探索＋終盤は完全読み）相手でも。置ける場所と返せる枚数のヒント表示、波打つフリップ演出、パス表示、1手もどす、CPUレベル別の成績記録つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="026" href="games/026-bound-breaker/index.html"><div class="art"><div class="fallback">🧱</div></div><div class="card-body"><div class="chips"><span class="chip">ARCADE</span></div><h3>バウンドブレイカー</h3><p class="desc">ネオンに光るブロックをボールで全部こわすブロック崩し。全8ステージ＋ループで少しずつスピードアップ、2回当てないと壊れないブロックやこわれない壁も登場。パドル拡大・ボール3分裂・つらぬき・スローの4種のカプセル、コンボ加点、パーティクル演出、ベストスコア記録つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="025" href="games/025-dokidoki-sweeper/index.html"><div class="art"><div class="fallback">💣</div></div><div class="card-body"><div class="chips"><span class="chip">LOGIC</span></div><h3>ドキドキスイーパー</h3><p class="desc">ネオンに光る格子で遊ぶ地雷探しパズル。数字は「まわり8マスにある地雷の数」、最初の1タップは必ず安全。やさしい（9×9）・ふつう（16×16）・むずかしい（16×30）の3レベルで、レベルごとのベストタイムを記録。数字をタップしてまわりを一気に開く「コード」、波紋のように広がる連鎖オープン、クリア時の花火つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="024" href="games/024-sanmai-soroe/index.html"><div class="art"><div class="fallback">🀄</div></div><div class="card-body"><div class="chips"><span class="chip">TILE MATCH</span></div><h3>3まいそろえ</h3><p class="desc">何層にも重なった絵柄タイルを上から取って、下のトレイ（7枠）に集めるじっくりパズル。同じ絵が3枚そろうと弾けて消え、全部消せばクリア。レベルが上がるほど枚数と層が増え（配置は必ず解けるように生成）、道具3種「もどす・シャッフル・3まいだし」で切り抜けよう。タイマーなし、進んだレベルは自動保存。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="023" href="games/023-irowake-bottle/index.html"><div class="art"><div class="fallback">🧪</div></div><div class="card-body"><div class="chips"><span class="chip">SORT PUZZLE</span></div><h3>いろわけボトル</h3><p class="desc">まざった色の液体をボトルからボトルへ注いで、ぜんぶ1色4層にそろえるパズル。同じ色の上（か空のボトル）にだけ注げて、続いている分だけいっきに移る。レベルは3色から最大9色まで自動生成（必ず解ける保証つき）。1手もどす無制限・ヒント・レベルごとの最少手数記録・色覚に配慮したマーク付き。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="022" href="games/022-pitatto-block/index.html"><div class="art"><div class="fallback">🧩</div></div><div class="card-body"><div class="chips"><span class="chip">BLOCK PUZZLE</span></div><h3>ぴたっとブロック</h3><p class="desc">8×8の盤面に3つのピースをドラッグして置き、タテかヨコの列がそろうと消えるブロックパズル。2列同時消しで「COMBO x2!」、連続で消し続けるとSTREAK加点。ピースは指の上に浮いて見え、置ける場所はゴーストで表示。ベスト記録と盤面は自動セーブされるので途中でやめても続きから遊べる。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="021" href="games/021-tsumiage-tower/index.html"><div class="art"><div class="fallback">🏗️</div></div><div class="card-body"><div class="chips"><span class="chip">TIMING</span></div><h3>つみあげタワー</h3><p class="desc">左右に往復するブロックをタイミングよく止めて、どこまでも高くつみあげるタイミングゲーム。はみ出た部分は切り落とされて落下し、ブロックはどんどん細く・はやくなる。ぴったり止めればPERFECTで幅が少し回復、コンボが続くほど音が高くなる。虹色に変わるタワーと、ゲームオーバー時の全景ズームアウト、ベスト記録つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="020" href="games/020-tonton-fukurou/index.html"><div class="art"><div class="fallback">🦉</div></div><div class="card-body"><div class="chips"><span class="chip">ONE BUTTON</span></div><h3>トントンふくろう</h3><p class="desc">タップで小さなフクロウが羽ばたく1ボタン飛行ゲーム。上下からのびるネオン柱のすき間をくぐりぬけて1点、柱・地面・天井にぶつかったらおしまい。進むほどすき間がせまく速くなり、10点ごとに夜の色がかわって流れ星が降る。夜空・月・流れる街並みの多層背景、ベスト記録と10・25・50点のメダルつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="019" href="games/019-gungun-snake/index.html"><div class="art"><div class="fallback">🐍</div></div><div class="card-body"><div class="chips"><span class="chip">ARCADE</span></div><h3>ぐんぐんスネーク</h3><p class="desc">光るヘビを操作してエサを食べ、どんどん長くなる定番アーケード。食べるほど少しずつ速くなり、たまに出る点滅ボーナス★は時間内に取ると50点。壁で終わる「かべあり」と反対側から出てくる「ワープ」の2モード、ベスト記録は自動保存。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="018" href="games/018-soroete-2048/index.html"><div class="art"><div class="fallback">🔢</div></div><div class="card-body"><div class="chips"><span class="chip">NUMBER PUZZLE</span></div><h3>そろえて2048</h3><p class="desc">4×4のマスでタイルをすべらせ、同じ数字をぶつけて合体させる定番の数字パズル。2048を作ったらクリア、そのあとも続けてハイスコアを狙える。数字が大きいほど光って音も高くなり、2048達成で紙吹雪。ベスト記録と途中の盤面は自動セーブ、1手もどす機能つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="017" href="games/017-yofukashi-daifugo/index.html"><div class="art"><div class="fallback">🃏</div></div><div class="card-body"><div class="chips"><span class="chip">CARD GAME</span></div><h3>よふかし大富豪</h3><p class="desc">CPU3人と対戦する定番トランプゲーム。8切り・革命・階段・縛り・11バック・都落ち・禁止上がり・カード交換などのローカルルールを設定画面でON/OFFできる。迷ったら「おすすめ」ボタン。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="016" href="games/016-nurinuri-battle/index.html"><div class="art"><div class="fallback">🎨</div></div><div class="card-body"><div class="chips"><span class="chip">2P BATTLE</span></div><h3>ぬりぬりバトル</h3><p class="desc">60秒で床を自分の色に塗りまくる陣取りバトル。相手の色の上も塗り替えOK、ペイントボムとダッシュで逆転を狙え。ひとつの画面をふたりで取り合うか、CPUと対戦。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="015" href="games/015-yofukashi-connect4/index.html"><div class="art"><div class="fallback">🔵</div></div><div class="card-body"><div class="chips"><span class="chip">BOARD</span></div><h3>よふかし四目ならべ</h3><p class="desc">コマを上から落として、タテ・ヨコ・ナナメに4つならべたら勝ちの定番ボードゲーム。ふたりで交代でも、3段階のCPU（よわい／ふつう／つよい）相手でも。落下アニメ・1手もどす・成績記録つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
@@ -1038,6 +1073,504 @@
 <script>
   // ============ ゲームごとのキービジュアル（描き下ろしSVG） ============
   const ART = {
+    "027": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="くるりんリバーシ">
+<defs>
+ <linearGradient id="k27s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#11112a"/><stop offset="1" stop-color="#1d1a42"/></linearGradient>
+ <radialGradient id="k27b" cx=".35" cy=".3" r="1"><stop offset="0" stop-color="#5a5482"/><stop offset=".5" stop-color="#1d1a2e"/><stop offset="1" stop-color="#09080f"/></radialGradient>
+ <radialGradient id="k27w" cx=".35" cy=".3" r="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e9e7fb"/><stop offset="1" stop-color="#a9a5cc"/></radialGradient>
+ <radialGradient id="k27m" cx=".4" cy=".4" r=".8"><stop offset="0" stop-color="#fff1bd"/><stop offset="1" stop-color="#ffd166"/></radialGradient>
+ <pattern id="k27p" x="112" y="22" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#0c2b25"/><rect x="1" y="1" width="20" height="20" rx="2" fill="#17453b"/></pattern>
+ <filter id="k27g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k27s)"/>
+<g fill="#e8e4ff" opacity=".55"><circle cx="28" cy="26" r="1.4"/><circle cx="62" cy="96" r="1"/><circle cx="44" cy="160" r="1.2"/><circle cx="352" cy="120" r="1"/><circle cx="378" cy="186" r="1.3"/><circle cx="330" cy="200" r="1"/><circle cx="90" cy="206" r="1"/></g>
+<circle cx="352" cy="42" r="20" fill="url(#k27m)" opacity=".35" filter="url(#k27g)"/>
+<circle cx="352" cy="42" r="17" fill="url(#k27m)"/><circle cx="360" cy="36" r="15" fill="#151434"/>
+<rect x="104" y="14" width="192" height="192" rx="12" fill="#1b1b38" stroke="#a06bff" stroke-width="3"/>
+<rect x="104" y="14" width="192" height="192" rx="12" fill="none" stroke="#a06bff" stroke-width="6" opacity=".35" filter="url(#k27g)"/>
+<rect x="112" y="22" width="176" height="176" fill="url(#k27p)"/>
+<g fill="#53e0d8" opacity=".5"><circle cx="156" cy="66" r="1.6"/><circle cx="244" cy="66" r="1.6"/><circle cx="156" cy="154" r="1.6"/><circle cx="244" cy="154" r="1.6"/></g>
+<g>
+ <circle cx="123" cy="33" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="145" cy="33" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="145" cy="55" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="211" cy="55" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="167" cy="77" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="189" cy="77" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="211" cy="77" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="167" cy="99" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="211" cy="99" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="233" cy="99" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="167" cy="121" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="189" cy="121" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="211" cy="121" r="9" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="233" cy="121" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="189" cy="143" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="211" cy="143" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="233" cy="165" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+ <circle cx="277" cy="187" r="9" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".6" stroke-width="1.2"/>
+</g>
+<ellipse cx="189" cy="99" rx="3.2" ry="10.5" fill="#ffffff" stroke="#ffd166" stroke-width="1.5"/>
+<rect x="187.5" y="87" width="3" height="24" fill="#fff" opacity=".9" filter="url(#k27g)"/>
+<circle cx="123" cy="33" r="2.6" fill="#ff5fa2"/>
+<g fill="#ffd166"><circle cx="255" cy="55" r="7" opacity=".25"/><circle cx="145" cy="99" r="7" opacity=".25"/><circle cx="189" cy="165" r="7" opacity=".25"/><circle cx="123" cy="187" r="7" opacity=".25"/></g>
+<g font-family="DotGothic16, monospace" font-size="9" fill="#ffd166" text-anchor="middle"><text x="255" y="58">2</text><text x="145" y="102">3</text><text x="189" y="168">1</text><text x="123" y="190">4</text></g>
+<g fill="#ffd166"><path d="M112 22 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3Z"/><path d="M70 130 l2.2 5.4 5.4 2.2 -5.4 2.2 -2.2 5.4 -2.2 -5.4 -5.4 -2.2 5.4 -2.2Z" opacity=".85"/></g>
+<g font-family="DotGothic16, monospace" letter-spacing="2">
+ <circle cx="40" cy="72" r="11" fill="url(#k27b)" stroke="#a06bff" stroke-opacity=".7" stroke-width="1.5"/><text x="60" y="78" font-size="15" fill="#53e0d8">34</text>
+ <circle cx="40" cy="112" r="11" fill="url(#k27w)" stroke="#53e0d8" stroke-opacity=".7" stroke-width="1.5"/><text x="60" y="118" font-size="15" fill="#ff5fa2">30</text>
+ <text x="330" y="100" font-size="11" fill="#ffd166">パス！</text>
+ <text x="348" y="130" font-size="9" fill="#9d99c0" text-anchor="middle">CPU つよい</text>
+</g>
+<text x="200" y="219" font-family="DotGothic16, monospace" font-size="10.5" fill="#ffd166" text-anchor="middle" letter-spacing="3" opacity=".95">はさんで ひっくりかえせ！</text>
+</svg>`,
+    "026": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="バウンドブレイカー">
+<defs>
+ <linearGradient id="k26xs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0d20"/><stop offset="1" stop-color="#1a1638"/></linearGradient>
+ <linearGradient id="k26xp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#53e0d8"/><stop offset="1" stop-color="#1f8f89"/></linearGradient>
+ <radialGradient id="k26xb" cx=".35" cy=".35" r=".9"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9ff4ee"/></radialGradient>
+ <filter id="k26xg" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k26xs)"/>
+<path d="M0 60H400M0 100H400M0 140H400M0 180H400M40 0V225M80 0V225M120 0V225M160 0V225M200 0V225M240 0V225M280 0V225M320 0V225M360 0V225" stroke="#6f66c8" stroke-opacity=".12" stroke-width="1"/>
+<line x1="0" y1="12" x2="400" y2="12" stroke="#53e0d8" stroke-opacity=".6" stroke-width="2"/>
+<g filter="url(#k26xg)" opacity=".55">
+ <g fill="#ff5f7a"><rect x="12" y="22" width="34" height="12" rx="3"/><rect x="50" y="22" width="34" height="12" rx="3"/><rect x="88" y="22" width="34" height="12" rx="3"/><rect x="126" y="22" width="34" height="12" rx="3"/><rect x="164" y="22" width="34" height="12" rx="3"/><rect x="240" y="22" width="34" height="12" rx="3"/><rect x="278" y="22" width="34" height="12" rx="3"/><rect x="316" y="22" width="34" height="12" rx="3"/><rect x="354" y="22" width="34" height="12" rx="3"/></g>
+ <g fill="#ff9f43"><rect x="12" y="38" width="34" height="12" rx="3"/><rect x="50" y="38" width="34" height="12" rx="3"/><rect x="88" y="38" width="34" height="12" rx="3"/><rect x="164" y="38" width="34" height="12" rx="3"/><rect x="240" y="38" width="34" height="12" rx="3"/><rect x="278" y="38" width="34" height="12" rx="3"/><rect x="316" y="38" width="34" height="12" rx="3"/><rect x="354" y="38" width="34" height="12" rx="3"/></g>
+ <g fill="#ffd166"><rect x="12" y="54" width="34" height="12" rx="3"/><rect x="50" y="54" width="34" height="12" rx="3"/><rect x="88" y="54" width="34" height="12" rx="3"/><rect x="126" y="54" width="34" height="12" rx="3"/><rect x="164" y="54" width="34" height="12" rx="3"/><rect x="278" y="54" width="34" height="12" rx="3"/><rect x="316" y="54" width="34" height="12" rx="3"/><rect x="354" y="54" width="34" height="12" rx="3"/></g>
+ <g fill="#53e0d8"><rect x="12" y="70" width="34" height="12" rx="3"/><rect x="50" y="70" width="34" height="12" rx="3"/><rect x="126" y="70" width="34" height="12" rx="3"/><rect x="164" y="70" width="34" height="12" rx="3"/><rect x="240" y="70" width="34" height="12" rx="3"/><rect x="278" y="70" width="34" height="12" rx="3"/><rect x="354" y="70" width="34" height="12" rx="3"/></g>
+</g>
+<g fill="#ff5f7a" opacity=".92"><rect x="12" y="22" width="34" height="12" rx="3"/><rect x="50" y="22" width="34" height="12" rx="3"/><rect x="88" y="22" width="34" height="12" rx="3"/><rect x="126" y="22" width="34" height="12" rx="3"/><rect x="164" y="22" width="34" height="12" rx="3"/><rect x="240" y="22" width="34" height="12" rx="3"/><rect x="278" y="22" width="34" height="12" rx="3"/><rect x="316" y="22" width="34" height="12" rx="3"/><rect x="354" y="22" width="34" height="12" rx="3"/></g>
+<g fill="#ff9f43" opacity=".92"><rect x="12" y="38" width="34" height="12" rx="3"/><rect x="50" y="38" width="34" height="12" rx="3"/><rect x="88" y="38" width="34" height="12" rx="3"/><rect x="164" y="38" width="34" height="12" rx="3"/><rect x="240" y="38" width="34" height="12" rx="3"/><rect x="278" y="38" width="34" height="12" rx="3"/><rect x="316" y="38" width="34" height="12" rx="3"/><rect x="354" y="38" width="34" height="12" rx="3"/></g>
+<g fill="#ffd166" opacity=".92"><rect x="12" y="54" width="34" height="12" rx="3"/><rect x="50" y="54" width="34" height="12" rx="3"/><rect x="88" y="54" width="34" height="12" rx="3"/><rect x="126" y="54" width="34" height="12" rx="3"/><rect x="164" y="54" width="34" height="12" rx="3"/><rect x="278" y="54" width="34" height="12" rx="3"/><rect x="316" y="54" width="34" height="12" rx="3"/><rect x="354" y="54" width="34" height="12" rx="3"/></g>
+<g fill="#53e0d8" opacity=".92"><rect x="12" y="70" width="34" height="12" rx="3"/><rect x="50" y="70" width="34" height="12" rx="3"/><rect x="126" y="70" width="34" height="12" rx="3"/><rect x="164" y="70" width="34" height="12" rx="3"/><rect x="240" y="70" width="34" height="12" rx="3"/><rect x="278" y="70" width="34" height="12" rx="3"/><rect x="354" y="70" width="34" height="12" rx="3"/></g>
+<g fill="none" stroke="#ffffff" stroke-opacity=".8" stroke-width="1.2"><rect x="128.5" y="24.5" width="29" height="7" rx="1.5"/><rect x="280.5" y="24.5" width="29" height="7" rx="1.5"/><rect x="52.5" y="56.5" width="29" height="7" rx="1.5"/></g>
+<g><rect x="88" y="70" width="34" height="12" rx="3" fill="#2a2a44" stroke="#5a5a80"/><path d="M92 82l10-12M100 82l10-12M108 82l10-12" stroke="#9d99c0" stroke-opacity=".4" stroke-width="1.5"/><rect x="316" y="70" width="34" height="12" rx="3" fill="#2a2a44" stroke="#5a5a80"/><path d="M320 82l10-12M328 82l10-12M336 82l10-12" stroke="#9d99c0" stroke-opacity=".4" stroke-width="1.5"/></g>
+<g fill="#ffd166"><rect x="218" y="60" width="4" height="4"/><rect x="230" y="50" width="3" height="3"/><rect x="209" y="72" width="3" height="3"/><rect x="238" y="66" width="4" height="4" opacity=".7"/><rect x="226" y="84" width="3" height="3" opacity=".8"/><rect x="246" y="90" width="3" height="3" opacity=".5"/></g>
+<text x="258" y="106" font-family="DotGothic16, monospace" font-size="13" fill="#ffd166" letter-spacing="2">COMBO x4</text>
+<g fill="#53e0d8"><circle cx="172" cy="138" r="2" opacity=".18"/><circle cx="180" cy="128" r="2.6" opacity=".3"/><circle cx="188" cy="118" r="3.2" opacity=".45"/><circle cx="196" cy="108" r="3.8" opacity=".6"/></g>
+<circle cx="205" cy="97" r="9" fill="#53e0d8" opacity=".35" filter="url(#k26xg)"/>
+<circle cx="205" cy="97" r="6" fill="url(#k26xb)"/>
+<g><rect x="286" y="132" width="34" height="16" rx="8" fill="#6ee7a0" opacity=".5" filter="url(#k26xg)"/><rect x="286" y="132" width="34" height="16" rx="8" fill="#6ee7a0"/><rect x="290" y="134" width="26" height="4" rx="2" fill="#ffffff" opacity=".45"/><text x="303" y="144" font-family="DotGothic16, monospace" font-size="9" fill="#0e0e1c" text-anchor="middle">WIDE</text></g>
+<rect x="128" y="188" width="92" height="12" rx="6" fill="#53e0d8" opacity=".5" filter="url(#k26xg)"/>
+<rect x="128" y="188" width="92" height="12" rx="6" fill="url(#k26xp)"/>
+<rect x="136" y="190" width="76" height="3" rx="1.5" fill="#ffffff" opacity=".55"/>
+<rect x="130" y="191" width="5" height="6" rx="2" fill="#ff5fa2"/><rect x="213" y="191" width="5" height="6" rx="2" fill="#ff5fa2"/>
+<g fill="#ff5fa2"><path d="M330 178 c0 -4 -3 -6 -5 -4 c-2 -2 -5 0 -5 4 c0 4 5 7 5 7 c0 0 5 -3 5 -7Z"/><path d="M348 178 c0 -4 -3 -6 -5 -4 c-2 -2 -5 0 -5 4 c0 4 5 7 5 7 c0 0 5 -3 5 -7Z"/><path d="M366 178 c0 -4 -3 -6 -5 -4 c-2 -2 -5 0 -5 4 c0 4 5 7 5 7 c0 0 5 -3 5 -7Z" opacity=".25"/></g>
+<text x="200" y="215" font-family="DotGothic16, monospace" font-size="10.5" fill="#53e0d8" text-anchor="middle" letter-spacing="3" opacity=".9">ブロックくずし ・ 8 STAGES</text>
+</svg>`,
+    "025": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ドキドキスイーパー">
+<defs>
+ <linearGradient id="k25s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#11102a"/><stop offset="1" stop-color="#1d1a44"/></linearGradient>
+ <linearGradient id="k25c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#31315f"/><stop offset="1" stop-color="#1c1c3b"/></linearGradient>
+ <radialGradient id="k25m" cx=".38" cy=".35" r=".8"><stop offset="0" stop-color="#6f6f96"/><stop offset="1" stop-color="#0c0c18"/></radialGradient>
+ <radialGradient id="k25b" cx=".5" cy=".5" r=".7"><stop offset="0" stop-color="#ff4d8a"/><stop offset="1" stop-color="#4a0c26"/></radialGradient>
+ <filter id="k25g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+ <clipPath id="k25k"><rect x="66" y="26" width="268" height="172"/></clipPath>
+</defs>
+<rect width="400" height="225" fill="url(#k25s)"/>
+<g fill="#e8e4ff" opacity=".5"><circle cx="24" cy="26" r="1.3"/><circle cx="52" cy="118" r="1"/><circle cx="376" cy="34" r="1.3"/><circle cx="352" cy="176" r="1"/><circle cx="30" cy="200" r="1"/><circle cx="386" cy="120" r="1.1"/></g>
+<rect x="60" y="20" width="280" height="184" rx="12" fill="#a06bff" opacity=".35" filter="url(#k25g)"/>
+<rect x="62" y="22" width="276" height="180" rx="10" fill="#14142a" stroke="#a06bff" stroke-width="3"/>
+<rect x="66" y="26" width="268" height="172" fill="#0a0a17"/>
+<g fill="url(#k25c)" stroke="rgba(160,107,255,.6)" stroke-width="1">
+ <rect x="167" y="27" width="32" height="32" rx="4"/><rect x="201" y="27" width="32" height="32" rx="4"/><rect x="235" y="27" width="32" height="32" rx="4"/><rect x="269" y="27" width="32" height="32" rx="4"/><rect x="303" y="27" width="30" height="32" rx="4"/>
+ <rect x="235" y="61" width="32" height="32" rx="4"/><rect x="269" y="61" width="32" height="32" rx="4"/><rect x="303" y="61" width="30" height="32" rx="4"/>
+ <rect x="235" y="95" width="32" height="32" rx="4"/><rect x="269" y="95" width="32" height="32" rx="4"/><rect x="303" y="95" width="30" height="32" rx="4"/>
+ <rect x="269" y="129" width="32" height="32" rx="4"/><rect x="303" y="129" width="30" height="32" rx="4"/>
+ <rect x="269" y="163" width="32" height="32" rx="4"/><rect x="303" y="163" width="30" height="32" rx="4"/>
+ <rect x="133" y="27" width="32" height="32" rx="4"/>
+</g>
+<path d="M100 26V198M134 26V198M168 26V198M202 26V198M236 26V198M270 26V198M304 26V198M66 60H334M66 94H334M66 128H334M66 162H334" stroke="#a06bff" stroke-opacity=".22" stroke-width="1"/>
+<g font-family="DotGothic16, monospace" font-size="22" text-anchor="middle">
+ <text x="117" y="51" fill="#53e0d8" opacity=".5" filter="url(#k25g)">1</text><text x="117" y="51" fill="#53e0d8">1</text>
+ <text x="117" y="85" fill="#53e0d8">1</text><text x="151" y="85" fill="#53e0d8">1</text><text x="185" y="85" fill="#53e0d8">1</text>
+ <text x="219" y="85" fill="#7cff7c" opacity=".5" filter="url(#k25g)">2</text><text x="219" y="85" fill="#7cff7c">2</text>
+ <text x="219" y="119" fill="#7cff7c">2</text>
+ <text x="219" y="153" fill="#53e0d8">1</text><text x="253" y="153" fill="#7cff7c" opacity=".5" filter="url(#k25g)">2</text><text x="253" y="153" fill="#7cff7c">2</text>
+ <text x="253" y="187" fill="#53e0d8">1</text>
+</g>
+<g transform="translate(133,27)">
+ <path d="M12 6 L25 12 L12 18 Z" fill="#ff5fa2" opacity=".6" filter="url(#k25g)"/>
+ <path d="M12 6 L25 12 L12 18 Z" fill="#ff5fa2"/><path d="M12 6V26" stroke="#e6e3ff" stroke-width="2" stroke-linecap="round"/><rect x="8" y="25" width="9" height="2.5" fill="#9d99c0"/>
+</g>
+<g opacity=".38">
+ <g transform="translate(251,43)"><circle r="7" fill="url(#k25m)" stroke="#ff5fa2" stroke-width="1"/><path d="M0 -11V-8M0 8V11M-11 0H-8M8 0H11M-8 -8L-6 -6M6 6L8 8M8 -8L6 -6M-6 6L-8 8" stroke="#ff9cc6" stroke-width="2" stroke-linecap="round"/></g>
+ <g transform="translate(251,77)"><circle r="7" fill="url(#k25m)" stroke="#ff5fa2" stroke-width="1"/><path d="M0 -11V-8M0 8V11M-11 0H-8M8 0H11M-8 -8L-6 -6M6 6L8 8M8 -8L6 -6M-6 6L-8 8" stroke="#ff9cc6" stroke-width="2" stroke-linecap="round"/></g>
+</g>
+<g clip-path="url(#k25k)">
+ <g fill="none" stroke="#53e0d8" stroke-width="2.5">
+  <circle cx="151" cy="145" r="14" opacity=".9"/><circle cx="151" cy="145" r="34" opacity=".55"/><circle cx="151" cy="145" r="56" opacity=".3"/><circle cx="151" cy="145" r="80" opacity=".14"/>
+ </g>
+ <circle cx="151" cy="145" r="20" fill="#53e0d8" opacity=".35" filter="url(#k25g)"/>
+</g>
+<rect x="135" y="129" width="32" height="32" rx="4" fill="none" stroke="#ffd166" stroke-width="2.5"/>
+<g transform="translate(316,150)"><rect x="-16" y="-16" width="32" height="32" rx="4" fill="url(#k25b)"/><circle r="7" fill="url(#k25m)" stroke="#ff5fa2" stroke-width="1.2"/><path d="M0 -12V-8M0 8V12M-12 0H-8M8 0H12M-8.5 -8.5L-6 -6M6 6L8.5 8.5M8.5 -8.5L6 -6M-6 6L-8.5 8.5" stroke="#ff9cc6" stroke-width="2" stroke-linecap="round"/><circle cx="-2.5" cy="-2.5" r="1.6" fill="#fff" opacity=".8"/></g>
+<g fill="#ffd166"><path d="M40 60 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4Z"/><path d="M362 74 l2 4.6 4.6 2 -4.6 2 -2 4.6 -2 -4.6 -4.6 -2 4.6 -2Z" opacity=".8"/></g>
+<g font-family="DotGothic16, monospace" letter-spacing="2"><text x="30" y="142" fill="#ff5fa2" font-size="13">🚩 07</text><text x="345" y="200" fill="#53e0d8" font-size="13">⏱ 042</text></g>
+<text x="200" y="217" font-family="DotGothic16, monospace" font-size="10.5" fill="#a06bff" text-anchor="middle" letter-spacing="3" opacity=".95">3 LEVELS ・ BEST TIME</text>
+</svg>`,
+    "024": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="3まいそろえ">
+<defs>
+ <linearGradient id="k24xs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14132a"/><stop offset="1" stop-color="#221d48"/></linearGradient>
+ <linearGradient id="k24xf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffbf1"/><stop offset="1" stop-color="#ece1cb"/></linearGradient>
+ <radialGradient id="k24xg" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#a06bff" stop-opacity=".28"/><stop offset="1" stop-color="#a06bff" stop-opacity="0"/></radialGradient>
+ <filter id="k24xb" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k24xs)"/>
+<rect width="400" height="225" fill="url(#k24xg)"/>
+<g fill="#e8e4ff" opacity=".5"><circle cx="28" cy="26" r="1.3"/><circle cx="72" cy="150" r="1"/><circle cx="372" cy="34" r="1.3"/><circle cx="340" cy="120" r="1"/><circle cx="24" cy="100" r="1"/><circle cx="386" cy="170" r="1"/></g>
+<!-- 下層（暗い） -->
+<g>
+ <g transform="translate(110,52)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍇</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".62"/></g>
+ <g transform="translate(150,52)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🌙</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".62"/></g>
+ <g transform="translate(190,52)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍓</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".62"/></g>
+ <g transform="translate(230,52)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🐸</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".62"/></g>
+ <g transform="translate(110,98)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">⭐</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".45"/></g>
+ <g transform="translate(230,98)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍙</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".45"/></g>
+</g>
+<!-- 中層 -->
+<g>
+ <g transform="translate(130,74)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🐱</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".35"/></g>
+ <g transform="translate(210,74)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍋</text><rect width="40" height="46" rx="6" fill="#0c0c1e" opacity=".35"/></g>
+ <g transform="translate(90,120)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍇</text></g>
+ <g transform="translate(250,120)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🌙</text></g>
+</g>
+<!-- 上層（明るい・取れる） -->
+<g>
+ <g transform="translate(170,62)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍎</text></g>
+ <g transform="translate(150,96)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">⭐</text></g>
+ <g transform="translate(190,96)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍓</text></g>
+ <!-- トレイへ飛ぶ🍎（軌跡つき） -->
+ <path d="M190 88 Q 260 110 292 172" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="3 5" opacity=".7"/>
+ <g transform="translate(236,112) rotate(12)"><rect x="3" y="4" width="40" height="46" rx="6" fill="rgba(0,0,0,.4)"/><rect width="40" height="46" rx="6" fill="#b6a98c"/><rect width="40" height="43" rx="6" fill="url(#k24xf)"/><text x="20" y="29" font-size="21" text-anchor="middle">🍎</text><rect x="-1" y="-1" width="42" height="45" rx="7" fill="none" stroke="#ffd166" stroke-width="2.5"/></g>
+</g>
+<!-- トレイ -->
+<rect x="36" y="168" width="328" height="46" rx="10" fill="#17172f" stroke="#a06bff" stroke-width="2.5"/>
+<rect x="36" y="168" width="328" height="46" rx="10" fill="none" stroke="#a06bff" stroke-width="6" opacity=".35" filter="url(#k24xb)"/>
+<g fill="#0a0a18" stroke="rgba(160,107,255,.3)" stroke-width="1">
+ <rect x="46" y="175" width="38" height="32" rx="5"/><rect x="92" y="175" width="38" height="32" rx="5"/><rect x="138" y="175" width="38" height="32" rx="5"/><rect x="184" y="175" width="38" height="32" rx="5"/><rect x="230" y="175" width="38" height="32" rx="5"/><rect x="276" y="175" width="38" height="32" rx="5"/><rect x="322" y="175" width="38" height="32" rx="5"/>
+</g>
+<!-- トレイの中身：🍎🍎（3まいめが来る）＋🍇 -->
+<g>
+ <g transform="translate(48,176)"><rect width="34" height="30" rx="5" fill="#b6a98c"/><rect width="34" height="28" rx="5" fill="url(#k24xf)"/><text x="17" y="21" font-size="17" text-anchor="middle">🍎</text><rect x="-1" y="-1" width="36" height="31" rx="6" fill="none" stroke="#ffd166" stroke-width="2"/></g>
+ <g transform="translate(94,176)"><rect width="34" height="30" rx="5" fill="#b6a98c"/><rect width="34" height="28" rx="5" fill="url(#k24xf)"/><text x="17" y="21" font-size="17" text-anchor="middle">🍎</text><rect x="-1" y="-1" width="36" height="31" rx="6" fill="none" stroke="#ffd166" stroke-width="2"/></g>
+ <g transform="translate(140,176)"><rect width="34" height="30" rx="5" fill="#b6a98c"/><rect width="34" height="28" rx="5" fill="url(#k24xf)"/><text x="17" y="21" font-size="17" text-anchor="middle">🍇</text></g>
+</g>
+<!-- キラキラ -->
+<g fill="#ffd166"><path d="M300 40 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3Z"/><path d="M66 60 l2.2 5.4 5.4 2.2 -5.4 2.2 -2.2 5.4 -2.2 -5.4 -5.4 -2.2 5.4 -2.2Z" opacity=".85"/><path d="M330 150 l2 4.6 4.6 2 -4.6 2 -2 4.6 -2 -4.6 -4.6 -2 4.6 -2Z" opacity=".8"/></g>
+<g fill="#53e0d8" opacity=".9"><circle cx="286" cy="150" r="2"/><circle cx="296" cy="140" r="1.5"/><circle cx="276" cy="160" r="1.5"/></g>
+<text x="318" y="90" font-family="DotGothic16, monospace" font-size="15" fill="#ffd166" letter-spacing="2" opacity=".95">3まい！</text>
+<text x="200" y="26" font-family="DotGothic16, monospace" font-size="11" fill="#53e0d8" text-anchor="middle" letter-spacing="3" opacity=".9">TILE MATCH ・ トレイ7枠</text>
+</svg>`,
+    "023": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="いろわけボトル">
+<defs>
+ <linearGradient id="k23xbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15142c"/><stop offset="1" stop-color="#241d4a"/></linearGradient>
+ <radialGradient id="k23xsp" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#a06bff" stop-opacity=".22"/><stop offset="1" stop-color="#a06bff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="k23xgl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".3" stop-color="#ffffff" stop-opacity="0"/><stop offset=".85" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity=".1"/></linearGradient>
+ <filter id="k23xf" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+ <clipPath id="k23xcb"><rect x="0" y="0" width="34" height="96" rx="8"/></clipPath>
+ <clipPath id="k23xct"><rect x="0" y="0" width="34" height="96" rx="8" transform="translate(212,82) rotate(70) translate(-34,2)"/></clipPath>
+</defs>
+<rect width="400" height="225" fill="url(#k23xbg)"/>
+<rect width="400" height="225" fill="url(#k23xsp)"/>
+<g fill="#e8e4ff" opacity=".55"><circle cx="24" cy="26" r="1.3"/><circle cx="70" cy="60" r="1"/><circle cx="330" cy="30" r="1.3"/><circle cx="372" cy="70" r="1"/><circle cx="300" cy="14" r=".9"/><circle cx="40" cy="120" r="1"/><circle cx="386" cy="150" r="1.1"/></g>
+<!-- shelf -->
+<rect x="22" y="196" width="356" height="8" rx="4" fill="#1f1f40"/><rect x="26" y="196" width="348" height="1.5" fill="#a06bff" opacity=".45"/>
+<!-- bottle 1: done (green) -->
+<g transform="translate(40,95)">
+ <rect width="34" height="96" rx="8" fill="#0c0c1b"/>
+ <g clip-path="url(#k23xcb)"><rect x="0" y="8" width="34" height="88" fill="#45d96a"/><g stroke="rgba(0,0,0,.18)" stroke-width="2"><path d="M0 30H34M0 52H34M0 74H34"/></g><g fill="rgba(0,60,20,.6)" font-size="10" text-anchor="middle"><text x="17" y="24">★</text><text x="17" y="46">★</text><text x="17" y="68">★</text><text x="17" y="90">★</text></g><rect width="34" height="96" fill="url(#k23xgl)"/></g>
+ <rect width="34" height="96" rx="8" fill="none" stroke="#ffd166" stroke-width="2.2"/>
+ <rect x="-4" y="-5" width="42" height="9" rx="3" fill="#2b2b4f" stroke="#e2e0ff" stroke-opacity=".7" stroke-width="1.4"/>
+ <rect x="5" y="-21" width="24" height="17" rx="4" fill="#c98a4b" stroke="#7a4b25" stroke-width="1.4"/><rect x="9" y="-18" width="3" height="10" fill="#fff" opacity=".28"/>
+</g>
+<rect x="36" y="91" width="42" height="104" rx="10" fill="#ffd166" opacity=".22" filter="url(#k23xf)"/>
+<!-- bottle 3: mixed -->
+<g transform="translate(150,95)">
+ <rect width="34" height="96" rx="8" fill="#0c0c1b"/>
+ <g clip-path="url(#k23xcb)"><rect x="0" y="74" width="34" height="22" fill="#ff4d5e"/><rect x="0" y="52" width="34" height="22" fill="#4a7bff"/><rect x="0" y="30" width="34" height="22" fill="#ff4d5e"/><rect x="0" y="8" width="34" height="22" fill="#b06bff"/><g stroke="rgba(0,0,0,.18)" stroke-width="2"><path d="M0 30H34M0 52H34M0 74H34"/></g><g font-size="10" text-anchor="middle" fill="rgba(255,255,255,.82)"><text x="17" y="90">●</text><text x="17" y="68">♦</text><text x="17" y="46">●</text><text x="17" y="24">✚</text></g><rect width="34" height="96" fill="url(#k23xgl)"/></g>
+ <rect width="34" height="96" rx="8" fill="none" stroke="#e2e0ff" stroke-opacity=".6" stroke-width="2"/>
+ <rect x="-4" y="-5" width="42" height="9" rx="3" fill="#2b2b4f" stroke="#e2e0ff" stroke-opacity=".7" stroke-width="1.4"/>
+</g>
+<!-- bottle 4: target (yellow, orange, orange + incoming) -->
+<g transform="translate(205,95)">
+ <rect width="34" height="96" rx="8" fill="#0c0c1b"/>
+ <g clip-path="url(#k23xcb)"><rect x="0" y="74" width="34" height="22" fill="#ffd93b"/><rect x="0" y="30" width="34" height="44" fill="#ff9a3c"/><g stroke="rgba(0,0,0,.18)" stroke-width="2"><path d="M0 52H34M0 74H34"/></g><g font-size="10" text-anchor="middle"><text x="17" y="90" fill="rgba(90,70,0,.55)">■</text><text x="17" y="68" fill="rgba(70,25,0,.6)">▲</text><text x="17" y="46" fill="rgba(70,25,0,.6)">▲</text></g><ellipse cx="10" cy="31" rx="9" ry="2.5" fill="#ffc48f" opacity=".8"/><rect width="34" height="96" fill="url(#k23xgl)"/></g>
+ <rect width="34" height="96" rx="8" fill="none" stroke="#e2e0ff" stroke-opacity=".6" stroke-width="2"/>
+ <rect x="-4" y="-5" width="42" height="9" rx="3" fill="#2b2b4f" stroke="#e2e0ff" stroke-opacity=".7" stroke-width="1.4"/>
+</g>
+<!-- bottle 5 -->
+<g transform="translate(260,95)">
+ <rect width="34" height="96" rx="8" fill="#0c0c1b"/>
+ <g clip-path="url(#k23xcb)"><rect x="0" y="52" width="34" height="44" fill="#4a7bff"/><rect x="0" y="30" width="34" height="22" fill="#b06bff"/><g stroke="rgba(0,0,0,.18)" stroke-width="2"><path d="M0 52H34M0 74H34"/></g><g font-size="10" text-anchor="middle" fill="rgba(255,255,255,.82)"><text x="17" y="90">♦</text><text x="17" y="68">♦</text><text x="17" y="46">✚</text></g><rect width="34" height="96" fill="url(#k23xgl)"/></g>
+ <rect width="34" height="96" rx="8" fill="none" stroke="#e2e0ff" stroke-opacity=".6" stroke-width="2"/>
+ <rect x="-4" y="-5" width="42" height="9" rx="3" fill="#2b2b4f" stroke="#e2e0ff" stroke-opacity=".7" stroke-width="1.4"/>
+</g>
+<!-- bottle 6: empty -->
+<g transform="translate(315,95)">
+ <rect width="34" height="96" rx="8" fill="#0c0c1b"/>
+ <g clip-path="url(#k23xcb)"><rect width="34" height="96" fill="url(#k23xgl)"/></g>
+ <rect width="34" height="96" rx="8" fill="none" stroke="#e2e0ff" stroke-opacity=".6" stroke-width="2"/>
+ <rect x="-4" y="-5" width="42" height="9" rx="3" fill="#2b2b4f" stroke="#e2e0ff" stroke-opacity=".7" stroke-width="1.4"/>
+</g>
+<!-- stream -->
+<line x1="215" y1="84" x2="215" y2="126" stroke="#ff9a3c" stroke-width="10" stroke-linecap="round" opacity=".35" filter="url(#k23xf)"/>
+<line x1="215" y1="84" x2="215" y2="126" stroke="#ff9a3c" stroke-width="5" stroke-linecap="round"/>
+<line x1="213.5" y1="88" x2="213.5" y2="122" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>
+<!-- tilted pouring bottle (liquid drawn as world-horizontal layers) -->
+<g transform="translate(212,82) rotate(70) translate(-34,2)"><rect width="34" height="96" rx="8" fill="#0c0c1b"/></g>
+<g clip-path="url(#k23xct)">
+ <rect x="90" y="97" width="140" height="30" fill="#3fd6e6"/>
+ <rect x="90" y="82" width="140" height="15" fill="#ff9a3c"/>
+ <rect x="90" y="96" width="140" height="2" fill="rgba(0,0,0,.18)"/><rect x="90" y="82" width="140" height="1.5" fill="rgba(255,255,255,.3)"/>
+ <text x="150" y="112" font-size="10" text-anchor="middle" fill="rgba(0,60,80,.6)">♥</text>
+ <text x="178" y="93" font-size="9" text-anchor="middle" fill="rgba(70,25,0,.6)">▲</text>
+</g>
+<g transform="translate(212,82) rotate(70) translate(-34,2)">
+ <g clip-path="url(#k23xcb)"><rect width="34" height="96" fill="url(#k23xgl)"/></g>
+ <rect width="34" height="96" rx="8" fill="none" stroke="#53e0d8" stroke-width="2.2"/>
+ <rect x="-4" y="-5" width="42" height="9" rx="3" fill="#2b2b4f" stroke="#e2e0ff" stroke-opacity=".7" stroke-width="1.4"/>
+</g>
+<!-- sparkles -->
+<g fill="#ffd166"><path d="M30 78 l2.6 6 6 2.6 -6 2.6 -2.6 6 -2.6 -6 -6 -2.6 6 -2.6Z"/><path d="M86 66 l1.8 4.2 4.2 1.8 -4.2 1.8 -1.8 4.2 -1.8 -4.2 -4.2 -1.8 4.2 -1.8Z" opacity=".85"/><path d="M356 56 l2.2 5 5 2.2 -5 2.2 -2.2 5 -2.2 -5 -5 -2.2 5 -2.2Z" opacity=".8"/></g>
+<g fill="#fff" opacity=".9"><circle cx="58" cy="60" r="1.6"/><circle cx="24" cy="100" r="1.2"/><circle cx="70" cy="86" r="1.1"/></g>
+<text x="52" y="44" font-family="DotGothic16, monospace" font-size="12" fill="#ffd166" letter-spacing="2" opacity=".95">できた！</text>
+<text x="200" y="217" font-family="DotGothic16, monospace" font-size="10.5" fill="#ff5fa2" text-anchor="middle" letter-spacing="3" opacity=".95">1色4だんに そろえよう</text>
+</svg>`,
+    "022": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ぴたっとブロック">
+<defs>
+ <linearGradient id="k22xs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#13122a"/><stop offset="1" stop-color="#1e1b44"/></linearGradient>
+ <linearGradient id="k22xc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ffff8"/><stop offset="1" stop-color="#2fb7b0"/></linearGradient>
+ <linearGradient id="k22xp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3d1"/><stop offset="1" stop-color="#e0448d"/></linearGradient>
+ <linearGradient id="k22xg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#e6b449"/></linearGradient>
+ <linearGradient id="k22xv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfb0ff"/><stop offset="1" stop-color="#8a4fe6"/></linearGradient>
+ <linearGradient id="k22xo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc79a"/><stop offset="1" stop-color="#f08445"/></linearGradient>
+ <linearGradient id="k22xe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5ffc8"/><stop offset="1" stop-color="#5fd881"/></linearGradient>
+ <filter id="k22xb" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k22xs)"/>
+<g fill="#e8e4ff" opacity=".5"><circle cx="24" cy="22" r="1.3"/><circle cx="372" cy="26" r="1.2"/><circle cx="388" cy="120" r="1"/><circle cx="14" cy="150" r="1"/><circle cx="330" cy="205" r="1"/></g>
+<rect x="30" y="34" width="156" height="156" rx="10" fill="#1b1b38" stroke="#a06bff" stroke-width="3"/>
+<g fill="#0b0b1a" stroke="rgba(160,107,255,.22)" stroke-width="1">
+ <rect x="37" y="41" width="16" height="16" rx="3"/><rect x="55" y="41" width="16" height="16" rx="3"/><rect x="73" y="41" width="16" height="16" rx="3"/><rect x="91" y="41" width="16" height="16" rx="3"/><rect x="109" y="41" width="16" height="16" rx="3"/><rect x="127" y="41" width="16" height="16" rx="3"/><rect x="145" y="41" width="16" height="16" rx="3"/><rect x="163" y="41" width="16" height="16" rx="3"/>
+ <rect x="37" y="59" width="16" height="16" rx="3"/><rect x="55" y="59" width="16" height="16" rx="3"/><rect x="73" y="59" width="16" height="16" rx="3"/><rect x="91" y="59" width="16" height="16" rx="3"/><rect x="109" y="59" width="16" height="16" rx="3"/><rect x="127" y="59" width="16" height="16" rx="3"/><rect x="145" y="59" width="16" height="16" rx="3"/><rect x="163" y="59" width="16" height="16" rx="3"/>
+ <rect x="37" y="77" width="16" height="16" rx="3"/><rect x="55" y="77" width="16" height="16" rx="3"/><rect x="73" y="77" width="16" height="16" rx="3"/><rect x="91" y="77" width="16" height="16" rx="3"/><rect x="109" y="77" width="16" height="16" rx="3"/><rect x="127" y="77" width="16" height="16" rx="3"/><rect x="145" y="77" width="16" height="16" rx="3"/><rect x="163" y="77" width="16" height="16" rx="3"/>
+ <rect x="37" y="95" width="16" height="16" rx="3"/><rect x="55" y="95" width="16" height="16" rx="3"/><rect x="73" y="95" width="16" height="16" rx="3"/><rect x="91" y="95" width="16" height="16" rx="3"/><rect x="109" y="95" width="16" height="16" rx="3"/><rect x="127" y="95" width="16" height="16" rx="3"/><rect x="145" y="95" width="16" height="16" rx="3"/><rect x="163" y="95" width="16" height="16" rx="3"/>
+ <rect x="37" y="113" width="16" height="16" rx="3"/><rect x="55" y="113" width="16" height="16" rx="3"/><rect x="73" y="113" width="16" height="16" rx="3"/><rect x="91" y="113" width="16" height="16" rx="3"/><rect x="109" y="113" width="16" height="16" rx="3"/><rect x="127" y="113" width="16" height="16" rx="3"/><rect x="145" y="113" width="16" height="16" rx="3"/><rect x="163" y="113" width="16" height="16" rx="3"/>
+ <rect x="37" y="131" width="16" height="16" rx="3"/><rect x="55" y="131" width="16" height="16" rx="3"/><rect x="73" y="131" width="16" height="16" rx="3"/><rect x="91" y="131" width="16" height="16" rx="3"/><rect x="109" y="131" width="16" height="16" rx="3"/><rect x="127" y="131" width="16" height="16" rx="3"/><rect x="145" y="131" width="16" height="16" rx="3"/><rect x="163" y="131" width="16" height="16" rx="3"/>
+ <rect x="37" y="149" width="16" height="16" rx="3"/><rect x="55" y="149" width="16" height="16" rx="3"/><rect x="73" y="149" width="16" height="16" rx="3"/><rect x="91" y="149" width="16" height="16" rx="3"/><rect x="109" y="149" width="16" height="16" rx="3"/><rect x="127" y="149" width="16" height="16" rx="3"/><rect x="145" y="149" width="16" height="16" rx="3"/><rect x="163" y="149" width="16" height="16" rx="3"/>
+ <rect x="37" y="167" width="16" height="16" rx="3"/><rect x="55" y="167" width="16" height="16" rx="3"/><rect x="73" y="167" width="16" height="16" rx="3"/><rect x="91" y="167" width="16" height="16" rx="3"/><rect x="109" y="167" width="16" height="16" rx="3"/><rect x="127" y="167" width="16" height="16" rx="3"/><rect x="145" y="167" width="16" height="16" rx="3"/><rect x="163" y="167" width="16" height="16" rx="3"/>
+</g>
+<g stroke="rgba(0,0,0,.35)" stroke-width="1">
+ <rect x="37" y="167" width="16" height="16" rx="3" fill="url(#k22xp)"/><rect x="55" y="167" width="16" height="16" rx="3" fill="url(#k22xp)"/><rect x="73" y="167" width="16" height="16" rx="3" fill="url(#k22xg)"/><rect x="91" y="167" width="16" height="16" rx="3" fill="url(#k22xg)"/><rect x="109" y="167" width="16" height="16" rx="3" fill="url(#k22xe)"/><rect x="127" y="167" width="16" height="16" rx="3" fill="url(#k22xe)"/>
+ <rect x="37" y="149" width="16" height="16" rx="3" fill="url(#k22xp)"/><rect x="73" y="149" width="16" height="16" rx="3" fill="url(#k22xg)"/><rect x="91" y="149" width="16" height="16" rx="3" fill="url(#k22xg)"/><rect x="109" y="149" width="16" height="16" rx="3" fill="url(#k22xv)"/><rect x="127" y="149" width="16" height="16" rx="3" fill="url(#k22xe)"/>
+ <rect x="37" y="131" width="16" height="16" rx="3" fill="url(#k22xo)"/><rect x="55" y="131" width="16" height="16" rx="3" fill="url(#k22xo)"/><rect x="109" y="131" width="16" height="16" rx="3" fill="url(#k22xv)"/><rect x="127" y="131" width="16" height="16" rx="3" fill="url(#k22xv)"/>
+ <rect x="37" y="113" width="16" height="16" rx="3" fill="url(#k22xo)"/><rect x="163" y="113" width="16" height="16" rx="3" fill="url(#k22xp)"/>
+ <rect x="163" y="95" width="16" height="16" rx="3" fill="url(#k22xp)"/><rect x="163" y="77" width="16" height="16" rx="3" fill="url(#k22xp)"/>
+</g>
+<rect x="37" y="167" width="142" height="16" rx="3" fill="#ffffff" opacity=".22"/>
+<rect x="37" y="149" width="142" height="16" rx="3" fill="#ffffff" opacity=".12"/>
+<g opacity=".35" fill="url(#k22xc)"><rect x="145" y="149" width="16" height="16" rx="3"/><rect x="163" y="149" width="16" height="16" rx="3"/><rect x="145" y="167" width="16" height="16" rx="3"/><rect x="163" y="167" width="16" height="16" rx="3"/></g>
+<g transform="translate(150,104) rotate(-6)">
+ <g fill="#53e0d8" opacity=".55" filter="url(#k22xb)"><rect x="0" y="0" width="22" height="22" rx="4"/><rect x="24" y="0" width="22" height="22" rx="4"/><rect x="0" y="24" width="22" height="22" rx="4"/><rect x="24" y="24" width="22" height="22" rx="4"/></g>
+ <g fill="url(#k22xc)" stroke="rgba(0,0,0,.35)" stroke-width="1.2"><rect x="0" y="0" width="22" height="22" rx="4"/><rect x="24" y="0" width="22" height="22" rx="4"/><rect x="0" y="24" width="22" height="22" rx="4"/><rect x="24" y="24" width="22" height="22" rx="4"/></g>
+ <g fill="#ffffff" opacity=".35"><rect x="3" y="3" width="16" height="7" rx="2"/><rect x="27" y="3" width="16" height="7" rx="2"/><rect x="3" y="27" width="16" height="7" rx="2"/><rect x="27" y="27" width="16" height="7" rx="2"/></g>
+</g>
+<text x="176" y="176" font-size="22">👆</text>
+<g transform="translate(212,40)">
+ <rect x="0" y="0" width="176" height="40" rx="8" fill="rgba(28,28,51,.9)" stroke="#2c2c4d" stroke-width="1.5"/>
+ <text x="12" y="16" font-family="DotGothic16, monospace" font-size="9" fill="#9d99c0" letter-spacing="1">SCORE</text><text x="12" y="33" font-family="DotGothic16, monospace" font-size="16" fill="#eeecfa">2480</text>
+ <text x="166" y="16" font-family="DotGothic16, monospace" font-size="9" fill="#9d99c0" letter-spacing="1" text-anchor="end">BEST</text><text x="166" y="33" font-family="DotGothic16, monospace" font-size="16" fill="#ffd166" text-anchor="end">5120</text>
+</g>
+<g transform="translate(300,124) rotate(-4)">
+ <text x="0" y="0" font-family="DotGothic16, monospace" font-size="27" fill="#0a0a18" stroke="#0a0a18" stroke-width="6" text-anchor="middle" letter-spacing="2">COMBO x2!</text>
+ <text x="0" y="0" font-family="DotGothic16, monospace" font-size="27" fill="#ffd166" text-anchor="middle" letter-spacing="2">COMBO x2!</text>
+ <text x="0" y="22" font-family="DotGothic16, monospace" font-size="12" fill="#53e0d8" text-anchor="middle" letter-spacing="2">STREAK 3</text>
+</g>
+<g fill="#ffd166"><path d="M232 96 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3Z"/><path d="M372 150 l2.2 5 5 2.2 -5 2.2 -2.2 5 -2.2 -5 -5 -2.2 5 -2.2Z" opacity=".85"/><path d="M356 88 l1.8 4 4 1.8 -4 1.8 -1.8 4 -1.8 -4 -4 -1.8 4 -1.8Z" opacity=".7"/></g>
+<g fill="#ff5fa2" opacity=".8"><rect x="200" y="150" width="4" height="4" transform="rotate(20 202 152)"/><rect x="250" y="164" width="5" height="5" transform="rotate(35 252 166)"/><rect x="330" y="178" width="4" height="4" transform="rotate(10 332 180)"/></g>
+<g transform="translate(212,166)">
+ <rect x="0" y="0" width="52" height="40" rx="7" fill="rgba(28,28,51,.9)" stroke="#2c2c4d" stroke-width="1.5"/>
+ <g fill="url(#k22xg)" stroke="rgba(0,0,0,.3)"><rect x="8" y="10" width="10" height="10" rx="2"/><rect x="19" y="10" width="10" height="10" rx="2"/><rect x="30" y="10" width="10" height="10" rx="2"/><rect x="8" y="21" width="10" height="10" rx="2"/><rect x="19" y="21" width="10" height="10" rx="2"/><rect x="30" y="21" width="10" height="10" rx="2"/></g>
+ <rect x="62" y="0" width="52" height="40" rx="7" fill="rgba(28,28,51,.9)" stroke="#2c2c4d" stroke-width="1.5"/>
+ <g fill="url(#k22xv)" stroke="rgba(0,0,0,.3)"><rect x="72" y="9" width="10" height="10" rx="2"/><rect x="83" y="9" width="10" height="10" rx="2"/><rect x="94" y="9" width="10" height="10" rx="2"/><rect x="83" y="20" width="10" height="10" rx="2"/></g>
+ <rect x="124" y="0" width="52" height="40" rx="7" fill="rgba(28,28,51,.9)" stroke="#2c2c4d" stroke-width="1.5"/>
+ <g fill="url(#k22xo)" opacity=".3"><rect x="130" y="15" width="8" height="8" rx="2"/><rect x="139" y="15" width="8" height="8" rx="2"/><rect x="148" y="15" width="8" height="8" rx="2"/><rect x="157" y="15" width="8" height="8" rx="2"/><rect x="166" y="15" width="8" height="8" rx="2"/></g>
+</g>
+<text x="200" y="217" font-family="DotGothic16, monospace" font-size="10.5" fill="#53e0d8" text-anchor="middle" letter-spacing="3" opacity=".9">DRAG &amp; CLEAR ・ AUTO SAVE</text>
+</svg>`,
+    "021": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="つみあげタワー">
+<defs>
+ <linearGradient id="k21xs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c0c1e"/><stop offset="1" stop-color="#241448"/></linearGradient>
+ <linearGradient id="k21xg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1c3a"/><stop offset="1" stop-color="#0d0d1c"/></linearGradient>
+ <filter id="k21xb" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4"/></filter>
+ <filter id="k21xm" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k21xs)"/>
+<g fill="#e8e4ff" opacity=".6"><circle cx="24" cy="22" r="1.2"/><circle cx="70" cy="60" r="1"/><circle cx="118" cy="18" r="1.3"/><circle cx="300" cy="30" r="1"/><circle cx="352" cy="70" r="1.3"/><circle cx="380" cy="120" r="1"/><circle cx="40" cy="140" r="1"/><circle cx="330" cy="160" r="1.1"/><circle cx="150" cy="40" r=".9"/><circle cx="260" cy="12" r="1"/></g>
+<circle cx="338" cy="44" r="16" fill="#f6f1d6" filter="url(#k21xm)" opacity=".6"/><circle cx="338" cy="44" r="14" fill="#f6f1d6"/>
+<g fill="#12122a"><rect x="0" y="140" width="26" height="70"/><rect x="30" y="160" width="18" height="50"/><rect x="52" y="130" width="22" height="80"/><rect x="78" y="166" width="16" height="44"/><rect x="300" y="158" width="20" height="52"/><rect x="324" y="136" width="26" height="74"/><rect x="354" y="162" width="18" height="48"/><rect x="376" y="144" width="24" height="66"/></g>
+<g fill="#ffd166" opacity=".45"><rect x="8" y="150" width="2" height="3"/><rect x="16" y="172" width="2" height="3"/><rect x="60" y="142" width="2" height="3"/><rect x="66" y="180" width="2" height="3"/><rect x="332" y="148" width="2" height="3"/><rect x="340" y="176" width="2" height="3"/><rect x="386" y="160" width="2" height="3"/></g>
+<rect x="0" y="196" width="400" height="29" fill="url(#k21xg)"/>
+<path d="M92 196 l16 -10 h200 l-16 10Z" fill="#2b2b52" stroke="rgba(160,107,255,.55)" stroke-width="1.2"/>
+<rect x="92" y="196" width="200" height="8" fill="#1f1f40"/>
+<path d="M0 218 H400" stroke="#a06bff" stroke-width="5" opacity=".35" filter="url(#k21xb)"/>
+<path d="M0 218 H400" stroke="#a06bff" stroke-width="1.6" opacity=".9"/>
+<g><rect x="128" y="180" width="124" height="16" fill="hsl(200,70%,50%)"/><path d="M252 180 l11 -7 v16 l-11 7Z" fill="hsl(200,70%,33%)"/><path d="M128 180 l11 -7 h124 l-11 7Z" fill="hsl(200,72%,67%)"/><path d="M128 180 h124" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M128 196 V180 l11 -7 h124 v16 l-11 7Z M252 180 v16 M252 180 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="128" y="164" width="124" height="16" fill="hsl(220,70%,50%)"/><path d="M252 164 l11 -7 v16 l-11 7Z" fill="hsl(220,70%,33%)"/><path d="M128 164 l11 -7 h124 l-11 7Z" fill="hsl(220,72%,67%)"/><path d="M128 164 h124" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M128 180 V164 l11 -7 h124 v16 l-11 7Z M252 164 v16 M252 164 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="134" y="148" width="112" height="16" fill="hsl(240,70%,50%)"/><path d="M246 148 l11 -7 v16 l-11 7Z" fill="hsl(240,70%,33%)"/><path d="M134 148 l11 -7 h112 l-11 7Z" fill="hsl(240,72%,67%)"/><path d="M134 148 h112" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M134 164 V148 l11 -7 h112 v16 l-11 7Z M246 148 v16 M246 148 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="132" y="132" width="100" height="16" fill="hsl(260,70%,50%)"/><path d="M232 132 l11 -7 v16 l-11 7Z" fill="hsl(260,70%,33%)"/><path d="M132 132 l11 -7 h100 l-11 7Z" fill="hsl(260,72%,67%)"/><path d="M132 132 h100" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M132 148 V132 l11 -7 h100 v16 l-11 7Z M232 132 v16 M232 132 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="130" y="116" width="100" height="16" fill="hsl(280,70%,50%)"/><path d="M230 116 l11 -7 v16 l-11 7Z" fill="hsl(280,70%,33%)"/><path d="M130 116 l11 -7 h100 l-11 7Z" fill="hsl(280,72%,67%)"/><path d="M130 116 h100" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M130 132 V116 l11 -7 h100 v16 l-11 7Z M230 116 v16 M230 116 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="134" y="100" width="88" height="16" fill="hsl(300,70%,50%)"/><path d="M222 100 l11 -7 v16 l-11 7Z" fill="hsl(300,70%,33%)"/><path d="M134 100 l11 -7 h88 l-11 7Z" fill="hsl(300,72%,67%)"/><path d="M134 100 h88" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M134 116 V100 l11 -7 h88 v16 l-11 7Z M222 100 v16 M222 100 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="131" y="84" width="78" height="16" fill="hsl(320,70%,50%)"/><path d="M209 84 l11 -7 v16 l-11 7Z" fill="hsl(320,70%,33%)"/><path d="M131 84 l11 -7 h78 l-11 7Z" fill="hsl(320,72%,67%)"/><path d="M131 84 h78" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M131 100 V84 l11 -7 h78 v16 l-11 7Z M209 84 v16 M209 84 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="128" y="68" width="78" height="16" fill="hsl(340,70%,50%)"/><path d="M206 68 l11 -7 v16 l-11 7Z" fill="hsl(340,70%,33%)"/><path d="M128 68 l11 -7 h78 l-11 7Z" fill="hsl(340,72%,67%)"/><path d="M128 68 h78" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M128 84 V68 l11 -7 h78 v16 l-11 7Z M206 68 v16 M206 68 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g><g><rect x="130" y="52" width="70" height="16" fill="hsl(0,70%,50%)"/><path d="M200 52 l11 -7 v16 l-11 7Z" fill="hsl(0,70%,33%)"/><path d="M130 52 l11 -7 h70 l-11 7Z" fill="hsl(0,72%,67%)"/><path d="M130 52 h70" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M130 68 V52 l11 -7 h70 v16 l-11 7Z M200 52 v16 M200 52 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g>
+<path d="M156 52 l11 -7 h44 l-11 7Z" fill="rgba(0,0,0,.35)"/>
+<rect x="152" y="20" width="78" height="24" fill="hsl(20,90%,65%)" opacity=".55" filter="url(#k21xb)"/>
+<g><rect x="156" y="24" width="70" height="16" fill="hsl(20,70%,50%)"/><path d="M226 24 l11 -7 v16 l-11 7Z" fill="hsl(20,70%,33%)"/><path d="M156 24 l11 -7 h70 l-11 7Z" fill="hsl(20,72%,67%)"/><path d="M156 24 h70" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M156 40 V24 l11 -7 h70 v16 l-11 7Z M226 24 v16 M226 24 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g>
+<g stroke="hsl(20,90%,75%)" stroke-width="2" opacity=".9"><path d="M134 32 h10"/><path d="M126 32 h4"/></g>
+<g transform="translate(292 112) rotate(28)"><g><rect x="-14" y="-8" width="28" height="16" fill="hsl(300,70%,50%)"/><path d="M14 -8 l11 -7 v16 l-11 7Z" fill="hsl(300,70%,33%)"/><path d="M-14 -8 l11 -7 h28 l-11 7Z" fill="hsl(300,72%,67%)"/><path d="M-14 -8 h28" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M-14 8 V-8 l11 -7 h28 v16 l-11 7Z M14 -8 v16 M14 -8 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g></g>
+<g transform="translate(300 144) rotate(62)" opacity=".7"><g><rect x="-8" y="-8" width="16" height="16" fill="hsl(300,70%,50%)"/><path d="M8 -8 l11 -7 v16 l-11 7Z" fill="hsl(300,70%,33%)"/><path d="M-8 -8 l11 -7 h16 l-11 7Z" fill="hsl(300,72%,67%)"/><path d="M-8 -8 h16" stroke="rgba(255,255,255,.45)" stroke-width="1"/><path d="M-8 8 V-8 l11 -7 h16 v16 l-11 7Z M8 -8 v16 M8 -8 l11 -7" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/></g></g>
+<ellipse cx="194" cy="113" rx="78" ry="14" fill="none" stroke="#ffd166" stroke-width="2" opacity=".85"/>
+<ellipse cx="194" cy="113" rx="96" ry="19" fill="none" stroke="#ffd166" stroke-width="1.2" opacity=".4"/>
+<text x="62" y="88" font-family="DotGothic16, monospace" font-size="16" fill="#ffd166" letter-spacing="2">PERFECT!</text>
+<text x="70" y="104" font-family="DotGothic16, monospace" font-size="11" fill="#ff5fa2" letter-spacing="2">3 COMBO</text>
+<g fill="#ffd166"><path d="M44 68 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4Z"/><path d="M150 62 l2 4.6 4.6 2 -4.6 2 -2 4.6 -2 -4.6 -4.6 -2 4.6 -2Z" opacity=".8"/></g>
+<text x="200" y="213" font-family="DotGothic16, monospace" font-size="10.5" fill="#a06bff" text-anchor="middle" letter-spacing="3" opacity=".95">ぴったり止めて つみあげろ</text>
+</svg>`,
+    "020": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="トントンふくろう">
+<defs>
+ <linearGradient id="k20s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07071a"/><stop offset=".55" stop-color="#171441"/><stop offset="1" stop-color="#3a1a3e"/></linearGradient>
+ <radialGradient id="k20m" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff0be" stop-opacity=".35"/><stop offset="1" stop-color="#fff0be" stop-opacity="0"/></radialGradient>
+ <linearGradient id="k20p" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a0d24"/><stop offset=".4" stop-color="#8a1f52"/><stop offset=".6" stop-color="#8a1f52"/><stop offset="1" stop-color="#3a0d24"/></linearGradient>
+ <linearGradient id="k20t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+ <filter id="k20g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k20s)"/>
+<g fill="#e8e4ff" opacity=".75"><rect x="22" y="18" width="2" height="2"/><rect x="61" y="44" width="1.5" height="1.5"/><rect x="118" y="14" width="2" height="2"/><rect x="176" y="52" width="1.5" height="1.5"/><rect x="232" y="26" width="2" height="2"/><rect x="286" y="70" width="1.5" height="1.5"/><rect x="380" y="98" width="1.5" height="1.5"/><rect x="42" y="92" width="1.5" height="1.5"/><rect x="146" y="98" width="2" height="2"/><rect x="330" y="120" width="1.5" height="1.5"/><rect x="92" y="126" width="1.5" height="1.5"/><rect x="250" y="112" width="1.5" height="1.5"/></g>
+<circle cx="322" cy="50" r="60" fill="url(#k20m)"/>
+<circle cx="322" cy="50" r="24" fill="#fff1c4"/>
+<g fill="#c8aa6e" opacity=".3"><circle cx="314" cy="44" r="5"/><circle cx="330" cy="56" r="3.5"/><circle cx="321" cy="62" r="2.5"/></g>
+<line x1="30" y1="30" x2="110" y2="62" stroke="url(#k20t)" stroke-width="2.2" stroke-linecap="round"/><circle cx="110" cy="62" r="2.4" fill="#fff"/>
+<g fill="#1d1c42"><rect x="0" y="120" width="26" height="80"/><rect x="30" y="98" width="20" height="102"/><rect x="54" y="132" width="34" height="68"/><rect x="92" y="108" width="24" height="92"/><rect x="120" y="128" width="40" height="72"/><rect x="164" y="102" width="22" height="98"/><rect x="190" y="124" width="30" height="76"/><rect x="224" y="112" width="26" height="88"/><rect x="254" y="134" width="36" height="66"/><rect x="294" y="116" width="22" height="84"/><rect x="320" y="128" width="32" height="72"/><rect x="356" y="104" width="24" height="96"/><rect x="384" y="130" width="16" height="70"/></g>
+<g fill="#ffd166" opacity=".55"><rect x="36" y="106" width="3" height="4"/><rect x="42" y="118" width="3" height="4"/><rect x="98" y="116" width="3" height="4"/><rect x="106" y="130" width="3" height="4"/><rect x="170" y="112" width="3" height="4"/><rect x="230" y="122" width="3" height="4"/><rect x="238" y="140" width="3" height="4"/><rect x="300" y="126" width="3" height="4"/><rect x="362" y="114" width="3" height="4"/><rect x="368" y="132" width="3" height="4"/></g>
+<g fill="#53e0d8" opacity=".45"><rect x="60" y="142" width="3" height="4"/><rect x="130" y="138" width="3" height="4"/><rect x="200" y="134" width="3" height="4"/><rect x="264" y="146" width="3" height="4"/><rect x="330" y="140" width="3" height="4"/></g>
+<g fill="#0f0f29"><rect x="0" y="162" width="44" height="38"/><rect x="48" y="150" width="30" height="50"/><rect x="82" y="170" width="56" height="30"/><rect x="142" y="156" width="26" height="44"/><rect x="172" y="174" width="60" height="26"/><rect x="236" y="158" width="34" height="42"/><rect x="274" y="168" width="48" height="32"/><rect x="326" y="152" width="28" height="48"/><rect x="358" y="172" width="42" height="28"/></g>
+<g fill="#ffd166" opacity=".8"><rect x="8" y="170" width="5" height="6"/><rect x="20" y="182" width="5" height="6"/><rect x="56" y="160" width="5" height="6"/><rect x="66" y="176" width="5" height="6"/><rect x="150" y="166" width="5" height="6"/><rect x="246" y="168" width="5" height="6"/><rect x="258" y="184" width="5" height="6"/><rect x="334" y="162" width="5" height="6"/><rect x="368" y="182" width="5" height="6"/></g>
+<rect x="90" y="176" width="16" height="5" fill="#a06bff" opacity=".85"/><rect x="292" y="176" width="14" height="5" fill="#53e0d8" opacity=".85"/><rect x="186" y="180" width="12" height="5" fill="#ff5fa2" opacity=".85"/>
+<g>
+ <rect x="244" y="-4" width="34" height="68" fill="url(#k20p)"/>
+ <rect x="248" y="-4" width="2" height="68" fill="#ff5fa2" opacity=".9"/><rect x="272" y="-4" width="2" height="68" fill="#ff5fa2" opacity=".9"/>
+ <rect x="240" y="52" width="42" height="14" rx="1" fill="#8a1f52" stroke="#ff5fa2" stroke-width="2.5" filter="url(#k20g)" opacity=".8"/>
+ <rect x="240" y="52" width="42" height="14" rx="1" fill="#8a1f52" stroke="#ff5fa2" stroke-width="2"/>
+ <rect x="244" y="150" width="34" height="60" fill="url(#k20p)"/>
+ <rect x="248" y="150" width="2" height="60" fill="#ff5fa2" opacity=".9"/><rect x="272" y="150" width="2" height="60" fill="#ff5fa2" opacity=".9"/>
+ <rect x="240" y="148" width="42" height="14" rx="1" fill="#8a1f52" stroke="#ff5fa2" stroke-width="2.5" filter="url(#k20g)" opacity=".8"/>
+ <rect x="240" y="148" width="42" height="14" rx="1" fill="#8a1f52" stroke="#ff5fa2" stroke-width="2"/>
+</g>
+<g>
+ <rect x="372" y="-4" width="34" height="112" fill="url(#k20p)"/>
+ <rect x="376" y="-4" width="2" height="112" fill="#ff5fa2" opacity=".9"/>
+ <rect x="368" y="96" width="42" height="14" rx="1" fill="#8a1f52" stroke="#ff5fa2" stroke-width="2"/>
+</g>
+<rect x="0" y="200" width="400" height="25" fill="#0d0d20"/>
+<rect x="0" y="200" width="400" height="2.5" fill="#ff5fa2" opacity=".8"/>
+<g fill="#9d99c0" opacity=".35"><rect x="10" y="212" width="16" height="2"/><rect x="50" y="212" width="16" height="2"/><rect x="90" y="212" width="16" height="2"/><rect x="130" y="212" width="16" height="2"/><rect x="170" y="212" width="16" height="2"/><rect x="210" y="212" width="16" height="2"/><rect x="250" y="212" width="16" height="2"/><rect x="290" y="212" width="16" height="2"/><rect x="330" y="212" width="16" height="2"/><rect x="370" y="212" width="16" height="2"/></g>
+<g transform="translate(150,104) rotate(-14)">
+ <ellipse cx="-18" cy="-2" rx="15" ry="6" fill="#7a5033" transform="rotate(-30 -4 -3)"/>
+ <path d="M-14 0 L-28 -4 L-28 9 L-13 8Z" fill="#8d5f3d"/>
+ <ellipse cx="0" cy="0" rx="20" ry="18" fill="#b8804f"/>
+ <path d="M-12 -11 L-18 -25 L-3 -17Z M4 -16 L10 -28 L15 -13Z" fill="#b8804f"/>
+ <ellipse cx="5" cy="6" rx="11.5" ry="10" fill="#f2dcb8"/>
+ <ellipse cx="4" cy="-6" rx="14" ry="10.5" fill="#e6cfae"/>
+ <circle cx="-2.5" cy="-6" r="6.5" fill="#fff"/><circle cx="10.5" cy="-6" r="6.5" fill="#fff"/>
+ <circle cx="-1" cy="-5.6" r="3.4" fill="#1a1030"/><circle cx="12" cy="-5.6" r="3.4" fill="#1a1030"/>
+ <circle cx="0" cy="-7" r="1.2" fill="#fff"/><circle cx="13" cy="-7" r="1.2" fill="#fff"/>
+ <path d="M3 -1.5 L12 1.5 L4 4.5Z" fill="#ffb347"/>
+ <ellipse cx="-15" cy="-6" rx="15" ry="6.5" fill="#a97449" transform="rotate(-38 -3 -3)"/>
+</g>
+<g fill="#ffd166"><path d="M212 82 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4Z" opacity=".9"/><path d="M96 74 l1.8 4.2 4.2 1.8 -4.2 1.8 -1.8 4.2 -1.8 -4.2 -4.2 -1.8 4.2 -1.8Z" opacity=".7"/></g>
+<text x="200" y="30" font-family="DotGothic16, monospace" font-size="22" fill="#ffffff" text-anchor="middle" opacity=".95">12</text>
+<text x="200" y="216" font-family="DotGothic16, monospace" font-size="10.5" fill="#ff5fa2" text-anchor="middle" letter-spacing="3" opacity=".95">1ボタン ・ タップで はばたく</text>
+</svg>`,
+    "019": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ぐんぐんスネーク">
+<defs>
+ <linearGradient id="k19xs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0d20"/><stop offset="1" stop-color="#161638"/></linearGradient>
+ <linearGradient id="k19xb" gradientUnits="userSpaceOnUse" x1="70" y1="0" x2="300" y2="0"><stop offset="0" stop-color="#7048d6"/><stop offset=".55" stop-color="#53e0d8"/><stop offset="1" stop-color="#dffffc"/></linearGradient>
+ <radialGradient id="k19xf" cx=".35" cy=".3" r="1"><stop offset="0" stop-color="#ffd6e8"/><stop offset="1" stop-color="#ff5fa2"/></radialGradient>
+ <filter id="k19xg" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k19xs)"/>
+<path d="M0 25H400M0 50H400M0 75H400M0 100H400M0 125H400M0 150H400M0 175H400M0 200H400M25 0V225M50 0V225M75 0V225M100 0V225M125 0V225M150 0V225M175 0V225M200 0V225M225 0V225M250 0V225M275 0V225M300 0V225M325 0V225M350 0V225M375 0V225" stroke="#53e0d8" stroke-opacity=".07" stroke-width="1"/>
+<rect x="14" y="14" width="372" height="197" rx="6" fill="none" stroke="#53e0d8" stroke-width="2.5" stroke-opacity=".8" stroke-dasharray="14 8"/>
+<path d="M70 175 V115 H150 V160 H240 V80 H300" fill="none" stroke="url(#k19xb)" stroke-width="30" stroke-opacity=".28" stroke-linecap="round" stroke-linejoin="round" filter="url(#k19xg)"/>
+<path d="M70 175 V115 H150 V160 H240 V80 H300" fill="none" stroke="url(#k19xb)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+<g fill="#ffffff" opacity=".35"><circle cx="70" cy="150" r="1.8"/><circle cx="100" cy="115" r="1.8"/><circle cx="150" cy="140" r="1.8"/><circle cx="190" cy="160" r="1.8"/><circle cx="240" cy="120" r="1.8"/></g>
+<circle cx="303" cy="80" r="16" fill="#7ffff5" opacity=".35" filter="url(#k19xg)"/>
+<circle cx="303" cy="80" r="12" fill="#dffffc"/>
+<circle cx="303" cy="80" r="9.5" fill="#53e0d8" opacity=".55"/>
+<g><circle cx="307" cy="74" r="3.6" fill="#fff"/><circle cx="307" cy="86" r="3.6" fill="#fff"/><circle cx="308.6" cy="74" r="1.9" fill="#12122a"/><circle cx="308.6" cy="86" r="1.9" fill="#12122a"/></g>
+<path d="M315 80 h8 l4 -3 M323 80 l4 3" fill="none" stroke="#ff5fa2" stroke-width="2" stroke-linecap="round"/>
+<circle cx="352" cy="80" r="13" fill="none" stroke="#ff5fa2" stroke-opacity=".35" stroke-width="1.5"/>
+<circle cx="352" cy="80" r="9" fill="url(#k19xf)"/>
+<circle cx="349" cy="77" r="2.2" fill="#fff" opacity=".8"/>
+<g fill="#ff5fa2" opacity=".9"><rect x="336" y="60" width="4" height="4"/><rect x="366" y="66" width="3" height="3"/><rect x="362" y="96" width="4" height="4"/><rect x="338" y="100" width="3" height="3"/></g>
+<g transform="translate(330,165)">
+ <circle r="15" fill="none" stroke="#ffd166" stroke-opacity=".3" stroke-width="2"/>
+ <path d="M0 -15 A15 15 0 1 1 -12.9 7.5" fill="none" stroke="#ffd166" stroke-width="2" stroke-linecap="round"/>
+ <path d="M0 -10 L2.9 -3.6 10 -3.1 4.6 1.4 6.2 8.1 0 4.5 -6.2 8.1 -4.6 1.4 -10 -3.1 -2.9 -3.6Z" fill="#ffd166"/>
+ <circle r="1.6" fill="#fff"/>
+</g>
+<g font-family="DotGothic16, monospace" fill="#eeecfa"><text x="28" y="40" font-size="11" fill="#9d99c0">SCORE</text><text x="28" y="60" font-size="18" fill="#eeecfa">120</text><text x="372" y="40" font-size="11" fill="#9d99c0" text-anchor="end">BEST</text><text x="372" y="60" font-size="18" fill="#ffd166" text-anchor="end">340</text></g>
+<text x="200" y="207" font-family="DotGothic16, monospace" font-size="10.5" fill="#53e0d8" text-anchor="middle" letter-spacing="3" opacity=".9">かべあり ／ ワープ</text>
+</svg>`,
+    "018": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="そろえて2048">
+<defs>
+ <linearGradient id="k18s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15142c"/><stop offset="1" stop-color="#221d48"/></linearGradient>
+ <linearGradient id="k18t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".6" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+ <filter id="k18g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
+ <filter id="k18h" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="400" height="225" fill="url(#k18s)"/>
+<g fill="#e8e4ff" opacity=".55"><circle cx="24" cy="52" r="1.3"/><circle cx="70" cy="30" r="1"/><circle cx="350" cy="28" r="1.3"/><circle cx="380" cy="90" r="1"/><circle cx="30" cy="180" r="1"/><circle cx="366" cy="170" r="1.1"/></g>
+<circle cx="44" cy="30" r="11" fill="#ffd166"/><circle cx="50" cy="26" r="10" fill="#15142c"/>
+<rect x="110" y="10" width="179" height="179" rx="14" fill="#1b1b38" stroke="#a06bff" stroke-width="3"/>
+<g fill="#12122a" stroke="rgba(160,107,255,.18)" stroke-width="1">
+ <rect x="117" y="17" width="36" height="36" rx="6"/><rect x="160" y="17" width="36" height="36" rx="6"/><rect x="203" y="17" width="36" height="36" rx="6"/><rect x="246" y="17" width="36" height="36" rx="6"/>
+ <rect x="117" y="60" width="36" height="36" rx="6"/><rect x="160" y="60" width="36" height="36" rx="6"/><rect x="203" y="60" width="36" height="36" rx="6"/><rect x="246" y="60" width="36" height="36" rx="6"/>
+ <rect x="117" y="103" width="36" height="36" rx="6"/><rect x="160" y="103" width="36" height="36" rx="6"/><rect x="203" y="103" width="36" height="36" rx="6"/><rect x="246" y="103" width="36" height="36" rx="6"/>
+ <rect x="117" y="146" width="36" height="36" rx="6"/><rect x="160" y="146" width="36" height="36" rx="6"/><rect x="203" y="146" width="36" height="36" rx="6"/><rect x="246" y="146" width="36" height="36" rx="6"/>
+</g>
+<rect x="113" y="13" width="44" height="44" rx="8" fill="#ffd166" opacity=".7" filter="url(#k18g)"/>
+<rect x="158" y="15" width="40" height="40" rx="7" fill="#ffd166" opacity=".4" filter="url(#k18h)"/>
+<rect x="201" y="15" width="40" height="40" rx="7" fill="#ffb830" opacity=".35" filter="url(#k18h)"/>
+<rect x="244" y="15" width="40" height="40" rx="7" fill="#ff9c3d" opacity=".3" filter="url(#k18h)"/>
+<rect x="244" y="58" width="40" height="40" rx="7" fill="#ff7d5f" opacity=".3" filter="url(#k18h)"/>
+<rect x="201" y="58" width="40" height="40" rx="7" fill="#ff5fa2" opacity=".28" filter="url(#k18h)"/>
+<g font-family="DotGothic16, monospace" text-anchor="middle">
+ <rect x="117" y="17" width="36" height="36" rx="6" fill="#fff1a8" stroke="#ffffff" stroke-width="1.5"/><rect x="117" y="17" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="135" y="39" font-size="11" fill="#3a2600">2048</text>
+ <rect x="160" y="17" width="36" height="36" rx="6" fill="#ffd166"/><rect x="160" y="17" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="178" y="39" font-size="11" fill="#2a1200">1024</text>
+ <rect x="203" y="17" width="36" height="36" rx="6" fill="#ffb830"/><rect x="203" y="17" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="221" y="39.5" font-size="12" fill="#2a1200">512</text>
+ <rect x="246" y="17" width="36" height="36" rx="6" fill="#ff9c3d"/><rect x="246" y="17" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="264" y="39.5" font-size="12" fill="#2a1200">256</text>
+ <rect x="117" y="60" width="36" height="36" rx="6" fill="#4a4a8c"/><rect x="117" y="60" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="135" y="83" font-size="14" fill="#eeecfa">4</text>
+ <rect x="160" y="60" width="36" height="36" rx="6" fill="#6260d0"/><rect x="160" y="60" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="178" y="83" font-size="14" fill="#ffffff">8</text>
+ <rect x="203" y="60" width="36" height="36" rx="6" fill="#ff5fa2"/><rect x="203" y="60" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="221" y="83" font-size="14" fill="#ffffff">64</text>
+ <rect x="246" y="60" width="36" height="36" rx="6" fill="#ff7d5f"/><rect x="246" y="60" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="264" y="82.5" font-size="12" fill="#2a1200">128</text>
+ <rect x="117" y="103" width="36" height="36" rx="6" fill="#3b3b66"/><rect x="117" y="103" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="135" y="126" font-size="14" fill="#eeecfa">2</text>
+ <rect x="203" y="103" width="36" height="36" rx="6" fill="#a06bff"/><rect x="203" y="103" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="221" y="126" font-size="14" fill="#ffffff">16</text>
+ <rect x="246" y="103" width="36" height="36" rx="6" fill="#d45ed8"/><rect x="246" y="103" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="264" y="126" font-size="14" fill="#ffffff">32</text>
+ <rect x="203" y="146" width="36" height="36" rx="6" fill="#3b3b66"/><rect x="203" y="146" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="221" y="169" font-size="14" fill="#eeecfa">2</text>
+ <rect x="246" y="146" width="36" height="36" rx="6" fill="#4a4a8c"/><rect x="246" y="146" width="36" height="36" rx="6" fill="url(#k18t)"/><text x="264" y="169" font-size="14" fill="#eeecfa">4</text>
+</g>
+<g transform="translate(160,146)"><rect width="36" height="36" rx="6" fill="#3b3b66" opacity=".55"/><text x="18" y="23" font-family="DotGothic16, monospace" font-size="14" fill="#eeecfa" text-anchor="middle" opacity=".55">2</text></g>
+<path d="M156 164 H124" stroke="#53e0d8" stroke-width="3" stroke-linecap="round" opacity=".9"/><path d="M132 157 L124 164 L132 171" stroke="#53e0d8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+<g font-family="DotGothic16, monospace" text-anchor="middle">
+ <text x="56" y="96" font-size="13" fill="#9d99c0" letter-spacing="2">よふかし</text>
+ <text x="56" y="132" font-size="30" fill="#ffd166" letter-spacing="1" opacity=".5" filter="url(#k18h)">2048</text>
+ <text x="56" y="132" font-size="30" fill="#ffd166" letter-spacing="1">2048</text>
+</g>
+<g transform="translate(346,112)" stroke="#53e0d8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".85">
+ <path d="M0 -12 V-30 M-7 -23 L0 -30 L7 -23"/><path d="M0 12 V30 M-7 23 L0 30 L7 23"/><path d="M-12 0 H-30 M-23 -7 L-30 0 L-23 7"/><path d="M12 0 H30 M23 -7 L30 0 L23 7"/>
+ <circle r="5" fill="#53e0d8" stroke="none"/>
+</g>
+<g fill="#ffd166"><path d="M92 40 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4Z"/><path d="M318 62 l2 4.6 4.6 2 -4.6 2 -2 4.6 -2 -4.6 -4.6 -2 4.6 -2Z" opacity=".85"/><path d="M104 22 l1.6 3.8 3.8 1.6 -3.8 1.6 -1.6 3.8 -1.6 -3.8 -3.8 -1.6 3.8 -1.6Z" opacity=".7"/></g>
+<g fill="#ff5fa2"><rect x="300" y="150" width="5" height="3" transform="rotate(20 302 151)"/><rect x="330" y="182" width="5" height="3" transform="rotate(-30 332 183)"/></g>
+<g fill="#53e0d8"><rect x="80" y="160" width="5" height="3" transform="rotate(40 82 161)"/><rect x="316" y="196" width="5" height="3" transform="rotate(15 318 197)"/></g>
+<text x="200" y="214" font-family="DotGothic16, monospace" font-size="10.5" fill="#ffd166" text-anchor="middle" letter-spacing="3" opacity=".95">スワイプで合体 ・ 2048をめざせ</text>
+</svg>`,
     "017": `<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="よふかし大富豪">
 <defs>
  <radialGradient id="k17f" cx=".5" cy=".3" r=".95"><stop offset="0" stop-color="#1f6f90"/><stop offset="1" stop-color="#071e2c"/></radialGradient>
@@ -1355,6 +1888,8 @@
     const featured = document.getElementById("featured");
     const heroPlay = document.getElementById("hero-play");
     const ranking = document.getElementById("ranking");
+    const arrivals = document.getElementById("new-arrivals");
+    arrivals.hidden = availableGames.length < 4;
     if (!availableGames.length) {
       grid.innerHTML = '<p class="empty">COMING SOON...</p>';
       return;
@@ -1440,6 +1975,18 @@
           '<div class="rank-copy"><span class="rank-kicker">NO.0' + (i + 1) + ' · ' + (g.genre || "GAME") + ' · ' + (g.age || "全年齢") +
           '</span><h3>' + g.title + '</h3><span class="rank-play">PLAY →</span></div></a>';
       }).join("") + '</div>';
+
+    const today = new Date();
+    const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    arrivals.innerHTML = '<div class="label">NEW ARRIVALS</div><h2 id="new-arrivals-title">新着ゲーム</h2>' +
+      '<p class="new-arrivals-note">あたらしい順にならんでいます。</p><div class="new-arrivals-grid">' + sorted.slice(0, 6).map(function (g) {
+        const ageDays = (todayUTC - Date.parse(g.date + "T00:00:00Z")) / 86400000;
+        const isNew = ageDays >= 0 && ageDays <= 14;
+        return '<a class="card" data-game-id="' + g.id + '" style="--ac:' + (g.color || '#7c5cff') + '" href="' + g.path + '">' +
+          '<div class="art">' + artOf(g) + '</div><div class="card-body"><div class="chips"><span class="chip">' + (g.genre || 'GAME') + '</span>' +
+          (isNew ? '<span class="chip new">NEW</span>' : '') + '</div><h3>' + g.title + '</h3>' +
+          (g.date ? '<time datetime="' + g.date + '">' + g.date.replace(/-/g, '.') + '</time>' : '') + '</div></a>';
+      }).join('') + '</div>';
 
     window.LudotLibrary.setGames(sorted);
   }
