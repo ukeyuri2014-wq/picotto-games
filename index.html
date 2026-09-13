@@ -899,7 +899,7 @@
 <meta name="application-name" content="ルドット">
 <meta name="theme-color" content="#221f38">
 <link rel="icon" href="assets/ludot-icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/ludot-library.css">
+<link rel="stylesheet" href="assets/ludot-library.css?v=20260914">
 </head>
 <body>
 
@@ -949,12 +949,18 @@
 
 <div class="wrap">
   <section id="my-games" class="my-games" aria-labelledby="my-games-title">
-    <div class="library-heading"><div><div class="label">MY GAMES</div><h2 id="my-games-title">また、ここから。</h2></div><button type="button" data-bookmark-help>ルドットを保存</button></div>
-    <p class="library-note">お気に入り・履歴は、このブラウザに保存されます。登録は不要です。</p>
-    <p id="library-status" role="status" aria-live="polite"></p>
-    <h3>★ お気に入り</h3><div id="favorite-games" class="library-grid"><p>ゲームの「☆ 保存」を押すと、ここに並びます。</p></div>
-    <div class="library-heading"><h3>最近遊んだゲーム</h3><button type="button" id="clear-recent" hidden>履歴を消す</button></div>
-    <div id="recent-games" class="library-grid"><p>遊んだゲームから、すぐに戻れます。</p></div>
+    <div class="library-heading library-top"><div><div class="library-kicker">MY GAMES</div><h2 id="my-games-title">遊びのつづき。</h2></div><button class="bookmark-help" type="button" data-bookmark-help><span aria-hidden="true">＋</span> サイトを保存</button></div>
+    <div class="library-shelves">
+      <section class="library-shelf shelf-favorites" aria-labelledby="favorites-title">
+        <div class="shelf-heading"><span class="shelf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9Z"/></svg></span><h3 id="favorites-title">お気に入り</h3><span class="library-count" id="favorite-count" aria-label="お気に入り件数">0</span></div>
+        <div id="favorite-games" class="library-grid"><div class="library-empty"><p>好きなゲームを、自分のコレクションに。</p><span>ゲームの「☆ 保存」で追加できます。</span><a href="#games">お気に入りを見つける <span aria-hidden="true">↗</span></a></div></div>
+      </section>
+      <section class="library-shelf shelf-recent" aria-labelledby="recent-title">
+        <div class="shelf-heading"><span class="shelf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span><h3 id="recent-title">最近遊んだゲーム</h3><span class="library-count" id="recent-count" aria-label="最近遊んだゲーム件数">0</span><button type="button" id="clear-recent" hidden>履歴を消す</button></div>
+        <div id="recent-games" class="library-grid"><div class="library-empty"><p>気になるゲームを、ひとつ遊ぼう。</p><span>遊んだゲームがここに並びます。</span><a href="#games">ゲーム一覧へ <span aria-hidden="true">↗</span></a></div></div>
+      </section>
+    </div>
+    <div class="library-foot"><p class="library-note">登録不要。このブラウザに自動で保存されます。</p><p id="library-status" role="status" aria-live="polite"></p></div>
     <noscript><p>お気に入り・履歴を使うにはJavaScriptを有効にしてください。ゲーム一覧は下から選べます。</p></noscript>
   </section>
   <section class="ranking" id="ranking" aria-live="polite"></section>
@@ -1089,7 +1095,7 @@
 </footer>
 
 <script src="games.js"></script>
-<script src="assets/ludot-library.js"></script>
+<script src="assets/ludot-library.js?v=20260914"></script>
 <script>
   // ============ ゲームごとのキービジュアル（描き下ろしSVG） ============
   const ART = {
