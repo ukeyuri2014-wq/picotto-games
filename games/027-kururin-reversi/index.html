@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>くるりんリバーシ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.tgl{font-size:13px;color:var(--sub)}
+  .btn.tgl.on{border-color:rgba(255,209,102,.6);color:var(--gold);background:rgba(255,209,102,.07)}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.92);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.2}
+  #overlay .big.p1{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:6px;padding:9px 16px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .levels{display:flex;gap:6px;justify-content:center}
+  .levels button{font-family:inherit;font-size:13px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .levels button.on{border-color:var(--gold);color:var(--gold)}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="8×8の盤で相手の石をはさんでひっくり返す定番ボードゲーム。ふたりで交代でも、3段階のCPU（よわい／ふつう／つよい＝先読み探索＋終盤は完全読み）相手でも。置ける場所と返せる枚数のヒント表示、波打つフリップ演出、パス表示、1手もどす、CPUレベル別の成績記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/027-kururin-reversi/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"くるりんリバーシ","description":"8×8の盤で相手の石をはさんでひっくり返す定番ボードゲーム。ふたりで交代でも、3段階のCPU（よわい／ふつう／つよい＝先読み探索＋終盤は完全読み）相手でも。置ける場所と返せる枚数のヒント表示、波打つフリップ演出、パス表示、1手もどす、CPUレベル別の成績記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/027-kururin-reversi/index.html","inLanguage":"ja","genre":"BOARD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="027"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>くるりんリバーシ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / 2人用・CPU対戦</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="600"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">よふかし<br>リバーシ</div>
+    <div class="note" id="ovNote">
+      じぶんの石で あいての石を <b>はさむと ぜんぶ ひっくりかえる</b>！<br>
+      さいごに 石が多いほうの かち。<i class="c1">P1</i> と <i class="c2">P2</i> が こうたいで おくよ。<br>
+      ⚫ くろ が先手（先手は ゲームごとに こうたい）<br><br>
+      📱 おきたいマスをタップ ／ ⌨️ 矢印キー＋Enter
+    </div>
+    <div class="modes">
+      <button id="btn2p">ふたりで たいせん</button>
+      <button id="btnCpu" class="alt">ひとりで（CPU）</button>
+    </div>
+    <div class="levels" id="levels">
+      <button data-l="1">CPU よわい</button><button data-l="2" class="on">CPU ふつう</button><button data-l="3">CPU つよい</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="undoBtn">1手もどす</button>
+  <button class="btn" id="menuBtn">モードをえらぶ</button>
+</div>
+<div class="row">
+  <button class="btn tgl on" id="hintBtn">おける場所：ON</button>
+  <button class="btn tgl on" id="numBtn">かえせる数：ON</button>
+</div>
+
+<div class="help">
+  <p><b>ルール</b>：じぶんの石で あいての石を タテ・ヨコ・ナナメに <b>はさむ</b>と、はさんだ石が ぜんぶ じぶんの色に ひっくりかえる。はさめる場所にしか おけないよ。おける場所がないときは 自動で「パス！」。ふたりとも おけなくなったら おわりで、石が多いほうの かち（あいたマスは かった人の石として かぞえるよ）。</p>
+  <p><b>コツ</b>：四すみ（かど）の石は ぜったいに ひっくりかえされない。かどのとなりは あいてに かどを あげやすいので ちゅうい。はじめのうちは 石を とりすぎないほうが強い！</p>
+  <p>⚫ くろ が先手で、先手は ゲームごとに <i class="c1">P1</i>・<i class="c2">P2</i> で こうたい。「1手もどす」はCPU戦のときは 自分とCPUの2手分もどる。<br>⌨️ 矢印キーでえらんで Enter ／ Z＝もどす ／ H＝おける場所 ／ N＝かえせる数</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const N = 8, SZ = 64, CELL = 54, BX = 24, BY = 84, BW = N * CELL;   // board 432 x 432
+  const KEY = 'picotto_yofukashi-reversi_';
+  const MUTE_KEY = KEY + 'mute', STAT_KEY = KEY + 'stats', HINT_KEY = KEY + 'hints', NUM_KEY = KEY + 'nums';
+  const BLACK = 1, WHITE = 2;
+  const COLOR_NAME = { 1: 'くろ', 2: 'しろ' };
+  const SEAT_COL = { 1: '#53e0d8', 2: '#ff5fa2' };
+  const STONE_GLOW = { 1: 'rgba(160,107,255,', 2: 'rgba(83,224,216,' };
+  const FLIP_DUR = 0.34, POP_DUR = 0.26, STONE_R = 22;
+  const LEVEL_NAME = ['', 'よわい', 'ふつう', 'つよい'];
+  const COL_LETTERS = 'abcdefgh';
+  const CORNERS = [0, 7, 56, 63];
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    place(p) { tone('triangle', p === BLACK ? 300 : 420, 140, 0.12, 0.09); tone('square', 1200, 800, 0.04, 0.025); },
+    flip(i, delay) { tone('square', 480 + i * 70, 640 + i * 70, 0.06, 0.035, delay); },
+    corner(delay) { [880, 1174, 1568].forEach((f, i) => tone('triangle', f, f, 0.14, 0.06, delay + i * 0.07)); },
+    pass(delay) { tone('sawtooth', 330, 220, 0.18, 0.05, delay); tone('sawtooth', 260, 170, 0.24, 0.05, delay + 0.2); },
+    bad() { tone('square', 200, 120, 0.08, 0.04); },
+    undo() { tone('triangle', 520, 240, 0.16, 0.05); },
+    toggle() { tone('square', 700, 950, 0.05, 0.03); },
+    win(d) { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, d + i * 0.1)); },
+    lose(d) { tone('sawtooth', 300, 80, 0.5, 0.07, d); },
+    draw(d) { tone('triangle', 440, 440, 0.15, 0.06, d); tone('triangle', 440, 440, 0.15, 0.06, d + 0.2); },
+    hover() { tone('square', 900, 900, 0.03, 0.02); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ---------------------------------------------------------------
+  let board = new Array(SZ).fill(0);      // index r*8+c, 0 empty, 1 black, 2 white
+  let turn = BLACK, mode = '2p', level = 2, phase = 'title', over = false, winner = 0;
+  let first = 1, blackSeat = 1;           // seat(1=P1/you, 2=P2/CPU) that plays black
+  let history = [], lastMove = -1, legalNow = new Map();
+  let anims = [], pops = [], particles = [], passPop = null, banner = null;
+  let busyT = 0, shake = 0, animT = 0, thinking = false, cpuTimer = 0, autoCpu = true, endFx = 0, gameSeq = 0;
+  let hoverIdx = -1, cursorIdx = 19, kb = false, downIdx = -1;
+  let showHints = true, showNums = true;
+  let tally = { 1: 0, 2: 0, d: 0 };
+  let stats = { 1: { w: 0, l: 0, d: 0 }, 2: { w: 0, l: 0, d: 0 }, 3: { w: 0, l: 0, d: 0 } };
+  let finalCounts = null;
+  try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) stats = Object.assign(stats, s); } catch (e) {}
+  try { if (localStorage.getItem(HINT_KEY) === '0') showHints = false; if (localStorage.getItem(NUM_KEY) === '0') showNums = false; } catch (e) {}
+  const overlay = document.getElementById('overlay');
+  const undoBtn = document.getElementById('undoBtn'), hintBtn = document.getElementById('hintBtn'), numBtn = document.getElementById('numBtn');
+
+  const seatOf = col => (col === blackSeat ? 1 : 2);
+  const colorOf = seat => (seat === blackSeat ? BLACK : WHITE);
+  const humanColor = () => colorOf(1), cpuColor = () => colorOf(2);
+  const seatName = seat => (mode === 'cpu' ? (seat === 1 ? 'あなた' : 'CPU') : 'P' + seat);
+  const cellXY = idx => [BX + (idx & 7) * CELL + CELL / 2, BY + (idx >> 3) * CELL + CELL / 2];
+  const sqName = idx => COL_LETTERS[idx & 7] + ((idx >> 3) + 1);
+
+  // ---- rules -----------------------------------------------------------------
+  const DIRS = [-9, -8, -7, -1, 1, 7, 8, 9];
+  const DRC = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+  const RAY = new Int8Array(SZ * 8);      // how many squares exist in that direction
+  for (let i = 0; i < SZ; i++) {
+    const r = i >> 3, c = i & 7;
+    for (let d = 0; d < 8; d++) {
+      const [dr, dc] = DRC[d];
+      const nr = dr < 0 ? r : dr > 0 ? 7 - r : 8, nc = dc < 0 ? c : dc > 0 ? 7 - c : 8;
+      RAY[i * 8 + d] = Math.min(nr, nc);
+    }
+  }
+  function flipsAt(b, idx, p) {
+    let out = null; const o = 3 - p, base = idx * 8;
+    for (let d = 0; d < 8; d++) {
+      const n = RAY[base + d]; if (n < 2) continue;
+      const st = DIRS[d]; let j = idx + st;
+      if (b[j] !== o) continue;
+      let k = 2; j += st;
+      while (k <= n && b[j] === o) { j += st; k++; }
+      if (k <= n && b[j] === p) { if (!out) out = []; for (let m = idx + st; m !== j; m += st) out.push(m); }
+    }
+    return out;
+  }
+  function canFlip(b, idx, p) {
+    const o = 3 - p, base = idx * 8;
+    for (let d = 0; d < 8; d++) {
+      const n = RAY[base + d]; if (n < 2) continue;
+      const st = DIRS[d]; let j = idx + st;
+      if (b[j] !== o) continue;
+      let k = 2; j += st;
+      while (k <= n && b[j] === o) { j += st; k++; }
+      if (k <= n && b[j] === p) return true;
+    }
+    return false;
+  }
+  function hasMove(b, p) { for (let i = 0; i < SZ; i++) if (!b[i] && canFlip(b, i, p)) return true; return false; }
+  function mobility(b, p) { let n = 0; for (let i = 0; i < SZ; i++) if (!b[i] && canFlip(b, i, p)) n++; return n; }
+  function legalMap(b, p) { const m = new Map(); for (let i = 0; i < SZ; i++) if (!b[i]) { const f = flipsAt(b, i, p); if (f) m.set(i, f); } return m; }
+  function countStones(b) { let c1 = 0, c2 = 0; for (let i = 0; i < SZ; i++) { if (b[i] === 1) c1++; else if (b[i] === 2) c2++; } return { 1: c1, 2: c2, e: SZ - c1 - c2 }; }
+
+  // ---- AI (positional eval + negamax alpha-beta, iterative deepening) --------
+  const W8 = [
+    120, -25, 18, 6, 6, 18, -25, 120,
+    -25, -55, -4, -3, -3, -4, -55, -25,
+    18, -4, 4, 1, 1, 4, -4, 18,
+    6, -3, 1, 0, 0, 1, -3, 6,
+    6, -3, 1, 0, 0, 1, -3, 6,
+    18, -4, 4, 1, 1, 4, -4, 18,
+    -25, -55, -4, -3, -3, -4, -55, -25,
+    120, -25, 18, 6, 6, 18, -25, 120];
+  const ORDER = [...Array(SZ).keys()].sort((a, b) => W8[b] - W8[a]);
+  const ADJ = new Int8Array(SZ).fill(-1);           // X/C squares -> their corner
+  [[1, 0], [8, 0], [9, 0], [6, 7], [15, 7], [14, 7], [48, 56], [57, 56], [49, 56], [55, 63], [62, 63], [54, 63]].forEach(([s, c]) => { ADJ[s] = c; });
+  const ABORT = { abort: true };
+  let deadline = 0, nodes = 0, lastScores = [], STRONG_DEPTH = 7;
+  function terminal(b, p) {
+    const c = countStones(b); let me = c[p], op = c[3 - p];
+    if (me > op) me += c.e; else if (op > me) op += c.e;
+    return (me - op) * 1000;
+  }
+  function stableEdge(b, p) {
+    let n = 0;
+    for (const [c, dr, dc] of [[0, 1, 8], [7, -1, 8], [56, 1, -8], [63, -1, -8]]) {
+      if (b[c] !== p) continue;
+      for (let j = c + dr, k = 1; k < 8 && b[j] === p; j += dr, k++) n++;
+      for (let j = c + dc, k = 1; k < 8 && b[j] === p; j += dc, k++) n++;
+    }
+    return n;
+  }
+  function evaluate(b, p, empties) {
+    const o = 3 - p;
+    const mp = mobility(b, p), mo = mobility(b, o);
+    if (mp === 0 && mo === 0) return terminal(b, p);
+    let s = 0, dm = 0, dop = 0;
+    for (let i = 0; i < SZ; i++) {
+      const v = b[i]; if (!v) continue;
+      let w = W8[i]; if (ADJ[i] >= 0 && b[ADJ[i]] !== 0) w = 2;
+      if (v === p) { s += w; dm++; } else { s -= w; dop++; }
+    }
+    s += (mp - mo) * 7;
+    s += (stableEdge(b, p) - stableEdge(b, o)) * 16;
+    if (empties <= 16) s += (dm - dop) * (17 - empties) * 2;
+    return s;
+  }
+  const FL = new Int8Array(64 * 20);           // flip stack shared by the whole search (no allocations)
+  function pushFlips(b, idx, p, sp) {          // writes flipped squares to FL[sp..], returns new top (== sp if illegal)
+    const o = 3 - p, base = idx * 8; let e = sp;
+    for (let d = 0; d < 8; d++) {
+      const n = RAY[base + d]; if (n < 2) continue;
+      const st = DIRS[d]; let j = idx + st;
+      if (b[j] !== o) continue;
+      let k = 2; j += st;
+      while (k <= n && b[j] === o) { j += st; k++; }
+      if (k <= n && b[j] === p) { for (let m = idx + st; m !== j; m += st) FL[e++] = m; }
+    }
+    return e;
+  }
+  function negamax(b, p, depth, alpha, beta, passed, empties, sp) {
+    if ((++nodes & 2047) === 0 && performance.now() > deadline) throw ABORT;
+    if (empties === 0) return terminal(b, p);
+    if (depth === 0) return evaluate(b, p, empties);
+    const o = 3 - p; let any = false, best = -Infinity;
+    for (let k = 0; k < SZ; k++) {
+      const idx = ORDER[k]; if (b[idx]) continue;
+      const e = pushFlips(b, idx, p, sp); if (e === sp) continue;
+      any = true;
+      b[idx] = p; for (let i = sp; i < e; i++) b[FL[i]] = p;
+      const v = -negamax(b, o, depth - 1, -beta, -alpha, false, empties - 1, e);
+      b[idx] = 0; for (let i = sp; i < e; i++) b[FL[i]] = o;
+      if (v > best) { best = v; if (v > alpha) { alpha = v; if (alpha >= beta) break; } }
+    }
+    if (!any) { if (passed) return terminal(b, p); return -negamax(b, o, depth, -beta, -alpha, true, empties, sp); }
+    return best;
+  }
+  function think(b, p, moves, maxDepth, timeMs, noise, empties, exact) {
+    const o = 3 - p;
+    let order = moves.slice().sort((x, y) => W8[y.idx] - W8[x.idx]);
+    let best = order[0].idx;
+    const t0 = performance.now(); deadline = t0 + timeMs; nodes = 0;
+    for (let d = 1; d <= maxDepth; d++) {
+      // each iteration costs ~3-4x the previous one: outside the exact end-game, don't start one that cannot finish
+      if (!exact && d > 2 && performance.now() - t0 > timeMs * 0.3) break;
+      try {
+        let alpha = -Infinity; const scored = [];
+        for (const m of order) {
+          b[m.idx] = p; for (const j of m.flips) b[j] = p;
+          let v = -negamax(b, o, d - 1, -Infinity, -alpha, false, empties - 1, 0);
+          b[m.idx] = 0; for (const j of m.flips) b[j] = o;
+          if (noise) v += (Math.random() - 0.5) * noise;
+          scored.push({ v, m });
+          if (v > alpha) alpha = v;
+        }
+        scored.sort((x, y) => y.v - x.v);
+        order = scored.map(s => s.m); best = order[0].idx;
+        lastScores = scored.map(s => ({ idx: s.m.idx, v: Math.round(s.v), depth: d, nodes }));
+      } catch (e) { if (e !== ABORT) throw e; break; }
+    }
+    return best;
+  }
+  function aiMove(lv) {
+    const legal = legalMap(board, turn); if (!legal.size) return -1;
+    const moves = [...legal.entries()].map(([idx, flips]) => ({ idx, flips }));
+    if (moves.length === 1) return moves[0].idx;
+    if (lv === 1) {
+      const corner = moves.filter(m => CORNERS.includes(m.idx));
+      if (corner.length && Math.random() < 0.35) return corner[Math.floor(Math.random() * corner.length)].idx;
+      return moves[Math.floor(Math.random() * moves.length)].idx;
+    }
+    const empties = countStones(board).e, b = board.slice();
+    const exact = empties <= (lv === 2 ? 8 : 13);   // full-depth solve of the end-game
+    let cand = moves;                       // outside the exact end-game, a free corner is always taken
+    if (!exact) { const corner = moves.filter(m => CORNERS.includes(m.idx)); if (corner.length) cand = corner; }
+    if (lv === 2) return think(b, turn, cand, exact ? empties : 3, 400, exact ? 0 : 6, empties, exact);
+    return think(b, turn, cand, exact ? empties : STRONG_DEPTH, exact ? 900 : 700, 0, empties, exact);
+  }
+
+  // ---- game flow --------------------------------------------------------------
+  function refreshLegal() { legalNow = legalMap(board, turn); }
+  function canUndo() {
+    if (phase !== 'play' || over || !history.length) return false;
+    if (mode === 'cpu') { const hc = humanColor(); return history.some(h => h.turn === hc); }
+    return true;
+  }
+  function updateButtons() {
+    undoBtn.disabled = !canUndo();
+    hintBtn.textContent = 'おける場所：' + (showHints ? 'ON' : 'OFF'); hintBtn.classList.toggle('on', showHints);
+    numBtn.textContent = 'かえせる数：' + (showNums ? 'ON' : 'OFF'); numBtn.classList.toggle('on', showNums && showHints); numBtn.disabled = !showHints;
+  }
+  function startGame(m) {
+    if (m) mode = m;
+    gameSeq++; clearTimeout(cpuTimer); thinking = false;
+    board = new Array(SZ).fill(0); board[27] = WHITE; board[28] = BLACK; board[35] = BLACK; board[36] = WHITE;
+    turn = BLACK; blackSeat = first; history = []; lastMove = -1; over = false; winner = 0; finalCounts = null;
+    anims = []; pops = []; particles = []; passPop = null; banner = null; busyT = 0; shake = 0; endFx = 0; kb = false; cursorIdx = 19;
+    phase = 'play'; overlay.classList.remove('show');
+    refreshLegal(); updateButtons();
+    if (mode === 'cpu' && turn === cpuColor() && autoCpu) scheduleCpu();
+  }
+  function place(idx) {
+    if (phase !== 'play' || over) return false;
+    const flips = legalNow.get(idx); if (!flips) return false;
+    const p = turn;
+    history.push({ board: board.slice(), turn: p, move: idx, last: lastMove });
+    board[idx] = p; for (const j of flips) board[j] = p;
+    lastMove = idx;
+    // visuals: pop-in for the new stone, wave of flips ordered by distance
+    const affected = new Set(flips); affected.add(idx);
+    anims = anims.filter(a => !affected.has(a.idx));
+    anims.push({ idx, kind: 'pop', t: 0, from: p, to: p });
+    let maxDelay = 0;
+    const r0 = idx >> 3, c0 = idx & 7;
+    for (const j of flips) {
+      const d = Math.max(Math.abs((j >> 3) - r0), Math.abs((j & 7) - c0));
+      const delay = 0.1 + (d - 1) * 0.085; maxDelay = Math.max(maxDelay, delay);
+      anims.push({ idx: j, kind: 'flip', t: -delay, from: 3 - p, to: p, d });
+    }
+    for (let d = 1; d <= 7; d++) if (flips.some(j => Math.max(Math.abs((j >> 3) - r0), Math.abs((j & 7) - c0)) === d)) SFX.flip(d, 0.1 + (d - 1) * 0.085 + FLIP_DUR / 2);
+    const [px, py] = cellXY(idx);
+    SFX.place(p); burst(px, py, STONE_GLOW[p], 10, 90);
+    pops.push({ x: px, y: py - 8, text: '+' + flips.length, t: 0, color: '#ffd166', size: 22 });
+    if (CORNERS.includes(idx)) { pops.push({ x: px, y: py - 34, text: 'かど！', t: -0.1, color: '#ff5fa2', size: 18 }); SFX.corner(0.15); shake = Math.max(shake, 4); burst(px, py, 'rgba(255,209,102,', 18, 160); }
+    if (flips.length >= 6) shake = Math.max(shake, 3);
+    busyT = maxDelay + FLIP_DUR + 0.12;
+    advanceTurn();
+    return true;
+  }
+  function advanceTurn() {
+    const o = 3 - turn;
+    if (hasMove(board, o)) turn = o;
+    else if (hasMove(board, turn)) { passPop = { color: o, t: -busyT }; SFX.pass(busyT); busyT += 1.35; }
+    else { refreshLegal(); finish(); return; }
+    refreshLegal(); updateButtons();
+    if (mode === 'cpu' && turn === cpuColor() && autoCpu) scheduleCpu();
+  }
+  function finish() {
+    over = true; phase = 'over'; thinking = false; clearTimeout(cpuTimer);
+    const c = countStones(board); let b1 = c[1], b2 = c[2];
+    if (b1 > b2) b1 += c.e; else if (b2 > b1) b2 += c.e;
+    finalCounts = { 1: b1, 2: b2, e: c.e };
+    winner = b1 > b2 ? BLACK : b2 > b1 ? WHITE : 0;
+    const ws = winner ? seatOf(winner) : 0;
+    if (ws) tally[ws]++; else tally.d++;
+    if (mode === 'cpu') { const s = stats[level]; if (ws === 1) s.w++; else if (ws === 2) s.l++; else s.d++; try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {} }
+    first = 3 - first;
+    banner = { t: -busyT }; endFx = busyT + 1.5;
+    if (ws === 1 || (ws === 2 && mode !== 'cpu')) SFX.win(busyT); else if (ws === 2) SFX.lose(busyT); else SFX.draw(busyT);
+    updateButtons();
+    const gid = gameSeq;
+    setTimeout(() => { if (gid === gameSeq && phase === 'over') showResult(); }, (busyT + 2.0) * 1000);
+  }
+  function showResult() {
+    const big = document.getElementById('ovBig'), note = document.getElementById('ovNote');
+    const ws = winner ? seatOf(winner) : 0;
+    if (ws === 1) { big.textContent = mode === 'cpu' ? 'あなたの かち！' : 'P1 の かち！'; big.className = 'big p1'; }
+    else if (ws === 2) { big.textContent = mode === 'cpu' ? 'CPU の かち…' : 'P2 の かち！'; big.className = 'big p2'; }
+    else { big.textContent = 'ひきわけ'; big.className = 'big'; }
+    const fc = finalCounts || countStones(board);
+    note.innerHTML = '⚫ くろ <b>' + fc[1] + '</b> - <b>' + fc[2] + '</b> しろ ⚪' + (fc.e ? '<br><span style="color:var(--sub)">（あいたマス ' + fc.e + ' は かった人の石として かぞえたよ）</span>' : '') +
+      '<br>こんかいの せいせき： <i class="c1">' + seatName(1) + ' ' + tally[1] + '</i> - <i class="c2">' + seatName(2) + ' ' + tally[2] + '</i>（ひきわけ ' + tally.d + '）' +
+      '<br>つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + (first === 1 ? 'P1' : (mode === 'cpu' ? 'CPU' : 'P2')) + '</i> が くろ（先手）';
+    document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど（ふたりで）' : 'ふたりで たいせん';
+    document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど（CPU）' : 'ひとりで（CPU）';
+    renderStats(); overlay.classList.add('show');
+  }
+  function renderStats() {
+    const s = stats[level];
+    document.getElementById('ovStats').textContent = 'CPU' + LEVEL_NAME[level] + ' との せいせき： ' + s.w + '勝 ' + s.l + '敗 ' + s.d + '分';
+  }
+  function undo(force) {
+    if (!canUndo()) return false;
+    if (!force && busyT > 0) return false;
+    let e;
+    if (mode === 'cpu') { const hc = humanColor(); do { e = history.pop(); } while (e.turn !== hc); }
+    else e = history.pop();
+    board = e.board.slice(); turn = e.turn; lastMove = e.last;
+    anims = []; pops = []; passPop = null; busyT = 0; shake = 0; thinking = false; clearTimeout(cpuTimer);
+    refreshLegal(); updateButtons(); SFX.undo();
+    return true;
+  }
+  function scheduleCpu() {
+    clearTimeout(cpuTimer); thinking = true;
+    cpuTimer = setTimeout(cpuPlay, busyT * 1000 + 320 + Math.random() * 300);
+  }
+  function cpuPlay() {
+    thinking = false;
+    if (phase !== 'play' || over || mode !== 'cpu' || turn !== cpuColor()) return;
+    const m = aiMove(level);
+    if (m >= 0) place(m);
+  }
+  function setLevel(lv) { level = lv; document.querySelectorAll('#levels button').forEach(x => x.classList.toggle('on', +x.dataset.l === lv)); renderStats(); }
+  function toggleHints() { showHints = !showHints; try { localStorage.setItem(HINT_KEY, showHints ? '1' : '0'); } catch (e) {} updateButtons(); SFX.toggle(); }
+  function toggleNums() { if (!showHints) return; showNums = !showNums; try { localStorage.setItem(NUM_KEY, showNums ? '1' : '0'); } catch (e) {} updateButtons(); SFX.toggle(); }
+  function burst(x, y, glow, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c: glow, s: 3 + Math.random() * 3 }); } }
+  function goMenu() {
+    gameSeq++; clearTimeout(cpuTimer); thinking = false; phase = 'title';
+    document.getElementById('ovBig').innerHTML = 'よふかし<br>リバーシ'; document.getElementById('ovBig').className = 'big';
+    document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>こんかいの せいせき： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">P2/CPU ' + tally[2] + '</i>（ひきわけ ' + tally.d + '）<br>⚫ くろ が先手（つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + (first === 1 ? 'P1' : 'P2/CPU') + '</i>）';
+    document.getElementById('btn2p').textContent = 'ふたりで たいせん'; document.getElementById('btnCpu').textContent = 'ひとりで（CPU）';
+    renderStats(); overlay.classList.add('show'); updateButtons();
+  }
+
+  // ---- input -----------------------------------------------------------------
+  function cellAt(e) {
+    const rc = cv.getBoundingClientRect(); const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    if (x < BX || x >= BX + BW || y < BY || y >= BY + BW) return -1;
+    return ((y - BY) / CELL | 0) * 8 + ((x - BX) / CELL | 0);
+  }
+  function humanTurn() { return phase === 'play' && !over && busyT <= 0 && !(mode === 'cpu' && turn !== humanColor()); }
+  function tryPlace(idx) {
+    if (!humanTurn()) return false;
+    if (place(idx)) return true;
+    const [x, y] = cellXY(idx); pops.push({ x, y: y - 6, text: '✕', t: 0, color: '#ff5fa2', size: 20 }); SFX.bad();
+    return false;
+  }
+
+  // ---- drawing ------------------------------------------------------------------
+  function makeStoneSprite(col) {
+    const S = 128, c = document.createElement('canvas'); c.width = S; c.height = S; const g = c.getContext('2d');
+    const cx = S / 2, cy = S / 2, R = 48;
+    g.shadowColor = col === BLACK ? 'rgba(160,107,255,.85)' : 'rgba(83,224,216,.85)'; g.shadowBlur = 16;
+    g.fillStyle = col === BLACK ? '#14121f' : '#f4f2ff'; g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0;
+    const grad = g.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.1, cx, cy, R);
+    if (col === BLACK) { grad.addColorStop(0, '#514a74'); grad.addColorStop(0.55, '#1d1a2e'); grad.addColorStop(1, '#0a0912'); }
+    else { grad.addColorStop(0, '#ffffff'); grad.addColorStop(0.6, '#ebe9fb'); grad.addColorStop(1, '#b3b0d6'); }
+    g.fillStyle = grad; g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = col === BLACK ? 'rgba(160,107,255,.6)' : 'rgba(83,224,216,.6)'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, R - 1.5, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = col === BLACK ? 'rgba(255,255,255,.2)' : 'rgba(255,255,255,.9)'; g.beginPath(); g.ellipse(cx - R * 0.3, cy - R * 0.4, R * 0.3, R * 0.15, -0.5, 0, Math.PI * 2); g.fill();
+    return c;
+  }
+  const SPR = { 1: makeStoneSprite(BLACK), 2: makeStoneSprite(WHITE) };
+  function drawStone(x, y, r, col, sx = 1, sy = 1, alpha = 1) {
+    const k = r / 48;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.scale(sx, sy);
+    ctx.drawImage(SPR[col], -64 * k, -64 * k, 128 * k, 128 * k);
+    ctx.restore();
+  }
+  function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  function visualCounts() {
+    const c = { 1: 0, 2: 0 };
+    const am = new Map(); for (const a of anims) if (a.kind === 'flip') am.set(a.idx, a);
+    for (let i = 0; i < SZ; i++) { const v = board[i]; if (!v) continue; const a = am.get(i); c[(a && a.t < FLIP_DUR / 2) ? a.from : v]++; }
+    return c;
+  }
+  function drawCard(seat, x) {
+    const y = 10, w = 196, h = 60, col = colorOf(seat);
+    const active = phase === 'play' && !over && turn === col;
+    ctx.fillStyle = '#1b1b38'; rr(x, y, w, h, 12); ctx.fill();
+    if (active) { ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.5; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 14 + Math.sin(animT * 5) * 4; ctx.stroke(); ctx.shadowBlur = 0; }
+    else { ctx.strokeStyle = '#2c2c4d'; ctx.lineWidth = 2; ctx.stroke(); }
+    drawStone(x + 32, y + 30, 17, col);
+    ctx.textAlign = 'left'; ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = SEAT_COL[seat];
+    ctx.fillText(seatName(seat) + '（' + COLOR_NAME[col] + '）', x + 58, y + 23);
+    ctx.font = '30px DotGothic16, monospace'; ctx.fillStyle = '#eeecfa';
+    const vc = visualCounts(); ctx.fillText(String(vc[col]), x + 58, y + 53);
+    // status sits bottom-right, next to the big count, so it never collides with the name
+    ctx.textAlign = 'right'; ctx.font = '13px DotGothic16, monospace';
+    if (active) { ctx.fillStyle = '#ffd166'; ctx.fillText(mode === 'cpu' && seat === 2 && thinking ? 'かんがえ中…' : '▶ のばん', x + w - 12, y + 51); }
+    else if (over && winner === col) { ctx.fillStyle = '#ffd166'; ctx.fillText('WIN!', x + w - 12, y + 51); }
+    if (phase === 'play' && !over && !active && passPop && passPop.color === col && passPop.t >= 0) { ctx.fillStyle = '#ff5fa2'; ctx.fillText('パス', x + w - 12, y + 51); }
+    ctx.textAlign = 'left';
+  }
+  function draw() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+    if (shake > 0) ctx.translate((Math.random() - 0.5) * shake * 2, (Math.random() - 0.5) * shake * 2);
+    // top cards
+    drawCard(1, 24); drawCard(2, 260);
+    ctx.textAlign = 'center'; ctx.font = '12px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.7)'; ctx.fillText('vs', 240, 45);
+    // board frame
+    ctx.fillStyle = '#1b1b38'; ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 16;
+    rr(BX - 8, BY - 8, BW + 16, BW + 16, 12); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.fillStyle = '#0c2b25'; ctx.fillRect(BX, BY, BW, BW);
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) { ctx.fillStyle = (r + c) & 1 ? '#164238' : '#17453b'; ctx.fillRect(BX + c * CELL + 1, BY + r * CELL + 1, CELL - 2, CELL - 2); }
+    ctx.fillStyle = 'rgba(83,224,216,.45)';
+    for (const [r, c] of [[2, 2], [2, 6], [6, 2], [6, 6]]) { ctx.beginPath(); ctx.arc(BX + c * CELL, BY + r * CELL, 3, 0, Math.PI * 2); ctx.fill(); }
+    // coordinates
+    ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.55)'; ctx.textAlign = 'center';
+    for (let c = 0; c < N; c++) ctx.fillText(COL_LETTERS[c], BX + c * CELL + CELL / 2, BY + BW + 20);
+    for (let r = 0; r < N; r++) ctx.fillText(String(r + 1), 12, BY + r * CELL + CELL / 2 + 4);
+    // cursor / hover
+    const ht = humanTurn();
+    if (ht && kb && cursorIdx >= 0) {
+      const x = BX + (cursorIdx & 7) * CELL, y = BY + (cursorIdx >> 3) * CELL;
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10; rr(x + 3, y + 3, CELL - 6, CELL - 6, 8); ctx.stroke(); ctx.shadowBlur = 0;
+    } else if (ht && hoverIdx >= 0 && !board[hoverIdx]) {
+      const x = BX + (hoverIdx & 7) * CELL, y = BY + (hoverIdx >> 3) * CELL;
+      ctx.fillStyle = legalNow.has(hoverIdx) ? 'rgba(255,209,102,.16)' : 'rgba(255,95,162,.1)'; ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
+    }
+    // legal hints
+    if (showHints && phase === 'play' && !over && busyT <= 0 && !(mode === 'cpu' && turn !== humanColor())) {
+      const pulse = 0.75 + Math.sin(animT * 4) * 0.25;
+      for (const [idx, f] of legalNow) {
+        const [x, y] = cellXY(idx);
+        if (showNums) {
+          ctx.fillStyle = 'rgba(255,209,102,' + (0.14 * pulse + 0.06) + ')'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = 'rgba(255,209,102,.5)'; ctx.lineWidth = 1.5; ctx.stroke();
+          ctx.fillStyle = '#ffd166'; ctx.font = '16px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.fillText(String(f.length), x, y + 6);
+        } else {
+          ctx.fillStyle = 'rgba(255,209,102,' + (0.35 + 0.3 * pulse) + ')'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+    // stones
+    const am = new Map(); for (const a of anims) am.set(a.idx, a);
+    for (let i = 0; i < SZ; i++) {
+      const v = board[i]; if (!v) continue;
+      const [x, y] = cellXY(i); const a = am.get(i);
+      if (!a) { drawStone(x, y, STONE_R, v); continue; }
+      if (a.kind === 'pop') { const t = Math.min(1, Math.max(0, a.t) / POP_DUR); drawStone(x, y, STONE_R * (0.2 + 0.8 * easeOutBack(t)), v); continue; }
+      if (a.t < 0) { drawStone(x, y, STONE_R, a.from); continue; }
+      const u = Math.min(1, a.t / FLIP_DUR), sx = Math.abs(Math.cos(Math.PI * u)), lift = 1 + 0.2 * Math.sin(Math.PI * u);
+      drawStone(x, y, STONE_R, u < 0.5 ? a.from : a.to, Math.max(0.05, sx) * lift, lift);
+      if (sx < 0.3) { ctx.fillStyle = 'rgba(255,255,255,' + (0.7 * (1 - sx / 0.3)) + ')'; ctx.fillRect(x - 2, y - STONE_R * lift, 4, STONE_R * 2 * lift); }
+    }
+    // last move marker
+    if (lastMove >= 0 && board[lastMove] && phase !== 'title') {
+      const [x, y] = cellXY(lastMove); const a = am.get(lastMove); const s = a && a.kind === 'pop' ? Math.min(1, Math.max(0, a.t) / POP_DUR) : 1;
+      ctx.fillStyle = '#ff5fa2'; ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = 8; ctx.beginPath(); ctx.arc(x, y, 4.5 * s, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    }
+    // particles & pops
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.6)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - s.s / 2, s.y - s.s / 2, s.s, s.s); }
+    ctx.globalAlpha = 1;
+    for (const p of pops) {
+      if (p.t < 0) continue; const u = p.t / 0.9;
+      ctx.globalAlpha = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3; ctx.fillStyle = p.color; ctx.font = p.size + 'px DotGothic16, monospace'; ctx.textAlign = 'center';
+      ctx.shadowColor = p.color; ctx.shadowBlur = 8; ctx.fillText(p.text, p.x, p.y - u * 34); ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+    // bottom info
+    ctx.font = '14px DotGothic16, monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#9d99c0';
+    ctx.fillText(lastMove >= 0 && phase !== 'title' ? 'さいごの手：' + COLOR_NAME[board[lastMove]] + ' ' + sqName(lastMove) : 'さいごの手：ー', BX, 560);
+    ctx.textAlign = 'right'; ctx.fillText(mode === 'cpu' ? 'CPU ' + LEVEL_NAME[level] : 'ふたりモード', BX + BW, 560);
+    ctx.textAlign = 'center'; ctx.font = '15px DotGothic16, monospace';
+    const t1 = seatName(1) + ' ' + tally[1], t2 = seatName(2) + ' ' + tally[2], mid = ' - ', tail = '（ひきわけ ' + tally.d + '）';
+    const w1 = ctx.measureText(t1).width, wm = ctx.measureText(mid).width, w2 = ctx.measureText(t2).width, wt = ctx.measureText(tail).width;
+    let x0 = W / 2 - (w1 + wm + w2 + wt) / 2; ctx.textAlign = 'left';
+    ctx.fillStyle = SEAT_COL[1]; ctx.fillText(t1, x0, 586); x0 += w1;
+    ctx.fillStyle = '#9d99c0'; ctx.fillText(mid, x0, 586); x0 += wm;
+    ctx.fillStyle = SEAT_COL[2]; ctx.fillText(t2, x0, 586); x0 += w2;
+    ctx.fillStyle = '#9d99c0'; ctx.fillText(tail, x0, 586);
+    // pass pop
+    if (passPop && passPop.t >= 0) {
+      const t = passPop.t; const k = t < 0.22 ? easeOutBack(t / 0.22) : t > 1.1 ? Math.max(0, 1 - (t - 1.1) / 0.25) : 1;
+      ctx.save(); ctx.translate(BX + BW / 2, BY + BW / 2); ctx.scale(Math.max(0.01, k), Math.max(0.01, k)); ctx.globalAlpha = Math.min(1, k);
+      ctx.fillStyle = 'rgba(19,19,34,.94)'; ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 24; rr(-150, -56, 300, 112, 18); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.textAlign = 'center'; ctx.fillStyle = '#ffd166'; ctx.font = '42px DotGothic16, monospace'; ctx.fillText('パス！', 0, 4);
+      ctx.fillStyle = '#eeecfa'; ctx.font = '14px DotGothic16, monospace'; ctx.fillText(seatName(seatOf(passPop.color)) + '（' + COLOR_NAME[passPop.color] + '）は おける場所がないよ', 0, 36);
+      ctx.restore();
+    }
+    // game-over banner
+    if (banner && banner.t >= 0 && over) {
+      const t = banner.t; const k = t < 0.3 ? easeOutBack(t / 0.3) : 1; const fc = finalCounts;
+      const ws = winner ? seatOf(winner) : 0; const col = ws ? SEAT_COL[ws] : '#ffd166';
+      ctx.save(); ctx.translate(BX + BW / 2, BY + BW / 2); ctx.scale(Math.max(0.01, k), Math.max(0.01, k)); ctx.globalAlpha = Math.min(1, k);
+      ctx.fillStyle = 'rgba(19,19,34,.94)'; ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.shadowColor = col; ctx.shadowBlur = 24; rr(-170, -62, 340, 124, 18); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.textAlign = 'center'; ctx.fillStyle = col; ctx.font = '34px DotGothic16, monospace';
+      ctx.fillText(ws ? (mode === 'cpu' ? (ws === 1 ? 'あなたの かち！' : 'CPU の かち…') : 'P' + ws + ' の かち！') : 'ひきわけ', 0, -6);
+      ctx.fillStyle = '#eeecfa'; ctx.font = '24px DotGothic16, monospace'; ctx.fillText('⚫ ' + fc[1] + '  -  ' + fc[2] + ' ⚪', 0, 36);
+      ctx.restore();
+    }
+  }
+  function update(dt) {
+    animT += dt;
+    if (busyT > 0) busyT = Math.max(0, busyT - dt);
+    if (shake > 0) shake = Math.max(0, shake - dt * 16);
+    for (const a of anims) a.t += dt;
+    anims = anims.filter(a => a.t < (a.kind === 'pop' ? POP_DUR : FLIP_DUR));
+    for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 0.9);
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 260 * dt; s.life -= dt; return s.life > 0; });
+    if (passPop) { passPop.t += dt; if (passPop.t > 1.35) passPop = null; }
+    if (banner) banner.t += dt;
+    if (endFx > 0) {
+      endFx -= dt;
+      if (banner && banner.t > 0 && winner && Math.random() < 0.4) {
+        const mine = []; for (let i = 0; i < SZ; i++) if (board[i] === winner) mine.push(i);
+        if (mine.length) { const [x, y] = cellXY(mine[Math.floor(Math.random() * mine.length)]); burst(x, y, STONE_GLOW[winner], 6, 120); }
+      }
+    }
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- wiring (kept at the end) -------------------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  cv.addEventListener('pointermove', e => { if (e.pointerType === 'touch') return; const i = cellAt(e); if (i !== hoverIdx) { hoverIdx = i; kb = false; } });
+  cv.addEventListener('pointerleave', () => { hoverIdx = -1; });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); downIdx = cellAt(e); hoverIdx = downIdx; kb = false; });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); const i = cellAt(e); if (i >= 0 && i === downIdx) tryPlace(i); downIdx = -1; if (e.pointerType === 'touch') hoverIdx = -1; });
+  cv.addEventListener('pointercancel', () => { downIdx = -1; });
+  document.addEventListener('keydown', e => {
+    if (overlay.classList.contains('show')) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audio(); startGame(); } return; }
+    const k = e.key;
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      e.preventDefault(); kb = true; let r = cursorIdx >> 3, c = cursorIdx & 7;
+      if (k === 'ArrowLeft') c = Math.max(0, c - 1); if (k === 'ArrowRight') c = Math.min(7, c + 1);
+      if (k === 'ArrowUp') r = Math.max(0, r - 1); if (k === 'ArrowDown') r = Math.min(7, r + 1);
+      cursorIdx = r * 8 + c; SFX.hover(); return;
+    }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); kb = true; tryPlace(cursorIdx); return; }
+    if (k === 'z' || k === 'Z' || k === 'Backspace') { e.preventDefault(); undo(false); return; }
+    if (k === 'h' || k === 'H') { toggleHints(); return; }
+    if (k === 'n' || k === 'N') { toggleNums(); return; }
+  });
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startGame('cpu'); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => setLevel(+b.dataset.l)));
+  undoBtn.addEventListener('click', () => { audio(); undo(false); });
+  document.getElementById('menuBtn').addEventListener('click', goMenu);
+  hintBtn.addEventListener('click', () => { audio(); toggleHints(); });
+  numBtn.addEventListener('click', () => { audio(); toggleNums(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) last = performance.now(); });
+
+  // initial position shown under the title overlay
+  board[27] = WHITE; board[28] = BLACK; board[35] = BLACK; board[36] = WHITE;
+  drawMute(); renderStats(); updateButtons(); requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      board: Array.from({ length: 8 }, (_, r) => board.slice(r * 8, r * 8 + 8)),
+      turn, mode, level, over, phase, winner, counts: countStones(board), finalCounts,
+      legal: [...legalNow.keys()].map(i => [i >> 3, i & 7]), lastMove: lastMove >= 0 ? [lastMove >> 3, lastMove & 7] : null,
+      history: history.length, passed: passPop ? passPop.color : 0, humanColor: mode === 'cpu' ? humanColor() : 0, blackSeat, first,
+      busy: busyT, tally: Object.assign({}, tally), stats: JSON.parse(JSON.stringify(stats)), showHints, showNums, overlay: overlay.classList.contains('show'),
+    }),
+    place: (r, c) => place(r * 8 + c),
+    legalMoves: p => [...legalMap(board, p || turn).keys()].map(i => [i >> 3, i & 7]),
+    setBoard: (rows, t) => {
+      gameSeq++; clearTimeout(cpuTimer); thinking = false;
+      board = new Array(SZ).fill(0);
+      rows.forEach((row, r) => { const cells = typeof row === 'string' ? row.split('') : row; cells.forEach((v, c) => { board[r * 8 + c] = (+v) || 0; }); });
+      if (t) turn = t; over = false; phase = 'play'; winner = 0; finalCounts = null; history = []; lastMove = -1;
+      anims = []; pops = []; passPop = null; banner = null; busyT = 0; endFx = 0; overlay.classList.remove('show');
+      refreshLegal(); updateButtons();
+    },
+    ai: lv => { const m = aiMove(lv || level); return m >= 0 ? [m >> 3, m & 7] : null; },
+    aiScores: lv => { aiMove(lv || level); return lastScores.map(s => [s.idx >> 3, s.idx & 7, s.v, s.depth, s.nodes]); },
+    setDepth: d => { STRONG_DEPTH = d; },
+    undo: () => undo(true),
+    start: (m, lv) => { if (lv) setLevel(lv); startGame(m); },
+    skipCpu: () => { clearTimeout(cpuTimer); busyT = 0; if (phase === 'play' && !over && mode === 'cpu' && turn === cpuColor()) cpuPlay(); },
+    setAuto: v => { autoCpu = !!v; if (!v) { clearTimeout(cpuTimer); thinking = false; } },
+    setFirst: s => { first = s; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    toggleHints, toggleNums, menu: goMenu,
+  };
+})();
+</script>
+</body>
+</html>
