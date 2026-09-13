@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3まいそろえ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 10px 30px;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none}
+  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
+  .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;white-space:nowrap}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn small{display:block;font-size:10px;color:var(--sub);letter-spacing:0;margin-top:2px}
+  .btn.tool{padding:7px 0 6px}
+  .btn.used{opacity:.35}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.92);
+    border-radius:6px;text-align:center;padding:14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.2}
+  #overlay .big.good{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.bad{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)} #overlay .note .c3{color:var(--gold)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:6px;padding:9px 16px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .modes button.hidden{display:none}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="何層にも重なった絵柄タイルを上から取って、下のトレイ（7枠）に集めるじっくりパズル。同じ絵が3枚そろうと弾けて消え、全部消せばクリア。レベルが上がるほど枚数と層が増え（配置は必ず解けるように生成）、道具3種「もどす・シャッフル・3まいだし」で切り抜けよう。タイマーなし、進んだレベルは自動保存。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/024-sanmai-soroe/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"3まいそろえ","description":"何層にも重なった絵柄タイルを上から取って、下のトレイ（7枠）に集めるじっくりパズル。同じ絵が3枚そろうと弾けて消え、全部消せばクリア。レベルが上がるほど枚数と層が増え（配置は必ず解けるように生成）、道具3種「もどす・シャッフル・3まいだし」で切り抜けよう。タイマーなし、進んだレベルは自動保存。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/024-sanmai-soroe/index.html","inLanguage":"ja","genre":"TILE MATCH","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="024"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>3まいそろえ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / じっくりパズル</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="612"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">3まいそろえ</div>
+    <div class="note" id="ovNote"></div>
+    <div class="modes">
+      <button id="btnMain">はじめる</button>
+      <button id="btnSub" class="alt">レベル1から</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn tool" id="toolUndo">↩ もどす<small>のこり 1回</small></button>
+  <button class="btn tool" id="toolShuffle">🔀 シャッフル<small>のこり 1回</small></button>
+  <button class="btn tool" id="toolOut">⤴ 3まいだし<small>のこり 1回</small></button>
+</div>
+<div class="row">
+  <button class="btn" id="retryBtn">このレベルを やりなおす</button>
+  <button class="btn" id="menuBtn">タイトルへ</button>
+</div>
+
+<div class="help">
+  <b>コツ</b>：トレイに 2まい ある 絵の「3まいめ」を さがそう。うえの タイルから とっていくと、かくれていた タイルが 見えてくるよ。<b>くらい タイル</b>は まだ とれない。<br>
+  <b>どうぐ</b>（レベルごとに 1回ずつ）：<i class="c1">もどす</i>＝トレイの さいごの 1まいを 場に もどす ／ <i class="c1">シャッフル</i>＝のこりの タイルの 絵を ならべかえる ／ <i class="c1">3まいだし</i>＝トレイの さきあたま 3まいを 場に だす。<br>
+  ⌨️ 矢印キーで えらんで Enter ／ Z＝もどす ／ S＝シャッフル ／ D＝3まいだし ／ R＝やりなおす
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  // 盤面：半タイル単位のグリッド。タイル1枚は 2x2 半単位を占める
+  const TW = 48, TH = 54, HX = 24, HY = 27, GW = 18, GH = 16;
+  const FX = 24, FY = 72, LX = -1, LY = -2;             // 層ごとの見た目オフセット
+  const TRAY_N = 7, SLOT_W = 56, SLOT_GAP = 6, TRAY_X = 26, TRAY_Y = 516, TRAY_H = 82, SLOT_Y = 530;
+  const TRAY_W = TRAY_N * SLOT_W + (TRAY_N - 1) * SLOT_GAP;
+  const KEY = 'picotto_sanmai_soroe_';
+  const MUTE_KEY = KEY + 'mute', LEVEL_KEY = KEY + 'level', BEST_KEY = KEY + 'best', CLEARS_KEY = KEY + 'clears';
+  const EMOJI = ['🍎', '🍇', '🍋', '🍓', '🌙', '⭐', '🐱', '🐸', '🍙', '🍩', '🌈', '🎈', '🐟', '🍄', '🔔'];
+  const GOLD = '#ffd166', CYAN = '#53e0d8', PINK = '#ff5fa2', VIOLET = '#a06bff', SUB = '#9d99c0';
+  const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+
+  // ---- rng (mulberry32) -------------------------------------------------------
+  let seed = (Math.random() * 4294967296) >>> 0;
+  function rng() { seed = (seed + 0x6D2B79F5) >>> 0; let t = seed; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+  const ri = n => Math.floor(rng() * n);
+  function shuffleArray(a) { for (let i = a.length - 1; i > 0; i--) { const j = ri(i + 1); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    pick() { tone('triangle', 520, 900, 0.09, 0.06); },
+    land() { tone('square', 230, 140, 0.05, 0.035); },
+    bad() { tone('sawtooth', 150, 80, 0.16, 0.05); },
+    triple(n) { const m = 1 + Math.min(n, 5) * 0.05; [660, 880, 1320].forEach((f, i) => tone('square', f * m, f * m, 0.12, 0.06, i * 0.06)); tone('sine', 1760 * m, 2400, 0.28, 0.03, 0.18); },
+    tool() { tone('triangle', 400, 640, 0.12, 0.05); tone('triangle', 640, 960, 0.12, 0.04, 0.1); },
+    shuffle() { for (let i = 0; i < 7; i++) tone('square', 320 + i * 70, 320 + i * 70, 0.04, 0.03, i * 0.045); },
+    clear() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.18, 0.07, i * 0.09)); tone('triangle', 2093, 2093, 0.5, 0.05, 0.55); },
+    over() { tone('sawtooth', 300, 70, 0.6, 0.07); tone('sawtooth', 220, 55, 0.7, 0.05, 0.15); },
+    hover() { tone('square', 900, 900, 0.03, 0.02); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ---------------------------------------------------------------
+  let tiles = [], tray = [], level = 1, best = 0, clears = 0, moves = 0;
+  let phase = 'title';               // title | play | cleared | over
+  let tools = { undo: 1, shuffle: 1, out: 1 };
+  let pickStack = [];                // トレイにある札を取った順に
+  let solutionOrder = null;          // 生成時の「解ける順序」（id列）
+  let combo = 0, lastClear = null, resultToken = 0;
+  // visuals
+  let flights = [], pops = [], particles = [], rings = [], texts = [], wiggles = {}, vis = {}, returning = {};
+  let anim = 0, shake = 0, shuffleAnim = 0, oldKinds = null, hoverId = null, cursorId = null, kbMode = false, flash = 0;
+  const overlay = document.getElementById('overlay');
+  const $ = id => document.getElementById(id);
+  try {
+    level = Math.max(1, parseInt(localStorage.getItem(LEVEL_KEY) || '1', 10) || 1);
+    best = parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
+    clears = parseInt(localStorage.getItem(CLEARS_KEY) || '0', 10) || 0;
+  } catch (e) {}
+  function save(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+  const byId = id => tiles.find(t => t.id === id) || tiles.find(t => String(t.id) === String(id)) || null;
+
+  // ---- geometry / coverage -------------------------------------------------
+  const overlaps = (a, b) => Math.abs(a.x - b.x) < 2 && Math.abs(a.y - b.y) < 2;
+  function computeCover() {
+    const alive = tiles.filter(t => !t.removed);
+    for (const t of tiles) if (t.removed) { t.cover = 0; t.covered = false; }
+    for (const a of alive) {
+      let q = 0;
+      for (const b of alive) {
+        if (b.layer <= a.layer || !overlaps(a, b)) continue;
+        for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) {
+          const qx = a.x + i, qy = a.y + j;
+          if (qx >= b.x && qx < b.x + 2 && qy >= b.y && qy < b.y + 2) q |= 1 << (i * 2 + j);
+        }
+      }
+      const n = (q & 1) + (q >> 1 & 1) + (q >> 2 & 1) + (q >> 3 & 1);
+      a.cover = n / 4; a.covered = n > 0;
+    }
+  }
+  const tilePx = t => ({ x: FX + t.x * HX + t.layer * LX, y: FY + t.y * HY + t.layer * LY });
+  const slotPx = i => ({ x: TRAY_X + i * (SLOT_W + SLOT_GAP) + (SLOT_W - TW) / 2, y: SLOT_Y });
+
+  // ---- level generation ----------------------------------------------------------
+  function levelParams(L) {
+    L = Math.max(1, L | 0);
+    return {
+      count: Math.min(150, 18 + (L - 1) * 9),                 // 常に3の倍数
+      layers: Math.min(8, 1 + Math.ceil(L / 2)),
+      kinds: Math.min(EMOJI.length, 4 + Math.floor(L * 0.8)),
+      groups: L <= 2 ? 2 : 3,                                  // 同時に「そろえかけ」にする絵柄の数（≦3 → トレイ6枚以内で解ける）
+      pOpen: Math.min(0.75, 0.45 + L * 0.03),
+      linger: Math.min(0.5, Math.max(0, (L - 2) * 0.06)),
+      stackChance: L >= 4 ? Math.min(0.3, (L - 3) * 0.06) : 0,
+    };
+  }
+  function growBlob(cands, n, cx, cy) {
+    if (n <= 0 || !cands.length) return [];
+    const key = c => c.x + ',' + c.y;
+    const pool = new Map(cands.map(c => [key(c), c]));
+    const chosen = [], chosenSet = new Set();
+    const dist = c => Math.hypot(c.x - cx, c.y - cy);
+    const sorted = cands.slice().sort((a, b) => dist(a) - dist(b));
+    let frontier = [];
+    const add = c => {
+      chosen.push(c); chosenSet.add(key(c));
+      for (const [dx, dy] of [[2, 0], [-2, 0], [0, 2], [0, -2]]) {
+        const k = (c.x + dx) + ',' + (c.y + dy); const nb = pool.get(k);
+        if (nb && !chosenSet.has(k) && frontier.indexOf(nb) < 0) frontier.push(nb);
+      }
+    };
+    while (chosen.length < n) {
+      if (!frontier.length) { const s = sorted.find(c => !chosenSet.has(key(c))); if (!s) break; add(s); continue; }
+      let idx;
+      if (rng() < 0.6) { let bd = Infinity; idx = 0; frontier.forEach((c, i) => { const d = dist(c) + rng() * 1.2; if (d < bd) { bd = d; idx = i; } }); }
+      else idx = ri(frontier.length);
+      const c = frontier.splice(idx, 1)[0]; add(c);
+    }
+    return chosen;
+  }
+  function genLayout(count, layers, stackChance, attempt) {
+    const decay = 0.72, w = []; let ws = 0;
+    for (let k = 0; k < layers; k++) { w.push(Math.pow(decay, k)); ws += w[k]; }
+    const target = w.map(v => Math.round(count * v / ws));
+    target[0] += count - target.reduce((a, b) => a + b, 0);
+    const need = Math.ceil(target[0] * 1.35) + attempt * 3;
+    let rows0 = 2, cols0 = 2;
+    for (rows0 = 2; rows0 <= 8; rows0++) { cols0 = Math.max(2, Math.min(9, Math.round(rows0 * 9 / 8))); if (cols0 * rows0 >= need) break; }
+    if (rows0 > 8) { rows0 = 8; cols0 = 9; }
+    const x0 = 9 - cols0, y0 = 8 - rows0;
+    const cx = x0 + cols0 - 1, cy = y0 + rows0 - 1;
+    let px = x0 & 1, py = y0 & 1;
+    const placed = [], perLayer = [];
+    let leftover = 0;
+    for (let k = 0; k < layers; k++) {
+      if (k > 0) {
+        let sh = [[1, 1], [1, 1], [1, 1], [1, 0], [0, 1]][ri(5)];
+        if (rng() < stackChance) sh = [0, 0];
+        px = (px + sh[0]) & 1; py = (py + sh[1]) & 1;
+      }
+      const inset = Math.floor(k / 2);
+      const xmin = Math.max(0, x0 + inset), xmax = Math.min(GW - 2, x0 + 2 * cols0 - 2 - inset);
+      const ymin = Math.max(0, y0 + inset), ymax = Math.min(GH - 2, y0 + 2 * rows0 - 2 - inset);
+      const below = perLayer[k - 1] || [];
+      const cands = [];
+      for (let x = xmin; x <= xmax; x++) {
+        if ((x & 1) !== px) continue;
+        for (let y = ymin; y <= ymax; y++) {
+          if ((y & 1) !== py) continue;
+          if (k > 0 && !below.some(b => overlaps(b, { x, y }))) continue;
+          cands.push({ x, y });
+        }
+      }
+      const want = target[k] + leftover;
+      const chosen = growBlob(cands, Math.min(want, cands.length), cx, cy);
+      leftover = want - chosen.length;
+      const lt = chosen.map(c => ({ x: c.x, y: c.y, layer: k }));
+      perLayer.push(lt); placed.push(...lt);
+    }
+    for (let k = 0; k < layers && leftover > 0; k++) {
+      const L = perLayer[k]; if (!L.length && k > 0) continue;
+      const pk = L.length ? [L[0].x & 1, L[0].y & 1] : [x0 & 1, y0 & 1];
+      const below = perLayer[k - 1] || [];
+      const free = [];
+      for (let x = 0; x <= GW - 2; x++) {
+        if ((x & 1) !== pk[0]) continue;
+        for (let y = 0; y <= GH - 2; y++) {
+          if ((y & 1) !== pk[1]) continue;
+          if (L.some(t => t.x === x && t.y === y)) continue;
+          if (k > 0 && !below.some(b => overlaps(b, { x, y }))) continue;
+          free.push({ x, y, d: Math.hypot(x - cx, y - cy) + rng() * 2 });
+        }
+      }
+      free.sort((a, b) => a.d - b.d);
+      while (free.length && leftover > 0) { const c = free.shift(); const t = { x: c.x, y: c.y, layer: k }; L.push(t); placed.push(t); leftover--; }
+    }
+    if (leftover > 0) return null;
+    return placed;
+  }
+  // 上に何も乗っていないタイルをランダムに取っていく順序（＝この順で取れば必ず全部取れる）
+  function removalOrder(list) {
+    const n = list.length, alive = new Array(n).fill(true), order = [];
+    const above = list.map((a, i) => { const arr = []; for (let j = 0; j < n; j++) if (j !== i && list[j].layer > a.layer && overlaps(a, list[j])) arr.push(j); return arr; });
+    for (let step = 0; step < n; step++) {
+      const free = [];
+      for (let i = 0; i < n; i++) if (alive[i] && above[i].every(j => !alive[j])) free.push(i);
+      if (!free.length) return null;
+      const i = free[ri(free.length)]; order.push(i); alive[i] = false;
+    }
+    return order;
+  }
+  // 取る順序に沿って絵柄を割り当てる。同時に「そろえかけ」にする絵柄は P.groups 種まで → その順で取ればトレイは最大 2*groups 枚
+  function assignKinds(n, P, open0, pool) {
+    const open = open0.map(g => ({ kind: g.kind, placed: g.placed }));
+    const out = []; let r = n;
+    const need = () => open.reduce((s, g) => s + 3 - g.placed, 0);
+    for (let i = 0; i < n; i++) {
+      const avail = pool.filter(k => !open.some(g => g.kind === k));
+      const canOpen = open.length < P.groups && r - 1 >= need() + 2 && avail.length > 0;
+      let g = null;
+      if (!open.length || (canOpen && rng() < P.pOpen)) {
+        const kind = avail.length ? avail[ri(avail.length)] : pool[ri(pool.length)];
+        g = { kind, placed: 0 }; open.push(g);
+      } else {
+        let cand = open; if (open.length >= 2 && rng() < P.linger) cand = open.slice(1);
+        g = cand[ri(cand.length)];
+      }
+      g.placed++; out.push(g.kind); r--;
+      if (g.placed >= 3) open.splice(open.indexOf(g), 1);
+    }
+    return out;
+  }
+  function genLevel(L) {
+    const P = levelParams(L);
+    const pool = EMOJI.slice(0, P.kinds);
+    for (let layers = P.layers; layers >= 1; layers--) {
+      for (let attempt = 0; attempt < 12; attempt++) {
+        const layout = genLayout(P.count, layers, P.stackChance, attempt);
+        if (!layout) continue;
+        const order = removalOrder(layout); if (!order) continue;
+        const kinds = assignKinds(order.length, P, [], pool);
+        const ts = layout.map((t, i) => ({ id: i + 1, x: t.x, y: t.y, layer: t.layer, kind: '', removed: false, covered: false, cover: 0, born: 1 }));
+        order.forEach((idx, i) => { ts[idx].kind = kinds[i]; });
+        return { tiles: ts, order: order.map(i => i + 1), params: P };
+      }
+    }
+    // 最終フォールバック：平置き
+    const ts = []; let id = 1;
+    for (let y = 0; y <= GH - 2 && ts.length < Math.min(P.count, 72); y += 2) for (let x = 0; x <= GW - 2 && ts.length < Math.min(P.count, 72); x += 2) ts.push({ id: id++, x, y, layer: 0, kind: '', removed: false, covered: false, cover: 0, born: 1 });
+    const n = ts.length - ts.length % 3; ts.length = n;
+    const order = ts.map((t, i) => i); shuffleArray(order);
+    const kinds = assignKinds(n, P, [], pool); order.forEach((idx, i) => { ts[idx].kind = kinds[i]; });
+    return { tiles: ts, order: order.map(i => i + 1), params: P };
+  }
+
+  // ---- game flow --------------------------------------------------------------
+  function resetVisuals() { flights = []; pops = []; particles = []; rings = []; texts = []; wiggles = {}; vis = {}; returning = {}; shake = 0; shuffleAnim = 0; oldKinds = null; hoverId = null; cursorId = null; flash = 0; }
+  function freshRound() { tray = []; pickStack = []; moves = 0; combo = 0; tools = { undo: 1, shuffle: 1, out: 1 }; resetVisuals(); resultToken++; }
+  function startLevel() {
+    const g = genLevel(level);
+    tiles = g.tiles; solutionOrder = g.order;
+    tiles.forEach((t, i) => { t.born = -0.02 * i - t.layer * 0.05; });
+    freshRound(); phase = 'play'; overlay.classList.remove('show');
+    computeCover(); updateButtons(); save(LEVEL_KEY, level);
+  }
+  function setTiles(arr) {
+    tiles = (arr || []).map((t, i) => ({ id: t.id != null ? t.id : i + 1, kind: t.kind == null ? EMOJI[0] : t.kind, x: +t.x || 0, y: +t.y || 0, layer: +t.layer || 0, removed: !!t.removed, covered: false, cover: 0, born: 1 }));
+    solutionOrder = null; freshRound(); phase = 'play'; overlay.classList.remove('show');
+    computeCover(); updateButtons();
+  }
+  function nextLevel() { level++; startLevel(); }
+  function resetLevel() { startLevel(); }
+  function resetAll() { level = 1; save(LEVEL_KEY, 1); startLevel(); }
+  function trayInsert(t) {
+    let idx = -1;
+    for (let i = tray.length - 1; i >= 0; i--) if (tray[i].kind === t.kind) { idx = i + 1; break; }
+    if (idx < 0) idx = tray.length;
+    tray.splice(idx, 0, t); return idx;
+  }
+  function canPick(t) { return phase === 'play' && !!t && !t.removed && !t.covered && tray.length < TRAY_N; }
+  function currentTrayPos(id) {
+    const f = flights.find(x => x.id === id); if (f) return flightPos(f);
+    const v = vis[id]; if (v) return { x: v.x, y: v.y };
+    const i = tray.findIndex(e => e.id === id); return slotPx(Math.max(0, i));
+  }
+  function pick(id) {
+    const t = byId(id);
+    if (!canPick(t)) return false;
+    let from = tilePx(t);
+    const rt = returning[t.id]; if (rt) { from = returnPos(rt, t); delete returning[t.id]; }
+    t.removed = true; moves++;
+    trayInsert(t); pickStack.push(t.id);
+    computeCover();
+    flights.push({ id: t.id, kind: t.kind, sx: from.x, sy: from.y, t: 0, dur: 0.32 });
+    SFX.pick();
+    let cnt = 0; for (const e of tray) if (e.kind === t.kind) cnt++;
+    if (cnt >= 3) {
+      const first = tray.findIndex(e => e.kind === t.kind);
+      const group = tray.splice(first, 3);
+      for (const g of group) { const k = pickStack.indexOf(g.id); if (k >= 0) pickStack.splice(k, 1); }
+      combo++;
+      pops.push({ ids: group.map(g => g.id), kind: t.kind, slots: [first, first + 1, first + 2], t: -1, combo });
+      for (const e of tray) if (vis[e.id]) vis[e.id].hold = 0.7;
+    } else combo = 0;
+    if (tiles.every(x => x.removed) && tray.length === 0) finishClear();
+    else if (tray.length >= TRAY_N) finishOver();
+    updateButtons();
+    return true;
+  }
+  function finishClear() {
+    phase = 'cleared'; lastClear = { level, moves };
+    if (level > best) { best = level; save(BEST_KEY, best); }
+    clears++; save(CLEARS_KEY, clears); save(LEVEL_KEY, level + 1);
+    SFX.clear(); shake = 0.35; flash = 0.6; celebrate();
+    const tok = ++resultToken; setTimeout(() => { if (tok === resultToken) showResult(); }, 1500);
+  }
+  function finishOver() {
+    phase = 'over'; SFX.over(); shake = 0.5;
+    const tok = ++resultToken; setTimeout(() => { if (tok === resultToken) showResult(); }, 1100);
+  }
+  // ---- tools --------------------------------------------------------------------
+  const TOOL_ALIAS = { undo: 'undo', back: 'undo', 'もどす': 'undo', shuffle: 'shuffle', 'シャッフル': 'shuffle', out: 'out', '3まいだし': 'out', three: 'out' };
+  function useTool(name) {
+    const n = TOOL_ALIAS[name];
+    if (!n || phase !== 'play' || tools[n] <= 0) return false;
+    let ok = false;
+    if (n === 'undo') ok = toolUndo(); else if (n === 'shuffle') ok = toolShuffle(); else ok = toolOut();
+    if (ok) { tools[n]--; if (n !== 'shuffle') SFX.tool(); updateButtons(); }
+    return ok;
+  }
+  function returnToField(entry) {
+    const t = byId(entry.id); if (!t) return;
+    const from = currentTrayPos(entry.id);
+    const i = tray.indexOf(entry); if (i >= 0) tray.splice(i, 1);
+    const k = pickStack.indexOf(entry.id); if (k >= 0) pickStack.splice(k, 1);
+    flights = flights.filter(f => f.id !== entry.id);
+    pops.forEach(p => { const j = p.ids.indexOf(entry.id); if (j >= 0) p.ids.splice(j, 1); });
+    delete vis[entry.id];
+    t.removed = false;
+    returning[t.id] = { tile: t, sx: from.x, sy: from.y, t: 0, dur: 0.38 };
+  }
+  function toolUndo() {
+    if (!pickStack.length) return false;
+    const id = pickStack[pickStack.length - 1];
+    const entry = tray.find(e => e.id === id); if (!entry) return false;
+    returnToField(entry); computeCover();
+    texts.push({ x: W / 2, y: TRAY_Y - 24, s: 'もどした！', t: 0, color: CYAN });
+    return true;
+  }
+  function toolOut() {
+    if (!tray.length) return false;
+    const group = tray.slice(0, 3);
+    for (const e of group) returnToField(e);
+    computeCover();
+    texts.push({ x: W / 2, y: TRAY_Y - 24, s: group.length + 'まい 場にだした！', t: 0, color: CYAN });
+    return true;
+  }
+  function toolShuffle() {
+    const alive = tiles.filter(t => !t.removed);
+    if (alive.length < 2) return false;
+    oldKinds = {}; for (const t of alive) oldKinds[t.id] = t.kind;
+    const P = levelParams(level);
+    const pool = EMOJI.slice(0, P.kinds);
+    for (const t of tiles) if (pool.indexOf(t.kind) < 0) pool.push(t.kind);
+    const open = [];
+    for (const e of tray) { const g = open.find(o => o.kind === e.kind); if (g) g.placed++; else open.push({ kind: e.kind, placed: 1 }); }
+    const need = open.reduce((s, g) => s + 3 - g.placed, 0);
+    const order = removalOrder(alive);
+    let kinds;
+    if (order && alive.length >= need && (alive.length - need) % 3 === 0) kinds = assignKinds(alive.length, P, open, pool);
+    else { kinds = shuffleArray(alive.map(t => t.kind)); }
+    (order || alive.map((t, i) => i)).forEach((ai, i) => { alive[ai].kind = kinds[i]; });
+    shuffleAnim = 0.0001; SFX.shuffle(); computeCover();
+    texts.push({ x: W / 2, y: FY + 200, s: 'シャッフル！', t: 0, color: GOLD });
+    return true;
+  }
+
+  // ---- overlay / buttons ------------------------------------------------------------
+  const RULES = 'かさなった タイルを タップして、したの <i class="c3">トレイ</i>に いれよう。<br>おなじ 絵が <b>3まい</b> そろうと きえる！ ぜんぶ きえたら クリア。<br>うえに なにも のっていない タイルだけ とれるよ。<br>トレイが <i class="c2">7こ いっぱい</i>に なると ゲームオーバー…<br><br>📱 タイルをタップ ／ ⌨️ 矢印キーで えらんで Enter';
+  function setOverlay(big, cls, note, mainLabel, subLabel) {
+    $('ovBig').innerHTML = big; $('ovBig').className = 'big ' + (cls || '');
+    $('ovNote').innerHTML = note; $('btnMain').textContent = mainLabel;
+    $('btnSub').textContent = subLabel || ''; $('btnSub').classList.toggle('hidden', !subLabel);
+    $('ovStats').textContent = (best ? 'さいこう レベル ' + best : 'まだ クリアなし') + (clears ? ' ・ クリア ' + clears + '回' : '');
+    overlay.classList.add('show');
+  }
+  function showTitle() {
+    if (phase === 'cleared') level++;
+    phase = 'title'; resultToken++;
+    if (!tiles.length) { tiles = genLevel(Math.min(level, 6)).tiles; computeCover(); }
+    setOverlay('3まいそろえ', '', RULES, 'はじめる（レベル ' + level + '）', level > 1 ? 'レベル1から' : '');
+    updateButtons();
+  }
+  function showResult() {
+    if (phase === 'cleared') {
+      const lc = lastClear || { level, moves };
+      setOverlay('クリア！', 'good', 'レベル <i class="c3">' + lc.level + '</i> クリア！ 手数 ' + lc.moves + '<br>つぎは レベル ' + (lc.level + 1) + ' だよ。タイルが ふえるよ！', 'つぎのレベルへ', 'レベル1から');
+    } else if (phase === 'over') {
+      setOverlay('ざんねん…', 'bad', 'トレイが いっぱいに なっちゃった。<br>のこり <i class="c2">' + tiles.filter(t => !t.removed).length + 'まい</i> だった…<br>どうぐも つかって もういちど！', 'もういちど（レベル ' + level + '）', 'レベル1から');
+    }
+  }
+  function updateButtons() {
+    const play = phase === 'play';
+    const b1 = $('toolUndo'), b2 = $('toolShuffle'), b3 = $('toolOut');
+    b1.disabled = !(play && tools.undo > 0 && pickStack.length > 0);
+    b2.disabled = !(play && tools.shuffle > 0);
+    b3.disabled = !(play && tools.out > 0 && tray.length > 0);
+    b1.classList.toggle('used', tools.undo <= 0); b2.classList.toggle('used', tools.shuffle <= 0); b3.classList.toggle('used', tools.out <= 0);
+    b1.querySelector('small').textContent = tools.undo > 0 ? 'のこり 1回' : 'つかった';
+    b2.querySelector('small').textContent = tools.shuffle > 0 ? 'のこり 1回' : 'つかった';
+    b3.querySelector('small').textContent = tools.out > 0 ? 'のこり 1回' : 'つかった';
+    $('retryBtn').disabled = phase === 'title';
+  }
+
+  // ---- fx helpers ----------------------------------------------------------------
+  function burst(x, y, n = 14) {
+    const cols = [GOLD, CYAN, PINK, '#ffffff'];
+    for (let i = 0; i < n; i++) { const a = rng() * Math.PI * 2, sp = 60 + rng() * 200; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 80, life: 0.5 + rng() * 0.6, c: cols[ri(cols.length)], s: 3 + rng() * 4 }); }
+  }
+  function celebrate() {
+    const cols = [GOLD, CYAN, PINK, VIOLET, '#ffffff'];
+    for (let i = 0; i < 90; i++) particles.push({ x: rng() * W, y: -10 - rng() * 200, vx: (rng() - .5) * 60, vy: 80 + rng() * 120, life: 2 + rng() * 1.5, c: cols[ri(cols.length)], s: 4 + rng() * 5, spin: rng() * 6 });
+    texts.push({ x: W / 2, y: FY + 180, s: 'ぜんぶ そろった！', t: 0, color: GOLD, big: true });
+  }
+  const easeOut = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
+  const easeOutBack = t => { t = Math.min(1, Math.max(0, t)); const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  function flightEnd(f) {
+    const i = tray.findIndex(e => e.id === f.id); if (i >= 0) return slotPx(i);
+    for (const p of pops) { const k = p.ids.indexOf(f.id); if (k >= 0) return slotPx(p.slots[k]); }
+    return slotPx(Math.min(TRAY_N - 1, tray.length));
+  }
+  function flightPos(f) { const e = flightEnd(f), k = easeOut(f.t); return { x: f.sx + (e.x - f.sx) * k, y: f.sy + (e.y - f.sy) * k - Math.sin(Math.PI * k) * 46 }; }
+  function returnPos(r, t) { const e = tilePx(t), k = easeOut(r.t); return { x: r.sx + (e.x - r.sx) * k, y: r.sy + (e.y - r.sy) * k - Math.sin(Math.PI * k) * 40 }; }
+  function onPopStart(p) {
+    const c = p.slots.map(s => slotPx(s)); const mx = (c[0].x + c[2].x) / 2 + TW / 2, my = c[0].y + TH / 2;
+    for (const s of c) burst(s.x + TW / 2, s.y + TH / 2, 12);
+    rings.push({ x: mx, y: my, r: 8, life: 0.55 });
+    texts = texts.filter(t => !t.pop);
+    texts.push({ x: Math.min(W - 90, Math.max(90, mx)), y: my - 56, s: p.combo >= 2 ? 'れんぞく ×' + p.combo + '！' : '3まい そろった！', t: 0, color: p.combo >= 2 ? PINK : GOLD, pop: true });
+    shake = Math.max(shake, 0.16); SFX.triple(p.combo);
+    for (const id of p.ids) delete vis[id];
+  }
+
+  // ---- input -----------------------------------------------------------------
+  function toCanvas(e) { const rc = cv.getBoundingClientRect(); return { x: (e.clientX - rc.left) * (W / rc.width), y: (e.clientY - rc.top) * (H / rc.height) }; }
+  function tileAt(x, y) {
+    const alive = tiles.filter(t => !t.removed).sort((a, b) => b.layer - a.layer || b.y - a.y || b.x - a.x);
+    for (const t of alive) { const p = tilePx(t); if (x >= p.x && x <= p.x + TW && y >= p.y && y <= p.y + TH) return t; }
+    return null;
+  }
+  function tap(x, y) {
+    if (phase !== 'play') return;
+    const t = tileAt(x, y); if (!t) return;
+    if (canPick(t)) { cursorId = t.id; pick(t.id); }
+    else { wiggles[t.id] = 0.35; SFX.bad(); const p = tilePx(t); texts.push({ x: p.x + TW / 2, y: p.y - 6, s: t.covered ? 'まだ とれない' : 'トレイが いっぱい', t: 0, color: PINK, small: true }); }
+  }
+  function pickables() { return tiles.filter(t => !t.removed && !t.covered); }
+  function moveCursor(dx, dy) {
+    const ps = pickables(); if (!ps.length) return;
+    let cur = ps.find(t => t.id === cursorId);
+    if (!cur) { cur = ps.slice().sort((a, b) => a.y - b.y || a.x - b.x)[0]; cursorId = cur.id; return; }
+    let bestT = null, bd = Infinity;
+    for (const t of ps) {
+      if (t === cur) continue;
+      const ex = t.x - cur.x, ey = t.y - cur.y, along = ex * dx + ey * dy;
+      if (along <= 0) continue;
+      const perp = Math.abs(ex * dy) + Math.abs(ey * dx); const d = along + perp * 2.5;
+      if (d < bd) { bd = d; bestT = t; }
+    }
+    if (bestT) { cursorId = bestT.id; SFX.hover(); }
+  }
+
+  // ---- update / draw ------------------------------------------------------------
+  function update(dt) {
+    anim += dt;
+    for (const t of tiles) if (t.born < 1) t.born = Math.min(1, t.born + dt * 2.4);
+    for (let i = flights.length - 1; i >= 0; i--) {
+      const f = flights[i]; f.t += dt / f.dur;
+      if (f.t >= 1) { const e = flightEnd(f); vis[f.id] = { x: e.x, y: e.y, sq: 0.2, hold: 0 }; flights.splice(i, 1); SFX.land(); }
+    }
+    for (const id in returning) { const r = returning[id]; r.t += dt / r.dur; if (r.t >= 1) delete returning[id]; }
+    for (let i = pops.length - 1; i >= 0; i--) {
+      const p = pops[i];
+      if (!p.ids.length) { pops.splice(i, 1); continue; }
+      if (p.t < 0) { if (!flights.some(f => p.ids.indexOf(f.id) >= 0)) { p.t = 0; onPopStart(p); } }
+      else { p.t += dt / 0.42; if (p.t >= 1) pops.splice(i, 1); }
+    }
+    tray.forEach((e, i) => {
+      let v = vis[e.id];
+      if (!v) { if (flights.some(f => f.id === e.id)) return; const s = slotPx(i); v = vis[e.id] = { x: s.x, y: s.y, sq: 0, hold: 0 }; }
+      if (v.hold > 0) v.hold -= dt; else { const s = slotPx(i); v.x += (s.x - v.x) * Math.min(1, dt * 12); v.y = s.y; }
+      if (v.sq > 0) v.sq -= dt;
+    });
+    particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 320 * dt; p.life -= dt; return p.life > 0 && p.y < H + 20; });
+    rings = rings.filter(r => { r.r += 160 * dt; r.life -= dt; return r.life > 0; });
+    texts = texts.filter(t => { t.t += dt; return t.t < 1.1; });
+    if (shake > 0) shake = Math.max(0, shake - dt);
+    if (flash > 0) flash = Math.max(0, flash - dt);
+    if (shuffleAnim > 0) { shuffleAnim += dt / 0.5; if (shuffleAnim >= 1) { shuffleAnim = 0; oldKinds = null; } }
+    for (const id in wiggles) { wiggles[id] -= dt; if (wiggles[id] <= 0) delete wiggles[id]; }
+  }
+  function rr(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+  function drawTile(x, y, kind, o) {
+    o = o || {};
+    const s = o.scale == null ? 1 : o.scale;
+    ctx.save(); ctx.globalAlpha = o.alpha == null ? 1 : o.alpha;
+    ctx.translate(x + TW / 2, y + TH / 2); if (o.rot) ctx.rotate(o.rot); ctx.scale(s * (o.sx || 1), s * (o.sy || 1)); ctx.translate(-TW / 2, -TH / 2);
+    ctx.fillStyle = 'rgba(0,0,0,.4)'; rr(3, 5, TW, TH, 8); ctx.fill();
+    ctx.fillStyle = '#b6a98c'; rr(0, 3, TW, TH - 3, 8); ctx.fill();
+    const g = ctx.createLinearGradient(0, 0, 0, TH); g.addColorStop(0, '#fffbf1'); g.addColorStop(1, '#ede3cf');
+    ctx.fillStyle = g; rr(0, 0, TW, TH - 4, 8); ctx.fill();
+    ctx.strokeStyle = 'rgba(110,90,50,.35)'; ctx.lineWidth = 1; rr(0.5, 0.5, TW - 1, TH - 5, 8); ctx.stroke();
+    ctx.font = '26px ' + EMOJI_FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#222';
+    ctx.fillText(kind, TW / 2, (TH - 4) / 2 + 1);
+    if (o.dim > 0) { ctx.fillStyle = 'rgba(12,12,30,' + (0.2 + 0.58 * o.dim).toFixed(3) + ')'; rr(0, 0, TW, TH, 8); ctx.fill(); }
+    if (o.glow) { ctx.strokeStyle = o.glow; ctx.lineWidth = 3; ctx.shadowColor = o.glow; ctx.shadowBlur = 14; rr(-1, -1, TW + 2, TH - 2, 9); ctx.stroke(); ctx.shadowBlur = 0; }
+    ctx.restore();
+  }
+  const STARS = []; for (let i = 0; i < 40; i++) STARS.push([(i * 97) % W, (i * 61) % (H - 20), (i % 3) * 0.4 + 0.6]);
+  function drawBackground() {
+    const g = ctx.createRadialGradient(W / 2, FY + 200, 20, W / 2, FY + 200, 360);
+    g.addColorStop(0, 'rgba(160,107,255,.16)'); g.addColorStop(1, 'rgba(14,14,28,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(232,228,255,.35)';
+    for (const [x, y, r] of STARS) { const tw = 0.5 + 0.5 * Math.sin(anim * 2 + x); ctx.globalAlpha = 0.25 + tw * 0.4; ctx.fillRect(x, y, r * 2, r * 2); }
+    ctx.globalAlpha = 1;
+    // 盤面パネル（うっすら）
+    ctx.fillStyle = 'rgba(28,28,56,.45)'; ctx.strokeStyle = 'rgba(160,107,255,.22)'; ctx.lineWidth = 1.5;
+    rr(FX - 10, FY - 10, GW * HX + 20, GH * HY + 20, 16); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(160,107,255,.10)';
+    for (let gx = 0; gx <= GW; gx += 2) for (let gy = 0; gy <= GH; gy += 2) ctx.fillRect(FX + gx * HX - 1, FY + gy * HY - 1, 2, 2);
+  }
+  function drawHeader() {
+    ctx.font = '18px DotGothic16, monospace'; ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left'; ctx.fillStyle = GOLD; ctx.shadowColor = GOLD; ctx.shadowBlur = 8; ctx.fillText('レベル ' + level, 20, 38); ctx.shadowBlur = 0;
+    const remain = tiles.filter(t => !t.removed).length;
+    ctx.textAlign = 'center'; ctx.fillStyle = CYAN; ctx.fillText('のこり ' + remain + 'まい', W / 2, 38);
+    ctx.textAlign = 'right'; ctx.fillStyle = SUB; ctx.fillText('手数 ' + moves, W - 20, 38);
+    ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.6)'; ctx.textAlign = 'center';
+    ctx.fillText('TILE MATCH ・ おなじ絵を 3まい', W / 2, 56);
+  }
+  function drawField() {
+    const list = tiles.filter(t => !t.removed && !returning[t.id] && t.born > 0).sort((a, b) => a.layer - b.layer || a.y - b.y || a.x - b.x);
+    for (const t of list) {
+      const p = tilePx(t); const o = { dim: t.cover };
+      if (t.born < 1) o.scale = Math.max(0.01, easeOutBack(t.born));
+      if (wiggles[t.id]) p.x += Math.sin(wiggles[t.id] * 45) * 3;
+      let kind = t.kind;
+      if (shuffleAnim > 0) { o.sx = Math.max(0.05, Math.abs(Math.cos(Math.PI * shuffleAnim))); p.y -= Math.sin(Math.PI * shuffleAnim) * 6; if (shuffleAnim < 0.5 && oldKinds && oldKinds[t.id]) kind = oldKinds[t.id]; }
+      if (!t.covered && phase === 'play' && ((hoverId != null && t.id === hoverId) || (kbMode && t.id === cursorId))) o.glow = GOLD;
+      drawTile(p.x, p.y, kind, o);
+    }
+    for (const id in returning) { const r = returning[id], t = r.tile; const q = returnPos(r, t); drawTile(q.x, q.y, t.kind, { scale: 1 + 0.15 * Math.sin(Math.PI * Math.min(1, r.t)) }); }
+  }
+  function drawTray() {
+    const warn = tray.length >= 6 ? 1 : tray.length >= 5 ? 0.5 : 0;
+    const pulse = (Math.sin(anim * 8) + 1) / 2;
+    ctx.fillStyle = '#17172f'; ctx.strokeStyle = warn === 1 ? PINK : warn ? GOLD : VIOLET; ctx.lineWidth = 3;
+    ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 10 + pulse * 16 * warn;
+    rr(TRAY_X - 12, TRAY_Y, TRAY_W + 24, TRAY_H, 14); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.font = '12px DotGothic16, monospace'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'right';
+    ctx.fillStyle = warn === 1 ? PINK : SUB; ctx.fillText('トレイ ' + tray.length + ' / ' + TRAY_N + (warn === 1 ? '  あぶない！' : ''), TRAY_X + TRAY_W + 10, TRAY_Y - 6);
+    ctx.textAlign = 'left'; ctx.fillStyle = SUB; ctx.fillText('おなじ絵が 3まいで きえる', TRAY_X - 10, TRAY_Y - 6);
+    for (let i = 0; i < TRAY_N; i++) {
+      const s = slotPx(i);
+      ctx.fillStyle = '#0a0a18'; rr(s.x - 4, s.y - 4, TW + 8, TH + 8, 8); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,107,255,.28)'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    tray.forEach(e => {
+      if (flights.some(f => f.id === e.id)) return;
+      const v = vis[e.id]; if (!v) return;
+      const sq = v.sq > 0 ? v.sq / 0.2 : 0;
+      drawTile(v.x, v.y + sq * 3, e.kind, { sx: 1 + sq * 0.16, sy: 1 - sq * 0.16 });
+    });
+    for (const p of pops) {
+      p.ids.forEach((id, k) => {
+        if (flights.some(f => f.id === id)) return;
+        const s = slotPx(p.slots[k]);
+        if (p.t < 0) { drawTile(s.x, s.y, p.kind, { glow: GOLD }); return; }
+        const t = p.t;
+        const sc = t < 0.3 ? 1 + t / 0.3 * 0.35 : Math.max(0.01, 1.35 * (1 - (t - 0.3) / 0.7));
+        drawTile(s.x, s.y - t * 10, p.kind, { scale: sc, alpha: 1 - Math.max(0, t - 0.3) / 0.7, rot: (k - 1) * t * 0.7, glow: GOLD });
+      });
+    }
+    for (const f of flights) { const q = flightPos(f), k = Math.min(1, f.t); drawTile(q.x, q.y, f.kind, { scale: 1 + 0.2 * Math.sin(Math.PI * k), rot: Math.sin(Math.PI * k) * 0.25 }); }
+  }
+  function drawFx() {
+    for (const p of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.5)); ctx.fillStyle = p.c; ctx.save(); ctx.translate(p.x, p.y); if (p.spin) ctx.rotate(anim * p.spin); ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s); ctx.restore(); }
+    ctx.globalAlpha = 1;
+    for (const r of rings) { ctx.globalAlpha = Math.max(0, r.life * 1.8); ctx.strokeStyle = GOLD; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    for (const t of texts) {
+      const k = t.t; ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.4;
+      ctx.font = (t.big ? 30 : t.small ? 13 : 20) + 'px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = t.color; ctx.shadowColor = t.color; ctx.shadowBlur = 12;
+      const y = t.y - easeOut(k) * 34, sc = t.big ? 1 + Math.sin(Math.min(1, k * 3) * Math.PI) * 0.25 : 1;
+      ctx.save(); ctx.translate(t.x, y); ctx.scale(sc, sc); ctx.fillText(t.s, 0, 0); ctx.restore(); ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+    if (flash > 0) { ctx.fillStyle = 'rgba(255,240,200,' + (flash * 0.35).toFixed(3) + ')'; ctx.fillRect(0, 0, W, H); }
+  }
+  function draw() {
+    ctx.save(); ctx.clearRect(0, 0, W, H);
+    if (shake > 0) { const a = shake * 7; ctx.translate((Math.random() - .5) * a, (Math.random() - .5) * a); }
+    drawBackground(); drawHeader(); drawField(); drawTray(); drawFx();
+    ctx.restore();
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- events (末尾で登録) --------------------------------------------------------
+  let pdown = null;
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); pdown = toCanvas(e); kbMode = false; });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); if (!pdown) return; const p = toCanvas(e); const moved = Math.hypot(p.x - pdown.x, p.y - pdown.y); pdown = null; if (moved > 20) return; tap(p.x, p.y); });
+  cv.addEventListener('pointercancel', () => { pdown = null; });
+  cv.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { const p = toCanvas(e); const t = tileAt(p.x, p.y); hoverId = t ? t.id : null; kbMode = false; } });
+  cv.addEventListener('pointerleave', () => { hoverId = null; });
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (overlay.classList.contains('show')) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audio(); $('btnMain').click(); } return; }
+    if (phase !== 'play') return;
+    const k = e.key.toLowerCase();
+    if (e.key === 'ArrowLeft') { e.preventDefault(); kbMode = true; moveCursor(-1, 0); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); kbMode = true; moveCursor(1, 0); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); kbMode = true; moveCursor(0, -1); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); kbMode = true; moveCursor(0, 1); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audio(); kbMode = true; const t = byId(cursorId); if (t && canPick(t)) pick(t.id); else moveCursor(0, 0); }
+    else if (k === 'z' || k === '1') { e.preventDefault(); audio(); useTool('undo'); }
+    else if (k === 's' || k === '2') { e.preventDefault(); audio(); useTool('shuffle'); }
+    else if (k === 'd' || k === '3') { e.preventDefault(); audio(); useTool('out'); }
+    else if (k === 'r') { e.preventDefault(); audio(); startLevel(); }
+  });
+  $('btnMain').addEventListener('click', () => { audio(); if (phase === 'cleared') nextLevel(); else startLevel(); });
+  $('btnSub').addEventListener('click', () => { audio(); resetAll(); });
+  $('toolUndo').addEventListener('click', () => { audio(); useTool('undo'); });
+  $('toolShuffle').addEventListener('click', () => { audio(); useTool('shuffle'); });
+  $('toolOut').addEventListener('click', () => { audio(); useTool('out'); });
+  $('retryBtn').addEventListener('click', () => { audio(); if (phase === 'title') return; startLevel(); });
+  $('menuBtn').addEventListener('click', () => { audio(); showTitle(); });
+  muteBtn.addEventListener('click', () => { muted = !muted; save(MUTE_KEY, muted ? '1' : '0'); drawMute(); });
+  drawMute();
+  showTitle();
+  requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      phase, level, best, clears, moves, cleared: phase === 'cleared', over: phase === 'over',
+      remaining: tiles.filter(t => !t.removed).length,
+      tiles: tiles.map(t => ({ id: t.id, kind: t.kind, x: t.x, y: t.y, layer: t.layer, removed: t.removed, covered: t.covered, cover: t.cover })),
+      tray: tray.map(e => ({ id: e.id, kind: e.kind })),
+      tools: Object.assign({}, tools), pickStack: pickStack.slice(), combo,
+    }),
+    pick, useTool, setTiles, nextLevel,
+    reset: resetLevel, resetAll,
+    start: lv => { if (lv) level = Math.max(1, lv | 0); else if (phase === 'cleared') level++; startLevel(); },
+    setLevel: lv => { level = Math.max(1, lv | 0); },
+    title: showTitle,
+    solution: () => solutionOrder ? solutionOrder.slice() : null,
+    generate: L => { const g = genLevel(L); return { tiles: g.tiles.map(t => ({ id: t.id, kind: t.kind, x: t.x, y: t.y, layer: t.layer })), order: g.order, params: g.params }; },
+    params: levelParams,
+    setSeed: n => { seed = (n >>> 0); },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); draw(); },
+    pickables: () => pickables().map(t => t.id),
+    pickAt: (x, y) => tap(x, y),
+  };
+})();
+</script>
+</body>
+</html>
