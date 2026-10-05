@@ -2140,7 +2140,9 @@
       const remote = data.games.filter(g => g && /^U[A-Z0-9]+$/.test(g.id) && typeof g.path === "string" && g.path === "https://picotto-secure-submissions.edamame2025.chatgpt.site/play/" + g.id);
       // Public metadata is escaped before insertion into HTML.
       const escapeText = v => String(v || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-      const safe = remote.map(g => ({...g, title:escapeText(g.title), description:escapeText(g.description), controls:escapeText(g.controls), author:escapeText(g.author), genre:escapeText(g.genre), age:escapeText(g.age), emoji:escapeText(g.emoji), date:/^\d{4}-\d{2}-\d{2}$/.test(g.date) ? g.date : "", color:/^#[a-fA-F0-9]{3,8}$/.test(g.color) ? g.color : "#7c5cff"}));
+      // 投稿作のキービジュアル（こちらで用意した分だけ。IDが無いものは絵文字のまま）
+      const REMOTE_COVERS = ["U09C2EA0", "U7F0B653", "UFF9E2DD", "U416C768", "UD97A47E", "U51EB0AD", "U5135AEB", "U0C519F5"];
+      const safe = remote.map(g => ({...g, title:escapeText(g.title), description:escapeText(g.description), controls:escapeText(g.controls), author:escapeText(g.author), genre:escapeText(g.genre), age:escapeText(g.age), emoji:escapeText(g.emoji), date:/^\d{4}-\d{2}-\d{2}$/.test(g.date) ? g.date : "", color:/^#[a-fA-F0-9]{3,8}$/.test(g.color) ? g.color : "#7c5cff", cover: REMOTE_COVERS.indexOf(g.id) >= 0 ? "assets/covers/" + g.id + ".webp" : ""}));
       if (safe.length) renderGames([...safe, ...localGames]);
     } catch (_) { /* Local games remain available. */ }
     finally { clearTimeout(timeout); }
