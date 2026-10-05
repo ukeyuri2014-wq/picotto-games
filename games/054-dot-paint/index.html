@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ドットおえかき｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:480px; --side:360px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:6px 10px 24px; overflow-x:hidden; touch-action:manipulation; -webkit-text-size-adjust:100%;
+  }
+  button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .backbar,header,#wrap,.help{width:min(var(--w),100%)}
+  .backbar{font-size:13px;display:flex;justify-content:space-between;align-items:center;min-height:32px;margin-bottom:2px}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 2px}
+  #mute-btn{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;min-width:46px;height:32px;cursor:pointer;padding:0 10px}
+  header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 4px}
+  h1{font-size:21px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.6);font-weight:400;line-height:1.3}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid var(--edge);border-radius:10px;background:#0e0e1c;overflow:hidden;--ref:104px}
+  #wrap[data-mode="free"]{--ref:64px}
+  .hud{position:relative;display:flex;gap:8px;padding:6px;background:var(--panel);border-bottom:1px solid var(--edge)}
+  .refbox{position:relative;flex:none;align-self:flex-start;width:var(--ref);border:2px solid var(--gold);border-radius:6px;overflow:hidden;cursor:pointer;touch-action:none;background:#23233f;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .refbox canvas{display:block;width:calc(var(--ref) - 4px);height:calc(var(--ref) - 4px)}
+  #refCap{display:block;font-size:11px;line-height:15px;text-align:center;white-space:nowrap;overflow:hidden;background:rgba(255,209,102,.16);color:var(--gold);pointer-events:none}
+  #wrap[data-mode="free"] #refCap{display:none}
+  body.wide #wrap[data-mode="free"] #refCap{display:block}
+  .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;justify-content:space-between}
+  .l1{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-size:14px;white-space:nowrap;line-height:1.3}
+  #hudName{overflow:hidden;text-overflow:ellipsis}
+  #hudName .hearts{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.7)} #hudName .lost{color:#4a4a72}
+  #hudRight{font-size:13px;color:var(--gold);flex:none}
+  #hudRight.hot{color:var(--pink)}
+  #hudRight .par{color:var(--cyan)} #hudRight .par.off{color:#5d5a86;text-decoration:line-through}
+  .tip{font-size:12px;line-height:1.35;color:var(--sub);height:2.7em;overflow:hidden}
+  .tip b{color:var(--gold);font-weight:400}
+  .tip.flash{animation:tipflash .5s}
+  @keyframes tipflash{0%{color:#fff;transform:translateX(3px)}100%{color:var(--sub);transform:none}}
+  #wrap[data-mode="free"] .l1{display:none}
+  #wrap[data-mode="free"] .tip{height:1.35em;white-space:nowrap;text-overflow:ellipsis}
+  .acts{display:flex;gap:4px}
+  .hb{flex:1;min-width:44px;height:44px;border-radius:9px;border:1px solid var(--edge);background:#15152a;font-size:13px;cursor:pointer;padding:0 2px;white-space:nowrap}
+  .hb.go{flex:3;background:var(--cyan);color:#08222a;border:none;font-size:17px;letter-spacing:1px;box-shadow:0 0 12px rgba(83,224,216,.45)}
+  .hb.go:active{transform:scale(.97)}
+  .hb.st{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:11px;color:var(--sub)}
+  .hb.st i{font-style:normal;font-size:16px;line-height:1.1;color:var(--ink)}
+  .hb.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.1)}
+  #peekBtn{flex:1.4;color:var(--gold);border-color:rgba(255,209,102,.5)}
+  #wrap:not([data-mode="free"]) .only-free{display:none}
+  #wrap[data-mode="free"] .only-goal{display:none}
+  #wrap:not(.mem) .only-mem{display:none}
+  #wrap:not(.canzoom) .only-zoom{display:none}
+  #wrap.mem.canzoom .hb.go{flex:2.2;font-size:15px;letter-spacing:0}
+  #wrap.mem.canzoom .hb.st{flex:1.2;min-width:46px}
+  #timebar{position:absolute;left:0;right:0;bottom:0;height:3px;background:#0a0a17;display:none}
+  #wrap[data-mode="rush"] #timebar{display:block}
+  #timebar i{display:block;height:100%;width:100%;background:var(--cyan);transform-origin:left}
+
+  #stage{display:flex;justify-content:center;background:#0a0a17}
+  #cv{display:block;width:var(--side);height:var(--side);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+  #palette{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:4px;background:var(--panel);border-top:1px solid var(--edge)}
+  .sw{height:40px;border-radius:8px;border:2px solid rgba(255,255,255,.2);cursor:pointer;padding:0;position:relative;min-width:0}
+  #wrap[data-mode="free"] .sw{height:40px}
+  .sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--gold),0 0 12px rgba(255,209,102,.75);z-index:1}
+  .sw.on::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#fff;border:2px solid #131322}
+  #tools{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:2px 4px 5px;background:var(--panel)}
+  .tb{height:48px;border-radius:9px;border:1px solid var(--edge);background:#15152a;cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;color:var(--sub);min-width:0;white-space:nowrap}
+  .tb svg{width:18px;height:18px;display:block;color:var(--ink)}
+  .tb.on{border-color:var(--cyan);color:var(--cyan);background:rgba(83,224,216,.12);box-shadow:0 0 10px rgba(83,224,216,.35)}
+  .tb.on svg{color:var(--cyan)}
+  #tMirror.on{border-color:var(--pink);color:var(--pink);background:rgba(255,95,162,.12);box-shadow:0 0 10px rgba(255,95,162,.35)}
+  #tMirror.on svg{color:var(--pink)}
+  .tb:active,.hb.st:active{transform:scale(.95)}
+
+  body.wide #wrap{display:grid;grid-template-columns:244px 1fr;--ref:228px}
+  body.wide #wrap[data-mode="free"]{--ref:228px}
+  body.wide .hud{grid-column:1;grid-row:1 / span 3;flex-direction:column;border-bottom:none;border-right:1px solid var(--edge);padding:7px}
+  body.wide #stage,body.wide #palette,body.wide #tools{grid-column:2}
+  body.wide .info{justify-content:flex-start;gap:8px}
+  body.wide .l1{font-size:16px;flex-wrap:wrap}
+  body.wide .tip,body.wide #wrap[data-mode="free"] .tip{height:auto;min-height:4.2em;font-size:13px;line-height:1.5;white-space:normal}
+  body.wide .acts{flex-wrap:wrap}
+  body.wide .hb{height:48px}
+  body.wide #wrap[data-mode="free"] #palette{grid-template-columns:repeat(16,1fr) !important}
+  body.wide #timebar{top:0;bottom:auto}
+
+  #overlay{position:absolute;inset:0;display:none;background:rgba(15,15,30,.985);padding:10px;overflow:auto;z-index:5;text-align:center}
+  #overlay.show{display:flex}
+  .ovin{margin:auto;width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .big{font-size:28px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.7);line-height:1.2}
+  .big.sm{font-size:21px;letter-spacing:2px}
+  .ovin.tight{gap:5px}
+  .big.win{color:var(--gold);text-shadow:0 0 18px rgba(255,209,102,.75)}
+  .big.lose{color:var(--pink);text-shadow:0 0 18px rgba(255,95,162,.75)}
+  .note{font-size:13px;line-height:1.7;color:var(--ink)}
+  .note b{color:var(--gold);font-weight:400}
+  .note i{font-style:normal;color:var(--cyan)}
+  .sub2{font-size:12px;color:var(--sub);line-height:1.5}
+  .demo{width:88px;height:88px;border:2px solid var(--cyan);border-radius:8px;box-shadow:0 0 16px rgba(83,224,216,.4)}
+  .mbtn{width:100%;max-width:340px;display:grid;grid-template-columns:42px 1fr;align-items:center;column-gap:8px;text-align:left;padding:7px 12px;border-radius:12px;border:2px solid var(--edge);background:var(--panel);cursor:pointer;min-height:58px}
+  .mbtn i{font-style:normal;font-size:27px;grid-row:1 / span 2;text-align:center;line-height:1}
+  .mbtn b{font-weight:400;font-size:17px;letter-spacing:1px;line-height:1.3}
+  .mbtn small{font-size:12px;color:var(--sub);line-height:1.3}
+  .mbtn.c1{border-color:var(--cyan);box-shadow:0 0 14px rgba(83,224,216,.35)} .mbtn.c1 b{color:var(--cyan)}
+  .mbtn.c2{border-color:rgba(255,95,162,.65)} .mbtn.c2 b{color:var(--pink)}
+  .mbtn.c3{border-color:rgba(255,209,102,.65)} .mbtn.c3 b{color:var(--gold)}
+  .mbtn:active,.ob:active,.tile:active{transform:scale(.97)}
+  .ob{font-size:15px;min-height:44px;padding:8px 18px;border-radius:10px;border:none;background:var(--cyan);color:#08222a;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(83,224,216,.45)}
+  .ob.alt{background:none;color:var(--ink);border:1px solid var(--edge);box-shadow:none;font-size:13px;padding:8px 12px}
+  .ob.warn{background:none;color:var(--pink);border:1px solid rgba(255,95,162,.6);box-shadow:none;font-size:13px;padding:8px 12px}
+  .ob.tog{background:none;color:var(--ink);border:1px solid var(--violet);box-shadow:none;font-size:13px;padding:6px 12px;min-height:40px}
+  .ob.tog.on{background:rgba(160,107,255,.22);color:#fff;box-shadow:0 0 12px rgba(160,107,255,.5)}
+  .brow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .tier{width:100%;font-size:12px;color:var(--sub);text-align:left;margin-top:1px;line-height:1.3}
+  .tier b{color:var(--ink);font-weight:400}
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:100%}
+  .tile{position:relative;padding:4px 2px 2px;border-radius:9px;border:2px solid var(--edge);background:var(--panel);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;min-height:44px;min-width:0}
+  .tile canvas{display:block;border-radius:4px}
+  .tile .st{font-size:12px;color:var(--gold);white-space:nowrap;line-height:1.35}
+  .tile .st u{text-decoration:none;color:#4a4a72}
+  .tile.done{border-color:rgba(83,224,216,.55)}
+  .tile.next{border-color:var(--gold);animation:pulse 1.2s infinite}
+  .tile .tag{position:absolute;top:-3px;left:-3px;font-size:11px;line-height:1.3;background:var(--gold);color:#221a00;border-radius:6px;padding:0 4px}
+  .tile .bdg{position:absolute;top:-3px;right:-3px;font-size:11px;line-height:1.3;background:#131322;border:1px solid var(--edge);border-radius:6px;padding:0 2px}
+  .tile.empty{cursor:default;opacity:.55}
+  .tile .lab{font-size:12px;color:var(--sub);line-height:1.35;white-space:nowrap}
+  .tile.arm{border-color:var(--pink)} .tile.arm .lab{color:var(--pink)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 rgba(255,209,102,0)}50%{box-shadow:0 0 14px rgba(255,209,102,.8)}}
+  .cmp{display:flex;gap:14px;justify-content:center}
+  .cmp figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--sub)}
+  .cmp canvas{display:block;border:2px solid var(--edge);border-radius:6px}
+  .pct{font-size:15px;line-height:1.1}
+  .pct b{font-size:32px;color:var(--cyan);font-weight:400;text-shadow:0 0 12px rgba(83,224,216,.6)}
+  .stars{font-size:34px;letter-spacing:6px;line-height:1.1}
+  .stars span{display:inline-block;color:#3d3d63}
+  .stars span.on{color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.8);animation:starpop .45s both}
+  @keyframes starpop{0%{transform:scale(0) rotate(-40deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+  .viewcv{display:block;border-radius:6px}
+
+  .help{color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  @media (max-width:350px){
+    h1{font-size:18px;letter-spacing:1px} .age-badge{letter-spacing:0;padding:3px 7px}
+    .tb{letter-spacing:-1px} .hb.st{letter-spacing:-1px}
+  }
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    #mute-btn:hover,.hb:not(.go):hover,.tb:hover,.ob.alt:hover,.tile:not(.empty):hover{border-color:var(--gold)}
+    .mbtn:hover{border-color:#fff}
+    .sw:hover{border-color:#fff}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="お手本を見て、おなじドット絵をかくゲーム。そっくり度で★がもらえる「お手本チャレンジ」20種、まいかい絵がかわる「モンスターラッシュ」、16×16・32×32の「じゆうモード」（5まいほぞん）であそべる。バケツ・スポイト・かがみペン・もどす つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/054-dot-paint/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ドットおえかき","description":"お手本を見て、おなじドット絵をかくゲーム。そっくり度で★がもらえる「お手本チャレンジ」20種、まいかい絵がかわる「モンスターラッシュ」、16×16・32×32の「じゆうモード」（5まいほぞん）であそべる。バケツ・スポイト・かがみペン・もどす つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/054-dot-paint/index.html","inLanguage":"ja","genre":"CREATIVE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="054"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ドットおえかき</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜</div>
+</header>
+
+<div id="wrap" data-mode="challenge">
+  <div class="hud" id="hud">
+    <div class="refbox" id="refBox"><canvas id="ref" width="104" height="104"></canvas><span id="refCap">お手本</span></div>
+    <div class="info">
+      <div class="l1"><span id="hudName">ハート</span><span id="hudRight"></span></div>
+      <div class="tip" id="hudTip"></div>
+      <div class="acts">
+        <button id="peekBtn" class="hb st only-mem"><i>👀</i><span id="peekLab">みる 0回</span></button>
+        <button id="doneBtn" class="hb go only-goal">できた！</button>
+        <button id="sizeBtn" class="hb st only-free"><i>▦</i><span id="sizeLab">16×16</span></button>
+        <button id="zoomBtn" class="hb st only-zoom"><i>🔍</i><span id="zoomLab">ズーム</span></button>
+        <button id="saveBtn" class="hb st only-free"><i>💾</i><span>ほぞん</span></button>
+        <button id="odaiBtn" class="hb st only-free"><i>🎲</i><span>おだい</span></button>
+        <button id="menuBtn" class="hb st"><i>≡</i><span>メニュー</span></button>
+      </div>
+    </div>
+    <div id="timebar"><i id="timeFill"></i></div>
+  </div>
+  <div id="stage"><canvas id="cv" width="360" height="360"></canvas></div>
+  <div id="palette"></div>
+  <div id="tools">
+    <button class="tb on" data-tool="pen"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 14l1-4 8-8 3 3-8 8z" fill="currentColor"/></svg><span>ペン</span></button>
+    <button class="tb" data-tool="eraser"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 2l5 5-6 6H5L2 10z" fill="currentColor"/><path d="M3 15h11" stroke="currentColor" stroke-width="1.5"/></svg><span>けしゴム</span></button>
+    <button class="tb" data-tool="bucket"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h9l-1 9H3z" fill="currentColor"/><path d="M3 6c0-5 7-5 7 0" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 8c1 2 1.8 2.8 1.8 4a1.8 1.8 0 01-3.6 0c0-1.2.8-2 1.8-4z" fill="currentColor"/></svg><span>バケツ</span></button>
+    <button class="tb" data-tool="pick"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11 1l4 4-2 2-1-1-6 6-4 2 2-4 6-6-1-1z" fill="currentColor"/></svg><span>スポイト</span></button>
+    <button class="tb" id="tMirror"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/><path d="M6 4v8L1 8zM10 4v8l5-4z" fill="currentColor"/></svg><span>かがみ</span></button>
+    <button class="tb" id="tUndo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2L1 6l5 4V7h4a3 3 0 010 6H5v2h5a5 5 0 000-10H6z" fill="currentColor"/></svg><span>もどす</span></button>
+    <button class="tb" id="tClear"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4h10v1.5H3zM6 2h4v2H6zM4 6.5h8l-1 8.5H5z" fill="currentColor"/></svg><span>リセット</span></button>
+  </div>
+  <div id="overlay" class="show"></div>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：「お手本チャレンジ」は、お手本を よく見て おなじ絵を かくゲーム。色をえらんで マスを タップ／なぞって ぬり、「できた！」で こたえあわせ。そっくり度 100%で ★3つ！<br>
+  めやす時間いないに 100%で ⚡はやがきバッジ、お手本を かくす「おぼえてモード」で 100%なら 👑。★を あつめると さくひんの わくが ふえるよ。<br>
+  「モンスターラッシュ」は まいかい ちがう モンスターが お手本。時間内に 80%いじょう そっくりに かけたら 次のレベルへ（♥が 0で おしまい）。<br>
+  「じゆうに かく」は 16×16・32×32 の すきな絵を かいて、5まいまで ほぞんできるよ。<br>
+  📱 タップ／なぞる で ぬる。お手本を おしている間は 大きく見られる。マスが 小さい絵は「🔍ズーム」で 大きくして、小窓を おすと 見る場所が うごく（2本ゆびでも）。 🖱 左クリックで ぬる／右クリックで けす。<br>
+  ⌨️ 矢印キーで カーソル、スペースで ぬる、数字キーで 色、P ペン・E けしゴム・F バケツ・I スポイト・M かがみ・Z もどす・Y やりなおす、Enterで「できた！」。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d'), ref = $('ref'), rctx = ref.getContext('2d');
+  const wrap = $('wrap'), hud = $('hud'), overlay = $('overlay'), palEl = $('palette'), toolsEl = $('tools'), refBox = $('refBox');
+  const RS = Math.min(2, window.devicePixelRatio || 1);
+  const KEY = 'ludot_dot-paint_';
+  const CH = '.roylgcunvptbwsek';
+  const COL = [null, '#ff4d5e', '#ff9a3c', '#ffd84a', '#a8e05f', '#3fbf6a', '#6fdcf0', '#3f8cff', '#3a4fb8', '#a06bff', '#ff8fc7', '#ffd3a8', '#a8683c', '#ffffff', '#a9aec4', '#5d6280', '#0d0d16'];
+  const CNAME = ['', 'あか', 'オレンジ', 'きいろ', 'きみどり', 'みどり', 'みずいろ', 'あお', 'こん', 'むらさき', 'ピンク', 'うすだいだい', 'ちゃいろ', 'しろ', 'はいいろ', 'こいはいいろ', 'くろ'];
+  const ALL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+  const NOTE = [0, 523, 587, 659, 784, 880, 1047, 1175, 392, 1319, 988, 698, 330, 1568, 494, 440, 262];
+  const BG1 = '#3a3a5e', BG2 = '#43436b', PLAIN = '#2a2a4a';
+  const TIERS = [['やさしい', '8×8'], ['ふつう', '12×12'], ['むずかしい', '16×16'], ['たつじん', '16×16・色が多い']];
+  const FRAMES = [{ name: 'ネオン', need: 0 }, { name: 'ゴールド', need: 10 }, { name: 'にじ', need: 25 }, { name: 'ほしぞら', need: 45 }];
+  const ODAI_A = ['そらとぶ', 'おこった', 'ねむそうな', 'にじいろの', 'ちいさな', 'おおきな', 'ロボットの', 'おばけの', 'ゆきの日の', 'うちゅうの', 'わらっている', 'さかさまの'];
+  const ODAI_B = ['ねこ', 'さかな', 'くるま', 'おうち', 'ケーキ', 'はな', 'きょうりゅう', 'とり', '木', 'くつ', 'かお', 'ほし', 'ふね', 'くだもの', 'ぼうし', 'いぬ'];
+  const RAW = [
+    [0,'ハート','.rr..rr./rprrrrrr/rprrrrrr/rrrrrrrr/.rrrrrr./..rrrr../...rr.../........'],
+    [0,'にこにこ','..yyyy../.yyyyyy./yykyykyy/yykyykyy/yyyyyyyy/ykyyyyky/.ykkkky./..yyyy..'],
+    [0,'おにぎり','...ww.../..wwww../..wrrw../.wwrrww./.wwwwww./wwkkkkww/wwkkkkww/.wkkkkw.'],
+    [0,'さくらんぼ','.....gll/....gll./...gg.../..g..g../.rr..rr./rwrrrwrr/rrrrrrrr/.rr..rr.'],
+    [0,'プリン','...rr.../..bbbb../.bbbbbb./.yyyyyy./.yyyyyy./yyyyyyyy/wwwwwwww/.wwwwww.'],
+    [1,'ねこ','.o........o./.oo......oo./.opo....opo./.oooooooooo./oooooooooooo/oookooookooo/oookooookooo/oooooppooooo/ooowwwwwwooo/.oowwwwwwoo./..oooooooo../............'],
+    [1,'チューリップ','............/..r..rr..r../..rr.rr.rr../..rrrrrrrr../..rrrrrrrr../..rrrrrrrr../...rrrrrr.../....rrrr..../.l...gg...l./.ll..gg..ll./..lllggglll./.....gg.....'],
+    [1,'てんとうむし','...k....k.../....kkkk..../...kwkkwk.../..rrrkkrrr../.rrkrkkrkrr./rrrrrkkrrrrr/rkrrrkkrrrkr/rrrrrkkrrrrr/rrrkrkkrkrrr/.rrrrkkrrrr./..rrrkkrrr../....rkkr....'],
+    [1,'ユーフォー','............/....cccc..../...cwccccc../..cwcccccc../..cccccccc../.ssssssssss./spsspsspssps/.ssssssssss./....yyyy..../...yyyyyy.../..yyyyyyyy../............'],
+    [1,'ゆきだるま','....uuuu..../....uuuu..../..uuuuuuuu../...wwwwww.../...wkwwkw.../...wwooww.../..rrrrrrrr../.wwrrwwwwww./.wwwwkkwwww./wwwwwwwwwwww/.wwwwkkwwww./..wwwwwwww..'],
+    [2,'パンダ','................/..kkk......kkk../.kkkkk....kkkkk./.kkkkwwwwwwkkkk./..kwwwwwwwwwwk../..wwwwwwwwwwww../.wwwkkwwwwkkwww./.wwkkkwwwwkkkww./.wwkwkwwwwkwkww./.wwkkwwwwwwkkww./.wwwwwwkkwwwwww./.wpwwwwkkwwwwpw./..wwwkwwwwkwww../..wwwwkkkkwwww../...wwwwwwwwww.../.....wwwwww.....'],
+    [2,'たこ','................/.....rrrrrr...../...rrrrrrrrrr.../..rrprrrrrrrrr../..rprrrrrrrrrr../.rrrrrrrrrrrrrr./.rrrwwrrrrwwrrr./.rrrwkrrrrwkrrr./.rrrrrrrrrrrrrr./.rrrrrrpprrrrrr./..rrrrrrrrrrrr../.rr.rr.rr.rr.rr./.rr.rr.rr.rr.rr./rr..rr.rr.rr..rr/r..rr..rr..rr..r/................'],
+    [2,'かぼちゃ','.......gg......./.......gg......./...ooooggoooo.../..oooooooooooo../.oooooooooooooo./.ooyyooooooyyoo./ooyyyyooooyyyyoo/oooooooyyooooooo/oooooooyyooooooo/oooooooooooooooo/ooyyyyyyyyyyyyoo/.oyyoyyyyyyoyyo./.oooyyyyyyyyooo./..oooooooooooo../...oooooooooo.../................'],
+    [2,'ききゅう','.....yuuuuy...../...ryyuuuuyyr.../..rryyuuuuyyrr../..rryyuuuuyyrr../..rryyuuuuyyrr../..rryyuuuuyyrr../...ryyuuuuyyr.../...ryyuuuuyyr.../....yyuuuuyy..../.....yuuuuy...../.....s....s...../......s..s....../......bbbb....../......bbbb....../......bbbb....../................'],
+    [2,'ロボット','.......yy......./.......ee......./...ssssssssss.../...ssssssssss.../...sccssssccs.../...sccssssccs.../...ssssssssss.../...ssrrrrrrss.../...ssssssssss.../......eeee....../.ssssssssssssss./.ss.ssuuuuss.ss./.ss.ssuyyuss.ss./.ee.ssssssss.ee./....ss....ss..../...eee....eee...'],
+    [3,'きつね','oo............oo/ooo..........ooo/owoo........oowo/owwoo......oowwo/owwoooooooooowwo/oooooooooooooooo/oooooooooooooooo/.ookkooooookkoo./.ookkooooookkoo./.wwooooooooooww./.wwwwoooooowwww./..wwwwwoowwwww../...wwwwkkwwww.../....wwwkkwww..../......wwww....../................'],
+    [3,'きょうりゅう','................/.........ggggg../........ggkgggg./........ggggggg./........gggg..../.y......gggggg../.gy....ggggl..../.gg...gggglllgg./.ggy.ggggglll.../..ggggggggll..../..yggggggggl..../...gggggggg...../....ggg.ggg...../....gg...gg...../....ggg..ggg..../................'],
+    [3,'くじら','....c.c........./.....c........../.....c.......u.u/...uuuuuu....uuu/..uuuuuuuuu...u./.uuuuuuuuuuu.uu./.ukuuuuuuuuuuuu./.uuuuuuuuuuuuu../.wwuuuuuuuuuu.../..wwwwuuuuuu..../...wwwwwww....../................/cc..ccc..ccc..cc/nnccnnnccnnnccnn/nnnnnnnnnnnnnnnn/nnnnnnnnnnnnnnnn'],
+    [3,'おしろ','.......rr......./......rrrr....../.r...rrrrrr...r./rrr..ssssss..rrr/sss..ssyyss..sss/sys..ssyyss..sys/sss..ssssss..sss/sss.s.ssss.s.sss/ssssssssssssssss/ssssssssssssssss/sysssssbbsssssys/ssssssbbbbssssss/ssssssbbbbssssss/ssssssbbbbssssss/eeeeeebbbbeeeeee/................'],
+    [3,'にじ','................/................/................/....rrrrrrrr..../...roooooooor.../..rooyyyyyyoor../.rooyggggggyoor./.royguuuuuugyor./roygguvvvvuggyor/royguv....vugyor/rwwwuv....vuwwwr/wwwww......wwwww/wwwwww....wwwwww/.wwww......wwww./................/................'],
+  ];
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false, ac = null, lastPaintSnd = 0;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = ac; if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    paint(v) { const n = performance.now(); if (n - lastPaintSnd < 38) return; lastPaintSnd = n; if (v) tone('square', NOTE[v], NOTE[v], 0.07, 0.04); else tone('triangle', 300, 190, 0.06, 0.05); },
+    bucket() { for (let i = 0; i < 6; i++) tone('triangle', 380 + i * 95, 470 + i * 95, 0.07, 0.045, i * 0.035); },
+    pick() { tone('sine', 880, 1500, 0.11, 0.07); },
+    undo() { tone('square', 560, 320, 0.09, 0.04); },
+    redo() { tone('square', 320, 560, 0.09, 0.04); },
+    click() { tone('square', 1000, 1000, 0.03, 0.03); },
+    deny() { tone('square', 210, 150, 0.1, 0.05); },
+    mirror(on) { tone('triangle', on ? 620 : 820, on ? 940 : 500, 0.1, 0.06); },
+    clear() { tone('sawtooth', 500, 90, 0.2, 0.04); },
+    good() { tone('triangle', 784, 784, 0.1, 0.07); tone('triangle', 1175, 1175, 0.16, 0.07, 0.09); },
+    ok(p) { tone('square', 480 + p * 760, 520 + p * 760, 0.045, 0.035); },
+    ng() { tone('sawtooth', 190, 140, 0.07, 0.045); },
+    star(i, d) { const f = [784, 988, 1319][i]; tone('triangle', f, f, 0.24, 0.09, d); tone('square', f * 2, f * 2, 0.08, 0.025, d); },
+    win() { [523, 659, 784, 1047].forEach((f, i) => tone('square', f, f, 0.16, 0.06, i * 0.08)); },
+    perfect() { [523, 659, 784, 1047, 1319, 1568, 2093].forEach((f, i) => tone('square', f, f, 0.2, 0.06, i * 0.08)); [784, 988, 1175, 1568].forEach((f, i) => tone('triangle', f, f, 0.3, 0.06, 0.6 + i * 0.07)); },
+    fail() { tone('triangle', 330, 196, 0.38, 0.08); tone('triangle', 247, 147, 0.4, 0.06, 0.16); },
+    lv() { tone('square', 660, 660, 0.08, 0.05); tone('square', 880, 880, 0.12, 0.05, 0.09); },
+    over() { [392, 330, 262, 196].forEach((f, i) => tone('triangle', f, f * 0.97, 0.3, 0.08, i * 0.17)); },
+    tick() { tone('square', 1400, 1400, 0.04, 0.04); },
+    save() { tone('triangle', 660, 660, 0.09, 0.07); tone('triangle', 990, 990, 0.09, 0.07, 0.08); tone('triangle', 1320, 1320, 0.2, 0.07, 0.16); },
+  };
+  const muteBtn = $('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- storage ---------------------------------------------------------------
+  function load(k, d) { try { const v = localStorage.getItem(KEY + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
+
+  // ---- data helpers ----------------------------------------------------------
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  function enc(a) { let s = ''; for (let i = 0; i < a.length; i++) s += CH[a[i]]; return s; }
+  function dec(s, n) { const a = new Uint8Array(n * n); if (typeof s === 'string' && s.length === n * n) for (let i = 0; i < a.length; i++) { const k = CH.indexOf(s[i]); a[i] = k > 0 ? k : 0; } return a; }
+  function colorsOf(a) { const cnt = {}; for (let i = 0; i < a.length; i++) if (a[i]) cnt[a[i]] = (cnt[a[i]] || 0) + 1; return Object.keys(cnt).map(Number).sort((x, y) => cnt[y] - cnt[x] || x - y); }
+  function isSym(a, n) { for (let y = 0; y < n; y++) for (let x = 0; x < n >> 1; x++) if (a[y * n + x] !== a[y * n + n - 1 - x]) return false; return true; }
+  function countOf(a) { let c = 0; for (let i = 0; i < a.length; i++) if (a[i]) c++; return c; }
+  // そっくり度：「お手本か自分のどちらかが ぬってあるマス」のうち、色まで同じマスのわりあい。
+  // お手本が からっぽの所を ぬった「はみ出し」は そのぶん さらに ひく（バケツで ぜんぶ ぬるだけでは ★が つかない）。何もかかなければ 0%。
+  function compare(a, m) {
+    let union = 0, ok = 0, extra = 0; const wrong = [];
+    for (let i = 0; i < m.length; i++) if (a[i] || m[i]) { union++; if (a[i] === m[i]) ok++; else { wrong.push(i); if (!m[i]) extra++; } }
+    return { match: union ? Math.max(0, Math.floor(100 * (ok - extra) / union)) : 0, ok, union, extra, wrong };
+  }
+  const starsOf = m => m >= 100 ? 3 : m >= 80 ? 2 : m >= 50 ? 1 : 0;
+  const fmtT = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const MODELS = RAW.map((r, i) => { const rows = r[2].split('/'), n = rows.length, data = dec(rows.join(''), n); return { id: i, tier: r[0], name: r[1], n, data, colors: colorsOf(data), sym: isSym(data, n) }; });
+  function rng(seed) { let a = (seed >>> 0) || 1; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function rushParams(lv) {
+    const L = clamp(lv, 1, 12) - 1;
+    return { n: [6, 8, 8, 10, 10, 10, 12, 12, 14, 14, 16, 16][L], cols: [2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5][L], asym: [0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4][L] };
+  }
+  // まいかい ちがう モンスターを つくる（左右たいしょうの からだ＋目＋つの・うで・足＋おなか・もよう）
+  function genMonster(seed, lv) {
+    const rnd = rng(seed), P = rushParams(lv), n = P.n, h = n >> 1;
+    const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+    const m = new Uint8Array(n * h);                 // 左半分。x = h-1 が まん中の線のとなり。1=からだ 2=つの・足
+    const ok = (x, y) => x >= 0 && x < h && y >= 0 && y < n;
+    const at = (x, y) => ok(x, y) ? m[y * h + x] : 0;
+    const put = (x, y, v) => { if (ok(x, y) && !m[y * h + x]) m[y * h + x] = v; };
+    const hornLen = n >= 8 ? ri(0, 2) : ri(0, 1), legLen = n >= 8 ? ri(1, 2) : 1;
+    const top = hornLen + (n >= 10 ? ri(0, 1) : 0), bottom = n - 1 - legLen, maxW = h - (n >= 8 ? 1 : 0);
+    const a = 0.42 + rnd() * 0.3, b = 0.25 + rnd() * 0.4, skew = rnd() * 0.5 - 0.25, wid = [];
+    for (let y = top; y <= bottom; y++) {
+      const t = (y - top) / Math.max(1, bottom - top), tt = clamp(t + skew * Math.sin(Math.PI * t), 0, 1);
+      let w = Math.round(maxW * Math.min(1, a + b * Math.sin(Math.PI * tt))) + (rnd() < 0.22 ? (rnd() < 0.5 ? -1 : 1) : 0);
+      w = clamp(w, 1, maxW); wid[y] = w;
+      for (let k = 0; k < w; k++) m[y * h + h - 1 - k] = 1;
+    }
+    const ey = clamp(top + Math.max(1, Math.round((bottom - top) * 0.28)), top, bottom), ex = Math.max(0, h - 2);
+    for (let k = 0; k < Math.min(maxW, 3); k++) m[ey * h + h - 1 - k] = 1;       // 目の まわりは かならず からだ
+    if (wid[ey] < 3) wid[ey] = Math.min(maxW, 3);
+    const legs = n >= 12 ? 2 : 1, used = {};
+    for (let k = 0; k < legs; k++) { const lx = h - 1 - ri(0, wid[bottom] - 1); if (used[lx]) continue; used[lx] = 1; for (let j = 1; j <= legLen; j++) put(lx, bottom + j, 2); }
+    if (hornLen) { const hx = h - 1 - ri(0, wid[top] - 1); for (let j = 1; j <= hornLen; j++) put(hx, top - j, 2); }
+    if (n >= 8 && bottom - top >= 3) { const ay = ri(top + 2, bottom - 1), xo = h - wid[ay]; put(xo - 1, ay, 1); if (rnd() < 0.6) put(xo - 2, ay + (rnd() < 0.5 ? -1 : 0), 1); }
+    const BODY = [1, 2, 3, 4, 5, 6, 7, 9, 10];
+    const pick = arr => arr[Math.floor(rnd() * arr.length)];
+    const A = pick(BODY); let rest = BODY.filter(c => c !== A);
+    const B = pick(rest); rest = rest.filter(c => c !== B); const C = pick(rest); rest = rest.filter(c => c !== C); const D = pick(rest);
+    const eye = (A === 2 || A === 3 || A === 4 || A === 6 || A === 10) ? 16 : 13;
+    const half = new Uint8Array(n * h);
+    for (let i = 0; i < m.length; i++) if (m[i]) half[i] = (m[i] === 2 && P.cols >= 4) ? C : A;
+    if (P.cols >= 3) { const bw = Math.max(1, maxW >> 1); for (let y = ey + 2; y <= bottom; y++) for (let x = h - bw; x < h; x++) if (at(x, y) === 1) half[y * h + x] = B; }
+    if (P.cols >= 5) { if (at(h - 1, ey + 1) === 1) half[(ey + 1) * h + h - 1] = D; for (let k = 0; k < 2; k++) { const i = Math.floor(rnd() * half.length); if (half[i] === A && i !== ey * h + ex) half[i] = D; } if (colorsOfHas(half, D) === 0) half[top * h + h - 1] = D; }
+    const eyes = [];
+    half[ey * h + ex] = eye; eyes.push(ey * n + ex, ey * n + n - 1 - ex);
+    if (n >= 12 && at(ex, ey + 1) === 1) { half[(ey + 1) * h + ex] = eye; eyes.push((ey + 1) * n + ex, (ey + 1) * n + n - 1 - ex); }
+    const g = new Uint8Array(n * n);
+    for (let y = 0; y < n; y++) for (let x = 0; x < h; x++) { const v = half[y * h + x]; g[y * n + x] = v; g[y * n + n - 1 - x] = v; }
+    const cols = colorsOf(g); let made = 0, guard = 0;
+    while (made < P.asym && guard++ < 400) {      // 上のレベルでは 右がわだけ 少しちがう（かがみペンだけでは おわらない）
+      const x = h + Math.floor(rnd() * h), y = Math.floor(rnd() * n), i = y * n + x;
+      if (eyes.indexOf(i) >= 0) continue;
+      if (g[i]) { const alt = cols.filter(c => c !== g[i] && c !== eye); if (!alt.length) continue; g[i] = pick(alt); made++; }
+      else { const nb = (x > 0 && g[i - 1]) || (x < n - 1 && g[i + 1]) || (y > 0 && g[i - n]) || (y < n - 1 && g[i + n]); if (!nb) continue; g[i] = A; made++; }
+    }
+    return { id: -1, tier: -1, name: 'モンスター', n, data: g, colors: colorsOf(g), sym: isSym(g, n), seed };
+  }
+  function colorsOfHas(a, v) { let c = 0; for (let i = 0; i < a.length; i++) if (a[i] === v) c++; return c; }
+  const parOf = mo => Math.round(8 + countOf(mo.data) * 0.8 + mo.colors.length * 3);     // はやがきバッジの めやす時間
+  function timeFor(mo, lv) { return Math.round(8 + countOf(mo.data) * Math.max(0.45, 1.36 - 0.06 * lv)); }
+
+  // ---- state ---------------------------------------------------------------
+  let phase = 'title';                       // title | select | play | judge | result | menu | slots | gallery | view | over
+  let mode = 'challenge';                    // challenge | rush | free
+  let N = 8, grid = new Uint8Array(64), pop = new Float64Array(64);
+  let model = MODELS[0], modelIdx = 0, palette = MODELS[0].colors.slice(), color = 1, tool = 'pen', mirror = false;
+  let undoStack = [], redoStack = [], stroke = null;
+  let view = { z: 1, ox: 0, oy: 0 };
+  let side = 360, refPx = 104, refDirty = true, T = 0;
+  let timer = 0, lastSec = -1, memory = false, memWanted = false, peeks = 0, peekHold = false, peekUntil = 0, memIntro = false;
+  let tut = null, paintCount = 0, wrongBlink = null, blinkUntil = 0, lastCell = null;
+  let judgeSt = null, lastResult = null;
+  let rush = { lv: 1, hearts: 3, score: 0, cleared: 0, timeLeft: 0, timeMax: 1, seed: 0 };
+  let prog = { s: {}, t: {}, c: {}, f: {} }, rushBest = { lv: 0, score: 0 }, slots = [null, null, null, null, null], freeSt = { size: 16, g16: '', g32: '' };
+  let particles = [], toast = null, hover = null, cur = { x: 4, y: 4 }, kb = false, spaceDown = false;
+  const pointers = new Map(); let pan = null, refDrag = false;
+  let demo = null, viewSt = null, counter = null, slotArm = -1, delArm = false, galleryFrom = 'title';
+
+  const totalStars = () => MODELS.reduce((s, m, i) => s + (prog.s[i] || 0), 0);
+  const totalCrowns = () => MODELS.reduce((s, m, i) => s + (prog.c[i] != null ? 1 : 0), 0);
+  const totalFast = () => MODELS.reduce((s, m, i) => s + (prog.f[i] ? 1 : 0), 0);
+  const framesOpen = () => { const st = totalStars(); return FRAMES.filter(f => st >= f.need).length; };
+  const isPeeking = () => mode !== 'free' && !!model && (memIntro || peekHold || T < peekUntil);
+  const overlayOn = () => overlay.classList.contains('show');
+
+  // ---- layout ----------------------------------------------------------------
+  function fit() {
+    const wide = window.innerWidth >= 820 && window.innerHeight >= 520;
+    document.body.classList.toggle('wide', wide);
+    const root = document.documentElement, vw = root.clientWidth || window.innerWidth;
+    const availW = Math.max(240, Math.min(vw - 20, wide ? 244 + 544 : 524));
+    root.style.setProperty('--w', availW + 'px');
+    const top = wrap.getBoundingClientRect().top + (window.scrollY || 0);
+    const hudH = wide ? 0 : hud.offsetHeight;
+    const maxW = (wide ? availW - 244 : availW) - 4;
+    let s = Math.floor(Math.min(maxW, window.innerHeight - top - hudH - palEl.offsetHeight - toolsEl.offsetHeight - 8));
+    s = clamp(s, 200, 540); if (s > maxW) s = Math.max(120, maxW);
+    side = s; root.style.setProperty('--side', s + 'px');
+    if (wide) root.style.setProperty('--w', (244 + s + 4) + 'px');
+    wrap.classList.toggle('canzoom', mode === 'free' || (N >= 14 && s / N < 28));      // スマホの 14×14・16×16 は マスが小さいので ズームを出す
+    cv.width = cv.height = Math.round(s * RS);
+    refPx = ref.clientWidth || 100; ref.width = ref.height = Math.round(refPx * RS);
+    refDirty = true;
+  }
+
+  // ---- editing ---------------------------------------------------------------
+  function pushUndo(snap) { undoStack.push(snap); if (undoStack.length > 60) undoStack.shift(); redoStack.length = 0; }
+  function cellPx() { return side / (N / view.z); }
+  function fxCell(x, y, v) {
+    if (particles.length > 260) return;
+    const cp = cellPx(), px = (x - view.ox + 0.5) * cp, py = (y - view.oy + 0.5) * cp;
+    if (px < 0 || py < 0 || px > side || py > side) return;
+    for (let k = 0; k < 3; k++) { const a = Math.random() * Math.PI * 2, sp = 40 + Math.random() * 70; particles.push({ x: px, y: py, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.3 + Math.random() * 0.25, col: v ? COL[v] : '#c9c6e6', size: Math.max(2, cp * 0.11) }); }
+  }
+  function setCell(x, y, v) { const i = y * N + x; if (grid[i] === v) return false; grid[i] = v; pop[i] = T || 0.001; fxCell(x, y, v); return true; }
+  function penAt(x, y, v) {
+    let ch = setCell(x, y, v);
+    if (mirror) { const mx = N - 1 - x; if (mx !== x) ch = setCell(mx, y, v) || ch; }
+    if (ch) { stroke.changed = true; SFX.paint(v); }
+    lastCell = { x, y };
+  }
+  function flood(x, y, v) {
+    const t = grid[y * N + x]; if (t === v) return 0;
+    const q = [[x, y, 0]]; grid[y * N + x] = v; pop[y * N + x] = T || 0.001; let head = 0;
+    while (head < q.length) {
+      const c = q[head++];
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(d => { const xx = c[0] + d[0], yy = c[1] + d[1]; if (xx < 0 || yy < 0 || xx >= N || yy >= N) return; const i = yy * N + xx; if (grid[i] !== t) return; grid[i] = v; pop[i] = (T || 0.001) + (c[2] + 1) * 16; q.push([xx, yy, c[2] + 1]); });
+    }
+    return q.length;
+  }
+  function pickAt(x, y) {
+    const v = grid[y * N + x];
+    if (!v) { if (!stroke.picked) setTip('そこは からっぽ。<b>色のマス</b>を さわってね'); return; }
+    if (palette.indexOf(v) < 0) return;
+    if (v !== color || !stroke.picked) SFX.pick();
+    color = v; stroke.picked = true; syncPalette();
+  }
+  function applyTool(x, y, first) {
+    const s = stroke;
+    if (s.tool === 'pen') penAt(x, y, color);
+    else if (s.tool === 'eraser') penAt(x, y, 0);
+    else if (s.tool === 'bucket') { if (first) { if (flood(x, y, color)) { s.changed = true; SFX.bucket(); } else SFX.deny(); lastCell = { x, y }; } }
+    else if (s.tool === 'pick') pickAt(x, y);
+  }
+  function lineCells(x0, y0, x1, y1, fn) {
+    const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1; let err = dx - dy, guard = 0;
+    while (guard++ < 200) { if (x0 === x1 && y0 === y1) break; const e2 = 2 * err; if (e2 > -dy) { err -= dy; x0 += sx; } if (e2 < dx) { err += dx; y0 += sy; } fn(x0, y0); }
+  }
+  function beginStroke(x, y, tl, pid, touch) {
+    if (stroke) endStroke();
+    if (x < 0 || y < 0 || x >= N || y >= N) return;
+    stroke = { tool: tl || tool, lx: x, ly: y, snap: grid.slice(), changed: false, pid: pid == null ? -1 : pid, touch: !!touch, picked: false };
+    applyTool(x, y, true);
+  }
+  function strokeTo(x, y) {
+    const s = stroke; if (!s || x < 0 || y < 0 || x >= N || y >= N) return;
+    if (s.lx < 0) { s.lx = x; s.ly = y; applyTool(x, y, false); return; }
+    if (x === s.lx && y === s.ly) return;
+    if (s.tool === 'pen' || s.tool === 'eraser') lineCells(s.lx, s.ly, x, y, (a, b) => applyTool(a, b, false)); else applyTool(x, y, false);
+    s.lx = x; s.ly = y;
+  }
+  function endStroke() {
+    const s = stroke; if (!s) return; stroke = null;
+    if (s.changed) { pushUndo(s.snap); afterEdit(); }
+    if (s.tool === 'pick' && s.picked && tool === 'pick') setTool('pen');
+  }
+  function cancelStroke() { const s = stroke; if (!s) return; stroke = null; if (s.changed) { grid.set(s.snap); refDirty = true; } }
+  function saveDraft() { if (mode !== 'free') return; freeSt.size = N; freeSt['g' + N] = enc(grid); save('free', freeSt); }
+  function afterEdit() {
+    refDirty = true; paintCount++;
+    if (mode === 'free') { saveDraft(); return; }
+    if (tut) {
+      if (tut.cells.every(i => grid[i] === tut.v)) { tut = null; save('tut', 1); SFX.good(); setTip('いいね！ あとは お手本を 見て つづきを かこう。<b>なぞる</b>と つづけて ぬれるよ'); }
+      return;
+    }
+    if (mode === 'challenge' && !memory) {
+      if (paintCount === 5 && model.sym && !mirror) setTip('💡 この絵は <b>左右おなじ形</b>。「かがみ」を おすと 左右いっきに ぬれるよ');
+      else if (paintCount === 11) setTip('お手本を <b>おしている間</b>、大きく 見られるよ。かけたら「できた！」');
+    }
+  }
+  function undo() {
+    if (phase !== 'play') return false; endStroke();
+    if (!undoStack.length) { SFX.deny(); return false; }
+    redoStack.push(grid.slice()); const prev = undoStack.pop();
+    for (let i = 0; i < grid.length; i++) if (grid[i] !== prev[i]) pop[i] = T || 0.001;
+    grid.set(prev); SFX.undo(); refDirty = true; saveDraft(); return true;
+  }
+  function redo() {
+    if (phase !== 'play') return false; endStroke();
+    if (!redoStack.length) { SFX.deny(); return false; }
+    undoStack.push(grid.slice()); const nx = redoStack.pop();
+    for (let i = 0; i < grid.length; i++) if (grid[i] !== nx[i]) pop[i] = T || 0.001;
+    grid.set(nx); SFX.redo(); refDirty = true; saveDraft(); return true;
+  }
+  function clearAll() {
+    if (phase !== 'play') return false; endStroke();
+    if (!countOf(grid)) { SFX.deny(); return false; }
+    pushUndo(grid.slice()); grid.fill(0); SFX.clear(); refDirty = true; saveDraft();
+    setTip('ぜんぶ けしたよ（「<b>もどす</b>」で もどせる）'); return true;
+  }
+  function setTool(t) { tool = t; syncTools(); syncPalette(); }
+  function setColor(v) { if (palette.indexOf(v) < 0) return; color = v; if (tool === 'eraser' || tool === 'pick') tool = 'pen'; syncTools(); syncPalette(); }
+  function setMirror(on) { mirror = !!on; syncTools(); }
+  function syncTools() { toolsEl.querySelectorAll('[data-tool]').forEach(b => b.classList.toggle('on', b.dataset.tool === tool)); $('tMirror').classList.toggle('on', mirror); }
+  function syncPalette() { for (const b of palEl.children) b.classList.toggle('on', +b.dataset.c === color && tool !== 'eraser'); }
+  function buildPalette() {
+    palEl.innerHTML = '';
+    palEl.style.gridTemplateColumns = 'repeat(' + (mode === 'free' ? 8 : Math.max(1, palette.length)) + ',1fr)';
+    palette.forEach(v => { const b = document.createElement('button'); b.className = 'sw'; b.style.background = COL[v]; b.dataset.c = v; b.setAttribute('aria-label', CNAME[v]); palEl.appendChild(b); });
+    syncPalette();
+  }
+  function setZoom(z) {
+    const maxZ = N >= 32 ? 4 : N >= 14 ? 2 : 1; if (z > maxZ || z < 1) z = 1;
+    const c = lastCell || { x: N >> 1, y: N >> 1 }, vis = N / z;
+    view.z = z; view.ox = clamp(Math.round(c.x + 0.5 - vis / 2), 0, N - vis); view.oy = clamp(Math.round(c.y + 0.5 - vis / 2), 0, N - vis);
+    refDirty = true; updateHud();
+  }
+  function followCursor() { const vis = N / view.z; if (cur.x < view.ox) view.ox = cur.x; if (cur.y < view.oy) view.oy = cur.y; if (cur.x >= view.ox + vis) view.ox = cur.x - vis + 1; if (cur.y >= view.oy + vis) view.oy = cur.y - vis + 1; refDirty = true; }
+
+  // ---- flow ------------------------------------------------------------------
+  function resetCanvas(n) {
+    N = n; grid = new Uint8Array(n * n); pop = new Float64Array(n * n); undoStack = []; redoStack = []; stroke = null;
+    view = { z: 1, ox: 0, oy: 0 }; cur = { x: n >> 1, y: n >> 1 }; hover = null; kb = false; spaceDown = false; wrongBlink = null; particles = []; judgeSt = null; paintCount = 0; lastCell = null; pointers.clear(); pan = null; peekHold = false; peekUntil = 0; toast = null;
+  }
+  function setMode(m) { mode = m; wrap.dataset.mode = m; wrap.classList.toggle('mem', m === 'challenge' && memory); }
+  function enterPlay() { phase = 'play'; closeOv(); buildPalette(); syncTools(); fit(); updateHud(); }
+  function startChallenge(i, mem) {
+    i = clamp(i | 0, 0, MODELS.length - 1); modelIdx = i; model = MODELS[i]; memory = !!mem; setMode('challenge'); resetCanvas(model.n);
+    palette = model.colors.slice(); color = palette[0]; tool = 'pen'; mirror = false; timer = 0; lastSec = -1; peeks = 0; lastResult = null; memIntro = memory;
+    tut = (!memory && i === 0 && !load('tut', 0)) ? { cells: [1, 2, 5, 6], v: 1 } : null;
+    enterPlay();
+    if (memory) setTip('<b>よく見て おぼえよう！</b> おぼえたら「おぼえた！」か 絵を タップ');
+    else if (tut) setTip('まず <b>ひかっている 4マス</b>を タップして ぬってみよう！');
+    else if (wrap.classList.contains('canzoom')) setTip('お手本と <b>おなじ絵</b>を かこう。マスが 小さい時は「<b>🔍ズーム</b>」で 大きくできるよ');
+    else setTip('お手本と <b>おなじ絵</b>を かこう。色をえらんで マスを ぬり、かけたら「できた！」');
+  }
+  function startRush() { rush = { lv: 1, hearts: 3, score: 0, cleared: 0, timeLeft: 0, timeMax: 1, seed: 0, prevLv: rushBest.lv, prevScore: rushBest.score }; nextRush(); }
+  function nextRush(seed) {
+    rush.seed = seed != null ? seed : Math.floor(Math.random() * 1e9) + 1;
+    model = genMonster(rush.seed, rush.lv); modelIdx = -1; memory = false; memIntro = false; tut = null; setMode('rush'); resetCanvas(model.n);
+    palette = model.colors.slice(); color = palette[0]; tool = 'pen'; mirror = false; lastResult = null;
+    rush.timeMax = rush.timeLeft = timeFor(model, rush.lv); lastSec = -1;
+    enterPlay();
+    setTip(wrap.classList.contains('canzoom') ? 'スコア <b>' + rush.score + '</b>てん。<b>80%</b>いじょうで クリア！ マスが 小さい時は「<b>🔍ズーム</b>」' : 'スコア <b>' + rush.score + '</b>てん。時間内に <b>80%</b>いじょう そっくりに かけたら クリア！');
+    toast = { text: 'Lv ' + rush.lv + ' スタート！', t: T, dur: 1300 }; SFX.lv();
+  }
+  function startFree(n) {
+    memory = false; memIntro = false; tut = null; model = null; modelIdx = -1; setMode('free');
+    if (n === 16 || n === 32) freeSt.size = n;
+    resetCanvas(freeSt.size === 32 ? 32 : 16); grid = dec(freeSt['g' + N], N);
+    palette = ALL; if (palette.indexOf(color) < 0) color = 1; tool = 'pen'; lastResult = null;
+    enterPlay();
+    if (N === 32 && side / 32 < 15) setZoom(2);
+    setTip(N === 32 && view.z > 1 ? '🔍 <b>小さい絵</b>を さわると 見る場所が うごく' : 'すきな絵を かこう！ 5まい ほぞん できるよ');
+    updateHud();
+  }
+  function judge(force) {
+    if (phase !== 'play' || mode === 'free' || !model) return false;
+    endStroke();
+    if (!force && !countOf(grid)) { SFX.deny(); setTip('まだ なにも かいていないよ。お手本を 見て <b>マスを ぬろう</b>！'); return false; }
+    judgeSt = { res: compare(grid, model.data), t: 0, dur: 0.45 + N * 0.05, row: -1 };
+    if (view.z > 1) { view = { z: 1, ox: 0, oy: 0 }; refDirty = true; updateHud(); }      // こたえあわせは ぜんたいで見せる
+    phase = 'judge'; peekHold = false; peekUntil = 0; memIntro = false; wrongBlink = null; hover = null;
+    setTip('こたえあわせ中… <b>✕</b> は ちがうマス');
+    return true;
+  }
+  function scanRow(y) {
+    let okc = 0, ng = 0; const cp = side / N;
+    for (let x = 0; x < N; x++) { const i = y * N + x; if (!grid[i] && !model.data[i]) continue; if (grid[i] === model.data[i]) { okc++; if (particles.length < 320) particles.push({ x: (x + 0.5) * cp, y: (y + 0.5) * cp, vx: (Math.random() - 0.5) * 60, vy: -30 - Math.random() * 50, life: 0.45, col: '#ffffff', size: Math.max(2, cp * 0.1) }); } else ng++; }
+    if (ng) SFX.ng(); else if (okc) SFX.ok(y / N);
+  }
+  function finishJudge() {
+    if (!judgeSt) return; const res = judgeSt.res; judgeSt = null;
+    if (mode === 'rush') finishRush(res); else finishChallenge(res);
+  }
+  function finishChallenge(res) {
+    const st = starsOf(res.match), i = modelIdx, before = totalStars(), par = parOf(model); let newTime = false, newCrown = false, fast = false;
+    if (st > (prog.s[i] || 0)) prog.s[i] = st;
+    if (res.match === 100) {
+      const t = Math.max(1, Math.round(timer));
+      if (prog.t[i] == null || t < prog.t[i]) { prog.t[i] = t; newTime = true; }
+      if (timer <= par) { fast = true; prog.f[i] = 1; }
+      if (memory && (prog.c[i] == null || peeks < prog.c[i])) { prog.c[i] = peeks; newCrown = true; }
+    }
+    save('prog', prog);
+    const after = totalStars(), frame = FRAMES.find(f => f.need > before && f.need <= after) || null;
+    lastResult = { mode: 'challenge', match: res.match, stars: st, wrong: res.wrong.slice(), time: Math.round(timer), newTime, newCrown, fast, par, frame: frame ? frame.name : null };
+    showResult(res, st, frame, newTime, newCrown, fast, par);
+  }
+  function saveRushBest() { let ch = false; if (rush.lv > rushBest.lv) { rushBest.lv = rush.lv; ch = true; } if (rush.score > rushBest.score) { rushBest.score = rush.score; ch = true; } if (ch) save('rush', rushBest); return ch; }
+  function finishRush(res) {
+    const pass = res.match >= 80, perfect = res.match === 100, lvWas = rush.lv; let gain = 0, healed = false;
+    if (pass) {
+      gain = res.match * lvWas + Math.floor(Math.max(0, rush.timeLeft)) * lvWas * 2 + (perfect ? 100 * lvWas : 0);
+      rush.score += gain; rush.cleared++; if (perfect && rush.hearts < 3) { rush.hearts++; healed = true; }
+      rush.lv++;
+    } else rush.hearts--;
+    saveRushBest();
+    const rec = rush.cleared > 0 && (rush.score > (rush.prevScore || 0) || rush.lv > (rush.prevLv || 0));      // はじめた時のベストと くらべる
+    lastResult = { mode: 'rush', match: res.match, pass, perfect, gain, hearts: rush.hearts, lv: rush.lv, score: rush.score, over: rush.hearts <= 0, record: rush.hearts <= 0 && rec };
+    if (rush.hearts <= 0) showRushOver(res, rec);
+    else showRushResult(res, pass, perfect, gain, healed, lvWas);
+    updateHud();
+  }
+
+  // ---- overlays --------------------------------------------------------------
+  function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function btn(html, act, cls, arg) { const b = el('button', cls || 'ob', html); b.dataset.act = act; if (arg != null) b.dataset.arg = arg; return b; }
+  function row() { const r = el('div', 'brow'); for (let i = 0; i < arguments.length; i++) if (arguments[i]) r.appendChild(arguments[i]); return r; }
+  function openOv(nodes, cls) { overlay.innerHTML = ''; const inn = el('div', 'ovin' + (cls ? ' ' + cls : '')); nodes.forEach(n => { if (n) inn.appendChild(n); }); overlay.appendChild(inn); overlay.classList.add('show'); overlay.scrollTop = 0; counter = null; }
+  function closeOv() { overlay.classList.remove('show'); overlay.innerHTML = ''; counter = null; viewSt = null; }
+  function drawArt(c, data, n, px, plain, lines) {
+    const cp = px / n;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) { const v = data[y * n + x]; c.fillStyle = v ? COL[v] : plain ? PLAIN : ((x + y) & 1 ? BG1 : BG2); c.fillRect(Math.floor(x * cp), Math.floor(y * cp), Math.ceil(cp), Math.ceil(cp)); }
+    if (lines) {
+      c.lineWidth = 1;
+      for (let k = 1; k < n; k++) { const major = k === n / 2 || (n % 4 === 0 && k % 4 === 0); c.strokeStyle = k === n / 2 ? 'rgba(83,224,216,.75)' : major ? 'rgba(255,255,255,.4)' : 'rgba(10,10,23,.28)'; const p = Math.round(k * cp) + 0.5; c.beginPath(); c.moveTo(p, 0); c.lineTo(p, px); c.moveTo(0, p); c.lineTo(px, p); c.stroke(); }
+    }
+  }
+  function artCanvas(data, n, px, plain) { const c = document.createElement('canvas'); c.width = c.height = Math.round(px * RS); c.style.width = c.style.height = px + 'px'; const x = c.getContext('2d'); x.scale(RS, RS); drawArt(x, data, n, px, plain, false); return c; }
+  const starHtml = n => '★'.repeat(n) + '<u>' + '★'.repeat(3 - n) + '</u>';
+  function nextDemo() { const m = MODELS[Math.floor(Math.random() * MODELS.length)], order = []; for (let i = 0; i < m.data.length; i++) if (m.data[i]) order.push(i); demo = { m, order, p: 0 }; }
+  function showTitle() {
+    phase = 'title'; stroke = null; judgeSt = null; nextDemo();
+    const dc = el('canvas', 'demo'); dc.id = 'demoCv'; dc.width = dc.height = Math.round(88 * RS);
+    const note = el('div', 'note', 'お手本を <b>よく見て</b>、おなじ絵を かこう！<br>色をえらんで マスを <b>タップ／なぞって</b> ぬる。<br>「できた！」で こたえあわせ。<b>★3つ</b>を めざせ！');
+    const mk = (cls, ic, name, sub, act) => { const b = el('button', 'mbtn ' + cls, '<i>' + ic + '</i><b>' + name + '</b><small>' + sub + '</small>'); b.dataset.act = act; return b; };
+    const b1 = mk('c1', '🖼', 'お手本チャレンジ', 'はじめての人は ここから！ ★ ' + totalStars() + '/60', 'challenge'); b1.dataset.default = '1';
+    const b2 = mk('c2', '👾', 'モンスターラッシュ', 'まいかい ちがう お手本。' + (rushBest.lv ? '🏆 Lv ' + rushBest.lv + '・' + rushBest.score + 'てん' : 'どこまで いける？'), 'rush');
+    const b3 = mk('c3', '🎨', 'じゆうに かく', '16×16・32×32／5まい ほぞん', 'free');
+    const n = slots.filter(Boolean).length;
+    openOv([dc, el('div', 'big', 'ドットおえかき'), note, b1, b2, b3, btn('🖼 さくひんを 見る（' + n + 'まい）', 'gallery', 'ob alt', 'title')]);
+  }
+  function showSelect() {
+    phase = 'select';
+    const nodes = [el('div', 'big sm', 'お手本を えらぼう'), el('div', 'sub2', '★ ' + totalStars() + '/60　👑 ' + totalCrowns() + '/20　⚡ ' + totalFast() + '/20')];
+    const tpx = side >= 420 ? 60 : 46;
+    let next = MODELS.findIndex((m, i) => !(prog.s[i] > 0)); if (next < 0) next = MODELS.findIndex((m, i) => (prog.s[i] || 0) < 3);
+    TIERS.forEach((t, ti) => {
+      nodes.push(el('div', 'tier', '<b>' + t[0] + '</b>　' + t[1]));
+      const g = el('div', 'tiles');
+      MODELS.forEach((m, i) => {
+        if (m.tier !== ti) return;
+        const st = prog.s[i] || 0, b = el('button', 'tile' + (st === 3 ? ' done' : '') + (i === next ? ' next' : ''));
+        b.dataset.act = 'pick'; b.dataset.arg = i; b.setAttribute('aria-label', m.name); if (i === next) b.dataset.default = '1';
+        b.appendChild(artCanvas(m.data, m.n, tpx, false));
+        b.appendChild(el('span', 'st', starHtml(st)));
+        if (prog.c[i] != null || prog.f[i]) b.appendChild(el('span', 'bdg', (prog.c[i] != null ? '👑' : '') + (prog.f[i] ? '⚡' : '')));
+        if (i === next) b.appendChild(el('span', 'tag', 'つぎ'));
+        g.appendChild(b);
+      });
+      nodes.push(g);
+    });
+    const back = btn('← もどる', 'title', 'ob alt'); back.dataset.esc = '1';
+    nodes.push(row(btn('🧠 おぼえてモード：' + (memWanted ? 'ON' : 'OFF'), 'mem', 'ob tog' + (memWanted ? ' on' : '')), back));
+    nodes.push(el('div', 'sub2', memWanted ? 'ON：お手本が かくれるよ。100%で 👑（見た回数も きろく）' : '100%で ★3つ／⚡は めやす時間いないの はやがきバッジ'));
+    openOv(nodes, 'tight');
+  }
+  function cmpNode(res) {
+    const px = side >= 470 ? 168 : Math.min(128, Math.floor((side - 60) / 2));
+    const f1 = el('figure'), f2 = el('figure');
+    f1.appendChild(artCanvas(model.data, model.n, px, false)); f1.appendChild(el('span', '', 'お手本'));
+    f2.appendChild(artCanvas(grid, N, px, false)); f2.appendChild(el('span', '', 'きみの絵'));
+    const c = el('div', 'cmp'); c.appendChild(f1); c.appendChild(f2);
+    const pct = el('div', 'pct', 'そっくり度 <b id="pctNum">0%</b>');
+    return [c, pct];
+  }
+  function startCounter(to) { counter = { id: 'pctNum', to, cur: 0 }; }
+  function starsNode(st) { const s = el('div', 'stars'); for (let i = 0; i < 3; i++) { const sp = el('span', i < st ? 'on' : '', '★'); sp.style.animationDelay = (0.55 + i * 0.28) + 's'; s.appendChild(sp); if (i < st) SFX.star(i, 0.55 + i * 0.28); } return s; }
+  function showResult(res, st, frame, newTime, newCrown, fast, par) {
+    phase = 'result';
+    const perfect = res.match === 100, i = modelIdx;
+    const big = el('div', 'big ' + (perfect ? 'win' : st ? '' : 'lose'), perfect ? 'かんぺき！' : st === 2 ? 'おしい！' : st === 1 ? 'いいかんじ！' : 'もうすこし…');
+    let n = perfect ? 'タイム <b>' + fmtT(timer) + '</b>' + (newTime ? '　<i>🏆 しんきろく！</i>' : '（ベスト ' + fmtT(prog.t[i]) + '）') : 'ちがうマスが <b>' + res.wrong.length + 'こ</b> あるよ。「なおす」で つづきから！';
+    if (perfect) n += fast ? '<br>⚡ <i>はやがきバッジ ゲット！</i>（めやす ' + fmtT(par) + ' いない）' : '<br>⚡ ' + fmtT(par) + ' いないに かけると「はやがきバッジ」';
+    if (perfect && memory) n += '<br>👑 おぼえて クリア！ 見た回数 <b>' + peeks + '回</b>' + (newCrown ? ' <i>🏆</i>' : '');
+    if (frame) n += '<br>🎁 さくひんの わく「<b>' + frame.name + '</b>」を ゲット！';
+    n += '<br>これまでの ★ <b>' + totalStars() + '</b>/60';
+    const fix = perfect ? null : btn('なおす', 'fix'), nx = btn('つぎの お手本 →', 'next', perfect ? 'ob' : 'ob alt');
+    (perfect ? nx : fix).dataset.default = '1';
+    const sel = btn('えらぶ', 'select', 'ob alt'); sel.dataset.esc = '1';
+    openOv([big].concat(cmpNode(res), [starsNode(st), el('div', 'note', n), row(fix, nx, sel)]));
+    startCounter(res.match);
+    if (perfect) { SFX.perfect(); confetti(); } else if (st) SFX.win(); else SFX.fail();
+  }
+  function showRushResult(res, pass, perfect, gain, healed, lvWas) {
+    phase = 'result';
+    const big = el('div', 'big ' + (pass ? 'win' : 'lose'), perfect ? 'パーフェクト！' : pass ? 'Lv ' + lvWas + ' クリア！' : 'ざんねん…');
+    let n = pass ? '<b>+' + gain + 'てん</b>（ごうけい ' + rush.score + 'てん）' + (healed ? '<br><i>パーフェクトで ♥ かいふく！</i>' : '') + '<br>つぎは <b>Lv ' + rush.lv + '</b>'
+      : '80%に とどかなかった… ♥ が 1つ へったよ<br>のこり <i style="color:#ff5fa2">' + '♥'.repeat(rush.hearts) + '</i>　もういちど <b>Lv ' + rush.lv + '</b> に ちょうせん';
+    const nx = btn('つぎへ →', 'rushNext'); nx.dataset.default = '1';
+    const q = btn('やめる', 'rushQuit', 'ob alt'); q.dataset.esc = '1';
+    openOv([big].concat(cmpNode(res), [el('div', 'note', n), row(nx, q)]));
+    startCounter(res.match);
+    if (perfect) { SFX.perfect(); confetti(); } else if (pass) SFX.win(); else SFX.fail();
+  }
+  function showRushOver(res, rec) {
+    phase = 'over';
+    const n = '<b>Lv ' + rush.lv + '</b> まで いけた！（クリア ' + rush.cleared + 'かい）<br>スコア <b>' + rush.score + 'てん</b>' + (rec ? '　<i>🏆 しんきろく！</i>' : '') + '<br>ベスト：Lv ' + rushBest.lv + '・' + rushBest.score + 'てん';
+    const again = btn('もういちど', 'rush'); again.dataset.default = '1';
+    const t = btn('タイトルへ', 'title', 'ob alt'); t.dataset.esc = '1';
+    openOv([el('div', 'big lose', 'おしまい！')].concat(cmpNode(res), [el('div', 'note', n), row(again, t)]));
+    startCounter(res.match); SFX.over();
+  }
+  function openMenu() {
+    if (phase !== 'play') return; endStroke(); phase = 'menu';
+    const how = mode === 'challenge' ? 'お手本と <b>おなじ絵</b>を かいて「できた！」。<br>50%で★・80%で★★・<b>100%で★★★</b>。<br>⚡は めやす時間いないに 100%で もらえる バッジ。'
+      : mode === 'rush' ? 'モンスターを まねして かこう。<br>時間内に <b>80%</b>いじょうで クリア、とどかないと ♥が へる。<br>パーフェクト（100%）で ♥ かいふく！'
+      : '色と どうぐを えらんで すきに かこう。<br><b>かがみ</b>＝左右いっしょに ぬれる／<b>スポイト</b>＝絵の色を ひろう。<br>「💾 ほぞん」した絵は「さくひん」で かざれるよ。';
+    const res = btn('つづける', 'resume'); res.dataset.default = '1'; res.dataset.esc = '1';
+    const nodes = [el('div', 'big', 'ひとやすみ'), el('div', 'note', how), res];
+    if (mode === 'challenge') nodes.push(row(btn('さいしょから かく', 'restart', 'ob alt'), btn('お手本を えらぶ', 'select', 'ob alt')));
+    if (mode === 'free') nodes.push(btn('🖼 さくひんを 見る', 'gallery', 'ob alt', 'play'));
+    nodes.push(btn(mode === 'rush' ? 'やめて タイトルへ' : 'タイトルへ', mode === 'rush' ? 'rushQuit' : 'title', 'ob alt'));
+    openOv(nodes);
+  }
+  function slotTile(i, act) {
+    const s = slots[i], b = el('button', 'tile' + (s ? '' : (act === 'view' ? ' empty' : '')) + (slotArm === i && act === 'slot' ? ' arm' : ''));
+    b.dataset.act = act; b.dataset.arg = i;
+    if (s) b.appendChild(artCanvas(dec(s.d, s.n), s.n, 52, true)); else { const ph = el('span', 'lab', 'あき'); ph.style.cssText = 'display:flex;align-items:center;justify-content:center;width:52px;height:52px'; b.appendChild(ph); }
+    b.appendChild(el('span', 'lab', slotArm === i && act === 'slot' ? 'うわがき' : String(i + 1)));
+    if (!s && act === 'view') b.disabled = true;
+    return b;
+  }
+  function showSlots() {
+    if (!countOf(grid)) { SFX.deny(); setTip('かいてから ほぞんしよう'); return; }
+    endStroke(); phase = 'slots';
+    const g = el('div', 'tiles'); for (let i = 0; i < 5; i++) g.appendChild(slotTile(i, 'slot'));
+    const back = btn('やめる', 'resume', 'ob alt'); back.dataset.esc = '1';
+    openOv([el('div', 'big', 'どこに ほぞん する？'), el('div', 'sub2', slotArm >= 0 ? 'もういちど おすと、前の絵に <b>うわがき</b>するよ' : 'ばんごうを えらんでね（絵がある所は うわがき）'), g, back]);
+  }
+  function showGallery(from) {
+    if (from) galleryFrom = from; phase = 'gallery'; delArm = false;
+    const g = el('div', 'tiles'); for (let i = 0; i < 5; i++) g.appendChild(slotTile(i, 'view'));
+    const any = slots.some(Boolean);
+    const back = btn('← もどる', galleryFrom === 'play' ? 'resume' : 'title', 'ob alt'); back.dataset.esc = '1';
+    openOv([el('div', 'big', 'さくひん'), el('div', 'sub2', any ? '見たい絵を えらんでね' : 'まだ ないよ。「じゆうに かく」で かいて「💾 ほぞん」しよう'), g, any ? null : btn('🎨 じゆうに かく', 'free'), back]);
+  }
+  function showView(i) {
+    const s = slots[i]; if (!s) return; phase = 'view';
+    const px = Math.min(240, Math.max(150, side - 110));
+    const c = el('canvas', 'viewcv'); c.id = 'viewCv'; c.width = c.height = Math.round(px * RS); c.style.width = c.style.height = px + 'px';
+    const open = framesOpen(), f = clamp(s.f | 0, 0, open - 1), nxt = FRAMES[open];
+    const info = 'さくひん ' + (i + 1) + '（' + s.n + '×' + s.n + '）' + (nxt ? '<br>つぎの わく「' + nxt.name + '」は ★' + nxt.need + ' で つかえる（いま ★' + totalStars() + '）' : '<br>わくは ぜんぶ つかえるよ！');
+    const load = btn('つづきを かく', 'load', 'ob', i); load.dataset.default = '1';
+    const back = btn('← もどる', 'gallery', 'ob alt'); back.dataset.esc = '1';
+    openOv([c, el('div', 'sub2', info), row(load, open > 1 ? btn('わく：' + FRAMES[f].name + ' ▶', 'frame', 'ob alt', i) : null), row(btn(delArm ? 'ほんとうに けす' : 'けす', 'del', 'ob warn', i), back)]);
+    viewSt = { i, data: dec(s.d, s.n), n: s.n, f, px };
+  }
+  function doAct(act, arg) {
+    const a = arg == null ? null : +arg;
+    switch (act) {
+      case 'challenge': case 'select': SFX.click(); if (mode === 'rush') saveRushBest(); showSelect(); break;
+      case 'mem': memWanted = !memWanted; SFX.mirror(memWanted); showSelect(); break;
+      case 'pick': SFX.lv(); startChallenge(a, memWanted); break;
+      case 'rush': startRush(); break;
+      case 'rushNext': nextRush(); break;
+      case 'rushQuit': SFX.click(); saveRushBest(); showTitle(); break;
+      case 'free': SFX.lv(); startFree(); break;
+      case 'title': SFX.click(); showTitle(); break;
+      case 'resume': SFX.click(); slotArm = -1; phase = 'play'; closeOv(); break;
+      case 'restart': SFX.click(); startChallenge(modelIdx, memory); break;
+      case 'fix': {
+        SFX.click(); phase = 'play'; closeOv();
+        if (!memory && lastResult) { wrongBlink = lastResult.wrong; blinkUntil = T + 6000; setTip('ちがう マスが <b>赤く</b> ひかったよ。なおして もういちど「できた！」'); }
+        else setTip('どこが ちがうかな？「👀 みる」で たしかめて なおそう');
+        break;
+      }
+      case 'next': SFX.lv(); startChallenge((modelIdx + 1) % MODELS.length, memory); break;
+      case 'gallery': SFX.click(); showGallery(arg === 'title' || arg === 'play' ? arg : null); break;
+      case 'slot': {
+        if (slots[a] && slotArm !== a) { slotArm = a; SFX.click(); showSlots(); break; }
+        slots[a] = { n: N, d: enc(grid), f: slots[a] ? (slots[a].f | 0) : 0 }; save('slots', slots); slotArm = -1;
+        phase = 'play'; closeOv(); SFX.save(); toast = { text: (a + 1) + 'ばんに ほぞんしたよ！', t: T, dur: 1500 }; setTip('メニューの「<b>さくひん</b>」で かざれるよ'); confetti();
+        break;
+      }
+      case 'view': if (slots[a]) { SFX.click(); delArm = false; showView(a); } break;
+      case 'frame': { const s = slots[a]; if (!s || framesOpen() < 2) break; s.f = ((s.f | 0) + 1) % framesOpen(); save('slots', slots); SFX.pick(); showView(a); break; }
+      case 'del': {
+        if (!delArm) { delArm = true; SFX.deny(); showView(a); break; }
+        slots[a] = null; save('slots', slots); delArm = false; SFX.clear(); showGallery(); break;
+      }
+      case 'load': {
+        const s = slots[a]; if (!s) break; SFX.lv(); startFree(s.n);
+        const d = dec(s.d, s.n); let same = true; for (let i = 0; i < d.length; i++) if (d[i] !== grid[i]) { same = false; break; }
+        if (!same) { if (countOf(grid)) pushUndo(grid.slice()); grid.set(d); saveDraft(); refDirty = true; }
+        break;
+      }
+    }
+  }
+
+  // ---- hud -------------------------------------------------------------------
+  function setTip(html) { const t = $('hudTip'); t.innerHTML = html; t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }
+  function updateHud() {
+    const nm = $('hudName'), rt = $('hudRight');
+    if (mode === 'challenge') { nm.textContent = (modelIdx + 1) + '. ' + model.name; const par = parOf(model); rt.innerHTML = '⏱ ' + fmtT(timer) + (timer <= par ? ' <span class="par">⚡' + fmtT(par) + '</span>' : ' <span class="par off">⚡' + fmtT(par) + '</span>'); rt.classList.remove('hot'); }
+    else if (mode === 'rush') { nm.innerHTML = 'Lv ' + rush.lv + '　<span class="hearts">' + '♥'.repeat(Math.max(0, rush.hearts)) + '</span><span class="lost">' + '♥'.repeat(3 - Math.max(0, rush.hearts)) + '</span>'; const s = Math.max(0, Math.ceil(rush.timeLeft)); rt.textContent = '⏱ ' + fmtT(s); rt.classList.toggle('hot', s <= 10); $('timeFill').style.transform = 'scaleX(' + clamp(rush.timeLeft / rush.timeMax, 0, 1) + ')'; $('timeFill').style.background = s <= 10 ? '#ff5fa2' : '#53e0d8'; }
+    $('refCap').textContent = mode === 'free' ? 'ぜんたい' : memory ? (view.z > 1 ? 'じぶんの絵' : 'かくれ中') : view.z > 1 ? 'おすと うごく' : 'お手本・おすと大';
+    $('peekLab').textContent = 'みる ' + peeks + '回'; $('doneBtn').textContent = memIntro ? 'おぼえた！' : 'できた！';
+    $('sizeLab').textContent = N + '×' + N;
+    $('zoomLab').textContent = view.z > 1 ? (memory ? '×' + view.z : 'ズーム×' + view.z) : 'ズーム';
+    $('zoomBtn').classList.toggle('on', view.z > 1);
+  }
+
+  // ---- fx / update -------------------------------------------------------------
+  function confetti() {
+    const cols = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#ffffff', '#a8e05f'];
+    for (let i = 0; i < 70; i++) particles.push({ x: Math.random() * side, y: -10 - Math.random() * 60, vx: (Math.random() - 0.5) * 80, vy: 60 + Math.random() * 160, life: 1.4 + Math.random() * 0.9, col: cols[i % cols.length], size: 3 + Math.random() * 2, g: 120 });
+  }
+  function update(dt) {
+    T += dt * 1000;
+    if (phase === 'play' && !memIntro) {
+      if (mode === 'challenge') { timer += dt; const s = Math.floor(timer); if (s !== lastSec) { lastSec = s; updateHud(); } }
+      else if (mode === 'rush') {
+        rush.timeLeft -= dt; const s = Math.ceil(rush.timeLeft);
+        if (s !== lastSec) { lastSec = s; if (s <= 5 && s > 0) SFX.tick(); updateHud(); }
+        if (rush.timeLeft <= 0) { rush.timeLeft = 0; toast = { text: 'じかんぎれ！', t: T, dur: 900 }; judge(true); }
+        else $('timeFill').style.transform = 'scaleX(' + clamp(rush.timeLeft / rush.timeMax, 0, 1) + ')';
+      }
+    }
+    if (phase === 'judge' && judgeSt) {
+      const j = judgeSt; j.t += dt; const rowNow = Math.min(N - 1, Math.floor(Math.min(1, j.t / j.dur) * N));
+      while (j.row < rowNow) { j.row++; scanRow(j.row); }
+      if (j.t >= j.dur + 0.4) finishJudge();
+    }
+    if (phase === 'title' && demo) { demo.p += dt * Math.max(26, demo.order.length / 2.4); if (demo.p > demo.order.length + 40) nextDemo(); }
+    if (counter) { const e = $(counter.id); if (!e) counter = null; else { counter.cur = Math.min(counter.to, counter.cur + dt * 130); e.textContent = Math.floor(counter.cur) + '%'; if (counter.cur >= counter.to) counter = null; } }
+    if (wrongBlink && T > blinkUntil) wrongBlink = null;
+    if (toast && T - toast.t > toast.dur) toast = null;
+    if (particles.length) particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.g || 260) * dt; p.life -= dt; return p.life > 0; });
+  }
+
+  // ---- draw --------------------------------------------------------------------
+  function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r); c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath(); }
+  function label(text, cy, col) {
+    ctx.font = '16px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const w = Math.min(side - 16, ctx.measureText(text).width + 28);
+    ctx.fillStyle = 'rgba(12,12,26,.86)'; rr(ctx, side / 2 - w / 2, cy - 17, w, 34, 10); ctx.fill();
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = col; ctx.fillText(text, side / 2, cy + 1, side - 30);
+  }
+  function outlineCell(x, y, col, lw) {
+    const cp = cellPx(), vis = N / view.z; if (x < view.ox || y < view.oy || x >= view.ox + vis || y >= view.oy + vis) return;
+    ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.strokeRect((x - view.ox) * cp + lw / 2, (y - view.oy) * cp + lw / 2, cp - lw, cp - lw);
+  }
+  function draw() {
+    const S = side; ctx.setTransform(RS, 0, 0, RS, 0, 0); ctx.clearRect(0, 0, S, S);
+    const pk = isPeeking(), full = pk && (memIntro || T < peekUntil);      // おぼえてモードの「みる」は いつも ぜんたい
+    const src = pk ? model.data : grid, vis = full ? N : N / view.z, cp = S / vis, x0 = full ? 0 : view.ox, y0 = full ? 0 : view.oy;
+    for (let y = 0; y < vis; y++) for (let x = 0; x < vis; x++) {
+      const gx = x + x0, gy = y + y0, i = gy * N + gx, px = Math.floor(x * cp), py = Math.floor(y * cp), w = Math.ceil(cp);
+      ctx.fillStyle = (gx + gy) & 1 ? BG1 : BG2; ctx.fillRect(px, py, w, w);
+      const v = src[i]; if (!v) continue;
+      let k = 1;
+      if (!pk && pop[i]) { const p = (T - pop[i]) / 140; if (p < 0) continue; if (p < 1) k = 0.5 + 0.5 * easeOutBack(p); else pop[i] = 0; }
+      ctx.fillStyle = COL[v];
+      if (k === 1) ctx.fillRect(px, py, w, w); else { const d = cp * k; ctx.fillRect(x * cp + (cp - d) / 2, y * cp + (cp - d) / 2, d, d); }
+    }
+    // grid lines（4マスごとに 太い線・まん中は 水色。数えやすくするため）
+    ctx.lineWidth = 1;
+    for (let k = 0; k <= vis; k++) {
+      const gk = k + x0, gky = k + y0, p = Math.round(k * cp) + (k === vis ? -0.5 : 0.5);
+      const stV = gk === N / 2 ? 'rgba(83,224,216,.8)' : (N % 4 === 0 && gk % 4 === 0) ? 'rgba(255,255,255,.34)' : 'rgba(10,10,23,.3)';
+      const stH = gky === N / 2 ? 'rgba(83,224,216,.8)' : (N % 4 === 0 && gky % 4 === 0) ? 'rgba(255,255,255,.34)' : 'rgba(10,10,23,.3)';
+      ctx.strokeStyle = stV; ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, S); ctx.stroke();
+      ctx.strokeStyle = stH; ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(S, p); ctx.stroke();
+    }
+    if (mirror && !pk) {
+      const mxp = (N / 2 - x0) * cp;
+      if (mxp >= 0 && mxp <= S) { ctx.strokeStyle = '#ff5fa2'; ctx.lineWidth = 3; ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = 10 + 4 * Math.sin(T / 300); ctx.beginPath(); ctx.moveTo(mxp, 0); ctx.lineTo(mxp, S); ctx.stroke(); ctx.shadowBlur = 0; }
+    }
+    if (phase === 'play' && !pk) {
+      if (tut) { const a = 0.55 + 0.45 * Math.sin(T / 160); ctx.globalAlpha = a; tut.cells.forEach(i => { if (grid[i] !== tut.v) { const x = i % N, y = (i / N) | 0; ctx.fillStyle = 'rgba(255,209,102,.35)'; ctx.fillRect(x * cp, y * cp, cp, cp); outlineCell(x, y, '#ffd166', 3); } }); ctx.globalAlpha = 1; }
+      if (wrongBlink) { const a = 0.35 + 0.65 * Math.abs(Math.sin(T / 190)); ctx.globalAlpha = a; wrongBlink.forEach(i => { if (grid[i] !== model.data[i]) outlineCell(i % N, (i / N) | 0, '#ff3b5c', 3); }); ctx.globalAlpha = 1; }
+      if (stroke && stroke.touch && stroke.lx >= 0) {          // ゆびで かくれても どのマスか 分かるように 行と列を うすく光らせる
+        ctx.fillStyle = 'rgba(255,255,255,.10)'; ctx.fillRect(0, (stroke.ly - y0) * cp, S, cp); ctx.fillRect((stroke.lx - x0) * cp, 0, cp, S);
+      }
+      const hc = kb ? cur : hover;
+      if (hc) { outlineCell(hc.x, hc.y, '#ffd166', 2.5); if (mirror && (tool === 'pen' || tool === 'eraser')) outlineCell(N - 1 - hc.x, hc.y, '#ff5fa2', 2); }
+    }
+    if (phase === 'judge' && judgeSt) {
+      const j = judgeSt, p = Math.min(1, j.t / j.dur), ly = p * S, m = model.data;
+      for (let y = 0; y <= j.row; y++) for (let x = 0; x < N; x++) { const i = y * N + x; if ((grid[i] || m[i]) && grid[i] !== m[i]) { ctx.fillStyle = 'rgba(255,40,80,.45)'; ctx.fillRect(x * cp, y * cp, cp, cp); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = Math.max(1.5, cp * 0.09); ctx.beginPath(); ctx.moveTo((x + 0.28) * cp, (y + 0.28) * cp); ctx.lineTo((x + 0.72) * cp, (y + 0.72) * cp); ctx.moveTo((x + 0.72) * cp, (y + 0.28) * cp); ctx.lineTo((x + 0.28) * cp, (y + 0.72) * cp); ctx.stroke(); } }
+      if (p < 1) { ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 3; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 14; ctx.beginPath(); ctx.moveTo(0, ly); ctx.lineTo(S, ly); ctx.stroke(); ctx.shadowBlur = 0; }
+    }
+    if (pk) {
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 5; ctx.globalAlpha = memIntro ? 0.6 + 0.4 * Math.sin(T / 200) : 1; ctx.strokeRect(2.5, 2.5, S - 5, S - 5); ctx.globalAlpha = 1;
+    }
+    if (particles.length) { for (const p of particles) { ctx.globalAlpha = clamp(p.life / 0.35, 0, 1); ctx.fillStyle = p.col; ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); } ctx.globalAlpha = 1; }
+    if (toast) { const a = clamp((toast.dur - (T - toast.t)) / 250, 0, 1); ctx.globalAlpha = a; label(toast.text, S * 0.42, '#ffd166'); ctx.globalAlpha = 1; }
+  }
+  function drawRef() {
+    refDirty = false; const c = rctx, px = refPx; c.setTransform(RS, 0, 0, RS, 0, 0); c.clearRect(0, 0, px, px);
+    const nav = mode === 'free' || (memory && view.z > 1);            // じぶんの絵の ぜんたい図
+    if (nav) drawArt(c, grid, N, px, mode === 'free', false);
+    else if (memory) { c.fillStyle = '#23233f'; c.fillRect(0, 0, px, px); c.fillStyle = '#9d99c0'; c.font = Math.round(px * 0.5) + 'px DotGothic16, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('？', px / 2, px / 2); }
+    else if (model) drawArt(c, model.data, model.n, px, false, true);
+    if (view.z > 1 && (nav || !memory)) {                               // いま見ている場所
+      const k = px / N, vis = N / view.z;
+      c.fillStyle = 'rgba(10,10,23,.45)'; c.fillRect(0, 0, px, view.oy * k); c.fillRect(0, (view.oy + vis) * k, px, px); c.fillRect(0, view.oy * k, view.ox * k, vis * k); c.fillRect((view.ox + vis) * k, view.oy * k, px, vis * k);
+      c.strokeStyle = '#ffffff'; c.lineWidth = 2; c.strokeRect(view.ox * k + 1, view.oy * k + 1, vis * k - 2, vis * k - 2);
+    }
+  }
+  function drawDemo() {
+    const dc = $('demoCv'); if (!dc || !demo) return; const c = dc.getContext('2d'), px = 88, n = demo.m.n, cp = px / n;
+    c.setTransform(RS, 0, 0, RS, 0, 0); c.fillStyle = PLAIN; c.fillRect(0, 0, px, px);
+    const upto = Math.min(demo.order.length, Math.floor(demo.p));
+    for (let k = 0; k < upto; k++) { const i = demo.order[k]; c.fillStyle = COL[demo.m.data[i]]; c.fillRect(Math.floor((i % n) * cp), Math.floor(((i / n) | 0) * cp), Math.ceil(cp), Math.ceil(cp)); }
+    if (upto < demo.order.length) { const i = demo.order[upto]; c.fillStyle = '#ffffff'; c.fillRect(Math.floor((i % n) * cp), Math.floor(((i / n) | 0) * cp), Math.ceil(cp), Math.ceil(cp)); }
+  }
+  function frameColor(f, k, t) {
+    if (f === 1) { const s = (k * 0.5 - t * 4) % 12; return s > -1.2 && s < 1.2 ? '#fff6c8' : k % 2 ? '#ffd166' : '#e8a12e'; }
+    if (f === 2) return 'hsl(' + ((k * 14 + t * 70) % 360) + ',92%,63%)';
+    if (f === 3) { const h = Math.sin(k * 12.9898 + Math.floor(t * 2.5 + k * 0.37) * 78.233) * 43758.5453; const r = h - Math.floor(h); return r > 0.86 ? '#ffffff' : r > 0.7 ? '#ffd166' : k % 2 ? '#1b2050' : '#232a66'; }
+    const s = (k - t * 6) % 10; return (s > -1 && s < 1) ? '#ffffff' : k % 2 ? '#53e0d8' : '#a06bff';
+  }
+  function drawView() {
+    const dc = $('viewCv'); if (!dc || !viewSt) return; const c = dc.getContext('2d'), px = viewSt.px, t = T / 1000;
+    c.setTransform(RS, 0, 0, RS, 0, 0); c.clearRect(0, 0, px, px);
+    const cnt = 16, b = px / cnt; let k = 0;
+    for (let i = 0; i < cnt; i++) { c.fillStyle = frameColor(viewSt.f, k++, t); c.fillRect(Math.floor(i * b), 0, Math.ceil(b), Math.ceil(b)); }
+    for (let i = 1; i < cnt; i++) { c.fillStyle = frameColor(viewSt.f, k++, t); c.fillRect(Math.floor((cnt - 1) * b), Math.floor(i * b), Math.ceil(b), Math.ceil(b)); }
+    for (let i = cnt - 2; i >= 0; i--) { c.fillStyle = frameColor(viewSt.f, k++, t); c.fillRect(Math.floor(i * b), Math.floor((cnt - 1) * b), Math.ceil(b), Math.ceil(b)); }
+    for (let i = cnt - 2; i >= 1; i--) { c.fillStyle = frameColor(viewSt.f, k++, t); c.fillRect(0, Math.floor(i * b), Math.ceil(b), Math.ceil(b)); }
+    const inner = px - b * 2 - 8; c.save(); c.translate(Math.round(b + 4), Math.round(b + 4 + Math.sin(t * 2) * 1.5)); c.fillStyle = PLAIN; c.fillRect(0, 0, inner, inner); drawArt(c, viewSt.data, viewSt.n, inner, true, false); c.restore();
+  }
+
+  // ---- input -------------------------------------------------------------------
+  function cellFromEvent(e) {
+    const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return null;
+    const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height; if (fx < 0 || fy < 0 || fx >= 1 || fy >= 1) return null;
+    const vis = N / view.z; return { x: view.ox + Math.floor(fx * vis), y: view.oy + Math.floor(fy * vis) };
+  }
+  function centroid() { let x = 0, y = 0; pointers.forEach(p => { x += p.x; y += p.y; }); return { x: x / pointers.size, y: y / pointers.size }; }
+  function onDown(e) {
+    audio();
+    if (phase !== 'play') return;
+    e.preventDefault();
+    if (memIntro) { endIntro(); return; }
+    if (isPeeking()) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size >= 2) { cancelStroke(); if (view.z > 1) { const c = centroid(); pan = { x: c.x, y: c.y, ox: view.ox, oy: view.oy }; } return; }
+    if (e.pointerType === 'mouse' && e.button === 1) return;
+    kb = false;
+    const c = cellFromEvent(e); if (!c) return;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    beginStroke(c.x, c.y, e.pointerType === 'mouse' && e.button === 2 ? 'eraser' : null, e.pointerId, e.pointerType !== 'mouse');
+  }
+  function onMove(e) {
+    if (e.pointerType === 'mouse') { hover = phase === 'play' ? cellFromEvent(e) : null; if (hover) kb = false; }
+    const p = pointers.get(e.pointerId); if (p) { p.x = e.clientX; p.y = e.clientY; }
+    if (pan && pointers.size >= 2) {
+      const c = centroid(), r = cv.getBoundingClientRect(), vis = N / view.z, k = r.width / vis;
+      view.ox = clamp(Math.round(pan.ox + (pan.x - c.x) / k), 0, N - vis); view.oy = clamp(Math.round(pan.oy + (pan.y - c.y) / k), 0, N - vis); refDirty = true; return;
+    }
+    if (!stroke || stroke.pid !== e.pointerId || phase !== 'play') return;
+    const c = cellFromEvent(e); if (!c) { stroke.lx = -1; return; }
+    strokeTo(c.x, c.y);
+  }
+  function onUp(e) { pointers.delete(e.pointerId); if (pointers.size < 2) pan = null; if (stroke && stroke.pid === e.pointerId) endStroke(); }
+  function refPan(e) {
+    const r = ref.getBoundingClientRect(), vis = N / view.z;
+    view.ox = clamp(Math.round((e.clientX - r.left) / r.width * N - vis / 2), 0, N - vis); view.oy = clamp(Math.round((e.clientY - r.top) / r.height * N - vis / 2), 0, N - vis); refDirty = true;
+  }
+  function endIntro() { if (!memIntro) return; memIntro = false; SFX.click(); refDirty = true; updateHud(); setTip('お手本は <b>かくれた</b>よ。わすれたら「👀 みる」で 3びょう 見られる（回数を きろく）'); }
+  function peek() { if (phase !== 'play' || !memory || memIntro) return; if (T < peekUntil) return; peeks++; peekUntil = T + 3000; SFX.pick(); updateHud(); }
+  function onRefDown(e) {
+    audio(); if (phase !== 'play') return; e.preventDefault(); endStroke();
+    if (memory && memIntro) { endIntro(); return; }
+    const grab = () => { refDrag = true; try { refBox.setPointerCapture(e.pointerId); } catch (err) {} refPan(e); };
+    if (mode === 'free' || (memory && view.z > 1)) { if (view.z > 1) grab(); else setTip('<b>ズーム中</b>に ここを さわると うごかせるよ'); return; }
+    if (memory) { peek(); return; }
+    if (view.z > 1) grab();            // ズーム中：おした所へ うごき、おしている間は お手本の そこが 大きく見える
+    peekHold = true; try { refBox.setPointerCapture(e.pointerId); } catch (err) {}
+  }
+  function onRefUp() { peekHold = false; refDrag = false; }
+  function randomOdai() { setTip('🎲 おだい『<b>' + ODAI_A[Math.floor(Math.random() * ODAI_A.length)] + ' ' + ODAI_B[Math.floor(Math.random() * ODAI_B.length)] + '</b>』'); SFX.good(); }
+  function onKey(e) {
+    const k = e.key;
+    if ((e.ctrlKey || e.metaKey) && (k === 'z' || k === 'Z')) { if (!overlayOn()) { e.preventDefault(); if (e.shiftKey) redo(); else undo(); } return; }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && e.target.tagName === 'BUTTON' && (k === 'Enter' || k === ' ')) return;
+    if (overlayOn()) {
+      if (k === 'Enter' || k === ' ') { e.preventDefault(); const b = overlay.querySelector('[data-default]'); if (b) { audio(); b.click(); } }
+      else if (k === 'Escape') { const b = overlay.querySelector('[data-esc]'); if (b) b.click(); }
+      return;
+    }
+    if (phase !== 'play') return;
+    if (memIntro) { if (k === ' ' || k === 'Enter') { e.preventDefault(); endIntro(); } return; }
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      e.preventDefault(); kb = true; hover = null;
+      if (k === 'ArrowLeft') cur.x = Math.max(0, cur.x - 1); if (k === 'ArrowRight') cur.x = Math.min(N - 1, cur.x + 1);
+      if (k === 'ArrowUp') cur.y = Math.max(0, cur.y - 1); if (k === 'ArrowDown') cur.y = Math.min(N - 1, cur.y + 1);
+      followCursor(); if (spaceDown && stroke) strokeTo(cur.x, cur.y); return;
+    }
+    if (k === ' ') { e.preventDefault(); audio(); if (!e.repeat && !isPeeking()) { kb = true; spaceDown = true; beginStroke(cur.x, cur.y, null, -2, false); } return; }
+    if (k === 'Enter') { e.preventDefault(); audio(); judge(); return; }
+    if (k === 'Escape') { openMenu(); return; }
+    const low = k.length === 1 ? k.toLowerCase() : k;
+    if (low === 'z') { audio(); undo(); }
+    else if (low === 'y') { audio(); redo(); }
+    else if (low === 'p' || low === 'b') { audio(); SFX.click(); setTool('pen'); }
+    else if (low === 'e' || low === 'x') { audio(); SFX.click(); setTool(tool === 'eraser' ? 'pen' : 'eraser'); }
+    else if (low === 'f' || low === 'g') { audio(); SFX.click(); setTool('bucket'); }
+    else if (low === 'i') { audio(); SFX.click(); setTool('pick'); }
+    else if (low === 'm') { audio(); setMirror(!mirror); SFX.mirror(mirror); }
+    else if (low >= '0' && low <= '9') { const idx = low === '0' ? 9 : +low - 1; if (palette[idx]) { audio(); setColor(palette[idx]); SFX.paint(palette[idx]); } }
+  }
+  function onKeyUp(e) { if (e.key === ' ' && spaceDown) { spaceDown = false; endStroke(); } }
+
+  // ---- loop --------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(Math.max(0, (now - last) / 1000), 0.05); last = now;
+    if (!document.hidden) { update(dt); draw(); if (refDirty || stroke) drawRef(); if (phase === 'title') drawDemo(); else if (phase === 'view') drawView(); }
+    requestAnimationFrame(loop);
+  }
+
+  // ---- init (last, to avoid TDZ issues) ------------------------------------------
+  muted = load('mute', 0) === 1;
+  { const p = load('prog', null); if (p && typeof p === 'object') prog = { s: p.s || {}, t: p.t || {}, c: p.c || {}, f: p.f || {} }; }
+  { const r = load('rush', null); if (r && typeof r === 'object') rushBest = { lv: r.lv | 0, score: r.score | 0 }; }
+  { const s = load('slots', null); if (Array.isArray(s)) for (let i = 0; i < 5; i++) { const v = s[i]; slots[i] = v && (v.n === 16 || v.n === 32) && typeof v.d === 'string' && v.d.length === v.n * v.n ? { n: v.n, d: v.d, f: v.f | 0 } : null; } }
+  { const f = load('free', null); if (f && typeof f === 'object') freeSt = { size: f.size === 32 ? 32 : 16, g16: typeof f.g16 === 'string' ? f.g16 : '', g32: typeof f.g32 === 'string' ? f.g32 : '' }; }
+  drawMute(); buildPalette(); syncTools(); fit(); updateHud(); showTitle();
+
+  muteBtn.addEventListener('click', () => { muted = !muted; save('mute', muted ? 1 : 0); drawMute(); audio(); SFX.click(); muteBtn.blur(); });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  cv.addEventListener('pointerdown', onDown);
+  cv.addEventListener('pointermove', onMove);
+  cv.addEventListener('pointerup', onUp);
+  cv.addEventListener('pointercancel', onUp);
+  cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover = null; });
+  refBox.addEventListener('contextmenu', e => e.preventDefault());
+  refBox.addEventListener('pointerdown', onRefDown);
+  refBox.addEventListener('pointermove', e => { if (refDrag && view.z > 1) refPan(e); });
+  refBox.addEventListener('pointerup', onRefUp);
+  refBox.addEventListener('pointercancel', onRefUp);
+  refBox.addEventListener('pointerleave', () => { if (!refDrag) peekHold = false; });
+  palEl.addEventListener('click', e => { const b = e.target.closest('.sw'); if (!b || phase !== 'play') return; audio(); setColor(+b.dataset.c); SFX.paint(color); b.blur(); });
+  toolsEl.addEventListener('click', e => {
+    const b = e.target.closest('.tb'); if (!b || phase !== 'play') return; audio(); b.blur();
+    if (b.dataset.tool) { SFX.click(); setTool(b.dataset.tool); if (b.dataset.tool === 'bucket') setTip('<b>バケツ</b>：つながった 同じ色を いっきに ぬる'); else if (b.dataset.tool === 'pick') setTip('<b>スポイト</b>：絵の マスを さわって 色を ひろう'); }
+    else if (b.id === 'tMirror') { setMirror(!mirror); SFX.mirror(mirror); setTip(mirror ? '<b>かがみON</b>：左右 おなじに ぬれるよ' : 'かがみを OFFにしたよ'); }
+    else if (b.id === 'tUndo') { if (!undo()) setTip('もどせる ものが ないよ'); }
+    else if (b.id === 'tClear') clearAll();
+  });
+  $('doneBtn').addEventListener('click', () => { audio(); if (phase === 'play' && memIntro) endIntro(); else judge(); $('doneBtn').blur(); });
+  $('peekBtn').addEventListener('click', () => { audio(); peek(); $('peekBtn').blur(); });
+  $('menuBtn').addEventListener('click', () => { audio(); SFX.click(); openMenu(); $('menuBtn').blur(); });
+  $('sizeBtn').addEventListener('click', () => { if (phase !== 'play') return; audio(); endStroke(); saveDraft(); SFX.lv(); startFree(N === 16 ? 32 : 16); setTip('<b>' + N + '×' + N + '</b>に きりかえたよ（前の絵も のこる）'); $('sizeBtn').blur(); });
+  $('zoomBtn').addEventListener('click', () => { if (phase !== 'play') return; audio(); endStroke(); SFX.click(); setZoom(view.z * 2); setTip(view.z > 1 ? (mode === 'free' ? '🔍×' + view.z + ' <b>小さい絵</b>を さわると 見る場所が うごく' : '🔍×2 <b>左上の小窓</b>を おすと 見る場所が うごくよ（2本ゆびでも うごく）') : 'ぜんたいを 見ているよ'); $('zoomBtn').blur(); });
+  $('saveBtn').addEventListener('click', () => { if (phase !== 'play') return; audio(); SFX.click(); slotArm = -1; showSlots(); $('saveBtn').blur(); });
+  $('odaiBtn').addEventListener('click', () => { if (phase !== 'play') return; audio(); randomOdai(); $('odaiBtn').blur(); });
+  overlay.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; audio(); doAct(b.dataset.act, b.dataset.arg); });
+  document.addEventListener('keydown', onKey);
+  document.addEventListener('keyup', onKeyUp);
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  window.addEventListener('resize', fit);
+  window.addEventListener('blur', () => { spaceDown = false; peekHold = false; endStroke(); });
+  document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) { spaceDown = false; peekHold = false; endStroke(); } });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { fit(); }).catch(() => {});
+  requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      phase, mode, n: N, grid: enc(grid), tool, color, mirror, palette: palette.slice(), memory, peeks, memIntro, peeking: isPeeking(), timer,
+      model: model ? { id: model.id, name: model.name, n: model.n, data: enc(model.data), sym: model.sym } : null, modelIdx,
+      match: model && mode !== 'free' ? compare(grid, model.data).match : null, last: lastResult,
+      prog: JSON.parse(JSON.stringify(prog)), totalStars: totalStars(), crowns: totalCrowns(), fast: totalFast(), par: model && mode === 'challenge' ? parOf(model) : null, frames: framesOpen(),
+      rush: { lv: rush.lv, hearts: rush.hearts, score: rush.score, cleared: rush.cleared, timeLeft: rush.timeLeft, timeMax: rush.timeMax, seed: rush.seed, best: { lv: rushBest.lv, score: rushBest.score } },
+      undo: undoStack.length, redo: redoStack.length, overlay: overlayOn(), view: { z: view.z, ox: view.ox, oy: view.oy }, side, tut: !!tut,
+      slots: slots.map(s => s ? { n: s.n, d: s.d, f: s.f } : null), free: { size: freeSt.size, g16: freeSt.g16, g32: freeSt.g32 },
+    }),
+    models: () => MODELS.map(m => ({ id: m.id, tier: m.tier, name: m.name, n: m.n, data: enc(m.data), colors: m.colors.slice(), sym: m.sym })),
+    chars: () => CH,
+    start: (m, a, b) => { if (m === 'rush') { startRush(); if (a != null) { rush.lv = a; nextRush(b); } } else if (m === 'free') startFree(a); else startChallenge(a || 0, !!b); },
+    select: showSelect, title: showTitle, menu: openMenu,
+    paint: (x, y) => { beginStroke(x, y, null, -3, false); endStroke(); },
+    stroke: pts => { beginStroke(pts[0][0], pts[0][1], null, -3, false); for (let i = 1; i < pts.length; i++) strokeTo(pts[i][0], pts[i][1]); endStroke(); },
+    setTool, setColor, setMirror, undo, redo, clear: clearAll, setZoom, peek,
+    setGrid: s => { endStroke(); grid = dec(s, N); refDirty = true; saveDraft(); },
+    solve: () => { endStroke(); if (model) { grid = model.data.slice(); refDirty = true; } },
+    judge: f => judge(!!f),
+    finish: () => { if (judgeSt) { while (judgeSt.row < N - 1) { judgeSt.row++; } finishJudge(); } },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    gen: (seed, lv) => { const m = genMonster(seed, lv); return { n: m.n, data: enc(m.data), colors: m.colors.slice(), sym: m.sym, time: timeFor(m, lv) }; },
+    compare: (a, b) => { const n = Math.round(Math.sqrt(b.length)), r = compare(dec(a, n), dec(b, n)); return { match: r.match, ok: r.ok, union: r.union, wrong: r.wrong.length, stars: starsOf(r.match) }; },
+    cellXY: (x, y) => { const r = cv.getBoundingClientRect(), vis = N / view.z; return { x: r.left + (x - view.ox + 0.5) * r.width / vis, y: r.top + (y - view.oy + 0.5) * r.height / vis }; },
+    act: doAct,
+  };
+})();
+</script>
+</body>
+</html>
