@@ -29,6 +29,8 @@
     gap: 8px;
     padding: 14px 16px 8px;
   }
+  .topbar .tools { display: flex; gap: 6px; flex: none; }
+  .topbar a { white-space: nowrap; flex: none; }
   .topbar a, .topbar button.mute {
     color: #53e0d8;
     font-weight: 900;
@@ -41,17 +43,24 @@
     cursor: pointer;
     font-family: inherit;
   }
-  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  .topbar button.mute { padding: 6px 11px; }
+  @media (hover: hover) {
+    .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+    .btn:hover { filter: brightness(1.12); }
+  }
   .topbar h1 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
     font-size: 1.0rem;
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     background: linear-gradient(100deg, #ff5fa2, #c77dff);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .stage { position: relative; width: min(94vw, 480px); margin: 6px 0 24px; }
+  .stage { position: relative; width: min(94vw, 480px, calc((100vh - 70px) * 0.75)); margin: 6px 0 24px; }
+  @media (max-width: 430px) { .topbar h1 .full { display: none; } .topbar { padding: 12px 10px 6px; } }
+  @media (min-width: 431px) { .topbar h1 .short { display: none; } }
   canvas {
     display: block;
     width: 100%;
@@ -60,7 +69,7 @@
     box-shadow: 0 0 40px rgba(83, 224, 216, 0.15), 0 14px 34px rgba(0, 0, 0, 0.45);
     touch-action: none;
   }
-  .focus-btn {
+  .focus-btn, .fire-btn {
     position: absolute;
     right: 12px;
     bottom: 60px;
@@ -72,14 +81,16 @@
     color: #53e0d8;
     font-family: inherit;
     font-weight: 900;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
     display: none;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
   }
   .focus-btn.on { background: rgba(83, 224, 216, 0.35); color: #fff; }
+  .fire-btn { right: auto; left: 12px; border-color: rgba(255, 95, 162, 0.7); color: #ff8fc0; }
+  .fire-btn.on { background: rgba(255, 95, 162, 0.4); color: #fff; }
   .overlay {
     position: absolute;
     inset: 0;
@@ -90,11 +101,12 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 22px;
-    gap: 12px;
+    padding: 16px;
+    gap: 10px;
     z-index: 5;
   }
   .overlay.hidden { display: none; }
+  .overlay > * { flex-shrink: 0; }
   .overlay .big { font-size: 2.5rem; }
   .overlay h2 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
@@ -122,17 +134,26 @@
     cursor: pointer;
     box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
   }
-  .btn:hover { filter: brightness(1.12); }
   .btn:active { transform: translateY(2px); }
   .btn:focus-visible, .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
-  .hint { font-size: 0.75rem; color: #9d99c0; }
+  .hint { font-size: 0.8rem; color: #a9a5cc; line-height: 1.6; }
+  .diff-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .diff-row .btn { padding: 11px 16px; letter-spacing: 0.04em; font-size: 1rem; }
+  .btn.easy { background: linear-gradient(100deg, #2bb8b0, #53e0d8); color: #06201f; box-shadow: 0 4px 18px rgba(83,224,216,.35); }
+  .btn.hard { background: linear-gradient(100deg, #7a3dff, #b06bff); box-shadow: 0 4px 18px rgba(176,107,255,.4); }
+  .btn.sub { background: #1e1e36; border: 1px solid #2c2c4d; box-shadow: none; color: #eeecfa; padding: 10px 26px; font-size: 0.95rem; }
+  .toggle { display: flex; gap: 0; border: 1px solid #2c2c4d; border-radius: 999px; overflow: hidden; }
+  .toggle button { background: transparent; border: 0; color: #a9a5cc; font-family: inherit; font-weight: 900; font-size: 0.8rem; padding: 7px 12px; cursor: pointer; }
+  .toggle button.on { background: #53e0d8; color: #06201f; }
+  .touch-only { display: none; }
+  .rank { font-family: "Mochiy Pop One", sans-serif; font-size: 2.6rem; line-height: 1; color: #ffd166; text-shadow: 0 0 18px rgba(255,209,102,.6); }
   .hint a { color: #9d99c0; }
   .age-badge { display:inline-flex; width:fit-content; margin:0; padding:5px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="縦レーザーで挑むボスラッシュ5連戦。ボスと同じ「列」に立てばダメージが入るが、真下は弾幕の的。ボス内部を回るコアを撃ち抜けば3倍ダメージ。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="縦レーザーで挑むボスラッシュ5連戦。ボスの真下にいつづけるとねらいうちされるので、左右にゆれながらコアをねらおう。かんたん・ふつう・むずかしいの3段階とランク評価つき。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/006-column-breaker/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"コラムブレイカー","description":"縦レーザーで挑むボスラッシュ5連戦。ボスと同じ「列」に立てばダメージが入るが、真下は弾幕の的。ボス内部を回るコアを撃ち抜けば3倍ダメージ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/006-column-breaker/index.html","inLanguage":"ja","genre":"BOSS RUSH","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"コラムブレイカー","description":"縦レーザーで挑むボスラッシュ5連戦。ボスの真下にいつづけるとねらいうちされるので、左右にゆれながらコアをねらおう。かんたん・ふつう・むずかしいの3段階とランク評価つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/006-column-breaker/index.html","inLanguage":"ja","genre":"BOSS RUSH","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="006"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -140,35 +161,42 @@
 
 <div class="topbar">
   <a href="../../index.html">← いちらんへ</a>
-  <h1>⚡ コラムブレイカー</h1>
-  <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
+  <h1><span class="full">⚡ コラムブレイカー</span><span class="short">コラムブレイカー</span></h1>
+  <span class="tools"><button class="mute" id="pause-btn" aria-label="いちじていし">⏸</button><button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button></span>
 </div>
 
 <div class="stage">
   <canvas id="game" width="480" height="640"></canvas>
   <button class="focus-btn" id="focus-btn" aria-label="しゅうちゅうモード">FOCUS</button>
+  <button class="fire-btn" id="fire-btn" aria-label="レーザーをうつ">FIRE</button>
 
   <div class="overlay" id="title-screen">
-    <div class="big">⚡🔵⚡</div>
-    <h2>コラムブレイカー</h2>
+    <h2>⚡ コラムブレイカー</h2>
     <p class="age-badge">対象年齢の目安：10歳〜</p>
     <p>
-      たてレーザーで<b>ボス5れんせん</b>！<br>
-      ボスと同じ<b>「たて一列」</b>に立ってレーザーをあてよう。<br>
-      でもボスの真下は弾がいちばんキケン…！<br>
-      ボスの中を回る<b>コア</b>に当てると<b>ダメージ3倍</b>✨
+      たてレーザーで<b>ボス5れんせん</b>！ ボスと同じ<b>「たて一列」</b>でうとう。<br>
+      でも<b>真下にずっといると ねらいうち</b>される…左右にゆれてかわそう！<br>
+      回る<b>コア</b>に当てると<b>ダメージ3倍</b>✨ はやくたおすと<b>タイムボーナス</b>
     </p>
     <p class="hint">
-      PC：WASD/矢印いどう ＋ スペース/クリック長おしでレーザー<br>
-      Shift＝しゅうちゅう（ゆっくり・高いりょく）／ P＝ポーズ<br>
-      スマホ：ゆびでドラッグいどう（さわってる間レーザー）＋ FOCUSボタン
+      <span class="pc-only">PC：WASD/矢印いどう ＋ スペース/クリック長おしでレーザー ／ Shift＝しゅうちゅう ／ P＝ポーズ</span>
+      <span class="touch-only">スマホ：ゆびでドラッグいどう ＋ 左下FIREでうつ・右下FOCUS</span>
     </p>
-    <button class="btn" id="start-btn">スタート！</button>
+    <div class="toggle touch-only" id="fire-mode" role="group" aria-label="スマホのうちかた">
+      <button type="button" data-mode="button">FIREボタンでうつ</button><button type="button" data-mode="auto">さわってる間うつ</button>
+    </div>
+    <div class="diff-row">
+      <button class="btn easy" id="easy-btn">かんたん</button>
+      <button class="btn" id="start-btn">ふつう</button>
+      <button class="btn hard" id="hard-btn">むずかしい</button>
+    </div>
+    <p class="best-line" id="title-best"></p>
   </div>
 
   <div class="overlay hidden" id="pause-screen">
     <h2>ポーズ</h2>
     <p>P か 下のボタンで さいかい</p>
+    <button class="btn sub" id="quit-btn">やめて なんいどをえらぶ</button>
     <button class="btn" id="resume-btn">つづける</button>
   </div>
 
@@ -179,17 +207,17 @@
     <p class="score-line" id="over-score">スコア：0</p>
     <p class="best-line" id="over-best"></p>
     <button class="btn" id="retry-btn">もういちど！</button>
-    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+    <button class="btn sub" id="title-btn">なんいどをえらぶ</button>
   </div>
 
   <div class="overlay hidden" id="clear-screen">
-    <div class="big">🏆</div>
     <h2>ぜんボスげきは！！</h2>
+    <div class="rank" id="clear-rank">S</div>
     <p id="clear-detail"></p>
     <p class="score-line" id="clear-score">スコア：0</p>
     <p class="best-line" id="clear-best"></p>
     <button class="btn" id="retry2-btn">もういちど！</button>
-    <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
+    <button class="btn sub" id="title2-btn">なんいどをえらぶ</button>
   </div>
 </div>
 
@@ -230,17 +258,33 @@
       atk1: ["radial14", "column"], atk2: ["spiral2", "column", "aim5"], hasMinis: true,
       tip: "しゅうちゅうモードで一瞬のかさなりを刺せ！" },
   ];
-  const STORAGE_KEY = "column-breaker-best";
+  const STORAGE_KEY = "column-breaker-best";            // 既存キー（ふつう のベスト）
+  // ★なんいど：攻撃間隔倍率 / 弾速加算 / 被ダメ倍率 / 真下ねらいうち(開始f・間隔f・弾数) / ステージ間回復
+  const DIFFS = {
+    easy:   { label: "かんたん",   rate: 1.35, spd: -0.5, dmg: 0.55, underStart: 80, underEvery: 34, underN: 1, heal: 50, key: "column-breaker-best-easy" },
+    normal: { label: "ふつう",     rate: 1.0,  spd: 0,    dmg: 1.0,  underStart: 40, underEvery: 22, underN: 3, heal: 30, key: STORAGE_KEY },
+    hard:   { label: "むずかしい", rate: 0.82, spd: 0.4,  dmg: 1.2,  underStart: 22, underEvery: 15, underN: 3, heal: 20, key: "column-breaker-best-hard" },
+  };
+  // ★ボスごとの目標タイム（秒・戦っている時間だけ計測）
+  const TARGET_SEC = [28, 34, 40, 46, 56];
+  const FIRE_MODE_KEY = "column-breaker-touch-fire";
+  const ls = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  };
+  let diffKey = "normal";
+  let fireMode = ls.get(FIRE_MODE_KEY) === "auto" ? "auto" : "button";
+  const isTouch = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
 
   let S = null, P = null, boss = null;
   let ebul = [], parts = [], floats = [], warns = [], minis = [];
   const input = { l: false, r: false, u: false, d: false, fire: false, focus: false };
-  let touch = { on: false, x: 0, y: 0 };
+  let touch = { on: false, x: 0, y: 0, id: null };
   let paused = false;
 
   // ============ おと（BGM＋こうかおん・ミュート対応） ============
   let audioCtx = null;
-  let muted = localStorage.getItem("picotto-muted") === "1";
+  let muted = ls.get("picotto-muted") === "1";
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     return audioCtx;
@@ -313,7 +357,8 @@
   // ============ ゲームのながれ ============
   function resetAll() {
     S = { stage: 1, score: 0, frames: 0, running: false, shake: 0, flash: 0, edge: 0,
-          banner: 0, bannerText: "", tip: "", transition: 0 };
+          banner: 0, bannerText: "", tip: "", transition: 0, bonusText: ["", ""],
+          diff: DIFFS[diffKey], combatF: 0, bossHurt: 0, hpLost: 0, totalCombatF: 0, bonusT: 0 };
     P = { x: W / 2, y: 520, vx: 0, vy: 0, hp: 100, en: 100, overheat: false, focus: false, inv: 0, firing: false };
     ebul = []; parts = []; floats = []; warns = []; minis = [];
   }
@@ -325,13 +370,15 @@
       x: W / 2, y: -B.r - 10, ty: 150, phase: 1, t: 0,
       atkT: Math.round(B.rate / 16.7), coreA: Math.random() * 6.28,
       dashState: 0, dashT: 70, dashDir: 1, tpT: 132, spiralT: 0, spiralA: 0, spiralN: 2,
-      entering: true,
+      entering: true, underT: 0, underShotT: 0,
     };
+    S.combatF = 0; S.bossHurt = 0;
     S.banner = 150;
     S.bannerText = "STAGE " + S.stage + "　" + boss.name;
     S.tip = boss.tip;
   }
-  function start() {
+  function start(d) {
+    if (typeof d === "string" && DIFFS[d]) diffKey = d;
     resetAll();
     spawnBoss();
     S.running = true;
@@ -340,12 +387,13 @@
     $("over-screen").classList.add("hidden");
     $("clear-screen").classList.add("hidden");
     $("pause-screen").classList.add("hidden");
+    $("pause-btn").textContent = "⏸";
     beep(660, 0.15);
     BGM.start();
   }
   function nextStage() {
     S.stage++;
-    P.hp = Math.min(100, P.hp + 30);
+    P.hp = Math.min(100, P.hp + S.diff.heal);
     P.en = 100;
     P.overheat = false;
     ebul = []; warns = []; minis = [];
@@ -356,29 +404,43 @@
     return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
   }
   function saveBest() {
-    const best = Math.max(Math.floor(S.score), Number(localStorage.getItem(STORAGE_KEY) || 0));
-    localStorage.setItem(STORAGE_KEY, String(best));
-    return best;
+    const prev = Number(ls.get(S.diff.key) || 0);
+    const best = Math.max(Math.floor(S.score), prev);
+    ls.set(S.diff.key, String(best));
+    return { best: best, record: Math.floor(S.score) > prev };
+  }
+  function showTitle() {
+    if (S) S.running = false;
+    paused = false;
+    BGM.stop();
+    ["over-screen", "clear-screen", "pause-screen"].forEach(function (id) { $(id).classList.add("hidden"); });
+    $("title-screen").classList.remove("hidden");
+    const b = ["easy", "normal", "hard"].map(function (k) { return DIFFS[k].label + " " + Number(ls.get(DIFFS[k].key) || 0); });
+    $("title-best").textContent = "ベスト：" + b.join(" ／ ");
   }
   function gameOver() {
     S.running = false;
     BGM.stop();
-    const best = saveBest();
-    $("over-detail").textContent = "STAGE " + S.stage + " " + boss.name + " にやぶれた…（タイム " + timeStr(S.frames) + "）";
-    $("over-score").textContent = "スコア：" + Math.floor(S.score);
-    $("over-best").textContent = "さいこうきろく：" + best;
+    const r = saveBest();
+    $("over-detail").textContent = "【" + S.diff.label + "】STAGE " + S.stage + " " + boss.name + " にやぶれた…（のこりHP " + Math.ceil(boss.hp / boss.maxHp * 100) + "%）";
+    $("over-score").textContent = "スコア：" + Math.floor(S.score) + (r.record ? "　✨しんきろく！" : "");
+    $("over-best").textContent = "さいこうきろく：" + r.best;
     $("over-screen").classList.remove("hidden");
     beep(120, 0.6, "sawtooth", 0.12);
   }
   function clearGame() {
-    const bonus = Math.max(0, 200000 - S.frames * 40);
-    S.score += bonus;
+    const hpBonus = Math.round(P.hp * 200);
+    S.score += hpBonus;
     S.running = false;
     BGM.stop();
-    const best = saveBest();
-    $("clear-detail").textContent = "クリアタイム " + timeStr(S.frames) + "　タイムボーナス +" + bonus;
-    $("clear-score").textContent = "スコア：" + Math.floor(S.score);
-    $("clear-best").textContent = "さいこうきろく：" + best;
+    const r = saveBest();
+    const sumT = TARGET_SEC.reduce(function (a, b) { return a + b; }, 0) * 60;
+    const fast = S.totalCombatF <= sumT;
+    const rank = S.hpLost < 40 && fast ? "S" : S.hpLost < 100 ? "A" : S.hpLost < 180 ? "B" : "C";
+    $("clear-rank").textContent = "ランク " + rank;
+    $("clear-detail").textContent = "【" + S.diff.label + "】たたかった時間 " + timeStr(S.totalCombatF) + "（目標 " + timeStr(sumT) + "）／ うけたダメージ " + Math.round(S.hpLost) + "　のこりHPボーナス +" + hpBonus;
+    $("clear-score").textContent = "スコア：" + Math.floor(S.score) + (r.record ? "　✨しんきろく！" : "");
+    $("clear-best").textContent = "さいこうきろく：" + r.best;
     $("clear-screen").classList.remove("hidden");
     beep(660, 0.2);
     try {
@@ -394,9 +456,10 @@
   function bossAttack() {
     const list = boss.phase === 2 ? boss.atk2 : boss.atk1;
     const a = list[Math.floor(Math.random() * list.length)];
-    const spd = clamp(2.7 + (S.stage - 1) * 0.22 + (boss.phase === 2 ? 0.3 : 0), 2.7, 4.0); // ★弾速
+    const spd = clamp(2.7 + (S.stage - 1) * 0.22 + (boss.phase === 2 ? 0.3 : 0), 2.7, 4.0) + S.diff.spd; // ★弾速
+    const p2 = boss.phase === 2;
     if (a === "radial14" || a === "radial20") {
-      const n = a === "radial20" ? 20 : 14;
+      const n = (a === "radial20" ? 20 : 14) + (p2 ? 6 : 0) + (diffKey === "easy" ? -4 : 0);
       const off = Math.random() * 6.28;
       for (let i = 0; i < n; i++) {
         const an = off + (i * Math.PI * 2) / n;
@@ -404,7 +467,7 @@
       }
       beep(300, 0.08, "square", 0.04);
     } else if (a === "aim3" || a === "aim5") {
-      const n = a === "aim5" ? 5 : 3;
+      const n = (a === "aim5" ? 5 : 3) + (p2 && diffKey !== "easy" ? 2 : 0);
       const base = Math.atan2(P.y - boss.y, P.x - boss.x);
       for (let i = 0; i < n; i++) {
         const an = base + (i - (n - 1) / 2) * 0.22;
@@ -412,10 +475,11 @@
       }
       beep(360, 0.08, "square", 0.04);
     } else if (a === "spiral2" || a === "spiral3") {
-      boss.spiralT = 48;
+      boss.spiralT = p2 ? 76 : 48;
       boss.spiralN = a === "spiral3" ? 3 : 2;
     } else if (a === "column") {
-      warns.push({ x: P.x, w: 34, warn: 70, fire: 26 }); // ★予告70f→発射26f 幅34px
+      warns.push({ x: P.x, w: 34, warn: diffKey === "easy" ? 90 : diffKey === "hard" ? 56 : 70, fire: 26 }); // ★予告→発射26f 幅34px
+      if (p2 && diffKey === "hard") warns.push({ x: clamp(P.x + (Math.random() < 0.5 ? -90 : 90), 20, W - 20), w: 34, warn: 80, fire: 26 });
       beep(220, 0.15, "sawtooth", 0.06);
     }
   }
@@ -471,6 +535,9 @@
 
   // ============ 被弾 ============
   function hurt(dmg, continuous) {
+    dmg *= S.diff.dmg;
+    if (!continuous && P.inv > 0) return;
+    S.hpLost += dmg; S.bossHurt += dmg;
     if (!continuous) {
       if (P.inv > 0) return;
       P.inv = 30;
@@ -487,6 +554,7 @@
   function update() {
     S.frames++;
     if (S.banner > 0) S.banner--;
+    if (S.bonusT > 0) S.bonusT--;
     if (S.flash > 0) S.flash--;
     if (S.edge > 0) S.edge--;
     if (S.shake > 0) S.shake--;
@@ -521,7 +589,7 @@
 
     // デバッグ用（テスト時のみ外から有効化）
     if (window.__cbFollow && boss) P.x = boss.x;
-    const wantFire = input.fire || touch.on || !!window.__cbFire;
+    const wantFire = input.fire || input.tfire || (touch.on && fireMode === "auto") || !!window.__cbFire;
 
     // --- エネルギーとレーザー ---
     let firing = false;
@@ -577,6 +645,25 @@
         boss.t++;
         moveBoss();
         boss.coreA += boss.phase === 2 ? 0.055 : 0.032; // ★コア回転速度
+        S.combatF++; S.totalCombatF++;
+
+        // ★真下ねらいうち：ボスの真下（列の中）にいつづけると、下むきの弾をねらってうってくる
+        const under = Math.abs(P.x - boss.x) < boss.r + 8 && P.y > boss.y;
+        if (under) boss.underT++; else boss.underT = Math.max(0, boss.underT - 2);
+        if (boss.underT > S.diff.underStart) {
+          boss.underShotT--;
+          if (boss.underShotT <= 0) {
+            const n = S.diff.underN + (boss.phase === 2 ? 2 : 0);
+            const base = Math.atan2(P.y - (boss.y + boss.r), P.x - boss.x);
+            const v = 4.2 + S.diff.spd + (S.stage - 1) * 0.15;
+            for (let i = 0; i < n; i++) {
+              const an = base + (i - (n - 1) / 2) * 0.16;
+              ebul.push({ x: boss.x + Math.cos(an) * boss.r, y: boss.y + boss.r * 0.8, vx: Math.cos(an) * v, vy: Math.sin(an) * v, r: 5, under: true });
+            }
+            boss.underShotT = Math.round(S.diff.underEvery * (boss.phase === 2 ? 0.8 : 1));
+            beep(520, 0.05, "square", 0.03);
+          }
+        } else boss.underShotT = 8;
 
         if (boss.phase === 1 && boss.hp <= boss.maxHp / 2) {
           boss.phase = 2;
@@ -595,14 +682,14 @@
         boss.atkT--;
         if (boss.atkT <= 0) {
           bossAttack();
-          boss.atkT = Math.round((boss.rate / 16.7) * (boss.phase === 2 ? 0.8 : 1)); // ★攻撃間隔
+          boss.atkT = Math.round((boss.rate / 16.7) * (boss.phase === 2 ? 0.72 : 1) * S.diff.rate); // ★攻撃間隔
         }
         if (boss.spiralT > 0) {
           boss.spiralT--;
           if (boss.spiralT % 4 === 0) {
             for (let k = 0; k < boss.spiralN; k++) {
               const an = boss.spiralA + (k * Math.PI * 2) / boss.spiralN;
-              ebul.push({ x: boss.x, y: boss.y, vx: Math.cos(an) * 2.8, vy: Math.sin(an) * 2.8, r: 5 });
+              ebul.push({ x: boss.x, y: boss.y, vx: Math.cos(an) * (2.8 + S.diff.spd * 0.5), vy: Math.sin(an) * (2.8 + S.diff.spd * 0.5), r: 5 });
             }
             boss.spiralA += 0.42;
           }
@@ -617,6 +704,13 @@
         if (boss.hp <= 0) {
           S.score += 5000 * S.stage;
           ftext(boss.x, boss.y, "+" + 5000 * S.stage, "#ffd166");
+          // ★タイムボーナス（戦った時間だけで計算）＆ノーダメージボーナス
+          const sec = S.combatF / 60, target = TARGET_SEC[S.stage - 1];
+          const tb = Math.max(0, Math.round((target - sec) * 250 * S.stage));
+          const nd = S.bossHurt < 1 ? 3000 * S.stage : 0;
+          S.score += tb + nd;
+          S.bonusText = ["げきは " + sec.toFixed(1) + "びょう（目標 " + target + "びょう）", (tb ? "TIME +" + tb : "タイムボーナスなし") + (nd ? "　ノーダメージ +" + nd : "")];
+          S.bonusT = 150;
           boom(boss.x, boss.y, boss.color);
           S.flash = 12; S.shake = 16;
           ebul = []; warns = []; minis = [];
@@ -754,6 +848,16 @@
       ctx.setLineDash([]);
     }
     ctx.globalAlpha = 1;
+    // 真下ねらいうちの予告（下がわが赤くひかる）
+    if (!boss.entering && boss.underT > S.diff.underStart - 25) {
+      const k = clamp((boss.underT - (S.diff.underStart - 25)) / 25, 0, 1);
+      ctx.fillStyle = "rgba(255, 61, 104, " + (0.25 + 0.35 * k * Math.abs(Math.sin(t / 70))) + ")";
+      ctx.beginPath(); ctx.arc(bx, by, boss.r + 4, 0.15 * Math.PI, 0.85 * Math.PI); ctx.lineTo(bx, by); ctx.fill();
+      if (k >= 1) {
+        ctx.fillStyle = "#ff5fa2"; ctx.font = "900 20px 'Zen Maru Gothic', sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("！", bx, by + boss.r + 26);
+      }
+    }
     // コア
     const coreX = bx + Math.cos(boss.coreA) * boss.r * 0.52;
     const coreY = by + Math.sin(boss.coreA) * boss.r * 0.52;
@@ -774,7 +878,7 @@
       ctx.fillStyle = "#1a1a3a";
       ctx.beginPath(); ctx.arc(mn.x, mn.y, 8, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#eeecfa";
-      ctx.font = "900 9px 'Zen Maru Gothic', sans-serif";
+      ctx.font = "900 14px 'Zen Maru Gothic', sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(String(Math.ceil(mn.hp)), mn.x, mn.y - 24);
     }
@@ -821,7 +925,7 @@
       }
       ctx.globalAlpha = 1;
       ctx.textAlign = "center";
-      ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
+      ctx.font = "900 18px 'Zen Maru Gothic', sans-serif";
       for (const f of floats) {
         ctx.globalAlpha = Math.max(f.life / 50, 0);
         ctx.fillStyle = f.color;
@@ -832,9 +936,9 @@
       // ===== HUD =====
       if (boss) {
         ctx.fillStyle = "#9d99c0";
-        ctx.font = "900 12px 'Zen Maru Gothic', sans-serif";
+        ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("STAGE " + S.stage + "　" + boss.name, W / 2, 16);
+        ctx.fillText("STAGE " + S.stage + "　" + boss.name, W / 2, 17);
         const bw = 360, bx0 = (W - bw) / 2;
         ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
         ctx.fillRect(bx0, 24, bw, 6);
@@ -845,12 +949,22 @@
       }
       ctx.textAlign = "left";
       ctx.fillStyle = "#9d99c0";
-      ctx.font = "900 11px 'Zen Maru Gothic', sans-serif";
-      ctx.fillText("SCORE " + Math.floor(S.score), 12, 46);
-      ctx.fillText("TIME " + timeStr(S.frames), 12, 60);
+      ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
+      ctx.fillText("SCORE " + Math.floor(S.score), 12, 50);
+      if (boss) {
+        const tgt = TARGET_SEC[S.stage - 1], el = S.combatF / 60;
+        ctx.fillStyle = el <= tgt ? "#53e0d8" : "#9d99c0";
+        ctx.fillText("TIME " + el.toFixed(0) + " / " + tgt, 12, 68);
+      }
+      ctx.fillStyle = "#9d99c0";
+      ctx.textAlign = "right";
+      ctx.fillText(S.diff.label, W - 12, 50);
+      ctx.textAlign = "left";
 
       // 下部 HP/EN
-      const gy = H - 26;
+      const gy = H - 24;
+      ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
+      ctx.textAlign = "left";
       ctx.fillStyle = "rgba(19, 19, 34, 0.7)";
       ctx.fillRect(0, gy - 12, W, 38);
       ctx.fillStyle = "#9d99c0";
@@ -862,7 +976,7 @@
       ctx.fillStyle = "#eeecfa";
       ctx.fillText(String(Math.ceil(P.hp)), 202, gy);
       ctx.fillStyle = P.overheat ? "#ff9d3d" : "#9d99c0";
-      ctx.fillText(P.overheat ? "OVERHEAT" : "EN", 248, gy);
+      ctx.fillText(P.overheat ? "OVER" : "EN", 262, gy);
       ctx.fillStyle = "rgba(255,255,255,0.12)";
       ctx.fillRect(316, gy - 8, 120, 9);
       ctx.fillStyle = P.overheat ? "#ff5a3d" : "#53e0d8";
@@ -870,6 +984,16 @@
       ctx.fillStyle = "#eeecfa";
       ctx.fillText(String(Math.ceil(P.en)), 442, gy);
 
+      // ボスげきはボーナス
+      if (S.bonusT > 0) {
+        ctx.globalAlpha = Math.min(1, S.bonusT / 30);
+        ctx.textAlign = "center";
+        ctx.font = "900 16px 'Zen Maru Gothic', sans-serif";
+        ctx.fillStyle = "#ffd166";
+        ctx.fillText(S.bonusText[0], W / 2, 380);
+        ctx.fillText(S.bonusText[1], W / 2, 404);
+        ctx.globalAlpha = 1;
+      }
       // バナー
       if (S.banner > 0) {
         ctx.globalAlpha = Math.min(1, S.banner / 40);
@@ -877,9 +1001,9 @@
         ctx.fillStyle = "#eeecfa";
         ctx.font = "900 24px 'Mochiy Pop One', 'Zen Maru Gothic', sans-serif";
         ctx.fillText(S.bannerText, W / 2, 300);
-        ctx.font = "900 13px 'Zen Maru Gothic', sans-serif";
+        ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
         ctx.fillStyle = "#53e0d8";
-        ctx.fillText("💡 " + S.tip, W / 2, 330);
+        ctx.fillText("💡 " + S.tip, W / 2, 332);
         ctx.globalAlpha = 1;
       }
 
@@ -919,7 +1043,10 @@
   function togglePause() {
     if (!S || !S.running) return;
     paused = !paused;
+    input.fire = input.tfire = input.focus = false; touch.on = false; touch.id = null;
+    $("fire-btn").classList.remove("on"); $("focus-btn").classList.remove("on");
     $("pause-screen").classList.toggle("hidden", !paused);
+    $("pause-btn").textContent = paused ? "▶" : "⏸";
   }
   document.addEventListener("keydown", function (e) {
     const k = e.key;
@@ -931,6 +1058,7 @@
     if (k === " ") input.fire = true;
     if (k === "Shift") input.focus = true;
     if (k === "p" || k === "P" || k === "Escape") togglePause();
+    if ((k === "Enter") && !$("title-screen").classList.contains("hidden")) start("normal");
   });
   document.addEventListener("keyup", function (e) {
     const k = e.key;
@@ -950,22 +1078,52 @@
   canvas.addEventListener("pointerdown", function (e) {
     const p = canvasPos(e);
     if (e.pointerType === "mouse") { input.fire = true; }
-    else { touch.on = true; touch.x = p.x; touch.y = p.y; }
+    else if (touch.id === null) {
+      e.preventDefault();
+      touch.on = true; touch.id = e.pointerId; touch.x = p.x; touch.y = p.y;
+    }
   });
   canvas.addEventListener("pointermove", function (e) {
-    if (e.pointerType !== "mouse") {
+    if (e.pointerType !== "mouse" && e.pointerId === touch.id) {
       const p = canvasPos(e);
       touch.x = p.x; touch.y = p.y;
     }
   });
-  window.addEventListener("pointerup", function (e) {
+  function endPointer(e) {
     if (e.pointerType === "mouse") input.fire = false;
-    else touch.on = false;
+    else if (e.pointerId === touch.id) { touch.on = false; touch.id = null; }
+  }
+  window.addEventListener("pointerup", endPointer);
+  window.addEventListener("pointercancel", endPointer);
+  // FIRE / FOCUS ボタン（2本目の指でおせる）
+  function holdButton(el, onDown, onUp) {
+    el.addEventListener("pointerdown", function (e) {
+      e.preventDefault(); e.stopPropagation();
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
+      onDown(); el.classList.add("on");
+    });
+    const up = function () { onUp(); el.classList.remove("on"); };
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+    el.addEventListener("lostpointercapture", up);
+    el.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  }
+  const focusBtn = $("focus-btn"), fireBtn = $("fire-btn");
+  holdButton(focusBtn, function () { input.focus = true; }, function () { input.focus = false; });
+  holdButton(fireBtn, function () { input.tfire = true; }, function () { input.tfire = false; });
+  function syncFireMode() {
+    if (isTouch) {
+      focusBtn.style.display = "block";
+      fireBtn.style.display = fireMode === "button" ? "block" : "none";
+      document.querySelectorAll(".touch-only").forEach(function (el) { el.style.display = el.tagName === "SPAN" ? "inline" : "flex"; });
+      document.querySelectorAll(".pc-only").forEach(function (el) { el.style.display = "none"; });
+    }
+    document.querySelectorAll("#fire-mode button").forEach(function (b) { b.classList.toggle("on", b.dataset.mode === fireMode); });
+  }
+  document.querySelectorAll("#fire-mode button").forEach(function (b) {
+    b.addEventListener("click", function () { fireMode = b.dataset.mode; ls.set(FIRE_MODE_KEY, fireMode); syncFireMode(); });
   });
-  const focusBtn = $("focus-btn");
-  focusBtn.addEventListener("touchstart", function (e) { e.preventDefault(); input.focus = true; focusBtn.classList.add("on"); });
-  focusBtn.addEventListener("touchend", function (e) { e.preventDefault(); input.focus = false; focusBtn.classList.remove("on"); });
-  if (navigator.maxTouchPoints > 0) focusBtn.style.display = "block";
+  syncFireMode();
 
   document.addEventListener("visibilitychange", function () {
     if (document.hidden && S && S.running && !paused) togglePause();
@@ -975,23 +1133,32 @@
   function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
   muteBtn.addEventListener("click", function () {
     muted = !muted;
-    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    ls.set("picotto-muted", muted ? "1" : "0");
     updateMuteBtn();
   });
   updateMuteBtn();
 
-  $("start-btn").addEventListener("click", start);
-  $("retry-btn").addEventListener("click", start);
-  $("retry2-btn").addEventListener("click", start);
+  $("start-btn").addEventListener("click", function () { start("normal"); });
+  $("easy-btn").addEventListener("click", function () { start("easy"); });
+  $("hard-btn").addEventListener("click", function () { start("hard"); });
+  $("retry-btn").addEventListener("click", function () { start(diffKey); });
+  $("retry2-btn").addEventListener("click", function () { start(diffKey); });
+  $("title-btn").addEventListener("click", showTitle);
+  $("title2-btn").addEventListener("click", showTitle);
+  $("quit-btn").addEventListener("click", showTitle);
   $("resume-btn").addEventListener("click", togglePause);
+  $("pause-btn").addEventListener("click", function () { togglePause(); this.blur(); });
 
   // デバッグフック
   window.__CB = {
     get S() { return S; }, get P() { return P; }, get boss() { return boss; },
-    start: start, nextStage: nextStage,
+    start: start, nextStage: nextStage, showTitle: showTitle,
+    step: function (n) { for (let i = 0; i < n; i++) { if (S && S.running && !paused) update(); } },
+    input: input, touch: touch, get ebul() { return ebul; }, get warns() { return warns; },
   };
 
   resetAll();
+  showTitle();
   requestAnimationFrame(function (t) { lastTime = t; requestAnimationFrame(loop); });
 })();
 </script>
