@@ -1,14 +1,55 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11182f"><title>おやつ防衛隊｜無料ブラウザゲーム｜ルドット</title><style>
-:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#eeb27f;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}button:hover:not(:disabled){background:#3b527e;transform:translateY(-1px)}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-</style><!-- LUDOT-SEO-START -->
-<meta name="description" content="道の周りに守り役を配置。敵を倒して得たコインで増設・強化し、全8ウェーブからおやつを守ろう。 無料・ダウンロード不要。ルドットで遊べます。">
+:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#eeb27f;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}@media(hover:hover){button:hover:not(:disabled){background:#3b527e;transform:translateY(-1px)}button.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.08)}}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style id="ludot-upgrade-038">
+@media(max-width:520px){header{padding:10px 14px}main{padding-top:0}.eyebrow{font-size:.78rem}h1{font-size:1.45rem;margin:4px 0}.lead{margin:0 0 10px;font-size:.95rem;line-height:1.5}.panel{padding:12px 10px}.toolbar{margin-bottom:6px}.stat{padding:5px 9px}.stat small{font-size:.75rem}.stat b{font-size:1.05rem}.intro .icon{font-size:3.2rem;margin:6px}}
+.notice{margin:6px 0;min-height:1.6em;text-align:center}
+.td-wrap{position:relative;max-width:640px;margin:6px auto 0}
+.td-wrap canvas{margin:0;width:100%;cursor:pointer}
+.td-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#0b1224e0;border-radius:18px;text-align:center;padding:10px;animation:tdIn .35s ease-out}
+.td-overlay[hidden]{display:none}
+.td-overlay h2{margin:0;font-size:clamp(1.1rem,4.6vw,1.6rem)}
+.td-overlay .stars{font-size:clamp(1.5rem,7vw,2.4rem);color:#ffd35c;letter-spacing:.12em;line-height:1.1}
+.td-overlay .stars i{font-style:normal;color:#4a5878}
+.td-overlay p{margin:0;line-height:1.5;color:#dfe7fb;font-size:.95rem}
+.td-overlay .row{justify-content:center;margin-top:4px;gap:8px}
+.td-overlay button{padding:9px 14px;min-height:44px}
+.td-dock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-height:62px;margin:8px auto 0;max-width:640px}
+.td-dock button{padding:3px 2px;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;font-size:.82rem;border-radius:12px}
+.td-dock .ic{font-size:1.35rem;line-height:1.1}
+.td-dock .hint{grid-column:1/-1;align-self:center;text-align:center;color:var(--muted);font-size:.92rem;line-height:1.5}
+.td-dock .info{grid-column:span 2;display:flex;flex-direction:column;justify-content:center;background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:4px 10px;font-size:.85rem;line-height:1.4}
+.td-dock .info b{font-size:1rem}
+.td-dock .cost{color:#ffd98a;font-weight:800}
+.td-dock button.short{background:#222c44;color:#9aa6c2}
+.td-dock button.short .cost{color:#ff9aa8}
+.td-bar{display:flex;gap:8px;justify-content:center;margin:8px auto 0;max-width:640px}
+.td-bar #wave{flex:1;max-width:330px}
+.td-bar button{min-height:48px}
+.td-bar button.busy{background:#314466;color:#e6edff;font-weight:700;border:1px dashed #8fa6d6}
+.td-preview{margin:6px 0 0;min-height:1.5em;text-align:center;font-size:.9rem;color:var(--muted)}
+.stage-list{display:grid;gap:10px;max-width:560px;margin:0 auto}
+.stage-card{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;width:100%}
+.stage-card .ic{font-size:2rem}
+.stage-card .st{color:#ffd35c;letter-spacing:.08em}
+.stage-card small{display:block;color:var(--muted);font-size:.85rem}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-width:560px;margin:12px auto 0;font-size:.85rem;color:var(--muted);line-height:1.45}
+.legend div{background:#10192d;border-radius:10px;padding:6px 8px}
+.td-how{display:grid;gap:8px;max-width:560px;margin:0 auto 14px}
+.td-how div{display:flex;gap:12px;align-items:center;background:#10192d;border:1px solid #ffffff14;border-radius:14px;padding:10px 12px;line-height:1.55;font-size:.95rem;color:#dfe7fb}
+.td-how i{font-style:normal;font-size:1.9rem;flex:none;width:2.2rem;text-align:center}
+.td-how b{color:var(--accent)}
+@keyframes tdIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="虫たちが道をとおって、おやつをねらってくるよ。道のまわりにクマ・ウサギ・ゾウ・ペンギンの守り役をおいて、ぜんぶのウェーブでおやつを守りきればクリア！ 3つのステージ、ボスも登場。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/038-oyatsu-defense/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"おやつ防衛隊","description":"道の周りに守り役を配置。敵を倒して得たコインで増設・強化し、全8ウェーブからおやつを守ろう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/038-oyatsu-defense/index.html","inLanguage":"ja","genre":"TOWER DEFENSE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"おやつ防衛隊","description":"虫たちが道をとおって、おやつをねらってくるよ。道のまわりにクマ・ウサギ・ゾウ・ペンギンの守り役をおいて、ぜんぶのウェーブでおやつを守りきればクリア！ 3つのステージ、ボスも登場。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/038-oyatsu-defense/index.html","inLanguage":"ja","genre":"TOWER DEFENSE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="038"></script>
 <!-- LUDOT-SEO-END -->
-</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">TOWER DEFENSE · #038</div><h1>🍪 おやつ防衛隊</h1><p class="lead">置き場所を考えて、おやつを守ろう。</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>道の周りに守り役を配置。敵を倒して得たコインで増設・強化し、全8ウェーブからおやつを守ろう。</p><p>設置マスをタップ。設置50コイン、強化40コイン。「次のウェーブ」で開始。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
+</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">TOWER DEFENSE · #038</div><h1>🍪 おやつ防衛隊</h1><p class="lead">置き場所を考えて、おやつを守ろう。</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>虫たちが道をとおって、おやつをねらってくるよ。道のまわりにクマ・ウサギ・ゾウ・ペンギンの守り役をおいて、ぜんぶのウェーブでおやつを守りきればクリア！ 3つのステージ、ボスも登場。</p><p>＋のマスをタップ→下のボタンで守り役をえらぶ。おいた守り役をタップで強化。「ウェーブスタート」で開始。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
 'use strict';
-const CONFIG={"id": "038", "title": "おやつ防衛隊", "genre": "TOWER DEFENSE", "emoji": "🍪", "color": "#eeb27f", "author": "スタッフ", "age": "8歳〜", "date": "2026-09-13", "description": "道の周りに守り役を配置。敵を倒して得たコインで増設・強化し、全8ウェーブからおやつを守ろう。", "controls": "設置マスをタップ。設置50コイン、強化40コイン。「次のウェーブ」で開始。", "path": "games/038-oyatsu-defense/index.html", "tagline": "置き場所を考えて、おやつを守ろう。", "rules": "道の周りに守り役を配置。敵を倒して得たコインで増設・強化し、全8ウェーブからおやつを守ろう。"};
+const CONFIG={"id": "038", "title": "おやつ防衛隊", "genre": "TOWER DEFENSE", "emoji": "🍪", "color": "#eeb27f", "author": "スタッフ", "age": "8歳〜", "date": "2026-09-13", "description": "虫たちが道をとおって、おやつをねらってくるよ。道のまわりにクマ・ウサギ・ゾウ・ペンギンの守り役をおいて、ぜんぶのウェーブでおやつを守りきればクリア！ 3つのステージ、ボスも登場。", "controls": "＋のマスをタップ→下のボタンで守り役をえらぶ。おいた守り役をタップで強化。「ウェーブスタート」で開始。", "path": "games/038-oyatsu-defense/index.html", "tagline": "置き場所を考えて、おやつを守ろう。", "rules": "虫たちが道をとおって、おやつをねらってくるよ。道のまわりにクマ・ウサギ・ゾウ・ペンギンの守り役をおいて、ぜんぶのウェーブでおやつを守りきればクリア！ 3つのステージ、ボスも登場。"};
 const app=document.getElementById('app');
 const $=(s,r=app)=>r.querySelector(s), $$=(s,r=app)=>[...r.querySelectorAll(s)];
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -31,10 +72,165 @@ function loop(fn){let active=true,id,last=performance.now();function step(now){i
 function point(e,c){const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}}
 function circle(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 function label(ctx,s,x,y,color='#eef3ff',size=20){ctx.fillStyle=color;ctx.font=`bold ${size}px system-ui`;ctx.textAlign='center';ctx.fillText(s,x,y)}
-function mount(){const route=[[0,90],[170,90],[170,290],[420,290],[420,130],[600,130]],spots=[[70,155],[235,100],[235,230],[345,220],[490,210],[345,345],[490,75]];let towers=[],enemies=[],money=140,lives=12,wave=0,spawn=0,tick=0,running=false,done=false;stage(canvas(600,400)+'<div class="row controls"><button id="wave" class="primary">次のウェーブ</button></div><p class="small center muted">青い＋：設置50 ／ 設置済み：強化40（最大3）<br>敵に近い位置から守ろう。</p>',stat('コイン',money,'money')+stat('おやつ',lives,'lives')+stat('ウェーブ','0 / 8','wave-num'));const c=$('#canvas'),ctx=c.getContext('2d');function hud(){$('#money').textContent=money;$('#lives').textContent=lives;$('#wave-num').textContent=`${wave} / 8`}on(c,'pointerdown',e=>{if(done)return;let p=point(e,c),i=spots.findIndex(([x,y])=>Math.hypot(p.x-x,p.y-y)<28);if(i<0)return;let t=towers.find(t=>t.i===i);if(t){if(t.level>=3)return say('この守り役は最大レベル。');if(money<40)return say('強化には40コイン必要。');money-=40;t.level++}else{if(money<50)return say('設置には50コイン必要。');money-=50;towers.push({i,level:1,cool:0})}hud();say('準備OK！')});$('#wave').onclick=()=>{if(running||done)return;if(!towers.length)return say('まずは＋を押して守り役を置こう。');running=true;wave++;spawn=6+wave;tick=0;$('#wave').disabled=true;hud()};loop(dt=>{if(done)return;if(running){tick-=dt;if(spawn>0&&tick<=0){enemies.push({x:0,y:90,segment:1,hp:3+wave,max:3+wave,speed:28+wave*3});spawn--;tick=.95}for(const e of enemies){const end=route[e.segment];const dx=end[0]-e.x,dy=end[1]-e.y,dist=Math.hypot(dx,dy);if(dist<=e.speed*dt){e.x=end[0];e.y=end[1];e.segment++;if(e.segment===route.length){e.out=true;lives--;hud()}}else{e.x+=dx/dist*e.speed*dt;e.y+=dy/dist*e.speed*dt}}for(const t of towers){t.cool-=dt;const [x,y]=spots[t.i],enemy=enemies.find(e=>!e.out&&e.hp>0&&Math.hypot(e.x-x,e.y-y)<135);if(enemy&&t.cool<=0){enemy.hp-=t.level;t.cool=.48;t.target=[enemy.x,enemy.y];t.flash=.12;if(enemy.hp<=0){money+=10;hud()}}t.flash=Math.max(0,(t.flash||0)-dt)}enemies=enemies.filter(e=>!e.out&&e.hp>0);if(lives<=0){done=true;result('おやつがなくなった！',`ウェーブ ${wave}まで到達。配置を変えて再挑戦しよう。`)}else if(!spawn&&!enemies.length){running=false;money+=25;hud();if(wave===8){done=true;result('おやつを守りきった！',`全8ウェーブクリア。残ったおやつ ${lives}個！`)}else{$('#wave').disabled=false;say('ウェーブクリア！ 25コインのボーナス。増設して次へ。')}}}ctx.clearRect(0,0,600,400);ctx.strokeStyle='#4e5470';ctx.lineWidth=36;ctx.lineJoin='round';ctx.beginPath();route.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();label(ctx,'🍪',560,105,'#fff',28);spots.forEach(([x,y],i)=>{const t=towers.find(t=>t.i===i);circle(ctx,x,y,25,t?'#79ccbd':'#28456b');label(ctx,t?String(t.level):'+',x,y+7,t?'#15203a':'#d5edff',24);if(t?.flash>0){ctx.strokeStyle='#ffda88';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(...t.target);ctx.stroke()}});for(const e of enemies){circle(ctx,e.x,e.y,11,'#ffacbd');ctx.fillStyle='#70d0a8';ctx.fillRect(e.x-12,e.y-20,24*e.hp/e.max,4)}})}
+/* ===== おやつ防衛隊 v2：守り役4種・敵4種・3ステージ ===== */
+const TOWERS={
+ bear:{icon:'🐻',name:'クマ',role:'バランス',cost:50,dmg:[2,3,4.2],rate:[.62,.56,.5],range:[112,122,134],base:'#b98552',shot:'#ffd27a',tip:'なんでもこなす'},
+ rabbit:{icon:'🐰',name:'ウサギ',role:'はやうち',cost:60,dmg:[.9,1.3,1.9],rate:[.2,.18,.15],range:[88,94,100],base:'#d98aa6',shot:'#ffc2d6',tip:'はやい敵に強い'},
+ elephant:{icon:'🐘',name:'ゾウ',role:'まとめて',cost:90,dmg:[3,4.5,6.5],rate:[1.2,1.1,1],range:[128,138,150],splash:[52,60,68],base:'#7d93bd',shot:'#8fd3ff',tip:'かたまりに強い'},
+ penguin:{icon:'🐧',name:'ペンギン',role:'ゆっくり',cost:70,dmg:[.6,.9,1.2],rate:[.85,.72,.6],range:[104,114,126],slow:[.42,.52,.62],base:'#4f9fb0',shot:'#d6f7ff',tip:'敵をおそくする'}
+};
+const ORDER=['bear','rabbit','elephant','penguin'];
+const ENEMIES={
+ ant:{icon:'🐜',name:'アリ',hp:4,speed:40,reward:3,bite:1,size:20,gap:.8},
+ bee:{icon:'🐝',name:'ハチ',hp:3,speed:74,reward:4,bite:1,size:20,gap:.55},
+ snail:{icon:'🐌',name:'カタツムリ',hp:13,speed:23,reward:7,bite:1,size:24,armor:1,gap:1.1},
+ beetle:{icon:'🪲',name:'カブトムシ',hp:62,speed:19,reward:30,bite:3,size:34,armor:1,gap:1.6,boss:true}
+};
+const STAGES=[
+ {name:'森の小道',icon:'🌳',waves:8,hp:1,money:140,grass:'#244a31',grass2:'#2c5a3a',path:'#a4835a',edge:'#6d5436',deco:['🌳','🌷','🍄','🌼'],
+  route:[[0,90],[170,90],[170,290],[420,290],[420,130],[600,130]],
+  spots:[[70,155],[235,100],[235,230],[345,220],[490,210],[345,350],[490,70],[100,250]]},
+ {name:'くねくね川原',icon:'🏞️',waves:10,hp:1.45,money:170,grass:'#2a4a52',grass2:'#315a61',path:'#b8a57f',edge:'#7e6d4f',deco:['🌾','🪨','🌸','🌿'],
+  route:[[0,330],[130,330],[130,70],[300,70],[300,330],[470,330],[470,70],[600,70]],
+  spots:[[55,230],[215,170],[215,270],[385,140],[385,240],[385,30],[545,170],[545,300]]},
+ {name:'ぐるぐる山道',icon:'⛰️',waves:12,hp:2.7,money:200,grass:'#3d3f5c',grass2:'#474a6a',path:'#b39b83',edge:'#6f5d4c',deco:['🌲','🪨','🍂','⛄'],
+  route:[[0,60],[540,60],[540,340],[80,340],[80,160],[420,160],[420,250],[250,250]],
+  spots:[[150,110],[330,110],[480,110],[30,250],[160,250],[330,205],[330,295],[480,250]]}
+];
+const LIVES=12;
+function segDist(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;const t=l?clamp(((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l,0,1):0;return Math.hypot(p[0]-a[0]-dx*t,p[1]-a[1]-dy*t)}
+function routeDist(p,r){let m=1e9;for(let i=1;i<r.length;i++)m=Math.min(m,segDist(p,r[i-1],r[i]));return m}
+function seeded(seed){return()=>(seed=(seed*16807)%2147483647)/2147483647}
+function upCost(t){const T=TOWERS[t.type];return t.level>=3?0:Math.round(T.cost*(t.level===1?.8:1.2))}
+function sellValue(t){return Math.floor(t.invested*.6)}
+function enemyHp(type,s,w){const k=w-1;return ENEMIES[type].hp*(1+.22*k+.012*k*k)*STAGES[s].hp}
+function isBossWave(s,w){const W=STAGES[s].waves;return w===W||(s>0&&w===Math.ceil(W/2))}
+function waveList(s,w){const f=Math.floor,ants=f(4+w*1.2+s*2),bees=w>=3?f(w/2+s):0,snails=w>=4?f((w-2)/2.2+s*.8):0,out=[];let a=ants,b=bees,c=snails;
+ for(let i=0;a+b+c>0;i++){if(a>0){out.push('ant');a--}if(b>0&&i%2===1){out.push('bee');b--}if(c>0&&i%3===2){out.push('snail');c--}if(i>40){while(b-->0)out.push('bee');while(c-->0)out.push('snail');break}}
+ if(isBossWave(s,w))out.push('beetle');return out}
+function waveText(s,w){const l=waveList(s,w),n=k=>l.filter(x=>x===k).length;return Object.keys(ENEMIES).filter(k=>n(k)).map(k=>`${ENEMIES[k].icon}×${n(k)}`).join(' ')+(isBossWave(s,w)?' ・ ボスが来る！':'')}
+function newGame(s){const st=STAGES[s],r=seeded(97+s*31),deco=[];let guard=0;
+ while(deco.length<22&&guard++<600){const p=[20+r()*560,20+r()*360];if(routeDist(p,st.route)<34)continue;if(st.spots.some(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<40))continue;deco.push({x:p[0],y:p[1],e:st.deco[Math.floor(r()*st.deco.length)],sz:14+r()*10})}
+ return{s,st,towers:[],enemies:[],shots:[],fx:[],deco,money:st.money,lives:LIVES,wave:0,queue:[],spawnT:0,phase:'build',events:[],banner:null,shake:0,time:0}}
+/* ---- 1フレーム分の世界の更新（描画しない） ---- */
+function hurt(G,e,d){const a=ENEMIES[e.type].armor||0;e.hp-=a?Math.max(d-a,d*.35):d;e.hitT=.12;if(e.hp<=0&&!e.dead){e.dead=true;const R=ENEMIES[e.type].reward;G.money+=R;G.fx.push({k:'puff',x:e.x,y:e.y,t:0,life:.6},{k:'text',x:e.x,y:e.y-14,s:'+'+R,c:'#ffd35c',t:0,life:.8});G.events.push(ENEMIES[e.type].boss?'boss':'pop')}}
+function update(G,dt){if(G.phase!=='wave')return;G.time+=dt;const route=G.st.route;
+ G.spawnT-=dt;if(G.queue.length&&G.spawnT<=0){const type=G.queue.shift(),hp=enemyHp(type,G.s,G.wave);G.enemies.push({type,x:route[0][0],y:route[0][1],seg:1,dist:0,hp,max:hp,slowT:0,slow:0,hitT:0,bob:Math.random()*6});G.spawnT=ENEMIES[type].gap}
+ for(const e of G.enemies){if(e.dead||e.out)continue;const E=ENEMIES[e.type];e.slowT-=dt;e.hitT-=dt;let d=E.speed*(e.slowT>0?1-e.slow:1)*dt;
+  while(d>0&&!e.out){const [ex,ey]=route[e.seg],rem=Math.hypot(ex-e.x,ey-e.y);if(rem<=d){e.x=ex;e.y=ey;d-=rem;e.dist+=rem;e.seg++;if(e.seg>=route.length){e.out=true;G.lives=Math.max(0,G.lives-E.bite);G.lastBite=E.bite;G.shake=.35;G.events.push('leak');G.fx.push({k:'text',x:ex-30,y:ey-20,s:'-'+E.bite+'🍪',c:'#ff8fa3',t:0,life:1})}}else{e.x+=(ex-e.x)/rem*d;e.y+=(ey-e.y)/rem*d;e.dist+=d;d=0}}}
+ for(const t of G.towers){const T=TOWERS[t.type],L=t.level-1,[x,y]=G.st.spots[t.i];t.cool-=dt;t.flash=Math.max(0,t.flash-dt);if(t.cool>0)continue;let best=null,score=-1e9;
+  for(const e of G.enemies){if(e.dead||e.out)continue;if(Math.hypot(e.x-x,e.y-y)>T.range[L])continue;const sc=e.dist-(T.slow&&e.slowT>.3?1e4:0);if(sc>score){score=sc;best=e}}
+  if(best){t.cool=T.rate[L];t.flash=.14;t.aim=Math.atan2(best.y-y,best.x-x);G.shots.push({x,y,target:best,tx:best.x,ty:best.y,type:t.type,L})}}
+ for(const b of G.shots){if(b.target&&!b.target.dead&&!b.target.out){b.tx=b.target.x;b.ty=b.target.y}const dx=b.tx-b.x,dy=b.ty-b.y,dd=Math.hypot(dx,dy),v=470*dt;
+  if(dd<=v+6){b.done=true;const T=TOWERS[b.type],L=b.L;
+   if(T.splash){G.fx.push({k:'ring',x:b.tx,y:b.ty,r:T.splash[L],t:0,life:.35,c:'#8fd3ff'});for(const e of G.enemies)if(!e.dead&&!e.out&&Math.hypot(e.x-b.tx,e.y-b.ty)<=T.splash[L])hurt(G,e,T.dmg[L])}
+   else{let e=b.target;if(!e||e.dead||e.out)e=G.enemies.find(o=>!o.dead&&!o.out&&Math.hypot(o.x-b.tx,o.y-b.ty)<16);if(e){if(T.slow){e.slowT=1.7;e.slow=Math.max(e.slowT>0?e.slow:0,T.slow[L])}hurt(G,e,T.dmg[L]);G.fx.push({k:'spark',x:b.tx,y:b.ty,t:0,life:.2,c:T.shot})}}}
+  else{b.x+=dx/dd*v;b.y+=dy/dd*v}}
+ G.shots=G.shots.filter(b=>!b.done);G.enemies=G.enemies.filter(e=>!e.dead&&!e.out);
+ if(G.lives<=0){G.phase='lose';G.events.push('lose');return}
+ if(!G.queue.length&&!G.enemies.length){G.shots=[];const bonus=10+G.wave*2;G.money+=bonus;if(G.wave>=G.st.waves){G.phase='win';G.events.push('win')}else{G.phase='build';G.events.push('clear');G.bonus=bonus}}}
+function startWave(G){if(G.phase!=='build')return false;G.wave++;G.queue=waveList(G.s,G.wave);G.spawnT=.4;G.phase='wave';G.banner={s:isBossWave(G.s,G.wave)?`ウェーブ ${G.wave} ・ ボス登場！`:`ウェーブ ${G.wave}`,t:0};G.events.push(isBossWave(G.s,G.wave)?'bosswave':'wave');return true}
+function build(G,i,type){const T=TOWERS[type];if(G.towers.some(t=>t.i===i)||G.money<T.cost)return false;G.money-=T.cost;G.towers.push({i,type,level:1,cool:.2,flash:0,aim:0,invested:T.cost});G.events.push('build');return true}
+function upgrade(G,t){const c=upCost(t);if(!c||G.money<c)return false;G.money-=c;t.invested+=c;t.level++;G.events.push('up');return true}
+function sell(G,t){G.money+=sellValue(t);G.towers=G.towers.filter(o=>o!==t);G.events.push('sell')}
+function starsFor(lives){return lives>=10?3:lives>=6?2:1}
 
-function launch(){mount()}
+/* ---- 効果音 ---- */
+let lastPop=0;
+function beep(freq,dur=.1,type='sine',vol=.08,delay=0){try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();if(audioContext.state==='suspended')audioContext.resume();const t0=audioContext.currentTime+delay,o=audioContext.createOscillator(),g=audioContext.createGain();o.type=type;o.frequency.setValueAtTime(freq,t0);g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.001,t0+dur);o.connect(g).connect(audioContext.destination);o.start(t0);o.stop(t0+dur+.02)}catch{}}
+function sfx(k){const now=performance.now();
+ if(k==='pop'){if(now-lastPop<70)return;lastPop=now;beep(880+Math.random()*200,.07,'triangle',.05)}
+ else if(k==='boss'){[523,659,784,1047].forEach((f,i)=>beep(f,.16,'triangle',.07,i*.08))}
+ else if(k==='leak')beep(170,.25,'sawtooth',.05)
+ else if(k==='build'){beep(660,.08,'triangle');beep(990,.1,'triangle',.07,.07)}
+ else if(k==='up'){[660,830,990].forEach((f,i)=>beep(f,.09,'triangle',.07,i*.06))}
+ else if(k==='sell')beep(420,.12,'triangle')
+ else if(k==='wave'){beep(520,.1);beep(700,.14,'sine',.08,.1)}
+ else if(k==='bosswave'){beep(300,.2,'square',.04);beep(300,.2,'square',.04,.25)}
+ else if(k==='clear'){beep(784,.1);beep(1046,.18,'sine',.08,.1)}
+ else if(k==='win'){[523,659,784,1046,1318].forEach((f,i)=>beep(f,.2,'triangle',.08,i*.11))}
+ else if(k==='lose'){[392,330,262].forEach((f,i)=>beep(f,.25,'sine',.07,i*.18))}
+ else if(k==='ng')beep(200,.1,'square',.03)}
+
+/* ---- 画面 ---- */
+function loadStars(){let v=read('stages',[0,0,0]);if(!Array.isArray(v)||v.length!==3)v=[0,0,0];return v.map(n=>clamp(Number(n)||0,0,3))}
+function fitPanel(){const p=$('.panel');if(!p)return;const r=p.getBoundingClientRect(),over=r.bottom-innerHeight;if(over>0)window.scrollBy(0,Math.min(r.top-6,over+6))}
+function howTo(next){stop();
+ app.innerHTML=`<section class="panel"><h2 class="center" style="margin:4px 0 12px">あそびかた</h2><div class="td-how">
+ <div><i>🐜</i><span><b>虫が おやつを ねらってくる！</b><br>虫は 🕳️あな から出て、道をとおって 🍪おやつ へ むかうよ。</span></div>
+ <div><i>🐻</i><span><b>守り役を おこう</b><br>道のそばの ＋ をタップして、下のボタンで守り役をえらぶ。近くにきた虫を 自動で追いはらってくれるよ。</span></div>
+ <div><i>▶️</i><span><b>「ウェーブスタート」を おす</b><br>虫がやってくる。追いはらうと コインがもらえるので、守り役を ふやしたり 強化しよう。</span></div>
+ <div><i>🏆</i><span><b>ぜんぶのウェーブで 守りきれば クリア</b><br>おやつが 0こ になると まけ。おやつが多くのこるほど ★がふえるよ。</span></div>
+ </div><div class="center"><button class="primary" id="go">わかった！ はじめる</button></div></section>`;
+ $('#go').onclick=()=>{save('howto',1);next()};fitPanel()}
+function stageSelect(){stop();const stars=loadStars();
+ app.innerHTML=`<section class="panel"><h2 class="center" style="margin:4px 0 12px">ステージをえらぼう</h2><div class="stage-list">${STAGES.map((st,i)=>{const open=i===0||stars[i-1]>0;return `<button class="stage-card ${open?'':'locked'}" data-stage="${i}" ${open?'':'disabled'}><span class="ic">${open?st.icon:'🔒'}</span><span><b>ステージ${i+1}　${st.name}</b><small>${open?`${st.waves}ウェーブ　<span class="st">${'★'.repeat(stars[i])}${'☆'.repeat(3-stars[i])}</span>`:`ステージ${i}をクリアでひらく`}</small></span></button>`}).join('')}</div>
+ <div class="legend">${ORDER.map(k=>{const T=TOWERS[k];return `<div>${T.icon} <b>${T.name}</b> ${T.cost}コイン<br>${T.tip}</div>`}).join('')}</div>
+ <p class="small center muted" style="margin:10px 0 0">🐌カタツムリと🪲ボスは かたい。ウサギの小さな玉は効きにくいよ。</p><div class="center" style="margin-top:10px"><button id="howto">❓ あそびかた</button></div></section>`;
+ $$('[data-stage]').forEach(b=>b.onclick=()=>{const n=+b.dataset.stage;if(!read('howto',0))howTo(()=>mount(n));else mount(n)});$('#howto').onclick=()=>howTo(stageSelect);fitPanel()}
+function mount(s){stop();let G=newGame(s),sel=null,speed=1,dockKey='';
+ stage(`<div class="td-wrap">${canvas(600,400)}<div id="overlay" class="td-overlay" hidden></div></div><div id="dock" class="td-dock"></div><div class="td-bar"><button id="wave" class="primary">▶ ウェーブ1 スタート</button><button id="speed" aria-label="速さ切りかえ">×1</button><button id="stages">ステージ</button></div><p id="preview" class="td-preview"></p>`,
+  stat('コイン',G.money,'money')+stat('おやつ',`${G.lives}`,'lives')+stat('ウェーブ',`0/${G.st.waves}`,'wave-num'));
+ $('#restart').onclick=()=>mount(s);
+ const c=$('#canvas'),ctx=c.getContext('2d');
+ function hud(){$('#money').textContent=G.money;$('#lives').textContent=G.lives;$('#wave-num').textContent=`${G.wave}/${G.st.waves}`;
+  const w=$('#wave');if(G.phase==='wave'){const left=G.queue.length+G.enemies.length;w.textContent=`⏳ のこり ${left}ひき`;w.className='busy'}else{w.textContent=`▶ ウェーブ${G.wave+1} スタート`;w.className='primary'}
+  $('#preview').textContent=G.phase==='build'&&G.wave<G.st.waves?`つぎ：${waveText(s,G.wave+1)}`:G.phase==='wave'?`${G.st.icon} ${G.st.name}　ウェーブ ${G.wave} / ${G.st.waves}`:'';dock()}
+ function dock(){const t=sel&&sel.tower,key=JSON.stringify([sel&&sel.i,t&&t.level,t&&t.type,G.money>=0&&ORDER.map(k=>G.money>=TOWERS[k].cost),t&&G.money>=upCost(t)]);if(key===dockKey)return;dockKey=key;const d=$('#dock');
+  if(!sel){d.innerHTML=`<div class="hint">＋のマスをタップして 守り役をおこう。<br>おいた守り役をタップすると 強化できるよ。</div>`;return}
+  if(!t){d.innerHTML=ORDER.map(k=>{const T=TOWERS[k];return `<button data-build="${k}" class="${G.money<T.cost?'short':''}" aria-label="${T.name}をおく ${T.cost}コイン"><span class="ic">${T.icon}</span>${T.role}<span class="cost">${T.cost}</span></button>`}).join('');
+   $$('[data-build]',d).forEach(b=>b.onclick=()=>{const k=b.dataset.build;if(build(G,sel.i,k)){sel={i:sel.i,tower:G.towers.find(o=>o.i===sel.i)};say(`${TOWERS[k].icon} ${TOWERS[k].name}をおいた！`)}else{sfx('ng');say(`コインがたりないよ（${TOWERS[k].cost}コイン必要）`)}hud()});return}
+  const T=TOWERS[t.type],L=t.level-1,uc=upCost(t);
+  d.innerHTML=`<div class="info"><b>${T.icon} ${T.name} Lv${t.level}</b><span>${T.role}・${T.tip}</span></div><button id="up" class="${uc&&G.money<uc?'short':''}" ${uc?'':'disabled'}><span class="ic">⬆️</span>${uc?'強化':'最大'}<span class="cost">${uc||'Lv3'}</span></button><button id="sell"><span class="ic">🔁</span>もどす<span class="cost">+${sellValue(t)}</span></button>`;
+  $('#up',d).onclick=()=>{if(upgrade(G,t))say(`${T.name}がパワーアップ！ Lv${t.level}`);else{sfx('ng');say(`強化には ${upCost(t)}コイン必要。`)}hud()};
+  $('#sell',d).onclick=()=>{sell(G,t);sel=null;say('守り役をもどして コインを受けとった。');hud()}}
+ on(c,'pointerdown',e=>{if(G.phase==='win'||G.phase==='lose')return;const p=point(e,c);const i=G.st.spots.findIndex(([x,y])=>Math.hypot(p.x-x,p.y-y)<36);if(i<0){sel=null;hud();return}
+  const t=G.towers.find(o=>o.i===i);sel={i,tower:t||null};beep(t?560:480,.05,'triangle',.05);hud();say(t?`${TOWERS[t.type].name}をえらんだ。`:'どの守り役をおく？ 下からえらんでね。')});
+ $('#wave').onclick=()=>{if(G.phase!=='build')return;if(!G.towers.length){sfx('ng');return say('まずは＋のマスに守り役をおこう。')}startWave(G);say(isBossWave(s,G.wave)?'🪲ボスはかたくて大きい！ みんなで力を合わせよう。':'ウェーブ中も 守り役をおいたり強化したりできるよ。');hud()};
+ $('#speed').onclick=()=>{speed=speed===1?2:1;$('#speed').textContent='×'+speed;$('#speed').classList.toggle('selected',speed===2)};
+ $('#stages').onclick=()=>stageSelect();
+ on(window,'keydown',e=>{if(e.key===' '&&G.phase==='build'&&document.activeElement?.tagName!=='BUTTON'){e.preventDefault();$('#wave').click()}});
+ function finish(win){const ov=$('#overlay'),stars=win?starsFor(G.lives):0;let msg;
+  if(win){const all=loadStars();if(stars>all[s]){all[s]=stars;save('stages',all)}
+   msg=`<h2>🎉 おやつを守りきった！</h2><div class="stars">${'★'.repeat(stars)}<i>${'★'.repeat(3-stars)}</i></div><p>のこったおやつ ${G.lives} / ${LIVES}${stars<3?'<br>10こ以上のこすと ★3つ！':''}</p><div class="row">${s<2?'<button id="next" class="primary">次のステージへ</button>':''}<button id="again" class="${s<2?'':'primary'}">もう一度</button><button id="sel">ステージ</button></div>`}
+  else msg=`<h2>おやつを食べられちゃった…</h2><p>ウェーブ ${G.wave} / ${G.st.waves} まで守れたよ。</p><p class="small">ヒント：${G.money>=60?`コインが ${G.money} のこっていたよ。守り役をふやそう！`:G.wave>=4?'かたい🐌には 🐘ゾウや 🐻クマが効く。🐧で足どめしよう。':'道が曲がる所のそばにおくと 長く当てられるよ。'}</p><div class="row"><button id="again" class="primary">もう一度</button><button id="sel">ステージ</button></div>`;
+  ov.innerHTML=msg;ov.hidden=false;say(win?`${STAGES[s].icon} ステージ${s+1} クリア！`:'くやしい！ おく場所や種類を変えてみよう。');sel=null;$('#dock').innerHTML='';dockKey='';$('#wave').disabled=true;$('#wave').className='busy';$('#wave').textContent=win?'クリア！':'ざんねん';$('#preview').textContent='';
+  $('#again',ov).onclick=()=>mount(s);$('#sel',ov).onclick=()=>stageSelect();if($('#next',ov))$('#next',ov).onclick=()=>mount(s+1);fitPanel()}
+ function draw(){const st=G.st;ctx.save();if(G.shake>0){ctx.translate((Math.random()-.5)*8*G.shake,(Math.random()-.5)*8*G.shake)}
+  ctx.fillStyle=st.grass;ctx.fillRect(-10,-10,620,420);ctx.fillStyle=st.grass2;for(let y=0;y<400;y+=40)for(let x=(y/40%2)*40;x<600;x+=80)ctx.fillRect(x,y,40,40);
+  ctx.textAlign='center';ctx.textBaseline='middle';for(const d of G.deco){ctx.globalAlpha=.8;ctx.font=`${d.sz}px system-ui`;ctx.fillText(d.e,d.x,d.y)}ctx.globalAlpha=1;
+  const path=w=>{ctx.lineWidth=w;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();st.route.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke()};ctx.strokeStyle=st.edge;path(42);ctx.strokeStyle=st.path;path(34);ctx.setLineDash([6,14]);ctx.strokeStyle='#ffffff30';path(3);ctx.setLineDash([]);
+  const [sx,sy]=st.route[0],[gx,gy]=st.route[st.route.length-1];ctx.font='22px system-ui';ctx.fillText('🕳️',sx+14,sy);
+  circle(ctx,gx-22,gy,24,'#f6e3c2');circle(ctx,gx-22,gy,19,'#e8c690');ctx.font='24px system-ui';ctx.fillText('🍪',gx-22,gy-2);label(ctx,String(G.lives),gx-22,gy+32,'#fff',15);
+  const pick=sel?st.spots[sel.i]:null;
+  if(sel&&sel.tower){const T=TOWERS[sel.tower.type];ctx.fillStyle='#ffffff18';ctx.strokeStyle='#ffffffaa';ctx.lineWidth=2;ctx.beginPath();ctx.arc(pick[0],pick[1],T.range[sel.tower.level-1],0,7);ctx.fill();ctx.stroke()}
+  st.spots.forEach(([x,y],i)=>{const t=G.towers.find(o=>o.i===i),on=sel&&sel.i===i;
+   if(!t){ctx.fillStyle=on?'#3e6aa8':'#1f3a60cc';ctx.beginPath();ctx.arc(x,y,24,0,7);ctx.fill();ctx.setLineDash([5,5]);ctx.strokeStyle=on?'#fff':'#9cc3ff';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);label(ctx,'+',x,y+1,'#d5edff',26);return}
+   const T=TOWERS[t.type];if(t.flash>0){ctx.strokeStyle=T.shot;ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,29,0,7);ctx.stroke()}
+   circle(ctx,x,y,25,'#0008');circle(ctx,x,y,23,T.base);if(on){ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y,26,0,7);ctx.stroke()}
+   ctx.font='26px system-ui';ctx.fillText(T.icon,x,y-1+(t.flash>0?-2:0));for(let k=0;k<t.level;k++)circle(ctx,x-9+k*9,y+21,3.5,'#ffd35c')});
+  for(const e of G.enemies){const E=ENEMIES[e.type],b=Math.sin(G.time*10+e.bob)*1.5;if(e.slowT>0)circle(ctx,e.x,e.y,E.size*.62,'#9be8ff55');ctx.font=`${E.size}px system-ui`;ctx.globalAlpha=e.hitT>0?.55:1;ctx.fillText(E.icon,e.x,e.y+b);ctx.globalAlpha=1;
+   const w=E.boss?40:24;ctx.fillStyle='#0009';ctx.fillRect(e.x-w/2,e.y-E.size*.7-5,w,5);ctx.fillStyle=E.boss?'#ff9f5a':'#70d0a8';ctx.fillRect(e.x-w/2,e.y-E.size*.7-5,w*clamp(e.hp/e.max,0,1),5)}
+  for(const b of G.shots){const T=TOWERS[b.type];circle(ctx,b.x,b.y,T.splash?6:T.slow?5:4,T.shot)}
+  for(const f of G.fx){const k=f.t/f.life;ctx.globalAlpha=1-k;if(f.k==='ring'){ctx.strokeStyle=f.c;ctx.lineWidth=3;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(.4+.6*k),0,7);ctx.stroke()}else if(f.k==='spark'){circle(ctx,f.x,f.y,8*(1-k)+2,f.c)}else if(f.k==='puff'){ctx.font=`${18+k*10}px system-ui`;ctx.fillText('💨',f.x,f.y-k*10)}else if(f.k==='text'){label(ctx,f.s,f.x,f.y-k*22,f.c,16)}ctx.globalAlpha=1}
+  if(G.banner&&G.banner.t<1.6){const k=G.banner.t/1.6;ctx.globalAlpha=k<.2?k*5:k>.75?(1-k)*4:1;ctx.fillStyle='#0b1224cc';ctx.fillRect(0,170,600,60);label(ctx,G.banner.s,300,208,G.banner.s.includes('ボス')?'#ffb27a':'#fff',28);ctx.globalAlpha=1}
+  if(G.phase==='build'&&G.wave===0){const tag=(t,x,y,col)=>{ctx.font='bold 14px system-ui';const w=ctx.measureText(t).width+16;x=clamp(x,w/2+4,596-w/2);ctx.fillStyle='#0b1224d9';ctx.beginPath();ctx.roundRect?ctx.roundRect(x-w/2,y-12,w,24,12):ctx.rect(x-w/2,y-12,w,24);ctx.fill();ctx.fillStyle=col;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,x,y+1)};
+   const along=(a,b,d)=>{const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;return[a[0]+(b[0]-a[0])/L*d,a[1]+(b[1]-a[1])/L*d]},R=st.route,p1=along(R[0],R[1],92),p2=along([gx-22,gy],R[R.length-2],98);
+   tag('虫は ここから',p1[0],p1[1],'#ffdd89');tag('おやつを守ろう',p2[0],p2[1],'#ffdd89')}
+  if(G.phase==='build'&&!G.towers.length&&!sel){const a=.5+.5*Math.sin(G.time0*5);ctx.strokeStyle=`rgba(255,221,137,${a})`;ctx.lineWidth=3;G.st.spots.slice(0,3).forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,30,0,7);ctx.stroke()})}
+  ctx.restore()}
+ G.time0=0;
+ loop(dt=>{G.time0+=dt;const steps=speed;for(let k=0;k<steps;k++)update(G,dt);
+  for(const f of G.fx)f.t+=dt*speed;G.fx=G.fx.filter(f=>f.t<f.life);if(G.banner)G.banner.t+=dt;G.shake=Math.max(0,G.shake-dt);
+  if(G.phase!=='wave'&&G.phase!=='build'&&G.phase!=='done'){}
+  if(G.events.length){const ev=G.events;G.events=[];let changed=false;for(const k of ev){sfx(k);changed=true;if(k==='clear')say(`ウェーブクリア！ ボーナス +${G.bonus}コイン。守り役をふやそう。`);if(k==='leak')say(`おやつを${G.lastBite||1}つ取られた！ 守りを強くしよう。`)}
+   if(changed)hud();if(ev.includes('win')||ev.includes('lose')){finish(ev.includes('win'));G.phase='done'}}
+  else if(G.phase==='wave'&&Math.floor(G.time*4)!==G._hudTick){G._hudTick=Math.floor(G.time*4);hud()}
+  draw()});
+ hud();say(`${STAGES[s].icon} ステージ${s+1}「${STAGES[s].name}」 ＋をタップして守り役をおこう。`);fitPanel()}
+function launch(){stageSelect()}
 app.innerHTML=`<section class="panel intro"><div class="icon">${CONFIG.emoji}</div><h2>${CONFIG.title}</h2><p>${CONFIG.rules}</p><button class="primary" id="start">あそぶ</button><p class="small">${CONFIG.controls}</p></section>`;
 $('#start').onclick=launch;
 on(window,'keydown',e=>{if(e.key==='Enter'&&$('#start')){e.preventDefault();stop();launch()}});
+
 </script></body></html>
