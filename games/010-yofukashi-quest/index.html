@@ -12,7 +12,7 @@
     --ink:#eeecfa; --sub:#9d99c0;
     --violet:#8f7bff; --pink:#ff5fa2; --gold:#ffd166; --cyan:#53e0d8; --green:#6ee77a;
   }
-  *{box-sizing:border-box}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
   body{
     background:var(--bg); color:var(--ink);
@@ -22,48 +22,62 @@
   }
   .backbar{width:min(520px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
   .backbar a{color:var(--sub);text-decoration:none}
-  .backbar a:hover,.backbar a:focus-visible{color:var(--violet);outline:none}
+  .backbar a:focus-visible{color:var(--violet);outline:none}
   .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
-  .backbar button:hover{color:var(--violet);border-color:var(--violet)}
-  header{width:min(520px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--violet)}
+    .backbar button:hover{color:var(--violet);border-color:var(--violet)}
+    #battlemenu button:hover{border-color:var(--gold);color:var(--gold)}
+    #titleov button:hover{filter:brightness(1.12)}
+  }
+  header{width:min(520px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 8px}
   h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--violet);text-shadow:0 0 12px rgba(143,123,255,.5);font-weight:400}
   .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(143,123,255,.35);border-radius:999px;color:var(--violet);background:rgba(143,123,255,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
-  #statbar{width:min(520px,100%);display:flex;gap:14px;font-size:13px;color:var(--sub);margin-bottom:6px;flex-wrap:wrap}
+  #statbar{width:min(520px,100%);display:flex;gap:4px 12px;font-size:13px;color:var(--sub);margin-bottom:6px;flex-wrap:wrap;min-height:20px}
+  #statbar.hide{visibility:hidden}
   #statbar b{color:var(--gold);font-weight:400}
+  #statbar .star{color:var(--gold);letter-spacing:1px}
   #wrap{position:relative;width:min(520px,100%)}
   canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none;image-rendering:pixelated}
   #msgbox{
     position:absolute;left:8px;right:8px;bottom:8px;display:none;
     background:rgba(19,19,34,.94);border:2px solid var(--violet);border-radius:8px;
-    padding:10px 14px;font-size:15px;line-height:1.7;min-height:64px;
+    padding:8px 14px 10px;font-size:15px;line-height:1.6;min-height:60px;cursor:pointer;
   }
   #msgbox.show{display:block}
   #msgbox .who{color:var(--gold);font-size:12px}
-  #msgbox .next{position:absolute;right:12px;bottom:6px;color:var(--violet);animation:bl 1s infinite}
+  #msgbox .next{position:absolute;right:12px;bottom:4px;color:var(--violet);animation:bl 1s infinite}
   @keyframes bl{50%{opacity:.2}}
   #battlemenu{
-    position:absolute;right:8px;bottom:84px;display:none;flex-direction:column;gap:6px;
+    position:absolute;left:8px;right:8px;bottom:8px;display:none;
+    grid-template-columns:repeat(4,1fr);gap:6px;
   }
-  #battlemenu.show{display:flex}
+  #battlemenu.show{display:grid}
   #battlemenu button{
-    font-family:inherit;font-size:15px;padding:8px 18px;text-align:left;
-    background:rgba(19,19,34,.94);color:var(--ink);border:2px solid var(--edge);border-radius:8px;cursor:pointer;
+    font-family:inherit;font-size:14px;padding:6px 2px;line-height:1.25;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(19,19,34,.95);color:var(--ink);border:2px solid var(--edge);border-radius:8px;cursor:pointer;
+    touch-action:manipulation;min-height:48px;
   }
-  #battlemenu button:hover,#battlemenu button.sel{border-color:var(--gold);color:var(--gold)}
+  #battlemenu button .i{font-size:16px}
+  #battlemenu button.sel{border-color:var(--gold);color:var(--gold)}
+  #battlemenu button.off{opacity:.45}
   #titleov{
-    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
-    align-items:center;justify-content:center;background:rgba(19,19,34,.9);
-    border-radius:6px;text-align:center;
+    position:absolute;inset:0;display:none;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.88);
+    border-radius:6px;text-align:center;padding:6px;
   }
   #titleov.show{display:flex}
-  #titleov .big{font-size:32px;letter-spacing:4px;color:var(--violet);text-shadow:0 0 18px rgba(143,123,255,.6)}
-  #titleov .note{font-size:14px;color:var(--sub);line-height:1.8}
+  #titleov .big{font-size:30px;letter-spacing:4px;line-height:1.15;color:var(--violet);text-shadow:0 0 18px rgba(143,123,255,.6)}
+  #titleov .note{font-size:14px;color:var(--sub);line-height:1.6}
+  #titleov .rec{font-size:13px;color:var(--gold);min-height:0}
+  #titleov .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   #titleov button{
     font-family:inherit;font-size:16px;background:var(--violet);color:#12083a;
-    border:none;border-radius:6px;padding:8px 28px;cursor:pointer;letter-spacing:2px;
+    border:none;border-radius:6px;padding:9px 24px;cursor:pointer;letter-spacing:2px;
   }
   #titleov button.ghost{background:transparent;color:var(--violet);border:1px solid var(--violet)}
-  #pads{display:flex;justify-content:space-between;align-items:center;margin-top:12px;width:min(520px,100%)}
+  #pads{display:flex;justify-content:space-between;align-items:center;margin-top:10px;width:min(520px,100%)}
   #dpad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:4px}
   #dpad button,#abtn{
     font-family:inherit;font-size:20px;background:var(--panel);color:var(--ink);
@@ -74,11 +88,22 @@
   #dpad .blank{visibility:hidden}
   #abtn{width:84px;height:84px;border-radius:50%;font-size:24px;color:var(--gold)}
   .help{width:min(520px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  @media (max-width:430px){
+    body{padding:8px 10px 24px}
+    header{margin:0 2px 4px}
+    h1{font-size:20px}
+    #titleov .big{font-size:24px;letter-spacing:3px}
+    #titleov .note{font-size:13px;line-height:1.5}
+    #titleov button{font-size:15px;padding:8px 18px}
+    #msgbox{font-size:14px;padding:6px 10px 8px;min-height:54px}
+    #battlemenu{left:5px;right:5px;bottom:5px;gap:4px}
+    #battlemenu button{font-size:13px;min-height:46px}
+  }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="草むらで戦ってレベルを上げ、洞窟にすむ「よるのおう」に挑む小さなRPG。宝箱・ポーション・セーブつき、クリアまで約15分の冒険。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="草むらで戦ってレベルを上げ、洞窟の「よるのおう」に挑む小さなRPG。ひっさつ技・そうび・かくしボスの塔もあって、クリア後もぼうけんが続くよ。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/010-yofukashi-quest/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"よふかしクエスト","description":"草むらで戦ってレベルを上げ、洞窟にすむ「よるのおう」に挑む小さなRPG。宝箱・ポーション・セーブつき、クリアまで約15分の冒険。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/010-yofukashi-quest/index.html","inLanguage":"ja","genre":"MINI RPG","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"よふかしクエスト","description":"草むらで戦ってレベルを上げ、洞窟の「よるのおう」に挑む小さなRPG。ひっさつ技・そうび・かくしボスの塔もあって、クリア後もぼうけんが続くよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/010-yofukashi-quest/index.html","inLanguage":"ja","genre":"MINI RPG","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="010"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -91,11 +116,13 @@
   <div class="age-badge">対象年齢の目安：8歳〜</div>
 </header>
 
-<div id="statbar">
+<div id="statbar" class="hide">
   <div>Lv <b id="sLv">1</b></div>
   <div>HP <b id="sHp">24/24</b></div>
   <div>こうげき <b id="sAtk">6</b></div>
-  <div>ポーション <b id="sPot">2</b></div>
+  <div>まもり <b id="sDef">1</b></div>
+  <div>🧪 <b id="sPot">2</b></div>
+  <div>ひっさつ <span class="star" id="sStar">☆☆☆</span></div>
   <div>つぎのLvまで <b id="sExp">8</b></div>
 </div>
 
@@ -103,15 +130,19 @@
   <canvas id="cv" width="480" height="336"></canvas>
   <div id="msgbox"><div class="who" id="msgWho"></div><div id="msgText"></div><div class="next">▼</div></div>
   <div id="battlemenu">
-    <button data-a="attack">⚔ たたかう</button>
-    <button data-a="potion">🧪 ポーション</button>
-    <button data-a="run">🏃 にげる</button>
+    <button data-a="attack"><span class="i">⚔</span>たたかう</button>
+    <button data-a="skill"><span class="i">★</span>ひっさつ</button>
+    <button data-a="potion"><span class="i">🧪</span>くすり</button>
+    <button data-a="run"><span class="i">🏃</span>にげる</button>
   </div>
   <div id="titleov" class="show">
     <div class="big">よふかし<br>クエスト</div>
-    <div class="note">よるのもりに まものがあふれた。<br>ちいさなゆうしゃよ、どうくつの<br>「よるのおう」を たおしてくれ!</div>
-    <button id="newBtn">はじめから</button>
-    <button id="contBtn" class="ghost" style="display:none">つづきから</button>
+    <div class="note">よるのもりに まものがあふれた。<br>どうくつの「よるのおう」を たおしてくれ!</div>
+    <div class="rec" id="titleRec"></div>
+    <div class="btns">
+      <button id="newBtn">はじめから</button>
+      <button id="contBtn" class="ghost" style="display:none">つづきから</button>
+    </div>
   </div>
 </div>
 
@@ -125,33 +156,46 @@
 </div>
 
 <div class="help">
-  そうさ：矢印キーかDパッドでいどう。ZキーかAボタンで はなす・しらべる・すすめる。<br>
-  くさむら🌿にはまものが出る。たたかってレベルアップ! むらのハナさんは HPかいふく＆セーブしてくれるで。
+  そうさ：矢印キーかDパッドでいどう。ZキーかAボタンで はなす・しらべる・すすめる。せんとうは ボタンをタップ（キーなら ←→で えらんで Z）。<br>
+  くさむら🌿にはまものが出る。たたかうと ★がたまり、3つで「ひっさつ」が うてるよ。たからばこには ぶきや たても あるかも? むらのハナさんは HPかいふく＆セーブしてくれるで。
 </div>
 
 <script>
 (() => {
   const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   const TILE = 24, VW = 20, VH = 14;
-  const SAVE_KEY = 'picotto_yquest_save';
+  const SAVE_KEY = 'picotto_yquest_save';          // 既存キー（互換維持）
+  const REC_KEY = 'ludot_yquest_record';           // 新: クリア記録
 
   // ---- sound -------------------------------------------------------------
   let muted = localStorage.getItem('picotto_yquest_mute') === '1';
   let ac = null;
-  function beep(freq, dur = 0.07, type = 'square', gain = 0.04, slide = 0) {
+  function beep(freq, dur = 0.07, type = 'square', gain = 0.04, slide = 0, delay = 0) {
     if (muted) return;
     try {
       ac = ac || new (window.AudioContext || window.webkitAudioContext)();
       if (ac.state === 'suspended') ac.resume();
       const o = ac.createOscillator(), g = ac.createGain();
-      o.type = type; o.frequency.value = freq;
-      if (slide) o.frequency.linearRampToValueAtTime(Math.max(30, freq + slide), ac.currentTime + dur);
-      g.gain.value = gain;
-      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+      const t0 = ac.currentTime + delay;
+      o.type = type; o.frequency.setValueAtTime(freq, t0);
+      if (slide) o.frequency.linearRampToValueAtTime(Math.max(30, freq + slide), t0 + dur);
+      g.gain.setValueAtTime(gain, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
       o.connect(g); g.connect(ac.destination);
-      o.start(); o.stop(ac.currentTime + dur);
+      o.start(t0); o.stop(t0 + dur + 0.02);
     } catch (e) {}
   }
+  function jingle(notes, step = 0.1, type = 'triangle', gain = 0.05) {
+    notes.forEach((f, i) => { if (f) beep(f, step * 1.3, type, gain, 0, i * step); });
+  }
+  const SFX = {
+    win: () => jingle([523, 659, 784, 1047], 0.09),
+    lvup: () => jingle([523, 659, 784, 659, 784, 1047, 1319], 0.08),
+    item: () => jingle([784, 988, 1175], 0.08),
+    boss: () => jingle([196, 185, 175, 165], 0.16, 'sawtooth', 0.04),
+    fanfare: () => jingle([523, 523, 523, 659, 0, 587, 659, 784, 0, 1047], 0.13, 'square', 0.035),
+    crit: () => { beep(1200, 0.12, 'square', 0.05, -700); beep(300, 0.2, 'sawtooth', 0.04, -150, 0.05); },
+  };
   const muteBtn = document.getElementById('mute-btn');
   function syncMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
   muteBtn.addEventListener('click', () => {
@@ -164,11 +208,12 @@
   // ---- maps -----------------------------------------------------------------
   // # tree/rock(block)  . floor  * tall grass(encounter)  : path  ~ water(block)
   // F house wall(block)  C cave entrance  E cave exit  B chest  K boss
+  // S star gate (opens after boss)  X tower exit  Q hidden boss
   const MAPS = {
     field: {
       rows: [
         '##########################',
-        '#....#.....*****....~~~..#',
+        '#....#.....*****....~~~.S#',
         '#.FFF#.....*****.....~~..#',
         '#.FFF......*****.........#',
         '#..:............:::::....#',
@@ -185,7 +230,7 @@
         '#...~~~~..........*****..#',
         '#....~~.....##....*****..#',
         '#...........#.....*****..#',
-        '#........................#',
+        '#B.......................#',
         '##########################',
       ],
       dark: false,
@@ -193,20 +238,17 @@
       encounterRate: 0.13,
       enemies: ['punyo', 'yorudori'],
       npcs: [
-        { x: 4, y: 4, kind: 'hana', name: 'ハナ',
-          talk: 'おかえり、ゆうしゃさま!\nHPをぜんかいふくして、ぼうけんをきろくしたよ📖',
-          heal: true },
-        { x: 8, y: 3, kind: 'oldman', name: 'そんちょう',
-          talk: 'ひがしのどうくつに「よるのおう」がおる…\nくさむらでたたかって、つよくなってからいくんじゃぞ。' },
+        { x: 4, y: 4, kind: 'hana', name: 'ハナ', heal: true },
+        { x: 8, y: 3, kind: 'oldman', name: 'そんちょう' },
         { x: 15, y: 6, kind: 'sign', name: 'かんばん',
-          talk: '→ ひがし:よるのどうくつ\n← にし:ひなたむら' },
+          talk: '→ ひがし:よるのどうくつ\n↗ きたひがし:ほしのとびら\n← にし:ひなたむら' },
       ],
-      warps: { C: { map: 'cave', x: 1, y: 12 } },
+      warps: { C: { map: 'cave', x: 1, y: 12 }, S: { map: 'tower', x: 10, y: 12 } },
     },
     cave: {
       rows: [
         '######################',
-        '#.....#..........B...#',
+        '#.....#..........B..B#',
         '#.###.#.########.##..#',
         '#.#...#........#..#..#',
         '#.#.#####.####.#..#..#',
@@ -223,78 +265,132 @@
       dark: true,
       encounterOn: '.',
       encounterRate: 0.07,
-      enemies: ['golem'],
+      enemies: ['golem', 'kodoku'],
       npcs: [],
       warps: { E: { map: 'field', x: 24, y: 8 } },
     },
+    tower: {
+      rows: [
+        '####################',
+        '#B.......#Q#.......#',
+        '#.######.#.#.#####.#',
+        '#.#......#.......#.#',
+        '#.#.####.#.#.###.#.#',
+        '#...#....#.#...#...#',
+        '#.#.#.##.###.#.#.#.#',
+        '#.#...#.....#...#..#',
+        '#.####.###.####.##.#',
+        '#..................#',
+        '#.######.##.######.#',
+        '#..................#',
+        '#........X.........#',
+        '####################',
+      ],
+      dark: false,
+      encounterOn: '.',
+      encounterRate: 0.08,
+      enemies: ['hoshikuzu', 'yumebat'],
+      npcs: [],
+      warps: { X: { map: 'field', x: 24, y: 2 } },
+    },
   };
-  // sanity: all rows same length
   for (const m of Object.values(MAPS)) {
     const w = m.rows[0].length;
     if (!m.rows.every(r => r.length === w)) console.error('map row length mismatch!');
   }
+  // たからばこの中身
+  const CHESTS = {
+    'field:1,18': { type: 'atk', v: 3, name: 'どうのけん', msg: 'どうのけんを てにいれた⚔\nこうげきが 3 あがった!' },
+    'cave:17,1':  { type: 'pot', v: 2, msg: 'ポーションを 2こ てにいれた🧪' },
+    'cave:20,1':  { type: 'def', v: 2, name: 'かわのたて', msg: 'かわのたてを てにいれた🛡\nまもりが 2 あがった!' },
+    'tower:1,1':  { type: 'atk', v: 4, name: 'ほしのけん', msg: 'ほしのけんを てにいれた🌟\nこうげきが 4 あがった!\nポーションも 2こ はいっていた🧪', pot: 2 },
+  };
 
   // ---- enemies ----------------------------------------------------------------
   const ENEMIES = {
-    punyo:    { name: 'よるのぷにょ', hp: 9,  atk: 4, def: 0, exp: 4,  color: '#6ee77a',
-      art: ['..####..','.######.','########','#.#..#.#','########','.######.','..#..#..','.##..##.'] },
-    yorudori: { name: 'よるどり',     hp: 13, atk: 5, def: 1, exp: 6,  color: '#53e0d8',
-      art: ['#......#','##....##','.######.','#.#..#.#','########','..####..','..#..#..','.#....#.'] },
-    golem:    { name: 'いわゴーレム', hp: 20, atk: 7, def: 2, exp: 10, color: '#c9a87b',
-      art: ['.######.','########','#.#..#.#','########','##.##.##','########','.##..##.','.##..##.'] },
-    boss:     { name: 'よるのおう',   hp: 64, atk: 9, def: 2, exp: 0,  color: '#8f7bff', boss: true,
-      art: ['#.#..#.#','########','##.##.##','########','#.####.#','########','.##..##.','#.#..#.#'] },
+    punyo:    { name: 'よるのぷにょ', hp: 9,  atk: 4, def: 0, exp: 4,  color: '#6ee77a', eye: '#131322',
+      art: ['..####..','.######.','########','#o#..#o#','########','.######.','..#..#..','.##..##.'] },
+    yorudori: { name: 'よるどり',     hp: 13, atk: 5, def: 1, exp: 6,  color: '#53e0d8', eye: '#ffd166',
+      art: ['#......#','##....##','.######.','#o#..#o#','########','..####..','..#..#..','.#....#.'] },
+    golem:    { name: 'いわゴーレム', hp: 20, atk: 7, def: 2, exp: 10, color: '#c9a87b', eye: '#ff5fa2',
+      art: ['.######.','########','#o#..#o#','########','##.##.##','########','.##..##.','.##..##.'] },
+    kodoku:   { name: 'こうもりん',   hp: 16, atk: 8, def: 1, exp: 9, color: '#b07bff', eye: '#ffd166',
+      art: ['#......#','##.##.##','########','#o####o#','.######.','..####..','...##...','........'] },
+    boss:     { name: 'よるのおう',   hp: 64, atk: 9, def: 2, exp: 0,  color: '#8f7bff', eye: '#ffd166', boss: 1,
+      art: ['#.#..#.#','########','#o#..#o#','########','#.####.#','########','.##..##.','#.#..#.#'] },
+    hoshikuzu:{ name: 'ほしくずん',   hp: 30, atk: 12, def: 4, exp: 16, color: '#ffd166', eye: '#131322',
+      art: ['...##...','..####..','########','.#o##o#.','..####..','.##..##.','##....##','........'] },
+    yumebat:  { name: 'ゆめもぐら',   hp: 38, atk: 13, def: 5, exp: 20, color: '#ff8fb8', eye: '#131322',
+      art: ['.##..##.','########','#o####o#','########','.######.','##.##.##','#......#','........'] },
+    dragon:   { name: 'ゆめくいドラゴン', hp: 170, atk: 16, def: 5, exp: 0, color: '#ff5fa2', eye: '#ffd166', boss: 2,
+      art: ['#......#','##.##.##','########','#o####o#','########','.######.','##.##.##','#..##..#'] },
   };
 
   // ---- game state -----------------------------------------------------------
   let mode = 'title';       // title | walk | dialog | battle | ending
-  const P = {};             // player stats + position
+  const P = {};
   let cam = { x: 0, y: 0 };
-  let anim = 0;             // global animation clock
-  let moving = null;        // {fx,fy,tx,ty,t}
+  let anim = 0;
+  let moving = null;
   let facing = 'down';
-  let arrived = false;      // just warped: don't re-trigger warp tile
+  let arrived = false;
   let msgQueue = [], msgWho = '', msgDone = null;
-  let battle = null;        // {enemy,ehp,phase,sel}
-  let chestsOpen = {};      // key "map:x,y" -> true
+  let battle = null;
+  let chestsOpen = {};
   let bossDead = false;
+  let dragonDead = false;
+  let endKind = 0, endAt = 0;
+  let pops = [];            // damage popups
+  let fx = { flash: 0, flashColor: '#fff' };
 
   function freshPlayer() {
     Object.assign(P, { lv: 1, exp: 0, maxhp: 24, hp: 24, atk: 6, def: 1, pot: 2,
-                       map: 'field', x: 4, y: 5 });
-    chestsOpen = {}; bossDead = false;
+                       star: 0, time: 0, wins: 0, map: 'field', x: 4, y: 5 });
+    chestsOpen = {}; bossDead = false; dragonDead = false;
   }
+  freshPlayer();
   function expNeed() { return P.lv * 8; }
+  const $ = id => document.getElementById(id);
   function statHud() {
-    document.getElementById('sLv').textContent = P.lv;
-    document.getElementById('sHp').textContent = `${P.hp}/${P.maxhp}`;
-    document.getElementById('sAtk').textContent = P.atk;
-    document.getElementById('sPot').textContent = P.pot;
-    document.getElementById('sExp').textContent = Math.max(expNeed() - P.exp, 0);
+    $('sLv').textContent = P.lv;
+    $('sHp').textContent = `${P.hp}/${P.maxhp}`;
+    $('sAtk').textContent = P.atk;
+    $('sDef').textContent = P.def;
+    $('sPot').textContent = P.pot;
+    $('sStar').textContent = '★'.repeat(P.star) + '☆'.repeat(3 - P.star);
+    $('sExp').textContent = Math.max(expNeed() - P.exp, 0);
   }
   function save() {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({
-      v: 1, P: { ...P }, chestsOpen, bossDead,
-    }));
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, P: { ...P }, chestsOpen, bossDead, dragonDead }));
+    } catch (e) {}
   }
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(SAVE_KEY));
-      if (!d || d.v !== 1) return false;
+      if (!d || d.v !== 1 || !d.P) return false;
+      freshPlayer();
       Object.assign(P, d.P);
+      for (const k of ['lv','exp','maxhp','hp','atk','def','pot','star','time','wins','x','y'])
+        if (typeof P[k] !== 'number' || !isFinite(P[k])) P[k] = { lv:1,exp:0,maxhp:24,hp:24,atk:6,def:1,pot:2,star:0,time:0,wins:0,x:4,y:5 }[k];
+      if (!MAPS[P.map]) { P.map = 'field'; P.x = 4; P.y = 5; }
       chestsOpen = d.chestsOpen || {};
       bossDead = !!d.bossDead;
+      dragonDead = !!d.dragonDead;
       return true;
     } catch (e) { return false; }
   }
+  function readRec() { try { return JSON.parse(localStorage.getItem(REC_KEY)) || {}; } catch (e) { return {}; } }
+  function writeRec(r) { try { localStorage.setItem(REC_KEY, JSON.stringify(r)); } catch (e) {} }
 
   // ---- dialog -----------------------------------------------------------------
-  const msgbox = document.getElementById('msgbox');
+  const msgbox = $('msgbox');
   function say(who, text, done) {
     msgQueue = Array.isArray(text) ? text.slice() : [text];
     msgWho = who || '';
     msgDone = done || null;
-    mode = mode === 'battle' ? 'battle' : 'dialog';
+    if (mode !== 'battle') mode = 'dialog';
+    menuOff();
     nextMsg(true);
   }
   function nextMsg(first) {
@@ -307,68 +403,104 @@
       return;
     }
     const t = msgQueue.shift();
-    document.getElementById('msgWho').textContent = msgWho;
-    document.getElementById('msgText').innerHTML = t.replace(/\n/g, '<br>');
+    $('msgWho').textContent = msgWho;
+    $('msgText').innerHTML = t.replace(/\n/g, '<br>');
     msgbox.classList.add('show');
   }
   function msgOpen() { return msgbox.classList.contains('show'); }
 
   // ---- battle -------------------------------------------------------------------
-  const bmenu = document.getElementById('battlemenu');
+  const bmenu = $('battlemenu');
+  const ACTS = ['attack', 'skill', 'potion', 'run'];
+  let menuSel = 0;
   function startBattle(kind) {
     const e = ENEMIES[kind];
-    battle = { kind, ehp: e.hp, phase: 'intro', shake: 0, flash: 0 };
+    battle = { kind, ehp: e.hp, phase: 'intro', shake: 0, flash: 0, trans: 0.45, turn: 0, hurt: 0, lunge: 0 };
     mode = 'battle';
-    beep(200, 0.2, 'sawtooth', 0.05, 150);
-    say('', `${e.name}が あらわれた!`, () => menuOn());
+    if (e.boss) SFX.boss(); else beep(200, 0.2, 'sawtooth', 0.05, 150);
+    setTimeout(() => {
+      if (!battle || battle.kind !== kind) return;
+      say('', e.boss ? `${e.name}が たちはだかった!` : `${e.name}が あらわれた!`, () => menuOn());
+    }, 380);
   }
   function menuOn() {
+    if (!battle) return;
     battle.phase = 'menu';
     bmenu.classList.add('show');
-    bmenu.querySelectorAll('button')[1].textContent = `🧪 ポーション ×${P.pot}`;
+    const bs = bmenu.querySelectorAll('button');
+    bs[1].innerHTML = `<span class="i">${'★'.repeat(P.star) + '☆'.repeat(3 - P.star)}</span>ひっさつ`;
+    bs[1].classList.toggle('off', P.star < 3);
+    bs[2].innerHTML = `<span class="i">🧪</span>くすり×${P.pot}`;
+    bs[2].classList.toggle('off', P.pot <= 0);
+    bs[3].classList.toggle('off', !!ENEMIES[battle.kind].boss);
+    syncSel();
   }
+  function syncSel() { bmenu.querySelectorAll('button').forEach((b, i) => b.classList.toggle('sel', i === menuSel)); }
   function menuOff() { bmenu.classList.remove('show'); }
+  function pop(text, x, y, color, big) { pops.push({ text, x, y, color, t: 0, big: !!big }); }
   function enemyTurn(after) {
+    if (!battle) return;
     const e = ENEMIES[battle.kind];
-    const dmg = Math.max(1, e.atk - P.def + Math.floor(Math.random() * 3) - 1);
+    battle.turn++;
+    let power = e.atk, line = `${e.name}の こうげき!`;
+    if (e.boss === 2 && battle.turn % 3 === 0) { power = Math.round(e.atk * 1.5); line = `${e.name}の ゆめのいぶき!`; }
+    else if (e.boss === 1 && battle.turn % 4 === 0) { power = Math.round(e.atk * 1.4); line = `${e.name}の やみのつめ!`; }
+    const dmg = Math.max(1, power - P.def + Math.floor(Math.random() * 3) - 1);
     P.hp = Math.max(0, P.hp - dmg);
-    battle.shake = 0.35;
+    battle.shake = 0.35; battle.lunge = 0.3;
+    fx.flash = 0.18; fx.flashColor = 'rgba(255,95,162,.35)';
+    pop(`-${dmg}`, 110, 170, '#ff5fa2');
     statHud();
     beep(150, 0.12, 'sawtooth', 0.05, -60);
-    say('', `${e.name}の こうげき!\nゆうしゃに ${dmg}のダメージ…`, () => {
+    say('', `${line}\nゆうしゃに ${dmg}のダメージ…`, () => {
       if (P.hp <= 0) {
-        say('', ['めのまえが まっくらになった…', 'きがつくと むらにいた。\nハナ「むちゃしないで!」'], () => {
+        say('', ['めのまえが まっくらになった…', 'きがつくと むらにいた。\nハナ「むちゃしないで! けいけんちは のこってるよ」'], () => {
           battle = null; menuOff();
-          P.hp = P.maxhp; P.map = 'field'; P.x = 4; P.y = 5;
-          arrived = true; mode = 'walk'; statHud(); save();
+          P.hp = P.maxhp; P.map = 'field'; P.x = 4; P.y = 5; facing = 'up';
+          syncArrived(); mode = 'walk'; statHud(); save();
         });
       } else after();
     });
   }
+  function hitEnemy(dmg, crit) {
+    battle.ehp = Math.max(0, battle.ehp - dmg);
+    battle.flash = 0.3; battle.hurt = 0.25;
+    pop(`${dmg}`, cv.width / 2, 110, crit ? '#ffd166' : '#eeecfa', crit);
+  }
   function doAction(a) {
     if (!battle || battle.phase !== 'menu') return;
     const e = ENEMIES[battle.kind];
+    if (a === 'skill' && P.star < 3) { beep(160, 0.08, 'square', 0.03); flashBtn(1); return; }
+    if (a === 'potion' && P.pot <= 0) { beep(160, 0.08, 'square', 0.03); flashBtn(2); return; }
+    if (a === 'run' && e.boss) { beep(160, 0.08, 'square', 0.03); flashBtn(3); say('', `${e.name}からは にげられない!`, menuOn); return; }
     menuOff();
     battle.phase = 'act';
     if (a === 'attack') {
-      const dmg = Math.max(1, P.atk - e.def + Math.floor(Math.random() * 3) - 1);
-      battle.ehp = Math.max(0, battle.ehp - dmg);
-      battle.flash = 0.3;
-      beep(500, 0.08, 'square', 0.05, -200);
-      say('', `ゆうしゃの こうげき!\n${e.name}に ${dmg}のダメージ!`, () => {
-        if (battle.ehp <= 0) winBattle();
-        else enemyTurn(menuOn);
-      });
+      const crit = Math.random() < 0.12;
+      let dmg = Math.max(1, P.atk - e.def + Math.floor(Math.random() * 3) - 1);
+      if (crit) dmg = Math.round(dmg * 1.8);
+      hitEnemy(dmg, crit);
+      const gain = P.star < 3;
+      P.star = Math.min(3, P.star + 1); statHud();
+      if (crit) SFX.crit(); else beep(500, 0.08, 'square', 0.05, -200);
+      const msg = (crit ? 'かいしんの いちげき!!\n' : 'ゆうしゃの こうげき!\n') + `${e.name}に ${dmg}のダメージ!` + (gain && P.star === 3 ? '\n★が 3つ たまった! ひっさつが うてる!' : '');
+      say('', msg, () => { if (battle.ehp <= 0) winBattle(); else enemyTurn(menuOn); });
+    } else if (a === 'skill') {
+      P.star = 0; statHud();
+      const dmg = Math.round(P.atk * 2.3) + Math.floor(Math.random() * 4);
+      hitEnemy(dmg, true);
+      fx.flash = 0.35; fx.flashColor = 'rgba(255,209,102,.55)';
+      jingle([880, 1175, 1568], 0.06, 'square', 0.04);
+      say('', `ゆうしゃの ひっさつ「ほしのけん」!!\n${e.name}に ${dmg}のダメージ!`, () => { if (battle.ehp <= 0) winBattle(); else enemyTurn(menuOn); });
     } else if (a === 'potion') {
-      if (P.pot <= 0) { say('', 'ポーションを もっていない!', menuOn); return; }
       P.pot--;
-      const heal = Math.min(15, P.maxhp - P.hp);
+      const heal = Math.min(18, P.maxhp - P.hp);
       P.hp += heal;
       statHud();
+      pop(`+${heal}`, 110, 170, '#6ee77a');
       beep(900, 0.15, 'triangle', 0.05, 200);
       say('', `ポーションをのんだ!\nHPが ${heal}かいふくした✨`, () => enemyTurn(menuOn));
     } else if (a === 'run') {
-      if (e.boss) { say('', 'よるのおうから にげられない!', menuOn); return; }
       if (Math.random() < 0.7) {
         beep(400, 0.2, 'triangle', 0.04, 300);
         say('', 'うまく にげきれた!', () => { battle = null; mode = 'walk'; });
@@ -377,36 +509,101 @@
       }
     }
   }
+  function flashBtn(i) {
+    const b = bmenu.querySelectorAll('button')[i];
+    b.animate([{ transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }, { transform: 'none' }], { duration: 160 });
+  }
   function winBattle() {
     const e = ENEMIES[battle.kind];
+    battle.phase = 'dead';
     if (e.boss) {
-      bossDead = true;
-      battle = null; menuOff();
-      save();
-      say('', [
-        'よるのおうを たおした!!',
-        'どうくつに あさひがさしこむ…',
-        'むらに へいわが もどった。\nゆうしゃさま、ありがとう!',
-      ], () => { mode = 'ending'; });
+      // 先にモードを切り替えてから battle を消す（描画ループが止まる不具合の修正）
+      mode = 'dialog'; battle = null; menuOff();
+      SFX.fanfare();
+      if (e.boss === 1) {
+        bossDead = true; save();
+        say('', ['よるのおうを たおした!!', 'どうくつに あさひが さしこむ…', 'むらに へいわが もどった。\nゆうしゃさま、ありがとう!'],
+          () => startEnding(1));
+      } else {
+        dragonDead = true; save();
+        say('', ['ゆめくいドラゴンを たおした!!', 'ほしぞらが きらきらと かがやきだす…', 'もう こわいゆめを みる こどもは いない。\nほんとうの へいわが おとずれた!'],
+          () => startEnding(2));
+      }
       return;
     }
-    P.exp += e.exp;
-    const msgs = [`${e.name}を たおした!\n${e.exp}の けいけんちをもらった`];
+    P.exp += e.exp; P.wins = (P.wins || 0) + 1;
+    const msgs = [`${e.name}を たおした!\n${e.exp}の けいけんちを もらった`];
+    if (Math.random() < 0.12) { P.pot++; msgs.push(`${e.name}は ポーションを おとしていった🧪`); }
+    let up = false;
     while (P.exp >= expNeed()) {
       P.exp -= expNeed();
       P.lv++; P.maxhp += 6; P.atk += 2; P.def += 1; P.hp = P.maxhp;
-      msgs.push(`レベルアップ! Lv${P.lv}になった!\nHPぜんかいふく、こうげき+2 ✨`);
-      beep(800, 0.3, 'triangle', 0.06, 400);
+      msgs.push(`レベルアップ! Lv${P.lv}になった!\nHPぜんかいふく、こうげき+2 まもり+1 ✨`);
+      up = true;
     }
     statHud();
+    if (up) SFX.lvup(); else SFX.win();
     say('', msgs, () => { battle = null; mode = 'walk'; save(); });
   }
   bmenu.addEventListener('click', e => {
     const b = e.target.closest('button');
-    if (b) doAction(b.dataset.a);
+    if (b) { menuSel = ACTS.indexOf(b.dataset.a); syncSel(); doAction(b.dataset.a); }
   });
 
+  // ---- ending -------------------------------------------------------------------
+  function startEnding(kind) {
+    endKind = kind; endAt = performance.now();
+    mode = 'ending';
+    const r = readRec();
+    if (kind === 1) { r.clear = true; r.bestLv1 = r.bestLv1 ? Math.min(r.bestLv1, P.lv) : P.lv; }
+    if (kind === 2) { r.trueClear = true; }
+    writeRec(r);
+  }
+  function finishEnding() {
+    if (endKind === 1) {
+      P.map = 'field'; P.x = 4; P.y = 5; facing = 'up'; P.hp = P.maxhp; syncArrived();
+      statHud(); save();
+      mode = 'walk';
+      say('ハナ', ['ゆうしゃさま、おかえり! ほんとうに ありがとう!',
+        'あのね… きたひがしの すみっこに\n「ほしのとびら」が あらわれたの。',
+        'おくには こわいゆめを たべる\n「ゆめくいドラゴン」が いるんだって。\nよかったら いってみて!']);
+    } else {
+      save();
+      mode = 'title';
+      refreshTitle();
+      titleov.classList.add('show');
+      $('statbar').classList.add('hide');
+    }
+  }
+  function drawEnding() {
+    ctx.fillStyle = endKind === 2 ? '#1a1030' : '#131322';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    for (let i = 0; i < 70; i++) {
+      const sx = (i * 173) % cv.width, sy = ((i * 97) + anim * (8 + i % 5) * 4) % cv.height;
+      ctx.globalAlpha = 0.35 + Math.sin(anim * 3 + i) * 0.3;
+      ctx.fillStyle = i % 4 ? '#eeecfa' : '#ffd166';
+      ctx.fillRect(sx, sy, 2, 2);
+    }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffd166';
+    ctx.font = '36px DotGothic16, monospace';
+    ctx.fillText(endKind === 2 ? 'TRUE END' : 'THE END', cv.width / 2, 110);
+    ctx.fillStyle = '#eeecfa';
+    ctx.font = '16px DotGothic16, monospace';
+    ctx.fillText(endKind === 2 ? 'ゆめくいドラゴンを たおし、よぞらに ほしが もどった' : 'よるのおうを たおし、むらに へいわが もどった', cv.width / 2, 150);
+    ctx.fillStyle = '#9d99c0';
+    const mm = Math.floor(P.time / 60), ss = Math.floor(P.time % 60);
+    ctx.fillText(`さいしゅうレベル Lv${P.lv}  ・  たおした まもの ${P.wins || 0}ひき`, cv.width / 2, 185);
+    ctx.fillText(`ぼうけんの じかん ${mm}ふん${String(ss).padStart(2, '0')}びょう`, cv.width / 2, 210);
+    ctx.fillStyle = '#8f7bff';
+    if (performance.now() - endAt > 700 && Math.sin(anim * 3) > -0.3)
+      ctx.fillText(endKind === 2 ? 'Aボタンで タイトルへ' : 'Aボタンで つづける（おまけの ぼうけんへ）', cv.width / 2, 262);
+    ctx.textAlign = 'left';
+  }
+
   // ---- map helpers ---------------------------------------------------------------
+  function syncArrived() { arrived = !!MAPS[P.map].warps[tileAt(P.map, P.x, P.y)]; }
   function tileAt(map, x, y) {
     const m = MAPS[map];
     if (y < 0 || y >= m.rows.length || x < 0 || x >= m.rows[0].length) return '#';
@@ -417,6 +614,8 @@
     if ('#~F'.includes(t)) return true;
     if (t === 'B' && !chestsOpen[`${map}:${x},${y}`]) return true;
     if (t === 'K' && !bossDead) return true;
+    if (t === 'Q' && !dragonDead) return true;
+    if (t === 'S' && !bossDead) return true;
     for (const n of MAPS[map].npcs) if (n.x === x && n.y === y) return true;
     return false;
   }
@@ -432,47 +631,64 @@
     moving = null;
     const m = MAPS[P.map];
     const t = tileAt(P.map, P.x, P.y);
-    // warp
     if (m.warps[t] && !arrived) {
       const w = m.warps[t];
       P.map = w.map; P.x = w.x; P.y = w.y;
       arrived = true;
+      fx.flash = 0.3; fx.flashColor = 'rgba(0,0,0,.9)';
       beep(300, 0.15, 'triangle', 0.04, 200);
       save();
+      if (w.map === 'tower' && !dragonDead) say('', 'ほしのとうに ついた。\nおくから ふしぎな いびきが きこえる…');
       return;
     }
     if (!m.warps[t]) arrived = false;
-    // encounter
     if (t === m.encounterOn && Math.random() < m.encounterRate) {
       const kind = m.enemies[Math.floor(Math.random() * m.enemies.length)];
       startBattle(kind);
     }
+  }
+  function npcTalk(n) {
+    if (n.kind === 'hana') {
+      P.hp = P.maxhp; statHud(); save();
+      beep(900, 0.2, 'triangle', 0.05, 300);
+      return 'おかえり、ゆうしゃさま!\nHPをぜんかいふくして、ぼうけんを きろくしたよ📖';
+    }
+    if (n.kind === 'oldman') {
+      if (dragonDead) return 'ほっほっ、そなたは むらの えいゆうじゃ!\nこれからも よふかしは ほどほどにの。';
+      if (bossDead) return 'よるのおうを たおすとは!\nほしのとうの ドラゴンは Lv8いじょうで\nいどむのが よいぞ。';
+      if (P.lv < 5) return 'ひがしのどうくつに「よるのおう」がおる…\nLv5くらいまで くさむらで きたえるんじゃ。\nむらの みなみにしに たからばこが あるぞ。';
+      return 'よし、そろそろ どうくつへ いけそうじゃな。\nたたかうと ★がたまる。ひっさつは\nボスまで とっておくのも てじゃぞ。';
+    }
+    return n.talk;
   }
   function interact() {
     const d = { up: [0,-1], down: [0,1], left: [-1,0], right: [1,0] }[facing];
     const tx = P.x + d[0], ty = P.y + d[1];
     const m = MAPS[P.map];
     for (const n of m.npcs) {
-      if (n.x === tx && n.y === ty) {
-        if (n.heal) {
-          P.hp = P.maxhp; statHud(); save();
-          beep(900, 0.2, 'triangle', 0.05, 300);
-        }
-        say(n.name, n.talk);
-        return;
-      }
+      if (n.x === tx && n.y === ty) { say(n.name, npcTalk(n)); return; }
     }
     const t = tileAt(P.map, tx, ty);
     const ck = `${P.map}:${tx},${ty}`;
     if (t === 'B' && !chestsOpen[ck]) {
       chestsOpen[ck] = true;
-      P.pot += 2; statHud(); save();
-      beep(700, 0.15, 'triangle', 0.05, 300);
-      say('', 'たからばこをあけた!\nポーションを 2こ てにいれた🧪');
+      const c = CHESTS[ck] || { type: 'pot', v: 2, msg: 'ポーションを 2こ てにいれた🧪' };
+      if (c.type === 'pot') P.pot += c.v;
+      if (c.type === 'atk') P.atk += c.v;
+      if (c.type === 'def') P.def += c.v;
+      if (c.pot) P.pot += c.pot;
+      statHud(); save();
+      SFX.item();
+      fx.flash = 0.2; fx.flashColor = 'rgba(255,209,102,.35)';
+      say('', 'たからばこを あけた!\n' + c.msg);
       return;
     }
     if (t === 'K' && !bossDead) {
       say('よるのおう', 'よくきたな、ちいさなゆうしゃよ…\nこのよるは わたしのものだ!', () => startBattle('boss'));
+      return;
+    }
+    if (t === 'Q' && !dragonDead) {
+      say('ゆめくいドラゴン', ['むにゃ… だれだ、わしの ひるねを じゃまするのは…', 'こどもたちの ゆめは おいしいのだ。\nかえさないぞー!'], () => startBattle('dragon'));
       return;
     }
   }
@@ -481,101 +697,96 @@
   const held = {};
   function aPress() {
     if (mode === 'title') return;
+    if (mode === 'ending') { if (performance.now() - endAt > 700) finishEnding(); return; }
     if (msgOpen()) { nextMsg(); return; }
+    if (mode === 'battle' && battle && battle.phase === 'menu') { doAction(ACTS[menuSel]); return; }
     if (mode === 'walk') interact();
   }
+  function menuMove(dir) {
+    if (!(mode === 'battle' && battle && battle.phase === 'menu' && !msgOpen())) return false;
+    if (dir === 'left' || dir === 'up') menuSel = (menuSel + 3) % 4;
+    else menuSel = (menuSel + 1) % 4;
+    syncSel(); beep(600, 0.03, 'square', 0.02);
+    return true;
+  }
+  const DMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+                 KeyW: 'up', KeyS: 'down', KeyA: 'left', KeyD: 'right' };
   document.addEventListener('keydown', e => {
-    const dmap = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
-                   KeyW: 'up', KeyS: 'down', KeyA: 'left', KeyD: 'right' };
-    if (dmap[e.code]) { e.preventDefault(); held[dmap[e.code]] = true; }
-    if (['KeyZ', 'Enter', 'Space'].includes(e.code)) { e.preventDefault(); aPress(); }
+    if (DMAP[e.code]) { e.preventDefault(); if (!e.repeat && menuMove(DMAP[e.code])) return; held[DMAP[e.code]] = true; }
+    if (['KeyZ', 'Enter', 'Space'].includes(e.code)) {
+      if (e.target && e.target.tagName === 'BUTTON' && e.code !== 'KeyZ') return; // ボタンのクリックと二重にしない
+      e.preventDefault(); if (!e.repeat) aPress();
+    }
   });
-  document.addEventListener('keyup', e => {
-    const dmap = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
-                   KeyW: 'up', KeyS: 'down', KeyA: 'left', KeyD: 'right' };
-    if (dmap[e.code]) held[dmap[e.code]] = false;
-  });
+  document.addEventListener('keyup', e => { if (DMAP[e.code]) held[DMAP[e.code]] = false; });
   for (const b of document.querySelectorAll('#dpad button[data-d]')) {
     const d = b.dataset.d;
-    b.addEventListener('pointerdown', e => { e.preventDefault(); b.setPointerCapture(e.pointerId); held[d] = true; });
+    b.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      if (menuMove(d)) return;
+      try { b.setPointerCapture(e.pointerId); } catch (_) {}
+      held[d] = true;
+    });
     const stop = () => { held[d] = false; };
     b.addEventListener('pointerup', stop);
     b.addEventListener('pointercancel', stop);
     b.addEventListener('lostpointercapture', stop);
   }
-  document.getElementById('abtn').addEventListener('click', aPress);
+  $('abtn').addEventListener('click', aPress);
   msgbox.addEventListener('click', () => { if (msgOpen()) nextMsg(); });
+  cv.addEventListener('click', () => { if (mode === 'ending') aPress(); });
 
   // ---- title --------------------------------------------------------------------
-  const titleov = document.getElementById('titleov');
+  const titleov = $('titleov');
   function refreshTitle() {
-    document.getElementById('contBtn').style.display =
-      localStorage.getItem(SAVE_KEY) ? '' : 'none';
+    $('contBtn').style.display = localStorage.getItem(SAVE_KEY) ? '' : 'none';
+    const r = readRec();
+    $('titleRec').textContent = r.trueClear ? '🌟 しんエンディング たっせい! 🌟' : r.clear ? '⭐ よるのおう げきは! おまけの とうが まってるよ' : '';
   }
-  document.getElementById('newBtn').addEventListener('click', () => {
-    freshPlayer(); statHud(); save();
+  function beginPlay() {
     titleov.classList.remove('show');
-    mode = 'walk';
-    say('ハナ', ['ゆうしゃさま、おはよう!\nひがしのどうくつに「よるのおう」がいるの。', 'くさむらでレベルをあげてから いってね。\nこまったら わたしにはなしかけて。かいふくするから!']);
-  });
-  document.getElementById('contBtn').addEventListener('click', () => {
-    if (!load()) return;
+    $('statbar').classList.remove('hide');
     statHud();
-    titleov.classList.remove('show');
     mode = 'walk';
-    arrived = true;
+  }
+  $('newBtn').addEventListener('click', () => {
+    freshPlayer(); save();
+    beginPlay();
+    say('ハナ', ['ゆうしゃさま、おはよう!\nひがしのどうくつに「よるのおう」がいるの。', 'くさむらで レベルをあげてから いってね。\nこまったら わたしに はなしかけて。かいふくするから!']);
+  });
+  $('contBtn').addEventListener('click', () => {
+    if (!load()) return;
+    beginPlay();
+    syncArrived();
   });
   refreshTitle();
-
-  // ---- ending -------------------------------------------------------------------
-  function drawEnding() {
-    ctx.fillStyle = '#131322';
-    ctx.fillRect(0, 0, cv.width, cv.height);
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffd166';
-    ctx.font = '34px DotGothic16, monospace';
-    ctx.fillText('THE END', cv.width / 2, 140);
-    ctx.fillStyle = '#eeecfa';
-    ctx.font = '15px DotGothic16, monospace';
-    ctx.fillText('よるのおうを たおし、むらに へいわがもどった', cv.width / 2, 180);
-    ctx.fillStyle = '#9d99c0';
-    ctx.fillText(`さいしゅうレベル: Lv${P.lv}`, cv.width / 2, 210);
-    ctx.fillStyle = '#8f7bff';
-    if (Math.sin(anim * 3) > -0.3) ctx.fillText('Aボタンで タイトルにもどる', cv.width / 2, 260);
-    ctx.textAlign = 'left';
-  }
-  function endToTitle() {
-    localStorage.removeItem(SAVE_KEY);
-    mode = 'title';
-    refreshTitle();
-    titleov.classList.add('show');
-  }
-  document.getElementById('abtn').addEventListener('click', () => { if (mode === 'ending') endToTitle(); });
-  document.addEventListener('keydown', e => {
-    if (mode === 'ending' && ['KeyZ', 'Enter', 'Space'].includes(e.code)) endToTitle();
-  });
 
   // ---- drawing ------------------------------------------------------------------
   const TILE_FILL = {
     field: { '#': '#1c3a2a', '.': '#1c2b1e', '*': '#234425', ':': '#4a3d2c',
-             '~': '#1b2b52', 'F': '#5a3a50', 'C': '#0c0c18', 'B': '#1c2b1e', 'K': '#1c2b1e', 'E': '#1c2b1e' },
-    cave:  { '#': '#3a3050', '.': '#191426', '*': '#191426', ':': '#191426',
-             '~': '#1b2b52', 'F': '#3a3050', 'C': '#191426', 'B': '#191426', 'K': '#191426', 'E': '#0c0c18' },
+             '~': '#1b2b52', 'F': '#5a3a50', 'C': '#0c0c18', 'B': '#1c2b1e', 'K': '#1c2b1e', 'E': '#1c2b1e', 'S': '#1c2b1e' },
+    cave:  { '#': '#3a3050', '.': '#191426', 'B': '#191426', 'K': '#191426', 'E': '#0c0c18' },
+    tower: { '#': '#2a2450', '.': '#161230', 'B': '#161230', 'Q': '#161230', 'X': '#0c0c18' },
   };
   function drawTile(map, t, sx, sy, x, y) {
     const pal = TILE_FILL[map];
-    ctx.fillStyle = pal[t] || '#191426';
+    ctx.fillStyle = pal[t] || pal['.'];
     ctx.fillRect(sx, sy, TILE, TILE);
     if (t === '#') {
-      if (map === 'field') { // tree
+      if (map === 'field') {
         ctx.fillStyle = '#153021'; ctx.fillRect(sx + 2, sy + 2, TILE - 4, TILE - 8);
         ctx.fillStyle = '#2c5a3a'; ctx.fillRect(sx + 4, sy + 4, TILE - 8, TILE - 12);
         ctx.fillStyle = '#4a3020'; ctx.fillRect(sx + 9, sy + TILE - 8, 6, 6);
-      } else { // rock
+      } else if (map === 'cave') {
         ctx.fillStyle = '#4c4066'; ctx.fillRect(sx + 2, sy + 2, TILE - 4, TILE - 4);
         ctx.fillStyle = '#2c2444'; ctx.fillRect(sx + 5, sy + 8, 6, 4);
         ctx.fillStyle = '#2c2444'; ctx.fillRect(sx + 14, sy + 14, 5, 4);
+      } else {
+        ctx.fillStyle = '#3b3470'; ctx.fillRect(sx + 1, sy + 1, TILE - 2, TILE - 2);
+        ctx.fillStyle = '#2a2450'; ctx.fillRect(sx + 1, sy + 11, TILE - 2, 2); ctx.fillRect(sx + 11, sy + 1, 2, 10);
       }
+    } else if (map === 'tower' && t === '.') {
+      if ((x * 7 + y * 3) % 11 === 0) { ctx.globalAlpha = 0.5 + Math.sin(anim * 3 + x) * 0.4; ctx.fillStyle = '#ffd166'; ctx.fillRect(sx + 10, sy + 10, 3, 3); ctx.globalAlpha = 1; }
     } else if (t === '*') {
       ctx.fillStyle = '#3fae4f';
       const sway = Math.sin(anim * 2 + x + y) * 1.5;
@@ -591,49 +802,78 @@
       ctx.fillStyle = '#7a4a68'; ctx.fillRect(sx + 1, sy + 1, TILE - 2, 8);
       ctx.fillStyle = '#c9a87b'; ctx.fillRect(sx + 3, sy + 10, TILE - 6, TILE - 12);
       ctx.fillStyle = '#4a3020'; ctx.fillRect(sx + 8, sy + 14, 7, 8);
-    } else if (t === 'C' || t === 'E') {
+    } else if (t === 'C' || t === 'E' || t === 'X') {
       ctx.fillStyle = '#000'; ctx.beginPath();
       ctx.arc(sx + TILE / 2, sy + TILE, TILE / 2 + 3, Math.PI, 0); ctx.fill();
       ctx.fillStyle = '#ffd166'; ctx.fillRect(sx + TILE / 2 - 1, sy + 6, 2, 2);
+    } else if (t === 'S' && bossDead) {
+      const r = 8 + Math.sin(anim * 4) * 2;
+      ctx.fillStyle = 'rgba(143,123,255,.35)'; ctx.beginPath(); ctx.arc(sx + 12, sy + 12, r + 3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffd166'; star(sx + 12, sy + 12, r, anim);
     } else if (t === 'B') {
       const open = chestsOpen[`${map}:${x},${y}`];
       ctx.fillStyle = open ? '#6b5030' : '#a06a2c';
       ctx.fillRect(sx + 4, sy + 8, 16, 12);
       ctx.fillStyle = '#ffd166';
       ctx.fillRect(sx + 10, sy + 12, 4, 4);
-      if (!open) { ctx.fillStyle = '#c98a3c'; ctx.fillRect(sx + 4, sy + 5, 16, 5); }
-    } else if (t === 'K' && !bossDead && map === 'cave') {
-      pixelArt(ENEMIES.boss.art, sx + 1, sy + 1, 2.7, ENEMIES.boss.color);
+      if (!open) {
+        ctx.fillStyle = '#c98a3c'; ctx.fillRect(sx + 4, sy + 5, 16, 5);
+        if (Math.sin(anim * 4 + x) > 0.8) { ctx.fillStyle = '#fff'; ctx.fillRect(sx + 18, sy + 4, 2, 2); }
+      }
+    } else if (t === 'K' && !bossDead) {
+      pixelArt(ENEMIES.boss, sx + 1, sy + 1, 2.7);
+    } else if (t === 'Q' && !dragonDead) {
+      pixelArt(ENEMIES.dragon, sx + 1, sy + 1 + Math.sin(anim * 2) * 1, 2.7);
+      ctx.fillStyle = '#eeecfa'; ctx.font = '10px monospace';
+      if (Math.sin(anim * 2) > 0) ctx.fillText('z', sx + 20, sy + 4);
     } else if (t === ':') {
       ctx.fillStyle = '#5a4a36'; ctx.fillRect(sx + 3, sy + 5, 3, 2); ctx.fillRect(sx + 14, sy + 15, 3, 2);
     }
   }
-  function pixelArt(art, x, y, s, color) {
-    ctx.fillStyle = color;
-    for (let r = 0; r < art.length; r++) for (let c = 0; c < art[r].length; c++)
-      if (art[r][c] === '#') ctx.fillRect(x + c * s, y + r * s, s + 0.5, s + 0.5);
+  function star(cx, cy, r, rot) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = rot + i * Math.PI / 5 - Math.PI / 2, rr = i % 2 ? r * 0.45 : r;
+      ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+    }
+    ctx.closePath(); ctx.fill();
   }
-  function drawChar(sx, sy, body, hat, isHero) {
-    // cute blob character 20x20 in a 24 tile
+  // ドット絵: '#'=からだ, 'o'=め（白目+ひとみ）。ふちどり付き
+  function pixelArt(e, x, y, s, blink) {
+    const art = e.art;
+    ctx.fillStyle = 'rgba(0,0,0,.45)';
+    for (let r = 0; r < art.length; r++) for (let c = 0; c < art[r].length; c++)
+      if (art[r][c] !== '.') ctx.fillRect(x + c * s - s * 0.15, y + r * s + s * 0.2, s * 1.3, s * 1.1);
+    for (let r = 0; r < art.length; r++) for (let c = 0; c < art[r].length; c++) {
+      const ch = art[r][c];
+      if (ch === '#') { ctx.fillStyle = r < 2 ? shade(e.color, 1.18) : r > 5 ? shade(e.color, 0.8) : e.color; ctx.fillRect(x + c * s, y + r * s, s + 0.5, s + 0.5); }
+      else if (ch === 'o') {
+        ctx.fillStyle = '#fff'; ctx.fillRect(x + c * s, y + r * s, s + 0.5, s + 0.5);
+        if (!blink) { ctx.fillStyle = e.eye; ctx.fillRect(x + c * s + s * 0.3, y + r * s + s * 0.25, s * 0.5, s * 0.6); }
+      }
+    }
+  }
+  function shade(hex, k) {
+    const n = parseInt(hex.slice(1), 16);
+    const f = v => Math.max(0, Math.min(255, Math.round(v * k)));
+    return `rgb(${f(n >> 16)},${f((n >> 8) & 255)},${f(n & 255)})`;
+  }
+  function drawChar(sx, sy, body, hat, isHero, dir) {
     const bob = Math.sin(anim * 6) * (moving && isHero ? 1.5 : 0.6);
     sy += bob;
+    ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(sx + 12, sy + 22 - bob, 8, 2.5, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = body;
     ctx.beginPath(); ctx.arc(sx + 12, sy + 14, 8, 0, Math.PI * 2); ctx.fill();
     if (hat) { ctx.fillStyle = hat; ctx.fillRect(sx + 4, sy + 2, 16, 6); ctx.fillRect(sx + 7, sy - 2, 10, 5); }
-    // face by facing (hero) or down (npc)
     ctx.fillStyle = '#131322';
-    const f = isHero ? facing : 'down';
+    const f = dir || (isHero ? facing : 'down');
     const off = { down: [0, 0], up: [0, -2], left: [-3, 0], right: [3, 0] }[f];
     if (f !== 'up') {
       ctx.fillRect(sx + 8 + off[0], sy + 11 + off[1], 2.5, 4);
       ctx.fillRect(sx + 14 + off[0], sy + 11 + off[1], 2.5, 4);
     }
   }
-  const NPC_STYLE = {
-    hana:   { body: '#ff8fb8', hat: null },
-    oldman: { body: '#c9c2a8', hat: '#6b5030' },
-    sign:   { body: null },
-  };
+  const NPC_STYLE = { hana: { body: '#ff8fb8', hat: null }, oldman: { body: '#c9c2a8', hat: '#6b5030' } };
   function drawNpc(n, sx, sy) {
     if (n.kind === 'sign') {
       ctx.fillStyle = '#8a6a40'; ctx.fillRect(sx + 4, sy + 4, 16, 10);
@@ -643,10 +883,10 @@
     }
     const st = NPC_STYLE[n.kind];
     drawChar(sx, sy, st.body, st.hat, false);
+    if (n.kind === 'hana') { ctx.fillStyle = '#ffd166'; ctx.fillRect(sx + 15, sy + 3, 4, 4); }
   }
   function drawWalk() {
     const m = MAPS[P.map];
-    // player draw position (tween)
     let px = P.x, py = P.y;
     if (moving) {
       const k = Math.min(moving.t / 0.14, 1);
@@ -658,14 +898,11 @@
     ctx.fillStyle = '#0e0e1c';
     ctx.fillRect(0, 0, cv.width, cv.height);
     const x0 = Math.floor(cam.x), y0 = Math.floor(cam.y);
-    for (let y = y0; y <= Math.min(y0 + VH, m.rows.length - 1); y++) {
-      for (let x = x0; x <= Math.min(x0 + VW, m.rows[0].length - 1); x++) {
+    for (let y = y0; y <= Math.min(y0 + VH, m.rows.length - 1); y++)
+      for (let x = x0; x <= Math.min(x0 + VW, m.rows[0].length - 1); x++)
         drawTile(P.map, m.rows[y][x], (x - cam.x) * TILE, (y - cam.y) * TILE, x, y);
-      }
-    }
     for (const n of m.npcs) drawNpc(n, (n.x - cam.x) * TILE, (n.y - cam.y) * TILE);
     drawChar((px - cam.x) * TILE, (py - cam.y) * TILE, '#53e0d8', '#ffd166', true);
-    // night vignette in cave
     if (m.dark) {
       const cx = (px - cam.x) * TILE + 12, cy = (py - cam.y) * TILE + 12;
       const g = ctx.createRadialGradient(cx, cy, 60, cx, cy, 240);
@@ -674,40 +911,67 @@
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, cv.width, cv.height);
     }
+    // ばしょ名
+    ctx.fillStyle = 'rgba(19,19,34,.7)'; ctx.fillRect(6, 6, 118, 22);
+    ctx.fillStyle = '#eeecfa'; ctx.font = '13px DotGothic16, monospace';
+    ctx.fillText({ field: 'ひなたむら・もり', cave: 'よるのどうくつ', tower: 'ほしのとう' }[P.map], 12, 22);
+  }
+  function bar(x, y, w, h, ratio, color) {
+    ctx.fillStyle = '#0b0b18'; ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+    ctx.fillStyle = '#2c2c4d'; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = color; ctx.fillRect(x, y, w * Math.max(0, ratio), h);
   }
   function drawBattle() {
+    if (!battle) { drawWalk(); return; }
     const e = ENEMIES[battle.kind];
-    ctx.fillStyle = P.map === 'cave' ? '#171126' : '#14202e';
-    ctx.fillRect(0, 0, cv.width, cv.height);
-    // ground ellipse
+    const g = ctx.createLinearGradient(0, 0, 0, cv.height);
+    const top = P.map === 'cave' ? '#1d1433' : P.map === 'tower' ? '#231a44' : '#16253a';
+    g.addColorStop(0, top); g.addColorStop(1, '#0e0e1c');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
     ctx.fillStyle = 'rgba(255,255,255,.06)';
-    ctx.beginPath(); ctx.ellipse(cv.width / 2, 200, 130, 30, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cv.width / 2, 190, 140, 26, 0, 0, Math.PI * 2); ctx.fill();
     // enemy
-    let ex = cv.width / 2 - 60, ey = 60;
-    if (battle.shake > 0) { battle.shake -= 0.016; ex += Math.sin(anim * 60) * 4; }
     const s = e.boss ? 16 : 13;
-    if (battle.flash > 0) { battle.flash -= 0.016; if (Math.sin(anim * 60) > 0) ctx.globalAlpha = 0.4; }
-    pixelArt(e.art, cv.width / 2 - s * 4, ey, s, e.color);
+    let ex = cv.width / 2 - s * 4, ey = 52 + Math.sin(anim * 2.5) * 3;
+    if (battle.lunge > 0) { battle.lunge -= 1 / 60; ey += Math.sin((0.3 - battle.lunge) / 0.3 * Math.PI) * 14; }
+    if (battle.hurt > 0) { battle.hurt -= 1 / 60; ex += Math.sin(anim * 70) * 5; }
+    if (battle.phase === 'dead') ctx.globalAlpha = 0.3;
+    else if (battle.flash > 0) { battle.flash -= 1 / 60; if (Math.sin(anim * 60) > 0) ctx.globalAlpha = 0.35; }
+    if (battle.ehp > 0 || battle.phase !== 'dead') pixelArt(e, ex, ey, s, Math.sin(anim * 1.3) > 0.97);
     ctx.globalAlpha = 1;
-    // enemy HP bar
-    ctx.fillStyle = '#2c2c4d'; ctx.fillRect(cv.width / 2 - 70, 30, 140, 10);
-    ctx.fillStyle = '#ff5fa2';
-    ctx.fillRect(cv.width / 2 - 70, 30, 140 * battle.ehp / e.hp, 10);
+    // enemy HP (右上)
+    ctx.font = '14px DotGothic16, monospace';
     ctx.fillStyle = '#eeecfa';
-    ctx.font = '13px DotGothic16, monospace';
-    ctx.fillText(e.name, cv.width / 2 - 70, 24);
-    // hero (back view, bottom-left, drawn larger for battle)
+    ctx.textAlign = 'right';
+    ctx.fillText(e.name, cv.width - 14, 22);
+    ctx.textAlign = 'left';
+    bar(cv.width - 154, 28, 140, 9, battle.ehp / e.hp, '#ff5fa2');
+    // hero info (左上)
+    let hx = 0;
+    if (battle.shake > 0) { battle.shake -= 1 / 60; hx = Math.sin(anim * 60) * 4; }
+    ctx.fillStyle = '#eeecfa';
+    ctx.fillText(`ゆうしゃ Lv${P.lv}`, 14 + hx, 22);
+    bar(14 + hx, 28, 120, 9, P.hp / P.maxhp, P.hp / P.maxhp > 0.3 ? '#6ee77a' : '#ff5fa2');
+    ctx.fillStyle = '#9d99c0'; ctx.font = '13px DotGothic16, monospace';
+    ctx.fillText(`HP ${P.hp}/${P.maxhp}`, 14 + hx, 54);
+    ctx.fillStyle = '#ffd166';
+    ctx.fillText('★'.repeat(P.star) + '☆'.repeat(3 - P.star), 100 + hx, 54);
+    // hero sprite
     ctx.save();
-    ctx.translate(70, 210);
+    ctx.translate(28 + hx, 168);
     ctx.scale(2.2, 2.2);
-    drawChar(0, 0, '#53e0d8', '#ffd166', false);
+    drawChar(0, 0, '#53e0d8', '#ffd166', false, 'right');
     ctx.restore();
-    // hero HP bar
-    ctx.fillStyle = '#2c2c4d'; ctx.fillRect(60, 296, 120, 10);
-    ctx.fillStyle = P.hp / P.maxhp > 0.3 ? '#6ee77a' : '#ff5fa2';
-    ctx.fillRect(60, 296, 120 * P.hp / P.maxhp, 10);
-    ctx.fillStyle = '#eeecfa';
-    ctx.fillText(`ゆうしゃ Lv${P.lv}  HP ${P.hp}/${P.maxhp}`, 60, 290);
+    // intro wipe
+    if (battle.trans > 0) {
+      battle.trans -= 1 / 60;
+      const k = Math.max(0, battle.trans / 0.45);
+      ctx.fillStyle = '#05030e';
+      for (let i = 0; i < 12; i++) {
+        const h = cv.height / 12;
+        ctx.fillRect(i % 2 ? cv.width * (1 - k) : 0, i * h, cv.width * k, h + 1);
+      }
+    }
   }
   function drawTitleBg() {
     ctx.fillStyle = '#0e0e1c'; ctx.fillRect(0, 0, cv.width, cv.height);
@@ -718,6 +982,27 @@
       ctx.fillRect(sx, sy, 2, 2);
       ctx.globalAlpha = 1;
     }
+    pixelArt(ENEMIES.punyo, 40, 250 + Math.sin(anim * 3) * 4, 6);
+    pixelArt(ENEMIES.yorudori, 390, 40 + Math.sin(anim * 2) * 6, 6);
+  }
+  function drawOverlay(dt) {
+    for (const p of pops) {
+      p.t += dt;
+      const k = p.t / 0.9;
+      ctx.globalAlpha = Math.max(0, 1 - k * k);
+      ctx.font = (p.big ? '30px' : '22px') + ' DotGothic16, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#0b0b18'; ctx.fillText(p.text, p.x + 2, p.y - k * 30 + 2);
+      ctx.fillStyle = p.color; ctx.fillText(p.text, p.x, p.y - k * 30);
+      ctx.textAlign = 'left';
+    }
+    ctx.globalAlpha = 1;
+    pops = pops.filter(p => p.t < 0.9);
+    if (fx.flash > 0) {
+      fx.flash -= dt;
+      ctx.fillStyle = fx.flashColor; ctx.globalAlpha = Math.min(1, fx.flash * 4);
+      ctx.fillRect(0, 0, cv.width, cv.height); ctx.globalAlpha = 1;
+    }
   }
 
   // ---- main loop -----------------------------------------------------------------
@@ -726,14 +1011,20 @@
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
     anim += dt;
-    update(dt);
-    if (mode === 'title') drawTitleBg();
-    else if (mode === 'battle') drawBattle();
-    else if (mode === 'ending') drawEnding();
-    else drawWalk();
+    try {
+      update(dt);
+      if (mode === 'title') drawTitleBg();
+      else if (mode === 'battle') drawBattle();
+      else if (mode === 'ending') drawEnding();
+      else drawWalk();
+      if (mode !== 'title' && mode !== 'ending') drawOverlay(dt);
+    } catch (err) {
+      console.warn(err); // どんな時もループは止めない
+    }
     requestAnimationFrame(loop);
   }
   function update(dt) {
+    if (mode === 'walk' || mode === 'dialog' || mode === 'battle') P.time = (P.time || 0) + dt;
     if (mode !== 'walk' && mode !== 'dialog') return;
     if (moving) {
       moving.t += dt;
@@ -751,14 +1042,15 @@
 
   // test hooks
   window.__test = {
-    state: () => ({ mode, P: { ...P }, bossDead, msg: msgOpen(), battle: battle && { kind: battle.kind, ehp: battle.ehp, phase: battle.phase } }),
-    newGame: () => document.getElementById('newBtn').click(),
+    state: () => ({ mode, P: { ...P }, bossDead, dragonDead, msg: msgOpen(), endKind, battle: battle && { kind: battle.kind, ehp: battle.ehp, phase: battle.phase } }),
+    newGame: () => $('newBtn').click(),
     nextMsg, aPress, tryStep, finishNow: () => { if (moving) { moving.t = 1; finishStep(); } },
-    teleport: (map, x, y) => { P.map = map; P.x = x; P.y = y; arrived = true; },
+    teleport: (map, x, y) => { P.map = map; P.x = x; P.y = y; syncArrived(); },
+    face: f => { facing = f; },
     battle: k => startBattle(k),
     act: doAction,
     setStats: o => { Object.assign(P, o); statHud(); },
-    maps: MAPS, blocked,
+    maps: MAPS, blocked, chests: CHESTS, setFlags: o => { if ('bossDead' in o) bossDead = o.bossDead; if ('dragonDead' in o) dragonDead = o.dragonDead; },
   };
 })();
 </script>
