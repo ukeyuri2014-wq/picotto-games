@@ -1,14 +1,54 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11182f"><title>のんびり釣り日和｜無料ブラウザゲーム｜ルドット</title><style>
-:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#82d5ed;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}button:hover:not(:disabled){background:#3b527e;transform:translateY(-1px)}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-</style><!-- LUDOT-SEO-START -->
-<meta name="description" content="竿を投げ、魚がかかったら合わせよう。動く印を緑のゾーンで止めると釣り成功。6種類の図鑑を集めよう。 無料・ダウンロード不要。ルドットで遊べます。">
+:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#82d5ed;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}@media(hover:hover){button:hover:not(:disabled){background:#3b527e;transform:translateY(-1px)}button.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.08)}}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style id="ludot-upgrade-040">
+@media(max-width:520px){header{padding:10px 14px}main{padding-top:0}.eyebrow{font-size:.78rem}h1{font-size:1.45rem;margin:4px 0}.lead{margin:0 0 10px;font-size:.95rem;line-height:1.5}.panel{padding:12px 10px}.toolbar{margin-bottom:6px}.stat{padding:5px 9px}.stat small{font-size:.75rem}.stat b{font-size:1.05rem}.intro .icon{font-size:3.2rem;margin:6px}}
+.notice{margin:6px 0;min-height:1.6em;text-align:center}
+.fi-tabs{display:flex;gap:6px;justify-content:center;margin:0 auto 6px;max-width:640px}
+.fi-tabs button{flex:1;min-height:42px;padding:6px 4px;font-size:.92rem}
+.fi-tabs button.selected{background:#3a5b8f;outline:3px solid var(--accent);outline-offset:-3px;font-weight:800}
+.fi-tabs button:disabled{opacity:.55}
+.fi-wrap{position:relative;max-width:640px;margin:0 auto}
+.fi-wrap canvas{margin:0;width:100%;cursor:pointer}
+.fi-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#08122ab8;border-radius:18px;text-align:center;padding:8px;animation:fiPop .4s cubic-bezier(.2,1.4,.4,1)}
+.fi-card[hidden]{display:none}
+.fi-card .fish{font-size:clamp(2.6rem,11vw,4.2rem);line-height:1.1;animation:fiJump .9s ease-out}
+.fi-card h3{margin:2px 0;font-size:clamp(1.1rem,4.6vw,1.5rem)}
+.fi-card p{margin:0;line-height:1.45;font-size:.95rem;color:#e6edff}
+.fi-card .tag{display:inline-block;background:#ffd35c;color:#1b2440;border-radius:999px;padding:1px 9px;font-weight:800;font-size:.85rem;margin:2px}
+.fi-card .tag.new{background:#7ce0b6}
+.fi-meter{height:48px;margin:8px auto 0;max-width:640px;display:flex;align-items:center;gap:8px}
+.fi-bar{flex:1;height:38px;background:#0a1328;position:relative;border-radius:12px;overflow:hidden;border:2px solid #ffffff22}
+.fi-zone{position:absolute;top:0;height:100%;background:#2f9c7e;box-shadow:inset 0 0 0 2px #7ce0b6}
+.fi-zone::after{content:"";position:absolute;left:35%;width:30%;top:0;height:100%;background:#7ce0b655}
+.fi-marker{position:absolute;top:-2px;width:6px;height:calc(100% + 4px);background:#fff;border-radius:3px;box-shadow:0 0 8px #fff;margin-left:-3px}
+.fi-life{font-size:1.1rem;white-space:nowrap;min-width:3.4em;text-align:right}
+.fi-hits{font-size:.95rem;white-space:nowrap;color:#ffd35c;font-weight:800}
+.fi-hint{flex:1;text-align:center;color:var(--muted);font-size:.95rem;line-height:1.4}
+.fi-state{margin:6px 0 4px;font-size:clamp(1.05rem,4.4vw,1.35rem);text-align:center;min-height:1.5em}
+.fi-action{display:block;margin:4px auto 0;width:min(100%,360px);min-height:54px;font-size:1.15rem}
+.fi-action.alert{animation:fiAlert .35s infinite alternate}
+.fi-book h2{margin:22px 0 8px}
+.fi-book h3{margin:14px 0 6px;font-size:1.05rem;color:var(--accent)}
+.fish-grid .card{padding:10px 6px;line-height:1.45;font-size:.9rem}
+.fish-grid .card .ic{font-size:2rem;display:block;line-height:1.2}
+.fish-grid .card.unknown .ic{filter:brightness(0) opacity(.45)}
+.fish-grid .card .rs{display:block;color:#ffd35c;font-size:.85rem;letter-spacing:.05em}
+.fish-grid .card small{display:block;color:var(--muted);font-size:.8rem}
+@keyframes fiPop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes fiJump{0%{transform:translateY(40px) rotate(-30deg) scale(.6)}60%{transform:translateY(-10px) rotate(10deg) scale(1.1)}100%{transform:none}}
+@keyframes fiAlert{from{transform:scale(1)}to{transform:scale(1.04);box-shadow:0 0 0 4px #ffd35c88}}
+@media(prefers-reduced-motion:reduce){.fi-action.alert,.fi-card,.fi-card .fish{animation:none}}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="竿を投げて、浮きがしずんだら合わせよう。動く印を緑のゾーンで止めて釣り上げる。川・海・夜の海で20種類の図鑑とサイズ記録を集めよう。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/040-nonbiri-fishing/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"のんびり釣り日和","description":"竿を投げ、魚がかかったら合わせよう。動く印を緑のゾーンで止めると釣り成功。6種類の図鑑を集めよう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/040-nonbiri-fishing/index.html","inLanguage":"ja","genre":"FISHING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"のんびり釣り日和","description":"竿を投げて、浮きがしずんだら合わせよう。動く印を緑のゾーンで止めて釣り上げる。川・海・夜の海で20種類の図鑑とサイズ記録を集めよう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/040-nonbiri-fishing/index.html","inLanguage":"ja","genre":"FISHING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="040"></script>
 <!-- LUDOT-SEO-END -->
-</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">FISHING · #040</div><h1>🎣 のんびり釣り日和</h1><p class="lead">次に釣れるのは、どんな魚？</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>竿を投げ、魚がかかったら合わせよう。動く印を緑のゾーンで止めると釣り成功。6種類の図鑑を集めよう。</p><p>「投げる」→合図で「合わせる」→緑の位置で「釣り上げる」。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
+</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">FISHING · #040</div><h1>🎣 のんびり釣り日和</h1><p class="lead">次に釣れるのは、どんな魚？</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>竿を投げて、浮きがしずんだら合わせよう。動く印を緑のゾーンで止めて釣り上げる。川・海・夜の海で20種類の図鑑とサイズ記録を集めよう。</p><p>「投げる」→浮きがしずんだら「合わせる」→白い印が緑の中で「釣り上げる」。画面タップやスペースキーでもOK。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
 'use strict';
-const CONFIG={"id": "040", "title": "のんびり釣り日和", "genre": "FISHING", "emoji": "🎣", "color": "#82d5ed", "author": "スタッフ", "age": "6歳〜", "date": "2026-09-13", "description": "竿を投げ、魚がかかったら合わせよう。動く印を緑のゾーンで止めると釣り成功。6種類の図鑑を集めよう。", "controls": "「投げる」→合図で「合わせる」→緑の位置で「釣り上げる」。", "path": "games/040-nonbiri-fishing/index.html", "tagline": "次に釣れるのは、どんな魚？", "rules": "竿を投げ、魚がかかったら合わせよう。動く印を緑のゾーンで止めると釣り成功。6種類の図鑑を集めよう。"};
+const CONFIG={"id": "040", "title": "のんびり釣り日和", "genre": "FISHING", "emoji": "🎣", "color": "#82d5ed", "author": "スタッフ", "age": "6歳〜", "date": "2026-09-13", "description": "竿を投げて、浮きがしずんだら合わせよう。動く印を緑のゾーンで止めて釣り上げる。川・海・夜の海で20種類の図鑑とサイズ記録を集めよう。", "controls": "「投げる」→浮きがしずんだら「合わせる」→白い印が緑の中で「釣り上げる」。画面タップやスペースキーでもOK。", "path": "games/040-nonbiri-fishing/index.html", "tagline": "次に釣れるのは、どんな魚？", "rules": "竿を投げて、浮きがしずんだら合わせよう。動く印を緑のゾーンで止めて釣り上げる。川・海・夜の海で20種類の図鑑とサイズ記録を集めよう。"};
 const app=document.getElementById('app');
 const $=(s,r=app)=>r.querySelector(s), $$=(s,r=app)=>[...r.querySelectorAll(s)];
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -31,11 +71,146 @@ function loop(fn){let active=true,id,last=performance.now();function step(now){i
 function point(e,c){const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}}
 function circle(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 function label(ctx,s,x,y,color='#eef3ff',size=20){ctx.fillStyle=color;ctx.font=`bold ${size}px system-ui`;ctx.textAlign='center';ctx.fillText(s,x,y)}
-const FISH=[['🐟','アジ'],['🐠','クマノミ'],['🐡','ハリセンボン'],['🦑','イカ'],['🦐','エビ'],['🦀','カニ']];
-function mount(){let collection=read('fish',Array(6).fill(0));if(!Array.isArray(collection)||collection.length!==6)collection=Array(6).fill(0);let state='ready',start=0,biteAt=0,position=0,target=40,width=24,casts=0;stage('<div class="center"><div class="big" id="scene">🌊 🎣</div><h2 id="state">水面がゆれている</h2><div style="height:35px;background:#0a1328;position:relative;border-radius:12px;overflow:hidden"><div id="zone" style="position:absolute;left:40%;width:24%;height:100%;background:#267c69"></div><div id="marker" style="position:absolute;left:0;width:5px;height:100%;background:white"></div></div><p id="instruction">竿を投げてみよう。</p><button id="action" class="primary">投げる</button></div><h2>魚の図鑑 <span id="count"></span></h2><div id="collection" class="fish-grid"></div>',stat('釣った数','0','total'));function drawCollection(){$('#collection').innerHTML=FISH.map(([icon,name],i)=>`<div class="card"><span style="font-size:2rem">${collection[i]?icon:'？'}</span><br>${collection[i]?name:'まだ見つけていない'}<br>${collection[i]}匹</div>`).join('');$('#total').textContent=collection.reduce((a,b)=>a+b,0);$('#count').textContent=collection.filter(n=>n>0).length+' / 6'}function ready(message){state='ready';$('#action').textContent='もう一度投げる';$('#state').textContent=message;$('#instruction').textContent='合図が出たら「合わせる」を押してね。'}$('#action').onclick=()=>{const now=performance.now();if(state==='ready'){state='waiting';biteAt=now+1800+Math.random()*2200;$('#state').textContent='魚が来るのを待とう…';$('#action').textContent='合わせる';$('#instruction').textContent='「かかった！」が合図。';casts++}else if(state==='waiting'){ready('まだ早かった！')}else if(state==='bite'){state='reel';start=now;target=20+Math.random()*45;width=24;$('#zone').style.left=target+'%';$('#zone').style.width=width+'%';$('#action').textContent='釣り上げる';$('#instruction').textContent='白い印が緑の中にある時に押そう！';$('#state').textContent='魚と勝負！'}else if(state==='reel'){if(position>=target&&position<=target+width){const missing=collection.map((n,i)=>n===0?i:-1).filter(i=>i>=0);const i=missing.length&&Math.random()<.5?missing[Math.floor(Math.random()*missing.length)]:Math.floor(Math.random()*6);collection[i]++;save('fish',collection);$('#scene').textContent=FISH[i][0];ready(FISH[i][1]+'が釣れた！');drawCollection();tone(750);if(collection.every(n=>n>0))say('🎉 図鑑コンプリート！ 6種類ぜんぶ集まったよ。')}else ready('逃げられちゃった。また挑戦しよう！')}};loop((dt,now)=>{if(document.hidden){if(state==='waiting'||state==='bite'){state='ready';ready('おかえり。もう一度投げてみよう。')}return}if(state==='waiting'&&now>=biteAt){state='bite';$('#state').textContent='かかった！ 今すぐ合わせて！';tone(800)}else if(state==='bite'&&now>biteAt+2200)ready('魚が逃げちゃった…');else if(state==='reel'){position=(Math.sin((now-start)/430)+1)*48;$('#marker').style.left=position+'%'}});drawCollection()}
+/* ===== のんびり釣り日和 v2：3つの釣り場・20種の図鑑・サイズ記録 ===== */
+const SPOTS=[
+ {id:'river',name:'川',icon:'🏞️',sky:['#9fd8ff','#e6f6ff'],water:['#4aa3b8','#1f5f73'],far:'#4f8f55',far2:'#6fae62',need:null},
+ {id:'sea',name:'海',icon:'🌊',sky:['#7cc4ff','#d3efff'],water:['#2c86c7','#103d6b'],far:'#6b9fd0',far2:'#e8d7a0',need:{spot:'river',n:4}},
+ {id:'night',name:'夜の海',icon:'🌙',sky:['#0c1535','#27336b'],water:['#1a3a66','#061430'],far:'#1b2448',far2:'#2a3564',need:{spot:'sea',n:5}}
+];
+// id, 釣り場, 絵, 名前, めずらしさ(1-3), 大きさcm, 緑ゾーン幅%, 印の速さ, 必要ヒット数, 色フィルタ
+const FISH=[
+ ['funa','river','🐟','フナ',1,[12,28],30,1,1,'hue-rotate(45deg) saturate(.7)'],
+ ['ayu','river','🐟','アユ',1,[14,25],28,1.1,1,'hue-rotate(-25deg) saturate(1.3)'],
+ ['zari','river','🦞','ザリガニ',1,[8,14],30,.95,1,''],
+ ['kame','river','🐢','カメ',2,[15,32],24,1.15,2,''],
+ ['namazu','river','🐟','ナマズ',2,[40,72],22,1.2,2,'grayscale(.85) brightness(.75)'],
+ ['niji','river','🐟','ニジマス',3,[30,58],17,1.45,3,'hue-rotate(150deg) saturate(2.2)'],
+ ['aji','sea','🐟','アジ',1,[15,30],28,1.05,1,''],
+ ['kumanomi','sea','🐠','クマノミ',1,[6,11],28,1.1,1,''],
+ ['harisen','sea','🐡','ハリセンボン',2,[15,30],23,1.15,2,''],
+ ['ika','sea','🦑','イカ',2,[20,40],22,1.25,2,''],
+ ['ebi','sea','🦐','エビ',1,[10,20],30,1,1,''],
+ ['kani','sea','🦀','カニ',1,[8,18],30,.95,1,''],
+ ['tako','sea','🐙','タコ',2,[30,60],21,1.2,2,''],
+ ['same','sea','🦈','サメの子ども',3,[60,110],16,1.5,3,''],
+ ['hotaru','night','🦑','ホタルイカ',1,[5,8],27,1.1,1,'hue-rotate(190deg) brightness(1.3)'],
+ ['kai','night','🐚','星の貝がら',1,[4,9],29,1,1,''],
+ ['tachiuo','night','🐟','タチウオ',2,[70,120],21,1.25,2,'grayscale(1) brightness(1.5)'],
+ ['anko','night','🐡','チョウチンアンコウ',2,[20,45],21,1.3,2,'grayscale(.6) brightness(.7) sepia(.4)'],
+ ['manbou','night','🐡','マンボウ',3,[100,200],16,1.5,3,'grayscale(1) brightness(1.2)'],
+ ['kin','night','🐠','金のさかな',3,[20,35],15,1.6,3,'sepia(1) saturate(5) hue-rotate(-12deg) brightness(1.15)']
+].map(([id,spot,icon,name,r,size,w,sp,hits,f])=>({id,spot,icon,name,r,size,w,sp,hits,f}));
+const OLD6=['aji','kumanomi','harisen','ika','ebi','kani']; // 旧版 ludot-040-fish の並び
+const WINDOW=[0,1.5,1.25,1.05];
+function loadBook(){let b=read('book',null);
+ if(!b||typeof b!=='object'||typeof b.c!=='object'){b={c:{},s:{},u:['river'],total:0};const old=read('fish',null);
+  if(Array.isArray(old)&&old.some(n=>Number(n)>0)){old.slice(0,6).forEach((n,i)=>{if(Number(n)>0)b.c[OLD6[i]]=Number(n)});b.u.push('sea');b.total=Object.values(b.c).reduce((a,n)=>a+n,0)}}
+ b.c=b.c||{};b.s=b.s||{};if(!Array.isArray(b.u))b.u=['river'];if(!b.u.includes('river'))b.u.unshift('river');b.total=Number(b.total)||0;return b}
+function fishStyle(f){return f.f?` style="filter:${f.f}"`:''}
+function stars(r){return '★'.repeat(r)+'☆'.repeat(3-r)}
+function sfx(k,x=0){const B=(f,d,t,v,dl)=>beep(f,d,t,v,dl);
+ if(k==='cast'){B(900,.18,'triangle',.05,0);B(500,.2,'triangle',.04,.08)}
+ else if(k==='plop')B(260,.12,'sine',.08)
+ else if(k==='nibble')B(620,.04,'square',.025)
+ else if(k==='bite'){B(880,.08,'square',.05);B(1100,.1,'square',.05,.1)}
+ else if(k==='hook'){B(520,.08,'triangle',.08);B(780,.12,'triangle',.08,.06)}
+ else if(k==='hit'){B(600+x*140,.1,'triangle',.08);B(900+x*140,.12,'triangle',.06,.06)}
+ else if(k==='perfect'){[1046,1318,1568].forEach((f,i)=>B(f,.1,'sine',.07,i*.05))}
+ else if(k==='miss')B(190,.18,'sawtooth',.045)
+ else if(k==='catch'){[523,659,784,1046].forEach((f,i)=>B(f,.16,'triangle',.08,i*.08))}
+ else if(k==='rare'){[523,659,784,1046,1318,1568].forEach((f,i)=>B(f,.2,'triangle',.08,i*.09))}
+ else if(k==='escape'){[440,370,294].forEach((f,i)=>B(f,.16,'sine',.06,i*.1))}
+ else if(k==='unlock'){[784,988,1175,1568].forEach((f,i)=>B(f,.18,'sine',.08,i*.1))}}
+function beep(freq,dur=.1,type='sine',vol=.08,delay=0){try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();if(audioContext.state==='suspended')audioContext.resume();const t0=audioContext.currentTime+delay,o=audioContext.createOscillator(),g=audioContext.createGain();o.type=type;o.frequency.setValueAtTime(freq,t0);g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.001,t0+dur);o.connect(g).connect(audioContext.destination);o.start(t0);o.stop(t0+dur+.02)}catch{}}
+function fitPanel(){const p=$('.panel');if(!p)return;const r=p.getBoundingClientRect(),limit=$('#action')?.getBoundingClientRect(),bottom=limit?limit.bottom+46:r.bottom,over=bottom-innerHeight;if(over>0)window.scrollBy(0,Math.min(r.top-6,over+6))}
+function pickFish(spot,book){const list=FISH.filter(f=>f.spot===spot),W=[0,60,30,12];let tot=0;const w=list.map(f=>{const v=W[f.r]*(book.c[f.id]?1:2.5);tot+=v;return v});let x=Math.random()*tot;for(let i=0;i<list.length;i++){x-=w[i];if(x<=0)return list[i]}return list[0]}
+function spotOpen(book,s){return book.u.includes(s.id)}
+function speciesIn(book,spot){return FISH.filter(f=>f.spot===spot&&book.c[f.id]).length}
 
+function mount(){stop();const book=loadBook();let spot=book.u.includes(read('spot','river'))?read('spot','river'):'river';
+ const S={phase:'ready',t:0,float:null,fish:null,biteAt:0,nibbles:[],zone:0,hits:0,lives:2,quality:[],freeze:0,winEnd:0,shadow:null,splash:[],flying:null,sessionBest:0};
+ stage(`<div class="fi-tabs" id="tabs"></div><div class="fi-wrap">${canvas(600,300)}<div id="card" class="fi-card" hidden></div></div>
+ <div class="fi-meter" id="meter"></div><div class="fi-state" id="state">どこで釣ろうかな？</div><button id="action" class="primary fi-action">🎣 投げる</button>
+ <div class="fi-book"><h2>魚の図鑑 <span id="count"></span></h2><div id="book"></div></div>`,stat('釣った数',book.total,'total')+stat('図鑑',`0/${FISH.length}`,'dex')+stat('今日の最大','-','best'));
+ $('#action').after($('#notice'));
+ const c=$('#canvas'),ctx=c.getContext('2d');
+ function tabs(){$('#tabs').innerHTML=SPOTS.map(s=>{const open=spotOpen(book,s);const need=s.need?`${SPOTS.find(o=>o.id===s.need.spot).name}で${s.need.n}種`:'';return `<button data-spot="${s.id}" class="${s.id===spot?'selected':''}" ${open?'':'disabled'} aria-label="${s.name}${open?'':'（'+need+'釣るとひらく）'}">${open?s.icon:'🔒'} ${s.name}</button>`}).join('');
+  $$('[data-spot]').forEach(b=>b.onclick=()=>{if(S.phase!=='ready'&&S.phase!=='done')return say('釣りの最中は 場所を変えられないよ。');spot=b.dataset.spot;save('spot',spot);resetScene();tabs();setState(`${SPOTS.find(s=>s.id===spot).icon} ${SPOTS.find(s=>s.id===spot).name}にやってきた。`);say(hintFor())})}
+ function hintFor(){const s=SPOTS.find(o=>o.id===spot),n=speciesIn(book,spot),all=FISH.filter(f=>f.spot===spot).length;const next=SPOTS.find(o=>o.need&&o.need.spot===spot&&!spotOpen(book,o));return next?`${s.name}の魚 ${n}/${all}種。あと${Math.max(0,next.need.n-n)}種で「${next.name}」へ行けるよ。`:`${s.name}の魚 ${n}/${all}種。★3のめずらしい魚もいるよ。`}
+ function drawBook(){const dex=FISH.filter(f=>book.c[f.id]).length;$('#dex').textContent=`${dex}/${FISH.length}`;$('#total').textContent=book.total;$('#count').textContent=`${dex} / ${FISH.length}`;
+  $('#book').innerHTML=SPOTS.map(s=>{const list=FISH.filter(f=>f.spot===s.id),n=list.filter(f=>book.c[f.id]).length;return `<h3>${spotOpen(book,s)?s.icon:'🔒'} ${s.name}　${n}/${list.length}</h3><div class="fish-grid">${list.map(f=>{const got=book.c[f.id];return `<div class="card ${got?'':'unknown'}"><span class="ic"${got?fishStyle(f):''}>${f.icon}</span>${got?`<b>${f.name}</b>`:'？？？'}<span class="rs">${stars(f.r)}</span><small>${got?`${got}匹${book.s[f.id]?`・最大 ${book.s[f.id]}cm`:''}`:'まだ見つけていない'}</small></div>`}).join('')}</div>`}).join('')}
+ function setState(t){$('#state').textContent=t}
+ function meter(){const m=$('#meter');
+  if(S.phase==='reel'){if(!m.querySelector('.fi-bar')){m.innerHTML=`<span class="fi-hits" id="hits"></span><div class="fi-bar"><div class="fi-zone" id="zone"></div><div class="fi-marker" id="marker"></div></div><span class="fi-life" id="life"></span>`}
+   $('#zone').style.left=S.zone+'%';$('#zone').style.width=S.fish.w+'%';$('#hits').textContent=`${S.hits}/${S.fish.hits}`;$('#life').textContent='💪'.repeat(S.lives)+'·'.repeat(2-S.lives)}
+  else{const tip={ready:'「投げる」で 竿をふろう。',cast:'ポチャン！',wait:'浮きが大きく しずんだら 合わせよう。',bite:'今だ！ 合わせて！',done:'もう一度投げて、図鑑をうめよう。'}[S.phase]||'';m.innerHTML=`<div class="fi-hint">${tip}</div>`}}
+ function action(){const now=S.t,btn=$('#action');
+  if(S.phase==='ready'||S.phase==='done'){$('#card').hidden=true;S.phase='cast';S.castT=0;S.float={x:300+Math.random()*200,y:175+Math.random()*60,sink:0};S.fish=pickFish(spot,book);S.hits=0;S.lives=2;S.quality=[];S.splash=[];S.flying=null;
+   const wait=1.6+Math.random()*2.3;S.biteAt=now+.7+wait;S.nibbles=[];const nn=Math.floor(Math.random()*3);for(let i=0;i<nn;i++)S.nibbles.push(now+.9+Math.random()*(wait-.5));
+   S.shadow={x:S.float.x+(Math.random()<.5?-1:1)*170,y:S.float.y+30,r:S.fish.r};btn.textContent='✋ 合わせる';btn.classList.remove('alert');setState('魚が来るのを待とう…');say('');sfx('cast');meter()}
+  else if(S.phase==='cast'||S.phase==='wait'){escape('早すぎた！ 魚がびっくりして 逃げちゃった。')}
+  else if(S.phase==='bite'){S.phase='reel';S.mp=0;S.zone=newZone();btn.textContent='🎣 釣り上げる';btn.classList.remove('alert');sfx('hook');setState(S.fish.r===3?'大物だ！ 緑の中で止めよう！':S.fish.hits>1?`手ごたえあり！ ${S.fish.hits}回 成功させよう！`:'白い印が 緑の中の時に押そう！');meter()}
+  else if(S.phase==='reel'){if(S.t<S.freeze)return;const pos=markerPos(),z=S.zone,w=S.fish.w;
+   if(pos>=z&&pos<=z+w){const q=1-Math.abs(pos-(z+w/2))/(w/2);S.quality.push(q);S.hits++;S.splash.push({x:S.float.x,y:S.float.y,t:0});
+    if(q>.7){sfx('perfect');say('✨ ぴったり！ 大きく育った魚かも！')}else{sfx('hit',S.hits);say('いいぞ！')}
+    if(S.hits>=S.fish.hits)return caught();S.freeze=S.t+.45;S.zone=newZone();meter()}
+   else{S.lives--;sfx('miss');S.freeze=S.t+.45;if(S.lives<=0)return escape('糸がゆるんで 逃げられちゃった。');say('おしい！ あと1回ミスすると逃げちゃうよ。');meter()}}}
+ function newZone(){const w=S.fish.w;let z;do{z=4+Math.random()*(92-w)}while(S.zone&&Math.abs(z-S.zone)<12&&Math.random()<.8);return z}
+ function markerPos(){return (Math.sin(S.mp-Math.PI/2)+1)*50}
+ function escape(msg){S.phase='done';S.float&&(S.float.sink=0);S.shadow=null;sfx('escape');setState(msg);say('もう一度 投げてみよう。');$('#action').textContent='🎣 もう一度投げる';$('#action').classList.remove('alert');meter()}
+ function caught(){const f=S.fish,q=S.quality.reduce((a,b)=>a+b,0)/S.quality.length,[a,b]=f.size,size=Math.round(a+(b-a)*clamp(.15*Math.random()+.85*q,0,1));
+  const first=!book.c[f.id],record=!first&&size>(book.s[f.id]||0);book.c[f.id]=(book.c[f.id]||0)+1;book.s[f.id]=Math.max(book.s[f.id]||0,size);book.total++;
+  let unlocked=null;for(const s of SPOTS)if(s.need&&!spotOpen(book,s)&&speciesIn(book,s.need.spot)>=s.need.n){book.u.push(s.id);unlocked=s}
+  save('book',book);S.phase='done';S.shadow=null;S.flying={t:0,x:S.float.x,y:S.float.y};S.sessionBest=Math.max(S.sessionBest,size);$('#best').textContent=S.sessionBest+'cm';
+  const card=$('#card');card.hidden=true;later(()=>{if(S.phase==='done'&&S.flying)card.hidden=false},650);card.innerHTML=`<div class="fish"${fishStyle(f)}>${f.icon}</div><h3>${f.name}が釣れた！</h3><p><span style="color:#ffd35c">${stars(f.r)}</span>　${size}cm</p><p>${first?'<span class="tag new">図鑑に登録！</span>':''}${record?'<span class="tag">サイズ新記録！</span>':''}${q>.7?'<span class="tag">ぴったり名人</span>':''}</p>`;
+  sfx(f.r===3||first?'rare':'catch');setState(f.r===3?`すごい！ めずらしい${f.name}！`:`${f.name}（${size}cm）ゲット！`);$('#action').textContent='🎣 もう一度投げる';drawBook();meter();
+  const dex=FISH.filter(o=>book.c[o.id]).length,spotAll=FISH.filter(o=>o.spot===spot).every(o=>book.c[o.id]);
+  if(unlocked){tabs();later(()=>sfx('unlock'),700);say(`🎉 ${unlocked.icon} 「${unlocked.name}」に行けるようになった！ 上のボタンで移動しよう。`)}
+  else if(dex===FISH.length&&first)say('🏆 図鑑コンプリート！ 20種類ぜんぶ集まったよ。こんどはサイズ記録に挑戦！');
+  else if(spotAll&&first)say(`🎉 ${SPOTS.find(s=>s.id===spot).name}の魚を ぜんぶ見つけた！`);
+  else say(hintFor())}
+ function resetScene(){S.phase='ready';S.float=null;S.shadow=null;S.flying=null;$('#card').hidden=true;$('#action').textContent='🎣 投げる';meter()}
+ $('#action').onclick=action;on(c,'pointerdown',e=>{e.preventDefault();action()});
+ on(window,'keydown',e=>{if((e.key===' '||e.key==='Enter')&&!$('#start')){if(document.activeElement===$('#action'))return;e.preventDefault();action()}});
+ on(document,'visibilitychange',()=>{if(document.hidden&&['cast','wait','bite','reel'].includes(S.phase))escape('おかえり。魚は どこかへ行っちゃった。')});
+ /* ---- 描画 ---- */
+ const cloud=[[80,40,1],[330,60,.8],[520,30,1.2]],starsXY=[...Array(40)].map((_,i)=>[(i*97)%600,(i*53)%110,(i%3)+1]);
+ function draw(dt){const sp=SPOTS.find(s=>s.id===spot),t=S.t,night=spot==='night',H=300,WY=120;
+  let g=ctx.createLinearGradient(0,0,0,WY);g.addColorStop(0,sp.sky[0]);g.addColorStop(1,sp.sky[1]);ctx.fillStyle=g;ctx.fillRect(0,0,600,WY);
+  if(night){for(const [x,y,r] of starsXY){ctx.globalAlpha=.5+.5*Math.sin(t*2+x);circle(ctx,x,y,r*.8,'#fff')}ctx.globalAlpha=1;circle(ctx,500,42,20,'#fff6c9');circle(ctx,508,36,17,sp.sky[0])}
+  else{circle(ctx,540,36,20,'#fff3b0');ctx.fillStyle='#ffffffcc';for(const [x,y,s] of cloud){const cx=(x+t*8*s)%700-50;ctx.beginPath();ctx.ellipse(cx,y,34*s,11*s,0,0,7);ctx.ellipse(cx+18*s,y-7*s,20*s,10*s,0,0,7);ctx.fill()}}
+  ctx.fillStyle=sp.far;ctx.beginPath();ctx.moveTo(0,WY);if(spot==='river'){ctx.quadraticCurveTo(120,60,260,WY);ctx.quadraticCurveTo(380,80,600,WY-10)}else{ctx.lineTo(380,WY);ctx.quadraticCurveTo(430,88,480,WY)}ctx.lineTo(600,WY);ctx.closePath();ctx.fill();
+  if(spot==='night'){ctx.fillStyle='#e8eefc';ctx.fillRect(452,78,8,30);circle(ctx,456,76,4+Math.sin(t*3),'#ffe58a')}
+  g=ctx.createLinearGradient(0,WY,0,H);g.addColorStop(0,sp.water[0]);g.addColorStop(1,sp.water[1]);ctx.fillStyle=g;ctx.fillRect(0,WY,600,H-WY);
+  ctx.strokeStyle=night?'#ffffff22':'#ffffff44';ctx.lineWidth=2;for(let i=0;i<6;i++){const y=WY+18+i*30;ctx.beginPath();for(let x=0;x<=600;x+=20)ctx.lineTo(x,y+Math.sin(x/40+t*1.6+i)*3);ctx.stroke()}
+  if(night){ctx.fillStyle='#fff6c933';ctx.fillRect(480,WY,40,H-WY)}
+  // 桟橋と釣り人
+  ctx.fillStyle='#8a5a33';ctx.fillRect(0,236,170,64);ctx.fillStyle='#6d4424';for(let x=10;x<170;x+=34)ctx.fillRect(x,236,4,64);ctx.fillStyle='#a8703f';ctx.fillRect(0,232,172,8);
+  ctx.font='40px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🧒',70,206);
+  // 魚の影
+  if(S.shadow&&(S.phase==='wait'||S.phase==='cast'||S.phase==='bite'||S.phase==='reel')&&S.float){const f=S.float,sh=S.shadow;if(S.phase==='reel'){sh.x=f.x+Math.sin(t*9)*18;sh.y=f.y+18+Math.cos(t*7)*6}else{sh.x+=(f.x-sh.x)*Math.min(1,dt*.9);sh.y+=(f.y+22-sh.y)*Math.min(1,dt*.9)}
+   ctx.fillStyle='#00000040';ctx.beginPath();ctx.ellipse(sh.x,sh.y,14+sh.r*9,6+sh.r*3,0,0,7);ctx.fill()}
+  // 竿と糸
+  const bend=S.phase==='reel'?18+Math.sin(t*14)*5:S.phase==='bite'?10:0,base=[92,214],tip=[214,96+bend];
+  ctx.strokeStyle='#5a3a1e';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(...base);ctx.quadraticCurveTo(160,120+bend*.6,tip[0],tip[1]);ctx.stroke();
+  let fp=null;if(S.float){const f=S.float;if(S.phase==='cast'){const k=clamp(S.castT/.7,0,1);fp=[tip[0]+(f.x-tip[0])*k,tip[1]+(f.y-tip[1])*k-Math.sin(k*Math.PI)*90]}else{let dy=Math.sin(t*2.4)*2;if(S.phase==='wait'&&S.nib>t)dy+=5;if(S.phase==='bite')dy+=12+Math.sin(t*20)*3;if(S.phase==='reel')dy+=8+Math.sin(t*16)*3;fp=[f.x,f.y+dy]}}
+  if(fp&&!S.flying){ctx.strokeStyle='#ffffffb0';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(...tip);ctx.quadraticCurveTo((tip[0]+fp[0])/2,Math.max(tip[1],fp[1])+(S.phase==='reel'?0:30),fp[0],fp[1]);ctx.stroke();
+   if(S.phase==='bite'||S.phase==='reel'){ctx.strokeStyle='#ffffff88';for(let i=0;i<2;i++){const r=((t*40+i*20)%40)+8;ctx.globalAlpha=1-r/48;ctx.beginPath();ctx.ellipse(fp[0],S.float.y+6,r*1.6,r*.5,0,0,7);ctx.stroke()}ctx.globalAlpha=1}
+   const sunk=S.phase==='bite'||S.phase==='reel';circle(ctx,fp[0],fp[1],8,'#fff');ctx.fillStyle='#ff4d5e';ctx.beginPath();ctx.arc(fp[0],fp[1],8,Math.PI,0);ctx.fill();
+   if(S.phase==='bite'){label(ctx,'！',fp[0]+18,fp[1]-22,'#ffe066',34)}}
+  for(const s of S.splash){s.t+=dt;ctx.globalAlpha=Math.max(0,1-s.t/.5);ctx.font='26px system-ui';ctx.fillText('💦',s.x+(Math.random()-.5)*6,s.y-20-s.t*40)}ctx.globalAlpha=1;S.splash=S.splash.filter(s=>s.t<.5);
+  if(S.flying&&S.flying.t<1){const k=S.flying.t;S.flying.t+=dt*1.6;const x=S.flying.x+(300-S.flying.x)*k,y=S.flying.y-Math.sin(k*Math.PI)*120;ctx.save();ctx.filter=S.fish.f||'none';ctx.font='44px system-ui';ctx.fillText(S.fish.icon,x,y);ctx.restore()}}
+ function stepPhase(dt){const btn=$('#action');
+  if(S.phase==='cast'){if(S.castT>=.7){S.phase='wait';sfx('plop');meter()}}
+  else if(S.phase==='wait'){if(S.nibbles.length&&S.t>=S.nibbles[0]){S.nibbles.shift();S.nib=S.t+.28;sfx('nibble');setState('ちょんちょん… まだかな？')}
+   if(S.t>=S.biteAt){S.phase='bite';S.winEnd=S.t+WINDOW[S.fish.r];btn.classList.add('alert');sfx('bite');setState(S.fish.r===3?'グイッ！ 大きな影！ 今すぐ合わせて！':'かかった！ 今すぐ合わせて！');meter()}}
+  else if(S.phase==='bite'&&S.t>S.winEnd)escape('魚が えさだけ取って 逃げちゃった…');
+  else if(S.phase==='reel'){S.mp+=dt*S.fish.sp*2.35*(1+S.hits*.08);const m=$('#marker');if(m)m.style.left=markerPos()+'%';if(S.fish.r===3&&S.t>=S.freeze){S.zone=clamp(S.zone+Math.sin(S.t*1.3)*.25,2,98-S.fish.w);const z=$('#zone');if(z)z.style.left=S.zone+'%'}}}
+ loop(dt=>{S.t+=dt;if(S.phase==='cast')S.castT+=dt;stepPhase(dt);draw(dt)});
+ tabs();drawBook();meter();say(hintFor());fitPanel()}
 function launch(){mount()}
 app.innerHTML=`<section class="panel intro"><div class="icon">${CONFIG.emoji}</div><h2>${CONFIG.title}</h2><p>${CONFIG.rules}</p><button class="primary" id="start">あそぶ</button><p class="small">${CONFIG.controls}</p></section>`;
 $('#start').onclick=launch;
 on(window,'keydown',e=>{if(e.key==='Enter'&&$('#start')){e.preventDefault();stop();launch()}});
+
 </script></body></html>
