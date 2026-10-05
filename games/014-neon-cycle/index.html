@@ -18,48 +18,54 @@
     background:var(--bg); color:var(--ink);
     font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
     min-height:100vh; display:flex; flex-direction:column; align-items:center;
-    padding:14px 10px 30px;
+    padding:10px 10px 30px;
   }
-  .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar{width:min(480px,100%);margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
   .backbar a{color:var(--sub);text-decoration:none}
-  .backbar a:hover,.backbar a:focus-visible{color:var(--cyan);outline:none}
+  .backbar a:focus-visible{color:var(--cyan);outline:none}
   .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
-  .backbar button:hover{color:var(--cyan);border-color:var(--cyan)}
-  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
-  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
-  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
-  #wrap{position:relative;width:min(480px,100%)}
+  @media(hover:hover){
+    .backbar a:hover{color:var(--cyan)}
+    .backbar button:hover{color:var(--cyan);border-color:var(--cyan)}
+    .levels button:hover{border-color:var(--gold)}
+  }
+  header{width:min(480px,100%);display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:12px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%,calc((100vh - 110px) * 0.75))}
   canvas{display:block;width:100%;height:auto;background:#0b0b1a;border:2px solid var(--edge);border-radius:6px;touch-action:none}
   #overlay{
-    position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
-    align-items:center;justify-content:center;background:rgba(19,19,34,.9);
-    border-radius:6px;text-align:center;padding:14px;
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.92);
+    border-radius:6px;text-align:center;padding:12px;overflow:auto;
   }
   #overlay.show{display:flex}
   #overlay .big{font-size:30px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6);line-height:1.2}
   #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
   #overlay .big.draw{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
-  #overlay .note{font-size:13px;color:var(--ink);line-height:1.9}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.75}
   #overlay .note i{font-style:normal}
+  #overlay .note b{color:var(--gold);font-weight:400}
   #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
   .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
   .modes button{
-    font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;
-    border:none;border-radius:6px;padding:9px 18px;cursor:pointer;letter-spacing:1px;
+    font-family:inherit;font-size:16px;background:var(--cyan);color:#062a28;
+    border:none;border-radius:8px;padding:11px 18px;cursor:pointer;letter-spacing:1px;
   }
   .modes button.alt{background:var(--pink);color:#2b0014}
-  .opt{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px;justify-content:center;cursor:pointer;user-select:none}
-  .opt input{accent-color:var(--gold);margin:0}
-  #overlay .rule{font-size:12px;color:var(--sub)}
+  .levels{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--sub)}
+  .levels button{font-family:inherit;font-size:13px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:6px 12px;cursor:pointer}
+  .levels button.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08)}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.6}
   .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
   .help .c1{color:var(--cyan);font-style:normal}
   .help .c2{color:var(--pink);font-style:normal}
   .help b{color:var(--ink);font-weight:400}
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="光の線をのばして相手を囲む対戦ライトサイクル。線・壁・ブロックにぶつかったら負け、先に3ラウンド取れば勝ち。ゲージがたまればブーストで一気に加速。ひとりならCPU対戦（つよいCPUも）。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="光の線をのばして相手を囲む対戦ライトサイクル。ブロック・ワープ・せまるカベの3ステージで3本先取、⚡をとるとブーストがすぐたまる。CPUは3段階。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/014-neon-cycle/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ネオンサイクル","description":"光の線をのばして相手を囲む対戦ライトサイクル。線・壁・ブロックにぶつかったら負け、先に3ラウンド取れば勝ち。ゲージがたまればブーストで一気に加速。ひとりならCPU対戦（つよいCPUも）。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/014-neon-cycle/index.html","inLanguage":"ja","genre":"2P BATTLE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ネオンサイクル","description":"光の線をのばして相手を囲む対戦ライトサイクル。ブロック・ワープ・せまるカベの3ステージで3本先取、⚡をとるとブーストがすぐたまる。CPUは3段階。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/014-neon-cycle/index.html","inLanguage":"ja","genre":"2P BATTLE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="014"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -77,25 +83,28 @@
   <div id="overlay" class="show">
     <div class="big" id="ovBig">ネオン<br>サイクル</div>
     <div class="note" id="ovNote">
-      光の線をのばして 相手をかこめ！<br>
-      線・かべ・ブロックに ぶつかったら まけ。<br>
-      さきに <b>3ラウンド</b> とったほうの かち🏆<br><br>
-      📱 タッチ：<i class="c2">うえの人は うえ半分</i>、<i class="c1">したの人は した半分</i>を スワイプで方向転換、<b>2回タップでブースト</b><br>
-      ⌨️ キーボード：<i class="c1">した WASD＋F</i> ／ <i class="c2">うえ 矢印＋Enter</i>
+      光の線をのばして 相手をかこめ！ ぶつかったら まけ。<br>
+      さきに <b>3ラウンド</b> とったほうの かち🏆<br>
+      ラウンドごとに ステージが かわるよ（ブロック／ワープ／せまるカベ）<br>
+      <b>⚡</b>をとると ブーストが すぐたまる！<br>
+      📱 <i class="c1">した半分</i>・<i class="c2">うえ半分</i>を スワイプで曲がる、2回タップでブースト<br>
+      ⌨️ <i class="c1">WASD＋F</i> ／ <i class="c2">矢印＋Enter</i>
     </div>
     <div class="modes">
       <button id="btn2p">ふたりで たいせん</button>
       <button id="btnCpu" class="alt">ひとりで（CPU）</button>
     </div>
-    <label class="opt"><input type="checkbox" id="chkHard"> CPUを つよくする</label>
-    <div class="rule">ブーストは ゲージがたまると使える⚡</div>
+    <div class="levels" id="levels">CPU：<button data-l="1">よわい</button><button data-l="2" class="on">ふつう</button><button data-l="3">つよい</button></div>
+    <div class="rule" id="ovRec"></div>
   </div>
 </div>
 
 <div class="help">
   <i class="c1">P1（水色）＝した側</i> / <i class="c2">P2（ピンク）＝うえ側</i>。うしろには曲がれない。<br>
-  <b>ブースト</b>：みじかい時間だけ2倍速。ゲージ（画面のはし）がいっぱいのとき、2回タップ・画面すみの⚡ボタン・キーで発動。<br>
-  ラウンドごとに ネオンブロックの配置が変わる。両方同時にぶつかったら そのラウンドは引き分け。
+  <b>スタートバリア</b>：スタートから1秒のあいだは、ぶつかりそうになると自動でよけてくれる。<br>
+  <b>ブースト</b>：みじかい時間だけ2倍速。ゲージがいっぱいのとき、2回タップ・画面すみの⚡ボタン・キーで発動。<br>
+  <b>ステージ</b>：ネオンブロック（ブロックをよけよう）／ワープ（はしから反対側に出る）／せまるカベ（まわりのカベがだんだん せまってくる）。<br>
+  両方が同時にぶつかったら そのラウンドは引き分け。
 </div>
 
 <script>
@@ -106,8 +115,11 @@
   const CELL = 8, COLS = W / CELL, ROWS = H / CELL;   // 60 x 80
   const WIN_ROUNDS = 3;
   const BASE_INTERVAL = 1000 / 15;                     // 15 cells / sec
+  const HALF = BASE_INTERVAL / 2;                      // boost = move every half tick
   const BOOST_TIME = 0.9, BOOST_REGEN = 0.22;
+  const SHIELD_TIME = 1.0;                             // start barrier
   const MUTE_KEY = 'picotto_ncycle_mute';
+  const REC_KEY = 'ludot_ncycle_rec_v1';               // CPU level -> wins
 
   // ---- sound ---------------------------------------------------------------
   let muted = false;
@@ -137,6 +149,9 @@
     go() { tone('square', 880, 1320, 0.16, 0.06); },
     round() { [523, 659, 784].forEach((f, i) => tone('square', f, f, 0.12, 0.06, i * 0.09)); },
     win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, i * 0.1)); },
+    item() { tone('square', 988, 1976, 0.12, 0.05); tone('triangle', 1318, 1318, 0.1, 0.04, 0.06); },
+    save() { tone('triangle', 600, 1200, 0.12, 0.05); },
+    wall() { tone('square', 140, 110, 0.12, 0.05); },
   };
   const muteBtn = document.getElementById('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
@@ -148,34 +163,44 @@
   const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
   const LEFT = { up: 'left', left: 'down', down: 'right', right: 'up' };
   const RIGHT = { up: 'right', right: 'down', down: 'left', left: 'up' };
-  let grid = new Uint8Array(COLS * ROWS);           // 0 free, 1 block, 2 p1 trail, 3 p2 trail
+  const STAGES = [
+    { id: 'block', name: 'ネオンブロック', tip: 'ブロックを よけよう' },
+    { id: 'warp', name: 'ワープ', tip: 'はしから 反対がわに 出るよ' },
+    { id: 'shrink', name: 'せまるカベ', tip: 'まわりのカベが せまってくる！' },
+  ];
+  let grid = new Uint8Array(COLS * ROWS);           // 0 free, 1 block/wall, 2 p1 trail, 3 p2 trail
   let p1, p2, score1 = 0, score2 = 0, round = 0;
-  let mode = '2p', hard = false;
+  let mode = '2p', level = 2;
   let state = 'title';                              // title | count | play | crash | over
-  let countT = 0, crashT = 0, roundWinner = 0;
-  let particles = [], blocks = [], anim = 0;
+  let countT = 0, crashT = 0, roundWinner = 0, playT = 0, tickN = 0, acc = 0;
+  let particles = [], blocks = [], items = [], anim = 0, stage = STAGES[0], stageOrder = [];
+  let ring = 0, ringT = 0, history = [], floaters = [];
+  let rec = { 1: 0, 2: 0, 3: 0 };
+  try { const r = JSON.parse(localStorage.getItem(REC_KEY) || 'null'); if (r) rec = Object.assign(rec, r); } catch (e) {}
   const overlay = document.getElementById('overlay');
+  const LV_NAME = ['', 'よわい', 'ふつう', 'つよい'];
 
   function mkPlayer(n) {
     return {
       n, x: 0, y: 0, dir: n === 1 ? 'up' : 'down', next: null, alive: true,
-      acc: 0, energy: 1, boostT: 0, trail: [], color: n === 1 ? '#53e0d8' : '#ff5fa2', glow: n === 1 ? 'rgba(83,224,216,' : 'rgba(255,95,162,',
-      cpuTick: 0,
+      energy: 0.5, boostT: 0, trail: [], color: n === 1 ? '#53e0d8' : '#ff5fa2', glow: n === 1 ? 'rgba(83,224,216,' : 'rgba(255,95,162,',
+      cpuTick: 0, saveFlash: 0,
     };
   }
   function idx(x, y) { return y * COLS + x; }
-  function free(x, y) { return x >= 0 && y >= 0 && x < COLS && y < ROWS && grid[idx(x, y)] === 0; }
+  function norm(x, y) { if (stage.id === 'warp') { x = (x + COLS) % COLS; y = (y + ROWS) % ROWS; } return [x, y]; }
+  function free(x, y) { [x, y] = norm(x, y); return x >= 0 && y >= 0 && x < COLS && y < ROWS && grid[idx(x, y)] === 0; }
 
-  function genBlocks() {
+  function genBlocks(count) {
     blocks = []; grid.fill(0);
-    const n = 3 + Math.floor(Math.random() * 2);
+    const n = count;
     let tries = 0;
     while (blocks.length < n * 2 && tries++ < 200) {
       const w = 2 + Math.floor(Math.random() * 6), h = 2 + Math.floor(Math.random() * 6);
       const x = 4 + Math.floor(Math.random() * (COLS - 8 - w)), y = 12 + Math.floor(Math.random() * (ROWS / 2 - 14 - h));
-      // keep the start columns clear
-      if (x <= COLS / 2 + 2 && x + w >= COLS / 2 - 2 && y + h > ROWS / 2 - 26 && y < ROWS / 2) continue;
-      const mx = COLS - x - w, my = ROWS - y - h;       // point-symmetric twin
+      if (x <= COLS / 2 + 2 && x + w >= COLS / 2 - 2 && y + h > ROWS / 2 - 26 && y < ROWS / 2) continue;   // keep the start lanes clear
+      if (x <= COLS / 2 + 2 && x + w >= COLS / 2 - 3 && y < 16) continue;
+      const mx = COLS - x - w, my = ROWS - y - h;       // point-symmetric twin (fair for both)
       const rects = [[x, y, w, h], [mx, my, w, h]];
       let ok = true;
       for (const [rx, ry, rw, rh] of rects) for (const [bx, by, bw, bh] of blocks) if (rx < bx + bw + 2 && rx + rw + 2 > bx && ry < by + bh + 2 && ry + rh + 2 > by) ok = false;
@@ -183,37 +208,69 @@
       for (const r of rects) { blocks.push(r); for (let yy = r[1]; yy < r[1] + r[3]; yy++) for (let xx = r[0]; xx < r[0] + r[2]; xx++) grid[idx(xx, yy)] = 1; }
     }
   }
+  function spawnItem() {
+    for (let t = 0; t < 60; t++) {
+      const x = 3 + Math.floor(Math.random() * (COLS - 6)), y = 3 + Math.floor(Math.random() * (ROWS - 6));
+      let ok = true;
+      for (let dy = -1; dy <= 1 && ok; dy++) for (let dx = -1; dx <= 1; dx++) if (!free(x + dx, y + dy)) { ok = false; break; }
+      if (!ok) continue;
+      if (Math.abs(x - p1.x) + Math.abs(y - p1.y) < 8 || Math.abs(x - p2.x) + Math.abs(y - p2.y) < 8) continue;
+      items.push({ x, y, t: 0 }); return;
+    }
+  }
   function resetRound() {
-    genBlocks();
+    stage = STAGES[stageOrder[round % stageOrder.length]];
+    genBlocks(stage.id === 'block' ? 3 + Math.floor(Math.random() * 2) : stage.id === 'warp' ? 2 : 1);
+    ring = 0; ringT = 0;
     p1 = mkPlayer(1); p2 = mkPlayer(2);
     p1.x = COLS / 2; p1.y = ROWS - 8; p2.x = COLS / 2 - 1; p2.y = 7;
     grid[idx(p1.x, p1.y)] = 2; grid[idx(p2.x, p2.y)] = 3;
     p1.trail.push([p1.x, p1.y]); p2.trail.push([p2.x, p2.y]);
-    particles = []; roundWinner = 0;
+    particles = []; floaters = []; roundWinner = 0; items = []; acc = 0; tickN = 0; playT = 0;
+    // symmetric item pair so nobody gets a luckier spot
+    spawnItem(); if (items.length) { const it = items[0]; if (free(COLS - 1 - it.x, ROWS - 1 - it.y)) items.push({ x: COLS - 1 - it.x, y: ROWS - 1 - it.y, t: 0 }); }
     state = 'count'; countT = 3;
   }
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   function startMatch(m) {
-    mode = m; hard = document.getElementById('chkHard').checked;
-    score1 = 0; score2 = 0; round = 0;
+    mode = m;
+    score1 = 0; score2 = 0; round = 0; history = [];
+    stageOrder = [0].concat(shuffle([1, 2]));   // 1ラウンド目は いつものブロック、2・3ラウンド目は ワープとせまるカベ
     overlay.classList.remove('show');
     resetRound();
   }
   document.getElementById('btn2p').addEventListener('click', () => { audio(); startMatch('2p'); });
   document.getElementById('btnCpu').addEventListener('click', () => { audio(); startMatch('cpu'); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => {
+    level = +b.dataset.l; document.querySelectorAll('#levels button').forEach(x => x.classList.toggle('on', x === b)); renderRec();
+  }));
+  function renderRec() {
+    document.getElementById('ovRec').innerHTML = 'CPUに かった回数：よわい ' + rec[1] + ' ／ ふつう ' + rec[2] + ' ／ つよい ' + rec[3] + (rec[3] > 0 ? ' 👑' : '');
+  }
+  renderRec();
 
   function showOver(winner) {
     const big = document.getElementById('ovBig');
     const note = document.getElementById('ovNote');
     if (winner === 1) { big.textContent = 'PLAYER 1 WIN!'; big.className = 'big'; }
     else { big.textContent = mode === 'cpu' ? 'CPU WIN…' : 'PLAYER 2 WIN!'; big.className = 'big p2'; }
-    note.innerHTML = '<i class="' + (winner === 1 ? 'c1' : 'c2') + '">' + (winner === 1 ? 'した側（水色）' : (mode === 'cpu' ? 'CPU（ピンク）' : 'うえ側（ピンク）')) + '</i> のかち！ ' + score1 + ' - ' + score2 + '<br><br>もういちど？ モードをえらんでね';
+    let newRec = '';
+    if (mode === 'cpu' && winner === 1) {
+      rec[level]++; try { localStorage.setItem(REC_KEY, JSON.stringify(rec)); } catch (e) {}
+      newRec = '<br><b>CPU' + LV_NAME[level] + 'に ' + rec[level] + '回目の しょうり！</b>' + (level < 3 ? '<br>つぎは 1つ上の つよさに ちょうせん？' : '');
+    }
+    const log = history.map((h, i) => (i + 1) + '. ' + h.stage + '：' + (h.w === 0 ? 'ひきわけ' : h.w === 1 ? '<i class="c1">P1</i>' : '<i class="c2">' + (mode === 'cpu' ? 'CPU' : 'P2') + '</i>')).join('<br>');
+    note.innerHTML = '<i class="' + (winner === 1 ? 'c1' : 'c2') + '">' + (winner === 1 ? 'した側（水色）' : (mode === 'cpu' ? 'CPU（ピンク）' : 'うえ側（ピンク）')) + '</i> のかち！ ' + score1 + ' - ' + score2 + newRec + '<br>' + log;
+    document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど（ふたりで）' : 'ふたりで たいせん';
+    document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど（CPU）' : 'ひとりで（CPU）';
+    renderRec();
     overlay.classList.add('show');
   }
 
   // ---- input ---------------------------------------------------------------
   function turn(p, dir) {
     if (!p || !p.alive) return;
-    if (dir === OPP[p.dir] || dir === p.dir) return;
+    if (dir === OPP[p.dir] || dir === p.dir) { if (p.next && dir === p.dir) p.next = null; return; }
     if (p.next !== dir) { p.next = dir; SFX.turn(p.n); }
   }
   function boost(p) {
@@ -223,10 +280,10 @@
   }
   const keyMap = { KeyW: [1, 'up'], KeyS: [1, 'down'], KeyA: [1, 'left'], KeyD: [1, 'right'], ArrowUp: [2, 'up'], ArrowDown: [2, 'down'], ArrowLeft: [2, 'left'], ArrowRight: [2, 'right'] };
   document.addEventListener('keydown', e => {
-    if (keyMap[e.code]) { e.preventDefault(); const [n, d] = keyMap[e.code]; if (n === 2 && mode === 'cpu') return; turn(n === 1 ? p1 : p2, d); return; }
+    if (keyMap[e.code]) { e.preventDefault(); const [n, d] = keyMap[e.code]; if (n === 2 && mode === 'cpu') { turn(p1, d); return; } turn(n === 1 ? p1 : p2, d); return; }
     if (e.code === 'KeyF' || e.code === 'ShiftLeft') { boost(p1); }
-    if ((e.code === 'Enter' || e.code === 'ShiftRight') && mode !== 'cpu') { boost(p2); }
-    if (e.code === 'Space' || e.code === 'Enter') { if (overlay.classList.contains('show')) { e.preventDefault(); audio(); startMatch(mode); } }
+    if (e.code === 'Enter' || e.code === 'ShiftRight') { if (mode !== 'cpu') boost(p2); else boost(p1); }
+    if (e.code === 'Space' || e.code === 'Enter') { if (overlay.classList.contains('show')) { e.preventDefault(); audio(); startMatch(mode); } else if (e.code === 'Space') { e.preventDefault(); boost(p1); } }
   });
   // touch: pointers owned by the half they start in; swipe = absolute direction, double tap = boost
   const pts = {}; const lastTap = { 1: 0, 2: 0 };
@@ -234,11 +291,11 @@
   function boostBtn(n) { return n === 1 ? { x: W - 78, y: H - 78, s: 70 } : { x: 8, y: 8, s: 70 }; }
   function inBtn(p, n) { const b = boostBtn(n); return p.x >= b.x && p.x <= b.x + b.s && p.y >= b.y && p.y <= b.y + b.s; }
   cv.addEventListener('pointerdown', e => {
-    e.preventDefault(); cv.setPointerCapture(e.pointerId); audio();
-    const p = cpos(e); const who = p.y > H / 2 ? 1 : 2;
-    if (who === 2 && mode === 'cpu') { pts[e.pointerId] = null; return; }
+    e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (_) {} audio();
+    const p = cpos(e); let who = p.y > H / 2 ? 1 : 2;
+    if (mode === 'cpu') who = 1;                       // CPU戦は画面のどこをスワイプしても自分が動く
     if (inBtn(p, who)) { boost(who === 1 ? p1 : p2); pts[e.pointerId] = null; return; }
-    pts[e.pointerId] = { who, x: p.x, y: p.y, sx: p.x, sy: p.y, moved: false, t: performance.now() };
+    pts[e.pointerId] = { who, x: p.x, y: p.y, moved: false };
   });
   cv.addEventListener('pointermove', e => {
     const s = pts[e.pointerId]; if (!s) return;
@@ -262,49 +319,94 @@
   // ---- CPU ------------------------------------------------------------------
   function areaFrom(x, y, limit) {
     if (!free(x, y)) return 0;
+    [x, y] = norm(x, y);
     const seen = new Uint8Array(COLS * ROWS); const stack = [[x, y]]; seen[idx(x, y)] = 1; let n = 0;
     while (stack.length && n < limit) {
       const [cx, cy] = stack.pop(); n++;
-      for (const k in DIRS) { const nx = cx + DIRS[k][0], ny = cy + DIRS[k][1]; if (free(nx, ny) && !seen[idx(nx, ny)]) { seen[idx(nx, ny)] = 1; stack.push([nx, ny]); } }
+      for (const k in DIRS) {
+        let [nx, ny] = norm(cx + DIRS[k][0], cy + DIRS[k][1]);
+        if (free(nx, ny) && !seen[idx(nx, ny)]) { seen[idx(nx, ny)] = 1; stack.push([nx, ny]); }
+      }
     }
     return n;
   }
   function straightFree(x, y, dir, max) { let n = 0; while (n < max && free(x + DIRS[dir][0] * (n + 1), y + DIRS[dir][1] * (n + 1))) n++; return n; }
+  const CPU_LV = {
+    1: { look: 3, period: 11, area: 200, straight: 0.5, noise: 22, mistake: 0.08, item: 0 },
+    2: { look: 4, period: 9, area: 350, straight: 0.8, noise: 14, mistake: 0.04, item: 8 },
+    3: { look: 10, period: 5, area: 900, straight: 1.5, noise: 3, mistake: 0, item: 25 },
+  };
   function cpuThink(p) {
+    const L = CPU_LV[level];
     p.cpuTick++;
-    const look = hard ? 10 : 4;
-    const ahead = straightFree(p.x, p.y, p.dir, look + 1);
-    const periodic = p.cpuTick % (hard ? 5 : 9) === 0;
-    if (ahead > look && !periodic) return;
+    const ahead = straightFree(p.x, p.y, p.dir, L.look + 1);
+    const periodic = p.cpuTick % L.period === 0;
+    if (ahead > L.look && !periodic) return;
     const opts = [p.dir, LEFT[p.dir], RIGHT[p.dir]];
-    let best = null, bestScore = -1;
+    let best = null, bestScore = -1e9;
     for (const d of opts) {
-      const nx = p.x + DIRS[d][0], ny = p.y + DIRS[d][1];
+      const [nx, ny] = norm(p.x + DIRS[d][0], p.y + DIRS[d][1]);
       if (!free(nx, ny)) continue;
-      let score = areaFrom(nx, ny, hard ? 900 : 350) + straightFree(nx, ny, d, 20) * (hard ? 1.5 : 0.8) + (d === p.dir ? 4 : 0) + Math.random() * (hard ? 3 : 14);
-      // avoid the opponent's head neighbourhood
+      let score = areaFrom(nx, ny, L.area) + straightFree(nx, ny, d, 20) * L.straight + (d === p.dir ? 4 : 0) + Math.random() * L.noise;
       const o = p1; if (Math.abs(nx - o.x) + Math.abs(ny - o.y) <= 2) score -= 60;
+      if (L.item) for (const it of items) { const dd = Math.abs(nx - it.x) + Math.abs(ny - it.y), d0 = Math.abs(p.x - it.x) + Math.abs(p.y - it.y); if (dd < d0 && d0 < 22) score += L.item; }
       if (score > bestScore) { bestScore = score; best = d; }
     }
-    if (!hard && Math.random() < 0.05) { const d = opts[Math.floor(Math.random() * 3)]; if (free(p.x + DIRS[d][0], p.y + DIRS[d][1])) best = d; }
+    if (Math.random() < L.mistake) { const d = opts[Math.floor(Math.random() * 3)]; if (free(p.x + DIRS[d][0], p.y + DIRS[d][1])) best = d; }
     if (best && best !== p.dir) p.next = best;
-    if (hard && p.energy >= 1 && straightFree(p.x, p.y, best || p.dir, 24) > 18) boost(p);
+    if (level >= 2 && p.energy >= 1 && straightFree(p.x, p.y, best || p.dir, 24) > (level === 3 ? 18 : 22)) boost(p);
   }
 
   // ---- update ---------------------------------------------------------------
-  function step(p) {
-    if (p.next) { p.dir = p.next; p.next = null; }
-    const nx = p.x + DIRS[p.dir][0], ny = p.y + DIRS[p.dir][1];
-    if (!free(nx, ny)) { p.alive = false; return; }
-    p.x = nx; p.y = ny; grid[idx(nx, ny)] = p.n === 1 ? 2 : 3; p.trail.push([nx, ny]);
-  }
   function explode(p) {
     const cx = p.x * CELL + CELL / 2, cy = p.y * CELL + CELL / 2;
     for (let i = 0; i < 40; i++) { const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 260; particles.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.4 + Math.random() * 0.5, c: p.glow }); }
   }
+  // 両者の「次のマス」を先に決めてから、同時に判定する（同じマス・すれちがいは相打ち）
+  function tick() {
+    tickN++;
+    const movers = [p1, p2].filter(p => p.alive && (p.boostT > 0 || tickN % 2 === 0));
+    if (!movers.length) return;
+    if (mode === 'cpu' && movers.includes(p2)) cpuThink(p2);
+    const shield = playT < SHIELD_TIME;
+    for (const p of movers) {
+      if (p.next) { p.dir = p.next; p.next = null; }
+      let [nx, ny] = norm(p.x + DIRS[p.dir][0], p.y + DIRS[p.dir][1]);
+      if (!free(nx, ny) && shield) {               // スタートバリア：よけられる方へ自動で曲がる
+        const alt = [LEFT[p.dir], RIGHT[p.dir]].map(d => ({ d, a: free(p.x + DIRS[d][0], p.y + DIRS[d][1]) ? areaFrom(p.x + DIRS[d][0], p.y + DIRS[d][1], 300) : 0 })).sort((a, b) => b.a - a.a)[0];
+        if (alt.a > 0) { p.dir = alt.d; [nx, ny] = norm(p.x + DIRS[p.dir][0], p.y + DIRS[p.dir][1]); p.saveFlash = 0.6; SFX.save(); }
+      }
+      p.tx = nx; p.ty = ny; p.ok = free(nx, ny);
+    }
+    if (movers.length === 2 && p1.tx === p2.tx && p1.ty === p2.ty) { p1.ok = false; p2.ok = false; }
+    for (const p of movers) {
+      if (!p.ok) { p.alive = false; explode(p); continue; }
+      p.x = p.tx; p.y = p.ty; grid[idx(p.x, p.y)] = p.n === 1 ? 2 : 3; p.trail.push([p.x, p.y]);
+      for (let i = items.length - 1; i >= 0; i--) {
+        const it = items[i];
+        if (Math.abs(it.x - p.x) <= 1 && Math.abs(it.y - p.y) <= 1) {
+          items.splice(i, 1); p.energy = 1; SFX.item();
+          floaters.push({ x: p.x * CELL, y: p.y * CELL - 10, t: 1, text: '⚡MAX', c: p.color });
+          setTimeout(() => { if (state === 'play') spawnItem(); }, 2500);
+        }
+      }
+    }
+    if (movers.some(p => !p.ok)) SFX.crash();
+  }
+  function growRing() {
+    if (ring >= 14) return;
+    const r = ring;
+    for (let x = r; x < COLS - r; x++) { grid[idx(x, r)] = grid[idx(x, r)] || 1; grid[idx(x, ROWS - 1 - r)] = grid[idx(x, ROWS - 1 - r)] || 1; }
+    for (let y = r; y < ROWS - r; y++) { grid[idx(r, y)] = grid[idx(r, y)] || 1; grid[idx(COLS - 1 - r, y)] = grid[idx(COLS - 1 - r, y)] || 1; }
+    ring++;
+    items = items.filter(it => it.x > ring && it.y > ring && it.x < COLS - 1 - ring && it.y < ROWS - 1 - ring);
+    SFX.wall();
+  }
   function update(dt) {
     anim += dt;
     particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vx *= 0.98; s.vy *= 0.98; s.life -= dt; return s.life > 0; });
+    floaters = floaters.filter(f => { f.t -= dt; f.y -= 20 * dt; return f.t > 0; });
+    for (const it of items) it.t += dt;
     if (state === 'count') {
       const before = Math.ceil(countT); countT -= dt; const after = Math.ceil(countT);
       if (after !== before && after > 0) SFX.count();
@@ -321,28 +423,20 @@
       return;
     }
     if (state !== 'play') return;
+    playT += dt;
     for (const p of [p1, p2]) {
       if (p.boostT > 0) p.boostT -= dt; else p.energy = Math.min(1, p.energy + BOOST_REGEN * dt);
+      if (p.saveFlash > 0) p.saveFlash -= dt;
     }
-    if (mode === 'cpu') { /* decide right before each move */ }
-    // per-player movement timers (boost = double speed)
-    for (const p of [p1, p2]) {
-      p.acc += dt * 1000;
-      const interval = p.boostT > 0 ? BASE_INTERVAL / 2 : BASE_INTERVAL;
-      while (p.acc >= interval && p.alive && state === 'play') {
-        p.acc -= interval;
-        if (mode === 'cpu' && p === p2) cpuThink(p);
-        step(p);
-        if (!p.alive) { explode(p); SFX.crash(); }
-      }
-    }
-    // head-on: both moved into the same cell this frame
-    if (p1.alive && p2.alive && p1.x === p2.x && p1.y === p2.y) { p1.alive = false; p2.alive = false; explode(p1); SFX.crash(); }
+    if (stage.id === 'shrink') { ringT += dt; if (ringT >= 3) { ringT -= 3; growRing(); } }
+    acc += dt * 1000;
+    while (acc >= HALF && p1.alive && p2.alive) { acc -= HALF; tick(); }
     if (!p1.alive || !p2.alive) {
       round++;
       if (p1.alive) { score1++; roundWinner = 1; SFX.round(); }
       else if (p2.alive) { score2++; roundWinner = 2; SFX.round(); }
       else roundWinner = 0;
+      history.push({ stage: stage.name, w: roundWinner });
       state = 'crash'; crashT = 1.6;
     }
   }
@@ -351,26 +445,40 @@
   function drawTrail(p) {
     if (p.trail.length < 1) return;
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    const t = p.trail;
     for (const [w, a] of [[9, 0.18], [4.5, 0.55], [2.4, 1]]) {
       ctx.strokeStyle = p.glow + a + ')'; ctx.lineWidth = w;
       ctx.beginPath();
-      const t = p.trail;
       ctx.moveTo(t[0][0] * CELL + CELL / 2, t[0][1] * CELL + CELL / 2);
-      for (let i = 1; i < t.length; i++) ctx.lineTo(t[i][0] * CELL + CELL / 2, t[i][1] * CELL + CELL / 2);
+      for (let i = 1; i < t.length; i++) {
+        const jump = Math.abs(t[i][0] - t[i - 1][0]) + Math.abs(t[i][1] - t[i - 1][1]) > 1;   // ワープの切れ目はつながない
+        if (jump) ctx.moveTo(t[i][0] * CELL + CELL / 2, t[i][1] * CELL + CELL / 2);
+        else ctx.lineTo(t[i][0] * CELL + CELL / 2, t[i][1] * CELL + CELL / 2);
+      }
       ctx.stroke();
     }
-    // head
     const hx = p.x * CELL + CELL / 2, hy = p.y * CELL + CELL / 2;
+    if (state === 'play' && playT < SHIELD_TIME || p.saveFlash > 0) {
+      ctx.strokeStyle = 'rgba(255,209,102,' + (p.saveFlash > 0 ? 0.9 : 0.5) + ')'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(hx, hy, 10 + Math.sin(anim * 12) * 2, 0, Math.PI * 2); ctx.stroke();
+    }
     ctx.fillStyle = '#ffffff'; ctx.shadowColor = p.color; ctx.shadowBlur = p.boostT > 0 ? 22 : 12;
     ctx.beginPath(); ctx.arc(hx, hy, p.boostT > 0 ? 5 : 4, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0;
   }
+  function drawArrow(p) {   // カウントダウン中に進む向きを見せる
+    const [dx, dy] = DIRS[p.dir];
+    const hx = p.x * CELL + CELL / 2, hy = p.y * CELL + CELL / 2;
+    ctx.strokeStyle = p.color; ctx.fillStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(anim * 5));
+    ctx.beginPath(); ctx.moveTo(hx + dx * 10, hy + dy * 10); ctx.lineTo(hx + dx * 34, hy + dy * 34); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hx + dx * 44, hy + dy * 44); ctx.lineTo(hx + dx * 32 + dy * 8, hy + dy * 32 + dx * 8); ctx.lineTo(hx + dx * 32 - dy * 8, hy + dy * 32 - dx * 8); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
   function drawEnergy(p) {
-    const n = p.n; const w = 120, h = 6;
-    const x = n === 1 ? W - w - 10 : 10, y = n === 1 ? H - 14 : 8;
+    const n = p.n; const w = 120, h = 7;
+    const x = n === 1 ? W - w - 90 : 90, y = n === 1 ? H - 16 : 9;
     ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.fillRect(x, y, w, h);
     ctx.fillStyle = p.energy >= 1 ? p.color : p.glow + '.5)'; ctx.fillRect(x, y, w * p.energy, h);
-    // boost button (touch)
     const b = boostBtn(n);
     ctx.strokeStyle = p.energy >= 1 ? p.color : 'rgba(157,153,192,.35)'; ctx.lineWidth = 2;
     ctx.fillStyle = p.energy >= 1 ? p.glow + '.16)' : 'rgba(255,255,255,.03)';
@@ -381,41 +489,71 @@
   }
   function draw() {
     ctx.clearRect(0, 0, W, H);
-    // grid
     ctx.strokeStyle = 'rgba(120,110,200,.09)'; ctx.lineWidth = 1;
     ctx.beginPath();
     for (let x = 0; x <= W; x += CELL * 5) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
     for (let y = 0; y <= H; y += CELL * 5) { ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
     ctx.stroke();
-    // halves tint + center line
     ctx.fillStyle = 'rgba(255,95,162,.03)'; ctx.fillRect(0, 0, W, H / 2);
     ctx.fillStyle = 'rgba(83,224,216,.03)'; ctx.fillRect(0, H / 2, W, H / 2);
-    ctx.strokeStyle = 'rgba(157,153,192,.25)'; ctx.setLineDash([6, 8]); ctx.beginPath(); ctx.moveTo(0, H / 2 + 0.5); ctx.lineTo(W, H / 2 + 0.5); ctx.stroke(); ctx.setLineDash([]);
-    // blocks
+    if (mode !== 'cpu' || state === 'title') { ctx.strokeStyle = 'rgba(157,153,192,.25)'; ctx.setLineDash([6, 8]); ctx.beginPath(); ctx.moveTo(0, H / 2 + 0.5); ctx.lineTo(W, H / 2 + 0.5); ctx.stroke(); ctx.setLineDash([]); }
+    // warp edges
+    if (stage.id === 'warp' && state !== 'title') {
+      ctx.strokeStyle = 'rgba(83,224,216,' + (0.35 + 0.25 * Math.sin(anim * 4)) + ')'; ctx.lineWidth = 4; ctx.setLineDash([10, 8]);
+      ctx.strokeRect(2, 2, W - 4, H - 4); ctx.setLineDash([]);
+    }
+    // shrinking wall
+    if (ring > 0) {
+      const r = ring * CELL;
+      ctx.fillStyle = 'rgba(255,95,162,.16)';
+      ctx.fillRect(0, 0, W, r); ctx.fillRect(0, H - r, W, r); ctx.fillRect(0, r, r, H - 2 * r); ctx.fillRect(W - r, r, r, H - 2 * r);
+      ctx.strokeStyle = '#ff5fa2'; ctx.lineWidth = 2; ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = 10; ctx.strokeRect(r + 1, r + 1, W - 2 * r - 2, H - 2 * r - 2); ctx.shadowBlur = 0;
+    }
     for (const [bx, by, bw, bh] of blocks) {
       const x = bx * CELL, y = by * CELL, w = bw * CELL, h = bh * CELL;
       ctx.fillStyle = 'rgba(160,107,255,.18)'; ctx.fillRect(x, y, w, h);
       ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 2; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 10; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2); ctx.shadowBlur = 0;
     }
+    // items
+    for (const it of items) {
+      const x = it.x * CELL + CELL / 2, y = it.y * CELL + CELL / 2, s = 1 + 0.15 * Math.sin(it.t * 6);
+      ctx.fillStyle = 'rgba(255,209,102,.18)'; ctx.beginPath(); ctx.arc(x, y, 14 * s, 0, Math.PI * 2); ctx.fill();
+      ctx.font = Math.round(20 * s) + 'px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#ffd166';
+      ctx.fillText('⚡', x, y + 7 * s); ctx.textAlign = 'left';
+    }
     // scores
     ctx.font = '34px DotGothic16, monospace'; ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(255,95,162,.7)'; ctx.fillText(score2, W - 40, H / 2 - 18);
     ctx.fillStyle = 'rgba(83,224,216,.7)'; ctx.fillText(score1, W - 40, H / 2 + 44);
-    ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.6)';
-    ctx.fillText('ROUND ' + Math.min(round + 1, 99) + ' ・ さきに' + WIN_ROUNDS + '本', 60, H / 2 + 4);
+    if (state !== 'title') {
+      const shown = (state === 'crash' || state === 'over') ? Math.max(1, round) : round + 1;
+      ctx.font = '16px DotGothic16, monospace'; ctx.fillStyle = 'rgba(200,196,230,.75)';
+      ctx.fillText('ROUND ' + shown + ' ・ さきに' + WIN_ROUNDS + '本', 90, H / 2 + 6);
+    }
     ctx.textAlign = 'left';
     if (p1) { drawTrail(p2); drawTrail(p1); drawEnergy(p1); if (mode !== 'cpu') drawEnergy(p2); }
+    if (state === 'count' && p1) { drawArrow(p1); drawArrow(p2); }
     for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - 2, s.y - 2, 4, 4); }
     ctx.globalAlpha = 1;
     ctx.textAlign = 'center';
+    for (const f of floaters) { ctx.globalAlpha = Math.min(1, f.t * 2); ctx.font = '16px DotGothic16, monospace'; ctx.fillStyle = f.c; ctx.fillText(f.text, f.x, f.y); }
+    ctx.globalAlpha = 1;
     if (state === 'count') {
+      ctx.fillStyle = 'rgba(11,11,26,.72)'; ctx.fillRect(40, H / 2 - 100, W - 80, 64);
+      ctx.fillStyle = '#eeecfa'; ctx.font = '24px DotGothic16, monospace';
+      ctx.fillText('ステージ：' + stage.name, W / 2, H / 2 - 72);
+      ctx.fillStyle = '#9d99c0'; ctx.font = '17px DotGothic16, monospace';
+      ctx.fillText(stage.tip, W / 2, H / 2 - 46);
       ctx.fillStyle = '#ffd166'; ctx.font = '58px DotGothic16, monospace'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 18;
-      ctx.fillText(Math.ceil(countT), W / 2, H / 2 + 20); ctx.shadowBlur = 0;
+      ctx.fillText(Math.ceil(countT), W / 2, H / 2 + 34); ctx.shadowBlur = 0;
     }
-    if (state === 'play' && anim < 0.8 + countT) { /* GO flash handled by count end */ }
+    if (state === 'play' && playT < 0.6) {
+      ctx.globalAlpha = 1 - playT / 0.6; ctx.fillStyle = '#ffd166'; ctx.font = '52px DotGothic16, monospace';
+      ctx.fillText('GO!', W / 2, H / 2 + 20); ctx.globalAlpha = 1;
+    }
     if (state === 'crash') {
       ctx.font = '36px DotGothic16, monospace';
-      if (roundWinner === 0) { ctx.fillStyle = '#ffd166'; ctx.fillText('DRAW', W / 2, H / 2 + 14); }
+      if (roundWinner === 0) { ctx.fillStyle = '#ffd166'; ctx.fillText('DRAW', W / 2, H / 2 + 14); ctx.font = '17px DotGothic16, monospace'; ctx.fillText('同時にぶつかった！ 引き分け', W / 2, H / 2 + 42); }
       else { ctx.fillStyle = roundWinner === 1 ? '#53e0d8' : '#ff5fa2'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 16; ctx.fillText((roundWinner === 1 ? 'P1' : (mode === 'cpu' ? 'CPU' : 'P2')) + ' ROUND!', W / 2, H / 2 + (roundWinner === 1 ? 60 : -40)); ctx.shadowBlur = 0; }
     }
     ctx.textAlign = 'left';
@@ -433,11 +571,15 @@
   window.__test = {
     start: startMatch,
     step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
-    state: () => ({ state, mode, hard, score1, score2, round, p1: p1 && { x: p1.x, y: p1.y, dir: p1.dir, alive: p1.alive, energy: +p1.energy.toFixed(2), boostT: +p1.boostT.toFixed(2), len: p1.trail.length }, p2: p2 && { x: p2.x, y: p2.y, dir: p2.dir, alive: p2.alive, len: p2.trail.length }, blocks: blocks.length }),
+    state: () => ({ state, mode, level, score1, score2, round, stage: stage.id, ring, items: items.length, history: history.slice(), p1: p1 && { x: p1.x, y: p1.y, dir: p1.dir, alive: p1.alive, energy: +p1.energy.toFixed(2), boostT: +p1.boostT.toFixed(2), len: p1.trail.length }, p2: p2 && { x: p2.x, y: p2.y, dir: p2.dir, alive: p2.alive, len: p2.trail.length }, blocks: blocks.length }),
     turn: (n, d) => turn(n === 1 ? p1 : p2, d),
     boost: n => boost(n === 1 ? p1 : p2),
     skipCount: () => { if (state === 'count') { countT = 0; } },
-    setHard: v => { document.getElementById('chkHard').checked = v; hard = v; },
+    setLevel: v => { level = v; },
+    hint: () => { if (!p1 || !p1.alive) return null; let best = null, bs = -1; for (const d of [p1.dir, LEFT[p1.dir], RIGHT[p1.dir]]) { const nx = p1.x + DIRS[d][0], ny = p1.y + DIRS[d][1]; if (!free(nx, ny)) continue; const sc = areaFrom(nx, ny, 600) + straightFree(nx, ny, d, 12) * 3 + (d === p1.dir ? 6 : 0); if (sc > bs) { bs = sc; best = d; } } return best; },
+    setHard: v => { level = v ? 3 : 2; },
+    // 同時衝突テスト用：ブロックなし・指定位置/向きに置く
+    place: (a, b) => { grid.fill(0); blocks = []; items = []; ring = 0; for (const [p, o] of [[p1, a], [p2, b]]) { p.x = o.x; p.y = o.y; p.dir = o.dir; p.next = null; p.trail = [[o.x, o.y]]; p.alive = true; grid[idx(o.x, o.y)] = p.n === 1 ? 2 : 3; } playT = 5; acc = 0; tickN = 1; },
   };
 })();
 </script>
