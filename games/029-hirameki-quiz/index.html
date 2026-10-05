@@ -1,41 +1,308 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11182f"><title>ひらめきクイズ｜無料ブラウザゲーム｜ルドット</title><style>
-:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#ffd278;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}button:hover:not(:disabled){background:#3b527e;transform:translateY(-1px)}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#ffd278;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+@media(hover:hover){button:hover:not(:disabled):not(.primary){background:#3b527e}button.primary:hover:not(:disabled){filter:brightness(1.08)}}
+.intro{margin:10px auto}.intro .icon{font-size:3rem;margin:0 0 4px;line-height:1}.intro h2{margin:2px 0 6px}.intro p{margin:6px 0;line-height:1.6}
+.intro-top{display:flex;justify-content:flex-end;margin:-6px -6px 0}.icon-btn{min-height:40px;min-width:44px;padding:6px 10px}
+.genres{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:12px 0 6px}.genres button{display:flex;align-items:center;gap:6px;justify-content:center;font-weight:700;padding:10px 8px;font-size:.95rem}.genres button span{font-size:1.2rem}
+.genres button.on{background:#5a4a1e;outline:3px solid #ffd278;outline-offset:-3px}
+.big-btn{font-size:1.2rem;padding:14px 48px;margin:10px 0 4px;background:#ffd278}
+button.primary{background:#ffd278}
+.panel.game{position:relative;overflow:hidden;padding:14px 16px}
+.panel.game .toolbar{margin-bottom:8px;flex-wrap:nowrap;gap:6px}.stat.inline{display:flex;align-items:baseline;gap:5px;padding:6px 10px;white-space:nowrap}.stat.inline small{display:inline;font-size:.82rem}.stat.inline b{font-size:1.1rem;margin-right:6px;min-width:1.5em}.row.tools{flex-wrap:nowrap;gap:6px}.panel.game .toolbar button{min-height:40px;padding:6px 12px}
+.timebar{height:8px;border-radius:8px;background:#10162b;overflow:hidden;margin:0 0 10px}.timebar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7ce0c1,#ffd278);border-radius:8px}.timebar i.low{background:#ff9f7a}
+.qhead{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}.combo-badge{background:#6b2f1f;color:#ffd0b0;border-radius:8px;padding:5px 9px;font-weight:800;animation:pulse .8s ease-in-out infinite alternate}
+@keyframes pulse{to{transform:scale(1.08)}}
+.question{text-align:center;font-size:clamp(1.25rem,4.4vw,1.7rem);line-height:1.5;margin:12px 0 14px;min-height:2.2em}
+.choices{display:grid;gap:10px;max-width:560px;margin:0 auto}
+.choice{position:relative;display:flex;align-items:center;gap:12px;text-align:left;font-size:1.15rem;font-weight:700;min-height:56px;padding:10px 14px;background:#2b3c62;border:2px solid #ffffff22}
+.choice .no{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#10182c;color:var(--muted);font-size:.95rem;flex:none}.choice .txt{flex:1}.choice .mark{font-size:1.3rem}
+.choice:disabled{opacity:1!important;color:var(--ink)}
+.choices .choice:disabled:not(.right):not(.wrong){opacity:.45!important}
+.choice.right{background:#1f7a62!important;border-color:#7ce0c1;box-shadow:0 0 0 3px #7ce0c155}
+.choice.right.chosen{animation:bounce .45s}
+.choice.wrong{background:#8a2c45!important;border-color:#ff8fb3}
+@keyframes bounce{40%{transform:scale(1.05)}70%{transform:scale(.98)}}
+.choices.shake{animation:shake .38s}@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.float{position:absolute;right:14px;top:-6px;font-weight:900;color:#ffd278;font-size:1.3rem;animation:up .9s ease-out forwards;pointer-events:none}@keyframes up{to{transform:translateY(-36px);opacity:0}}
+.feedback{max-width:560px;margin:10px auto 0;min-height:0;text-align:center;line-height:1.5}.feedback.show{background:#10192d;border-radius:12px;padding:8px 12px;animation:fade .25s}
+.feedback p{margin:4px 0 0;color:var(--muted);font-size:.95rem}.feedback .good{color:#7ce0c1;font-size:1.15rem}.feedback .bad{color:#ff9fb0;font-size:1.15rem}.mult{color:#ffb38a;font-weight:800}.fast{color:#ffd278;font-weight:800}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+.next{display:block;margin:10px auto 0;min-width:200px;font-size:1.1rem}
+#qarea.slide{animation:slidein .3s ease-out}@keyframes slidein{from{opacity:0;transform:translateX(24px)}}
+.result-card{text-align:center;border:2px solid #ffd278;border-radius:18px;padding:14px;background:#10192d;animation:fade .3s}
+.result-card h2{margin:4px 0}.stars{font-size:2rem;letter-spacing:.1em;color:#ffd278}.big-score{margin:4px 0;font-size:1.1rem}.big-score b{font-size:2.4rem;color:#ffd278}
+.score-line{margin:4px 0 8px;line-height:1.6}.newrec{background:#ffd278;color:#11182f;border-radius:6px;padding:2px 8px;font-weight:800}
+.center-row{justify-content:center}
+.review{margin-top:14px;background:#111c32;border-radius:14px;padding:10px 14px}.review summary{font-weight:800;cursor:pointer}.review ol{padding-left:1.4em;margin:8px 0 0}.review li{margin:0 0 10px;line-height:1.55}.rv-ok{color:#7ce0c1;font-weight:700}.rv-ng{color:#ff9fb0}.perfect{font-size:1.2rem;font-weight:800}
+.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:30}.confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 2.2s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--dx),720px) rotate(540deg);opacity:.2}}
+body.playing .eyebrow,body.playing h1,body.playing .lead{display:none}
+@media(max-width:520px){
+ body.playing header{padding:8px 14px}body.playing main{padding-top:0}
+ .lead{display:none}.intro{margin:4px auto}.intro .icon{font-size:2.4rem}.genres{grid-template-columns:repeat(2,1fr);gap:6px}.genres button{min-height:42px;padding:6px}
+ .panel.game{padding:10px 10px}.question{margin:8px 0 10px}.choice{min-height:52px;font-size:1.08rem}.choices{gap:8px}.panel.game .toolbar button{padding:6px 9px}
+}
+@media(prefers-reduced-motion:reduce){.choice,.choices,#qarea,.combo-badge,.float,.confetti i,.feedback,.result-card{animation:none!important}}
 </style><!-- LUDOT-SEO-START -->
-<meta name="description" content="動物・ことば・暮らしの3択クイズ。20問からランダムに10問出題。答えたあとに解説が読めるよ。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="6ジャンル・130問以上の3択クイズ。はやく答えるとボーナス、れんぞく正解でコンボ！ 最後にまちがえた問題をふくしゅうできるよ。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/029-hirameki-quiz/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ひらめきクイズ","description":"動物・ことば・暮らしの3択クイズ。20問からランダムに10問出題。答えたあとに解説が読めるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/029-hirameki-quiz/index.html","inLanguage":"ja","genre":"QUIZ","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ひらめきクイズ","description":"6ジャンル・130問以上の3択クイズ。はやく答えるとボーナス、れんぞく正解でコンボ！ 最後にまちがえた問題をふくしゅうできるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/029-hirameki-quiz/index.html","inLanguage":"ja","genre":"QUIZ","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="029"></script>
 <!-- LUDOT-SEO-END -->
-</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">QUIZ · #029</div><h1>💡 ひらめきクイズ</h1><p class="lead">身近なふしぎに、10問チャレンジ。</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>動物・ことば・暮らしの3択クイズ。20問からランダムに10問出題。答えたあとに解説が読めるよ。</p><p>答えをタップして「次の問題へ」。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
+</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">QUIZ · #029</div><h1>💡 ひらめきクイズ</h1><p class="lead">身近なふしぎに、10問チャレンジ。</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>いきもの・ことば・くらし・しぜん・かず・にほんとせかいの6ジャンル、130問以上の3択クイズ。1回10問、はやく答えるとボーナス、れんぞく正解でコンボ！ 最後にまちがえた問題をふくしゅうできるよ。</p><p>答えをタップ（PCは1〜3キーでも可）→「つぎへ」。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
 'use strict';
-const CONFIG={"id": "029", "title": "ひらめきクイズ", "genre": "QUIZ", "emoji": "💡", "color": "#ffd278", "author": "スタッフ", "age": "6歳〜", "date": "2026-09-13", "description": "動物・ことば・暮らしの3択クイズ。20問からランダムに10問出題。答えたあとに解説が読めるよ。", "controls": "答えをタップして「次の問題へ」。", "path": "games/029-hirameki-quiz/index.html", "tagline": "身近なふしぎに、10問チャレンジ。", "rules": "動物・ことば・暮らしの3択クイズ。20問からランダムに10問出題。答えたあとに解説が読めるよ。"};
+const CONFIG={"id": "029", "title": "ひらめきクイズ", "genre": "QUIZ", "emoji": "💡", "color": "#ffd278", "author": "スタッフ", "age": "6歳〜", "date": "2026-09-13"};
 const app=document.getElementById('app');
 const $=(s,r=app)=>r.querySelector(s), $$=(s,r=app)=>[...r.querySelectorAll(s)];
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-let cleanup=[];const on=(el,type,fn,opts)=>{el.addEventListener(type,fn,opts);cleanup.push(()=>el.removeEventListener(type,fn,opts))};
-const every=(fn,ms)=>{const t=setInterval(fn,ms);cleanup.push(()=>clearInterval(t));return t};
-const later=(fn,ms)=>{const t=setTimeout(fn,ms);cleanup.push(()=>clearTimeout(t));return t};
-function stop(){cleanup.forEach(f=>f());cleanup=[]}
+let timers=[];const later=(fn,ms)=>{const t=setTimeout(fn,ms);timers.push(t);return t};let raf=0;
+function stopAll(){timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf)}
 function read(key,fallback){try{const s=localStorage.getItem('ludot-'+CONFIG.id+'-'+key);return s===null?fallback:JSON.parse(s)}catch{return fallback}}
 function save(key,val){try{localStorage.setItem('ludot-'+CONFIG.id+'-'+key,JSON.stringify(val))}catch{document.getElementById('storage-warning').hidden=false}}
-function best(n){const old=Number(read('best',0))||0;if(n>old)save('best',n);return Math.max(n,old)}
-function stat(label,value,id=''){return `<div class="stat"><small>${label}</small><b ${id?`id="${id}"`:''}>${value}</b></div>`}
-function stage(content,stats=''){app.innerHTML=`<section class="panel"><div class="toolbar"><div class="stats">${stats}</div><button id="restart">やり直す</button></div><div id="play">${content}</div><div id="notice" class="notice" role="status" aria-live="polite"></div></section>`;$('#restart').onclick=()=>{stop();launch()}}
-function say(s){const el=$('#notice');if(el)el.textContent=s}
-function result(title,text){stop();const p=$('#play');p.insertAdjacentHTML('beforeend',`<section class="panel result" role="status"><h2>${title}</h2><p>${text}</p><button id="again" class="primary">もう一度あそぶ</button></section>`);$('#again').onclick=()=>{stop();launch()}}
-let audioContext;function tone(freq=440,dur=.1){try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();if(audioContext.state==='suspended')audioContext.resume();const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.09,audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+dur);o.connect(g).connect(audioContext.destination);o.start();o.stop(audioContext.currentTime+dur)}catch{}}
-function canvas(w=600,h=420){return `<canvas id="canvas" width="${w}" height="${h}" aria-label="${CONFIG.title}のプレイ画面"></canvas>`}
-function loop(fn){let active=true,id,last=performance.now();function step(now){if(!active)return;const dt=Math.min((now-last)/1000,.05);last=now;fn(dt,now);if(active)id=requestAnimationFrame(step)}id=requestAnimationFrame(step);cleanup.push(()=>{active=false;cancelAnimationFrame(id)})}
-function point(e,c){const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}}
-function circle(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-function label(ctx,s,x,y,color='#eef3ff',size=20){ctx.fillStyle=color;ctx.font=`bold ${size}px system-ui`;ctx.textAlign='center';ctx.fillText(s,x,y)}
-const QUESTIONS=[['タコの腕は何本？',['6本','8本','10本'],1,'タコには8本の腕があります。'],['1年で一番日数が少ない月は？',['2月','6月','11月'],0,'2月は通常28日、うるう年は29日です。'],['氷がとけると何になる？',['水','砂','塩'],0,'氷は水が凍ったものです。'],['パンダがよく食べる植物は？',['サボテン','竹','ひまわり'],1,'ジャイアントパンダの主食は竹です。'],['太陽がのぼる方角は？',['西','南','東'],2,'太陽は東からのぼります。'],['三角形の辺はいくつ？',['3つ','4つ','5つ'],0,'三角形は3本の辺で囲まれています。'],['水の中でえら呼吸するのは？',['イルカ','金魚','クジラ'],1,'金魚はえら、イルカとクジラは肺で呼吸します。'],['「大きい」の反対の言葉は？',['長い','小さい','高い'],1,'大きいと小さいは反対の意味です。'],['ひよこが成長すると？',['ニワトリ','ハト','スズメ'],0,'ニワトリのひなを、ひよこと呼びます。'],['1時間は何分？',['30分','60分','100分'],1,'1時間は60分です。'],['ピアノで音を出すために押すものは？',['ペン','鍵盤','弦'],1,'鍵盤を押すと中のハンマーが弦をたたきます。'],['日本の国旗の丸は何色？',['青','黄色','赤'],2,'白い地に赤い丸が描かれています。'],['春の次の季節は？',['秋','夏','冬'],1,'春、夏、秋、冬の順です。'],['カブトムシの脚は何本？',['4本','6本','8本'],1,'昆虫の脚は6本です。'],['10円玉が5枚。合計は？',['15円','50円','500円'],1,'10×5＝50円です。'],['にじの形に近いものは？',['弧','四角','十字'],0,'地上からは弧のように見えることが多いです。'],['手紙を運ぶ人は？',['消防士','郵便配達員','料理人'],1,'郵便配達員が手紙やはがきを届けます。'],['シマウマの模様は？',['しま模様','水玉','星形'],0,'白と黒のしま模様が特徴です。'],['植物が根から吸うものは？',['水','石','ガラス'],0,'根は水や水に溶けた養分を吸収します。'],['月はどこのまわりを回る？',['地球','金星','火星'],0,'月は地球の自然衛星です。']];
-function mount(){const qs=shuffle(QUESTIONS).slice(0,10);let n=0,score=0,locked=false;stage('<div id="question"></div>',stat('問題','1 / 10','number')+stat('正解','0','score'));function draw(){locked=false;$('#number').textContent=`${n+1} / 10`;const q=qs[n];$('#question').innerHTML=`<h2 class="center">${q[0]}</h2><div class="grid">${q[1].map((s,i)=>`<button data-answer="${i}">${s}</button>`).join('')}</div><p id="explanation" class="notice"></p><button id="next" class="primary" hidden>次の問題へ →</button>`;$$('[data-answer]').forEach(b=>b.onclick=()=>{if(locked)return;locked=true;const ok=+b.dataset.answer===q[2];if(ok){score++;tone(660)}$('#score').textContent=score;$$('[data-answer]').forEach((x,i)=>{x.disabled=true;if(i===q[2])x.style.background='#267c69'});$('#explanation').textContent=(ok?'正解！ ':'おしい！ ')+q[3];$('#next').hidden=false;$('#next').textContent=n===9?'結果を見る':'次の問題へ →'});$('#next').onclick=()=>{if(++n===10){$('#next').disabled=true;result('クイズ完了！',`${score} / 10問 正解。ベスト ${best(score)}問`)}else draw()}}draw()}
 
-function launch(){mount()}
-app.innerHTML=`<section class="panel intro"><div class="icon">${CONFIG.emoji}</div><h2>${CONFIG.title}</h2><p>${CONFIG.rules}</p><button class="primary" id="start">あそぶ</button><p class="small">${CONFIG.controls}</p></section>`;
-$('#start').onclick=launch;
-on(window,'keydown',e=>{if(e.key==='Enter'&&$('#start')){e.preventDefault();stop();launch()}});
+/* ---------- おと ---------- */
+let ac,muted=!!read('mute',false);
+function tone(f,d=.1,type='sine',vol=.07,delay=0){if(muted)return;try{ac??=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const t=ac.currentTime+delay,o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+d+.03)}catch{}}
+const SFX={
+ ok:c=>{const b=c>=5?1.26:c>=3?1.12:1;tone(659*b,.12,'triangle',.08);tone(988*b,.2,'triangle',.08,.09)},
+ ng:()=>{tone(220,.18,'square',.04);tone(175,.26,'square',.035,.12)},
+ tap:()=>tone(700,.05,'triangle',.04),
+ end:good=>(good?[523,659,784,1047,1319]:[392,440,523]).forEach((f,i)=>tone(f,.24,'triangle',.07,i*.1)),
+};
+
+/* ---------- もんだい [もんだい, [せいかい, まちがい, まちがい], かいせつ] ---------- */
+const GENRES={
+ animal:{name:'いきもの',icon:'🐾'},word:{name:'ことば',icon:'🔤'},life:{name:'くらし',icon:'🏠'},
+ nature:{name:'しぜん・うちゅう',icon:'🌏'},math:{name:'かず・かたち',icon:'🔢'},world:{name:'にほん・せかい',icon:'🗾'}};
+const Q={
+animal:[
+['タコのうでは何本？',['8本','6本','10本'],'タコには8本のうでがあります。'],
+['イカのうで（あし）は何本？',['10本','8本','6本'],'イカは10本。そのうち2本はとくに長い「しょくわん」です。'],
+['パンダがよく食べる しょくぶつは？',['竹（たけ）','サボテン','ひまわり'],'ジャイアントパンダの主食は竹やササです。'],
+['水の中で「えら」で こきゅうするのは？',['金魚','イルカ','クジラ'],'金魚はえら、イルカとクジラは肺（はい）で息をします。'],
+['カブトムシのあしは何本？',['6本','4本','8本'],'こん虫のあしは6本です。'],
+['クモのあしは何本？',['8本','6本','10本'],'クモはこん虫ではなく、あしは8本です。'],
+['カエルの子どもの名前は？',['おたまじゃくし','ひよこ','ヤゴ'],'おたまじゃくしは、あしが生えてカエルになります。'],
+['トンボの子どもの名前は？',['ヤゴ','イモムシ','おたまじゃくし'],'トンボの子ども「ヤゴ」は水の中でくらします。'],
+['世界でいちばん大きな動物は？',['シロナガスクジラ','アフリカゾウ','キリン'],'シロナガスクジラは30メートル近くになることもあります。'],
+['陸でくらす動物で いちばん大きいのは？',['アフリカゾウ','カバ','ライオン'],'アフリカゾウは陸でいちばん大きな動物です。'],
+['キリンの首の骨の数は？',['7こ','20こ','50こ'],'首が長くても、骨の数は人と同じ7こです。'],
+['ラクダのこぶに入っているのは おもに何？',['しぼう（あぶら）','水','空気'],'こぶには しぼうがたくわえられています。'],
+['ペンギンは何のなかま？',['鳥','魚','こん虫'],'ペンギンは空をとべない鳥のなかまです。'],
+['イルカは何のなかま？',['ほにゅうるい','魚','こん虫'],'イルカは肺で息をし、赤ちゃんをおちちで育てます。'],
+['コウモリは何のなかま？',['ほにゅうるい','鳥','こん虫'],'コウモリは空をとべる ほにゅうるいです。'],
+['ミツバチが花から あつめるものは？',['みつと花粉','水と土','石'],'みつと花粉は、ハチのごはんになります。'],
+['冬のあいだ、あなの中でねむってすごすのは？',['クマ','スズメ','ウサギ'],'クマは冬ごもりをして、春まですごします。'],
+['カメレオンの とくいわざは？',['体の色をかえる','空をとぶ','水の中で息をする'],'カメレオンは まわりや気分で体の色がかわります。'],
+['ダチョウについて 正しいのは？',['とべないが 走るのが速い','とても小さい鳥','水の中にもぐる'],'ダチョウは時速60キロほどで走れます。'],
+['ヒトデのうでは ふつう何本？',['5本','3本','8本'],'多くのヒトデは5本のうでを持っています。'],
+['陸でいちばん速く走る動物は？',['チーター','ゾウ','カメ'],'チーターはみじかい時間なら とても速く走れます。'],
+['ホタルが光るのは 体のどこ？',['おしり','あたま','はね'],'おしりのところが光ります。'],
+['セミで「ミーンミーン」と鳴くのは？',['オス','メス','どちらも'],'鳴くのはオスだけです。'],
+['カタツムリは何のなかま？',['貝','こん虫','魚'],'カタツムリは まき貝のなかまです。'],
+['ひよこが大きくなると？',['ニワトリ','ハト','スズメ'],'ニワトリのひなを ひよこといいます。'],
+['シマウマのもようは？',['しまもよう','水玉','星のもよう'],'白と黒のしまもようが目じるしです。'],
+['カンガルーの赤ちゃんは どこで育つ？',['おなかのふくろ','木の上','水の中'],'お母さんのおなかのふくろで育ちます。'],
+],
+word:[
+['「大きい」の反対の言葉は？',['小さい','長い','高い'],'大きい ⇔ 小さい です。'],
+['「あかるい」の反対の言葉は？',['くらい','おもい','ひくい'],'あかるい ⇔ くらい です。'],
+['「はやい」の反対の言葉は？',['おそい','ひくい','かるい'],'はやい ⇔ おそい です。'],
+['「ふとい」の反対の言葉は？',['ほそい','ひろい','あつい'],'ふとい ⇔ ほそい です。'],
+['「おもい」の反対の言葉は？',['かるい','よわい','ちいさい'],'おもい ⇔ かるい です。'],
+['ごはんを食べる前に言う言葉は？',['いただきます','ごちそうさま','いってきます'],'食べ終わったら「ごちそうさま」です。'],
+['家を出るときに言う言葉は？',['いってきます','ただいま','おかえり'],'帰ってきたら「ただいま」です。'],
+['あやまるときの言葉は？',['ごめんなさい','いただきます','おやすみ'],'気持ちをこめて「ごめんなさい」。'],
+['「山」の読みかたは？',['やま','かわ','た'],'山（やま）、川（かわ）、田（た）。'],
+['「川」の読みかたは？',['かわ','やま','き'],'川は「かわ」と読みます。'],
+['「木」が3つで できる漢字は？',['森','林','村'],'木が2つで「林」、3つで「森」です。'],
+['「日」と「月」をあわせた漢字は？',['明','朝','晴'],'「明」は あかるいという意味の漢字です。'],
+['「一・二・三」の つぎは？',['四','五','十'],'四（よん・し）です。'],
+['えんぴつの数えかたは？',['1本','1まい','1ぴき'],'ほそ長いものは「本」で数えます。'],
+['紙の数えかたは？',['1まい','1本','1台'],'うすくて平らなものは「まい」で数えます。'],
+['車の数えかたは？',['1台','1ぴき','1まい'],'車やきかいは「台」で数えます。'],
+['「さるも木から落ちる」の意味は？',['名人でも しっぱいする','さるは木のぼりが下手','木はあぶない'],'じょうずな人でも、ときには しっぱいするということ。'],
+['「いそがば回れ」の意味は？',['いそぐときほど 安全な道を','いそいで走ろう','回ると目が回る'],'あせらず、たしかな方法をえらぶほうが早いということ。'],
+['カタカナで「ねこ」と書くと？',['ネコ','ネユ','ヌコ'],'ね→ネ、こ→コ です。'],
+['「おにぎり」の べつの言いかたは？',['おむすび','おもち','おだんご'],'地方によって「おむすび」とも言います。'],
+['しりとりで「りんご」の つぎに言えるのは？',['ゴリラ','ラッパ','メロン'],'「ご」で始まる言葉をつなげます。'],
+['犬の鳴き声は？',['ワンワン','ニャー','モー'],'ねこはニャー、牛はモーです。'],
+['「雨」の読みかたは？',['あめ','ゆき','そら'],'雨（あめ）、雪（ゆき）、空（そら）。'],
+],
+life:[
+['1時間は何分？',['60分','30分','100分'],'1時間＝60分です。'],
+['1日は何時間？',['24時間','12時間','60時間'],'1日＝24時間です。'],
+['1週間は何日？',['7日','5日','10日'],'月・火・水・木・金・土・日の7日です。'],
+['1年は何か月？',['12か月','10か月','24か月'],'1月から12月まであります。'],
+['1年で 日数がいちばん少ない月は？',['2月','6月','11月'],'2月はふつう28日、うるう年は29日です。'],
+['信号で「わたってよい」のは何色？',['青','赤','黄色'],'青でも、右・左をよく見てからわたろう。'],
+['けがや病気で119番にかけると来るのは？',['救急車','パトカー','ゆうびん車'],'119番は 救急車や消防車をよぶ番号です。'],
+['110番にかけると 来てくれるのは？',['おまわりさん（警察）','救急車','タクシー'],'110番は警察の番号です。'],
+['子どもの歯（にゅうし）は ぜんぶで何本？',['20本','32本','12本'],'子どもの歯は20本。やがて大人の歯に生えかわります。'],
+['心ぞうの はたらきは？',['血を体じゅうに送る','空気をすう','食べ物をこなす'],'心ぞうはポンプのように血を送り出します。'],
+['空気をすったり はいたりする体の場所は？',['肺（はい）','胃（い）','骨'],'肺で空気の中の酸素をとり入れます。'],
+['食べ物をこなす（消化する）場所は？',['胃（い）','肺（はい）','心ぞう'],'胃や腸で 食べ物をこなします。'],
+['手紙をとどけてくれる人は？',['ゆうびん配達の人','消防士','料理人'],'ゆうびん配達の人が 手紙やはがきをとどけます。'],
+['火事のときに 活やくする人は？',['消防士','パイロット','大工さん'],'消防士が火を消し、人をたすけます。'],
+['日本のお金で いちばん大きい金がくのお札は？',['一万円','五千円','千円'],'お札は千円・二千円・五千円・一万円があります。'],
+['10円玉が5まいで 何円？',['50円','15円','500円'],'10が5つで50です。'],
+['れいぞうこの やくわりは？',['食べ物をひやす','服をあらう','ごはんをたく'],'ひやすと食べ物が長もちします。'],
+['くしゃみや せきが出るときは？',['ハンカチや そでで口をおおう','人のほうを向く','手をなめる'],'まわりの人にうつさないように気をつけよう。'],
+['はみがきをすると ふせげるのは？',['むし歯','かぜ','ねぼう'],'食べたら みがく習かんをつけよう。'],
+['ピアノで音を出すために おすのは？',['けんばん','ペダルだけ','ふた'],'けんばんをおすと、中のハンマーが弦をたたきます。'],
+['カレンダーで 日曜日の つぎは？',['月曜日','土曜日','水曜日'],'日・月・火・水・木・金・土の順です。'],
+],
+nature:[
+['太陽がのぼる方角は？',['東','西','南'],'太陽は東からのぼり、西にしずみます。'],
+['太陽がしずむ方角は？',['西','東','北'],'夕方、西の空が赤くなります。'],
+['氷がとけると 何になる？',['水','砂','塩'],'氷は水がこおったものです。'],
+['水がこおりはじめる温度は？',['0度','50度','100度'],'水は0度でこおります。'],
+['水がふっとうする温度（ふつう）は？',['100度','50度','200度'],'ふつうの気あつでは100度でふっとうします。'],
+['にじは 日本ではふつう何色と言われる？',['7色','3色','12色'],'赤・だいだい・黄・緑・青・あい・むらさきの7色。'],
+['月は 何のまわりを回っている？',['地球','金星','火星'],'月は地球のまわりを回る えいせいです。'],
+['地球は 何のまわりを回っている？',['太陽','月','火星'],'地球は1年かけて太陽のまわりを1周します。'],
+['太陽系で いちばん大きな わく星は？',['木星','地球','水星'],'木星は地球の10倍以上の はばがあります。'],
+['赤く見えることで有名な わく星は？',['火星','金星','土星'],'火星は赤っぽい土におおわれています。'],
+['大きな「わ」があることで有名な わく星は？',['土星','水星','火星'],'土星のわは、氷や石のつぶでできています。'],
+['地球の表面で 多いのは？',['海','陸','氷'],'地球の表面の およそ7わりが海です。'],
+['日本でいちばん高い山は？',['富士山','高尾山','六甲山'],'富士山の高さは3776メートルです。'],
+['日本でいちばん長い川は？',['信濃川','淀川','多摩川'],'信濃川は長野県と新潟県を流れています。'],
+['日本でいちばん大きい湖は？',['琵琶湖','諏訪湖','芦ノ湖'],'琵琶湖は滋賀県にあります。'],
+['春にさく花は？',['さくら','ひまわり','コスモス'],'ひまわりは夏、コスモスは秋の花です。'],
+['夏にさく、せの高い黄色い花は？',['ひまわり','チューリップ','うめ'],'ひまわりは太陽のほうを向いて育ちます。'],
+['秋に 葉が赤くなる木は？',['もみじ','まつ','竹'],'もみじは秋に赤く「紅葉」します。'],
+['かみなりの 光と音、先にとどくのは？',['光','音','同時'],'光は音よりずっと速いので、先に見えます。'],
+['しょくぶつが 根からすうものは？',['水','石','ガラス'],'根は水や、水にとけた養分をすいます。'],
+['雪のけっしょうの形は？',['六角形','三角形','四角形'],'雪のけっしょうは六角形をもとにした形です。'],
+['1年で 昼がいちばん長い日は？',['夏至（げし）','冬至（とうじ）','春分'],'夏至は6月21日ごろです。'],
+['夜空で 北の方角の目じるしになる星は？',['北極星','太陽','月'],'北極星は ほとんど動かず北の空に見えます。'],
+['夕方に 西の空で明るく光ることがある わく星は？',['金星','土星','天王星'],'金星は「よいの明星」とよばれます。'],
+],
+math:[
+['三角形の 辺の数は？',['3つ','4つ','5つ'],'三角形は3本の辺でかこまれています。'],
+['四角形の かどの数は？',['4つ','3つ','6つ'],'四角形には かどが4つあります。'],
+['2＋3は？',['5','6','4'],'2に3をたすと5です。'],
+['7−4は？',['3','2','4'],'7から4をひくと3です。'],
+['5が2つで いくつ？',['10','7','52'],'5＋5＝10です。'],
+['10円玉2まいと 5円玉1まいで何円？',['25円','15円','30円'],'10＋10＋5＝25円です。'],
+['サイコロの 向かい合う面の目をたすと？',['7','6','10'],'1と6、2と5、3と4。どれも7になります。'],
+['1から10まで ぜんぶたすと？',['55','50','45'],'1＋10、2＋9…と組にすると 11が5組で55です。'],
+['時計の長いはりが 1周すると？',['1時間','1分','1日'],'長いはりは1時間で ちょうど1周します。'],
+['時計の短いはりは 1日に何回まわる？',['2回','1回','24回'],'短いはりは12時間で1周、1日で2周します。'],
+['ボールの形は？',['球','円柱','立方体'],'どこから見てもまるい形を「球」といいます。'],
+['サイコロの面の数は？',['6','4','8'],'サイコロは6つの面がある立方体です。'],
+['1メートルは 何センチメートル？',['100センチ','10センチ','1000センチ'],'1m＝100cmです。'],
+['1キログラムは 何グラム？',['1000グラム','100グラム','10グラム'],'1kg＝1000gです。'],
+['12を はんぶんにすると？',['6','4','8'],'6＋6＝12です。'],
+['「ぐうすう（2でわりきれる数）」は どれ？',['8','7','9'],'8は2でわりきれます。'],
+['100円で 30円のあめを3こ買うと おつりは？',['10円','20円','0円'],'30×3＝90円。100−90＝10円です。'],
+['まる（円）にある かどの数は？',['0','1','4'],'円には かどがありません。'],
+['3人に あめを2こずつ くばると ぜんぶで何こ？',['6こ','5こ','8こ'],'2＋2＋2＝6こです。'],
+],
+world:[
+['日本の国旗の まるは何色？',['赤','青','黄色'],'白い地に赤いまるがえがかれています。'],
+['日本の首都は？',['東京','大阪','京都'],'国会などがある東京が首都です。'],
+['日本の都道府県の数は？',['47','40','50'],'1都・1道・2府・43県で47です。'],
+['日本でいちばん北にある都道府県は？',['北海道','沖縄県','青森県'],'北海道は日本のいちばん北にあります。'],
+['日本でいちばん南にある都道府県は？',['沖縄県','北海道','鹿児島県'],'沖縄県は たくさんの島からできています。'],
+['日本のまわりは 何でかこまれている？',['海','さばく','高い山'],'日本は海にかこまれた島国です。'],
+['ピラミッドがあることで有名な国は？',['エジプト','カナダ','ロシア'],'エジプトには 古い大きなピラミッドがあります。'],
+['カンガルーやコアラがくらす国は？',['オーストラリア','フランス','ブラジル'],'どちらもオーストラリアに住む動物です。'],
+['世界で いちばん面積が広い国は？',['ロシア','日本','イタリア'],'ロシアは日本の40倍以上の広さです。'],
+['世界で いちばん高い山は？',['エベレスト','富士山','キリマンジャロ'],'エベレストの高さは8800メートルをこえます。'],
+['世界で いちばん大きな海は？',['太平洋','大西洋','インド洋'],'日本の東がわに広がるのが太平洋です。'],
+['英語で「ありがとう」は？',['サンキュー','ハロー','グッバイ'],'ハローは「こんにちは」、グッバイは「さようなら」。'],
+['英語で「いぬ」は？',['ドッグ','キャット','バード'],'キャットは「ねこ」、バードは「鳥」です。'],
+['英語で「りんご」は？',['アップル','バナナ','ピーチ'],'りんごは apple（アップル）です。'],
+['こどもの日に かざるものは？',['こいのぼり','ひな人形','門松'],'5月5日のこどもの日には こいのぼりをかざります。'],
+['ひなまつりは 何月何日？',['3月3日','5月5日','7月7日'],'ひな人形をかざって女の子の成長をいわいます。'],
+['七夕（たなばた）は 何月何日？',['7月7日','8月8日','12月25日'],'ささに ねがいごとを書いた たんざくをかざります。'],
+['お正月に 家の入り口にかざるものは？',['門松（かどまつ）','こいのぼり','ささかざり'],'門松は 年神さまをむかえる かざりです。'],
+['節分（せつぶん）で まくものは？',['豆','お米','花びら'],'「おにはそと、ふくはうち」と言って豆をまきます。'],
+['2025年に 大阪で ひらかれた大きなイベントは？',['万博（ばんぱく）','オリンピック','ワールドカップ'],'2025年に 大阪・関西万博がひらかれました。'],
+],
+};
+const ALL=Object.entries(Q).flatMap(([g,list])=>list.map((q,i)=>({g,id:g+i,q:q[0],a:q[1][0],c:q[1],e:q[2]})));
+const ROUND=10,TIME=10;
+
+function nextQuestions(genre){const pool=ALL.filter(q=>genre==='all'||q.g===genre);let bag=read('bag-'+genre,[]).filter(id=>pool.some(q=>q.id===id));
+ const out=[];while(out.length<ROUND){if(!bag.length)bag=shuffle(pool.map(q=>q.id)).filter(id=>!out.some(o=>o.id===id));if(!bag.length)break;const id=bag.shift();out.push(pool.find(q=>q.id===id))}
+ save('bag-'+genre,bag);return out}
+
+function muteBtn(){return `<button id="mute" class="icon-btn" aria-label="${muted?'おとを だす':'おとを けす'}">${muted?'🔇':'🔊'}</button>`}
+function bindMute(){const b=$('#mute');if(b)b.onclick=()=>{muted=!muted;save('mute',muted);b.textContent=muted?'🔇':'🔊';if(!muted)SFX.tap()}}
+
+let genre=read('genre','all');if(genre!=='all'&&!GENRES[genre])genre='all';
+function title(){stopAll();document.body.classList.remove('playing');state=null;
+ const g=[['all','🌈','ぜんぶ']].concat(Object.entries(GENRES).map(([k,v])=>[k,v.icon,v.name]));
+ app.innerHTML=`<section class="panel intro"><div class="intro-top">${muteBtn()}</div><div class="icon">${CONFIG.emoji}</div><h2>${CONFIG.title}</h2>
+ <p>3つの中から こたえを えらぼう。<br>はやく こたえると <b>ボーナス</b>、れんぞく正解で <b>コンボ</b>！</p>
+ <div class="genres" role="group" aria-label="ジャンル">${g.map(([k,i,n])=>`<button data-g="${k}" class="${genre===k?'on':''}"><span>${i}</span>${n}</button>`).join('')}</div>
+ <p class="small muted" id="best-line">${bestLine()}</p>
+ <button class="primary big-btn" id="start">スタート</button>
+ <p class="small muted">もんだいは ぜんぶで ${ALL.length}問。1回に${ROUND}問 でるよ。</p></section>`;
+ bindMute();
+ $$('[data-g]').forEach(b=>b.onclick=()=>{genre=b.dataset.g;save('genre',genre);$$('[data-g]').forEach(x=>x.classList.toggle('on',x===b));$('#best-line').textContent=bestLine();SFX.tap()});
+ $('#start').onclick=start;}
+function genreName(g){return g==='all'?'ぜんぶ':GENRES[g].name}
+function bestLine(){return `「${genreName(genre)}」の ハイスコア：${Number(read('hiscore-'+genre,0))||0}点`}
+
+let state=null;
+function start(){stopAll();document.body.classList.add('playing');
+ state={qs:nextQuestions(genre),n:0,score:0,correct:0,combo:0,maxCombo:0,miss:[],locked:false,t0:0};
+ app.innerHTML=`<section class="panel game"><div class="toolbar"><div class="stat inline"><small>もんだい</small><b id="num">1/${ROUND}</b><small>とくてん</small><b id="score">0</b></div><div class="row tools">${muteBtn()}<button id="quit" aria-label="やめて もどる">≡</button></div></div>
+ <div class="timebar" aria-hidden="true"><i id="tb"></i></div><div id="qarea"></div></section>`;
+ bindMute();$('#quit').onclick=title;draw();window.scrollTo(0,0);}
+function draw(){const q=state.qs[state.n];state.locked=false;const choices=shuffle(q.c);
+ $('#num').textContent=`${state.n+1}/${state.qs.length}`;
+ $('#qarea').innerHTML=`<div class="qhead"><span class="badge">${GENRES[q.g].icon} ${GENRES[q.g].name}</span>${state.combo>=2?`<span class="combo-badge">🔥 ${state.combo}れんぞく</span>`:''}</div>
+ <h2 class="question">${escapeHTML(q.q)}</h2>
+ <div class="choices">${choices.map((s,i)=>`<button class="choice" data-c="${escapeHTML(s)}"><span class="no">${i+1}</span><span class="txt">${escapeHTML(s)}</span><span class="mark"></span></button>`).join('')}</div>
+ <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+ <button id="next" class="primary next" hidden>つぎへ ▶</button>`;
+ $$('.choice').forEach(b=>b.onclick=()=>answer(b));
+ $('#next').onclick=next;
+ const qa=$('#qarea');qa.classList.remove('slide');void qa.offsetWidth;qa.classList.add('slide');
+ state.t0=performance.now();const bar=$('#tb');
+ const tick=()=>{if(!state||state.locked)return;const left=Math.max(0,1-(performance.now()-state.t0)/(TIME*1000));bar.style.width=left*100+'%';bar.classList.toggle('low',left<.3);raf=requestAnimationFrame(tick)};tick();}
+function answer(b){if(!state||state.locked)return;state.locked=true;cancelAnimationFrame(raf);b.blur();
+ const q=state.qs[state.n],ok=b.dataset.c===q.a,el=(performance.now()-state.t0)/1000;
+ $$('.choice').forEach(x=>{x.disabled=true;if(x.dataset.c===q.a){x.classList.add('right');x.querySelector('.mark').textContent='⭕'}});
+ const fb=$('#feedback');
+ if(ok){state.correct++;state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);
+  const timeBonus=Math.round(Math.max(0,TIME-el)/TIME*50),mult=state.combo>=5?2:state.combo>=3?1.5:1,pts=Math.round((100+timeBonus)*mult);
+  state.score+=pts;$('#score').textContent=state.score;SFX.ok(state.combo);b.classList.add('chosen');
+  fb.innerHTML=`<b class="good">せいかい！ +${pts}</b>${mult>1?` <span class="mult">コンボ×${mult}</span>`:''}${timeBonus>=35?' <span class="fast">はやい！</span>':''}<p>${escapeHTML(q.e)}</p>`;
+  floatText(b,'+'+pts);
+ }else{state.combo=0;state.miss.push({q,picked:b.dataset.c});b.classList.add('wrong');b.querySelector('.mark').textContent='❌';SFX.ng();
+  $('.choices').classList.add('shake');
+  fb.innerHTML=`<b class="bad">ざんねん！</b> こたえは「${escapeHTML(q.a)}」<p>${escapeHTML(q.e)}</p>`;}
+ fb.className='feedback show '+(ok?'ok':'ng');
+ const nx=$('#next');nx.hidden=false;nx.textContent=state.n===state.qs.length-1?'けっかを見る ▶':'つぎへ ▶';nx.focus({preventScroll:true});}
+function floatText(b,t){const f=document.createElement('span');f.className='float';f.textContent=t;b.appendChild(f);later(()=>f.remove(),900)}
+function next(){if(!state)return;SFX.tap();if(++state.n>=state.qs.length)finish();else draw()}
+function finish(){const s=state,total=s.qs.length;cancelAnimationFrame(raf);
+ const hk='hiscore-'+genre,old=Number(read(hk,0))||0,isNew=s.score>old;if(isNew)save(hk,s.score);
+ const oldBest=Number(read('best',0))||0;if(s.correct>oldBest)save('best',s.correct);
+ const stars=s.correct>=9?3:s.correct>=6?2:s.correct>=3?1:0;
+ const msg=s.correct===total?'パーフェクト！ ひらめき天才！':s.correct>=8?'すごい！ ものしりだね！':s.correct>=5?'いいね！ そのちょうし！':'つぎは もっと わかるよ！';
+ SFX.end(s.correct>=5);
+ $('#tb').style.width='0%';
+ $('#qarea').innerHTML=`<section class="result-card"><div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+ <h2>${msg}</h2><p class="big-score"><b>${s.correct}</b> / ${total}問 せいかい</p>
+ <p class="score-line">とくてん <b>${s.score}</b>点 ${isNew?'<span class="newrec">ハイスコア更新！</span>':`（ハイスコア ${Math.max(old,s.score)}点）`}<br><span class="muted">さいだいコンボ ${s.maxCombo}</span></p>
+ <div class="row center-row"><button id="again" class="primary">もういちど</button><button id="menu">ジャンルをえらぶ</button></div></section>
+ ${s.miss.length?`<details class="review" open><summary>まちがえた もんだい（${s.miss.length}）を ふくしゅう</summary><ol>${s.miss.map(m=>`<li><b>${escapeHTML(m.q.q)}</b><br><span class="rv-ok">⭕ ${escapeHTML(m.q.a)}</span> <span class="rv-ng">（えらんだ：${escapeHTML(m.picked)}）</span><br><span class="muted">${escapeHTML(m.q.e)}</span></li>`).join('')}</ol></details>`:'<p class="center perfect">まちがいゼロ！ 🎉</p>'}`;
+ $('#again').onclick=start;$('#menu').onclick=title;state=null;
+ if(stars===3)confetti();}
+function confetti(){const layer=document.createElement('div');layer.className='confetti';const cs=['#ffd278','#7ce0c1','#ff8fb3','#8fb8ff','#fff'];for(let i=0;i<36;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=cs[i%cs.length];p.style.animationDelay=Math.random()*.4+'s';p.style.setProperty('--dx',(Math.random()*120-60)+'px');layer.appendChild(p)}$('.panel.game')?.appendChild(layer);later(()=>layer.remove(),2600)}
+
+window.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;
+ if(!state){if(e.key==='Enter'&&$('#start')&&document.activeElement===document.body){e.preventDefault();start()}return}
+ if(!state.locked&&/^[1-3]$/.test(e.key)){const b=$$('.choice')[+e.key-1];if(b)answer(b);return}
+ if(state.locked&&(e.key==='Enter'||e.key===' ')&&document.activeElement!==$('#next')){e.preventDefault();next()}});
+title();
+
 </script></body></html>
