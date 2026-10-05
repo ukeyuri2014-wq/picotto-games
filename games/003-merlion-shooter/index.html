@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden;
   }
   .topbar {
     width: 100%;
@@ -27,7 +28,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    padding: 14px 16px 8px;
+    padding: 12px 12px 6px;
   }
   .topbar a, .topbar button.mute {
     color: #53e0d8;
@@ -37,11 +38,15 @@
     background: #1e1e36;
     border: 1px solid #2c2c4d;
     border-radius: 999px;
-    padding: 6px 14px;
+    padding: 6px 12px;
     cursor: pointer;
     font-family: inherit;
+    white-space: nowrap;
+    flex: none;
   }
-  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  @media (hover: hover) {
+    .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  }
   .topbar h1 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
@@ -50,8 +55,25 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .stage { position: relative; width: min(94vw, 480px); margin: 6px 0 24px; }
+  @media (max-width: 420px) {
+    .topbar { gap: 6px; padding: 10px 10px 6px; }
+    .topbar a, .topbar button.mute { padding: 6px 10px; }
+    .topbar h1 { font-size: 0.8rem; }
+  }
+  .stage { position: relative; width: min(94vw, 480px, calc((100vh - 70px) * 0.75)); min-width: 300px; margin: 4px 0 24px; }
+  .stage.shake { animation: shake 0.3s linear; }
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-6px, 2px); }
+    40% { transform: translate(5px, -2px); }
+    60% { transform: translate(-4px, 1px); }
+    80% { transform: translate(3px, 0); }
+  }
   canvas {
     display: block;
     width: 100%;
@@ -59,6 +81,8 @@
     border: 1px solid #2c2c4d;
     box-shadow: 0 0 40px rgba(83, 224, 216, 0.15), 0 14px 34px rgba(0, 0, 0, 0.45);
     touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .overlay {
     position: absolute;
@@ -70,25 +94,50 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 24px;
-    gap: 13px;
+    padding: 16px;
+    gap: 9px;
   }
   .overlay.hidden { display: none; }
-  .overlay .big { font-size: 2.7rem; }
+  .overlay .big { font-size: 2.3rem; line-height: 1.1; }
   .overlay h2 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     background: linear-gradient(100deg, #ff5fa2, #53e0d8);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .overlay p { font-size: 0.92rem; line-height: 1.75; color: #c9c5e6; }
+  .overlay p { font-size: 0.9rem; line-height: 1.6; color: #c9c5e6; }
   .overlay p b { color: #eeecfa; }
-  .overlay .place { font-size: 0.72rem; letter-spacing: 0.28em; color: #ffd166; font-weight: 700; }
-  .overlay .score-line { font-size: 1.25rem; font-weight: 900; color: #eeecfa; }
+  .overlay .place { font-size: 0.75rem; letter-spacing: 0.28em; color: #ffd166; font-weight: 700; }
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px 12px;
+    text-align: left;
+    font-size: 0.84rem;
+    color: #c9c5e6;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid #2c2c4d;
+    border-radius: 14px;
+    padding: 8px 12px;
+  }
+  .legend span { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .legend b { color: #eeecfa; }
+  .legend svg { width: 18px; height: 18px; flex: none; }
+  .overlay .score-line { font-size: 1.3rem; font-weight: 900; color: #eeecfa; }
+  .overlay .wave-line { font-size: 1rem; font-weight: 900; color: #ffd166; }
   .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
+  .overlay .stat-line { font-size: 0.86rem; color: #c9c5e6; font-weight: 700; }
+  .overlay .newrec {
+    font-weight: 900; font-size: 0.92rem; color: #131322;
+    background: linear-gradient(100deg, #ffd166, #ff9fc6);
+    border-radius: 999px; padding: 4px 14px;
+    animation: pop 0.6s ease infinite alternate;
+  }
+  .overlay .newrec.hidden { display: none; }
+  @keyframes pop { from { transform: scale(1); } to { transform: scale(1.08); } }
   .btn {
     border: none;
     background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
@@ -99,20 +148,27 @@
     letter-spacing: 0.14em;
     border-radius: 999px;
     padding: 12px 46px;
+    min-height: 48px;
     cursor: pointer;
     box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
+    -webkit-tap-highlight-color: transparent;
   }
-  .btn:hover { filter: brightness(1.12); }
+  @media (hover: hover) {
+    .btn:hover { filter: brightness(1.12); }
+  }
   .btn:active { transform: translateY(2px); }
   .btn:focus-visible, .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
   .hint { font-size: 0.78rem; color: #9d99c0; }
   .hint a { color: #9d99c0; }
-  .age-badge { display:inline-flex; width:fit-content; margin:0; padding:5px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
+  .age-badge { display:inline-flex; width:fit-content; margin:0; padding:4px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
+  @media (prefers-reduced-motion: reduce) {
+    .stage.shake, .overlay .newrec { animation: none; }
+  }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="シンガポールの夜景を守れ。マーライオンの水鉄砲で降り注ぐドリアンを撃ち落とす縦シューティング。流れ星を撃てばボーナス。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="マーライオンの水でっぽうで、夜のシンガポールにふってくるドリアンをうちおとそう。ウェーブごとに強くなり、4ウェーブごとにボスが登場！ 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/003-merlion-shooter/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"マーライオンシューター","description":"シンガポールの夜景を守れ。マーライオンの水鉄砲で降り注ぐドリアンを撃ち落とす縦シューティング。流れ星を撃てばボーナス。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/003-merlion-shooter/index.html","inLanguage":"ja","genre":"SHOOTER","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"マーライオンシューター","description":"マーライオンの水でっぽうで、夜のシンガポールにふってくるドリアンをうちおとそう。ウェーブごとに強くなり、4ウェーブごとにボスが登場！","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/003-merlion-shooter/index.html","inLanguage":"ja","genre":"SHOOTER","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="003"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -124,30 +180,34 @@
   <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
 </div>
 
-<div class="stage">
+<div class="stage" id="stage">
   <canvas id="game" width="480" height="640"></canvas>
 
   <div class="overlay" id="title-screen">
-    <div class="big">🦁💧🍈</div>
+    <div class="big">🦁💧⭐</div>
     <h2>マーライオンシューター</h2>
     <div class="place">SINGAPORE NIGHT</div>
     <p class="age-badge">対象年齢の目安：7歳〜</p>
-    <p>
-      シンガポールのよるけいをまもれ！<br>
-      マーライオンを左右にうごかすと<br>
-      みずでっぽう💧をれんしゃするよ。<br>
-      🍈 ドリアン = うちおとして <b>+20てん</b><br>
-      ⭐ ながれぼし = あてたら <b>+50てん</b><br>
-      🍈が海におちたりぶつかると<b>ライフ−1</b>（ぜんぶで3つ）
-    </p>
+    <p>マーライオンをうごかすと みずでっぽうを<br>れんしゃ！ ドリアンを うみにおとさないで。</p>
+    <div class="legend">
+      <span><svg viewBox="0 0 40 40" aria-hidden="true"><g fill="#4f7028"><path d="M20 1l4 8h-8zM20 39l-4-8h8zM1 20l8-4v8zM39 20l-8 4v-8zM6 6l9 3-6 6zM34 34l-9-3 6-6zM34 6l-3 9-6-6zM6 34l3-9 6 6z"/></g><circle cx="20" cy="20" r="12" fill="#8bb04e"/></svg>ドリアン <b>+20〜</b></span>
+      <span>⭐ ながれぼし <b>+50</b></span>
+      <span>🔱 3way <b>3ほうこう</b></span>
+      <span>⚡ れんしゃ <b>はやうち</b></span>
+      <span>💗 ハート <b>ライフ+1</b></span>
+      <span>👑 ボス <b>4ウェーブごと</b></span>
+    </div>
     <button class="btn" id="start-btn">スタート！</button>
-    <p class="hint">そうさ：←→キー / マウス / ゆびでスライド</p>
+    <p class="hint" id="title-best">そうさ：ゆびでスライド / マウス / ←→キー</p>
   </div>
 
   <div class="overlay hidden" id="over-screen">
     <div class="big">🌃</div>
     <h2>ゲームオーバー！</h2>
+    <p class="wave-line" id="wave-line">ウェーブ 1 まで いけた！</p>
     <p class="score-line" id="final-score">スコア：0てん</p>
+    <p class="newrec hidden" id="newrec">🎉 じこベストこうしん！</p>
+    <p class="stat-line" id="stat-line"></p>
     <p class="best-line" id="best-score"></p>
     <button class="btn" id="retry-btn">もういちど！</button>
     <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
@@ -162,8 +222,13 @@ const SETTINGS = {
   enemyPoint: 20,
   bonusPoint: 50,
   lives: 3,
+  maxLives: 5,
   shootInterval: 0.32,
+  rapidInterval: 0.15,
+  powerTime: 9,           // 3way・れんしゃ の びょうすう
+  bossEvery: 4,           // なんウェーブごとに ボス
   storageKey: "merlion-shooter-best",
+  waveKey: "merlion-shooter-bestwave",
 };
 // ================================================================
 
@@ -171,6 +236,7 @@ const SETTINGS = {
   const W = 480;
   const H = 640;
   const WATER_Y = 540;
+  const MOUTH_DX = 17; // マーライオンの口もと＝ねらいの位置（からだは みぎに ずらして かく）
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -178,11 +244,19 @@ const SETTINGS = {
   canvas.height = H * dpr;
   ctx.scale(dpr, dpr);
 
+  const stageEl = document.getElementById("stage");
   const titleScreen = document.getElementById("title-screen");
   const overScreen = document.getElementById("over-screen");
   const finalScoreEl = document.getElementById("final-score");
   const bestScoreEl = document.getElementById("best-score");
+  const waveLineEl = document.getElementById("wave-line");
+  const statLineEl = document.getElementById("stat-line");
+  const newRecEl = document.getElementById("newrec");
+  const titleBestEl = document.getElementById("title-best");
   const muteBtn = document.getElementById("mute-btn");
+
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
   let state = "title";
   let score = 0;
@@ -191,6 +265,7 @@ const SETTINGS = {
   let bullets = [];
   let enemies = [];
   let stars = [];
+  let pickups = [];
   let popups = [];
   let sparks = [];
   let fireworks = [];
@@ -199,7 +274,12 @@ const SETTINGS = {
   let shootTimer = 0;
   let fwTimer = 3;
   let invincible = 0;
-  let player = { x: W / 2, y: 575 };
+  let wave = 1, waveKills = 0, kills = 0, bossesBeaten = 0;
+  let boss = null;
+  let banner = null;
+  let triple = 0, rapid = 0;
+  let flash = 0, flashColor = "#fff";
+  let player = { x: W / 2 - MOUTH_DX, y: 575 };
   let keys = { left: false, right: false };
   let lastTime = 0;
 
@@ -223,9 +303,10 @@ const SETTINGS = {
 
   // ============ おと（BGM＋こうかおん・ミュート対応） ============
   let audioCtx = null;
-  let muted = localStorage.getItem("picotto-muted") === "1";
+  let muted = lsGet("picotto-muted") === "1";
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") { try { audioCtx.resume(); } catch (e) {} }
     return audioCtx;
   }
   function tone(freq, t, dur, type, vol) {
@@ -238,13 +319,16 @@ const SETTINGS = {
     o.connect(g).connect(c.destination);
     o.start(t); o.stop(t + dur + 0.1);
   }
-  function beep(freq, dur, type, vol) {
+  function beep(freq, dur, type, vol, delay) {
     if (muted) return;
-    try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.1); } catch (e) {}
+    try { tone(freq, getCtx().currentTime + (delay || 0), dur, type || "sine", vol || 0.1); } catch (e) {}
   }
-  // アップテンポなアーケード調BGM
+  function arpeggio(notes, gap, type, vol) {
+    notes.forEach(function (n, i) { beep(n, 0.14, type || "triangle", vol || 0.08, i * (gap || 0.07)); });
+  }
+  // アップテンポなアーケード調BGM（ボスのときは すこし はやく）
   const BGM = {
-    timer: null, step: 0, next: 0,
+    timer: null, step: 0, next: 0, rate: 1,
     song: {
       bpm: 132, lead: "square",
       melody: [523, 0, 659, 784, 0, 784, 659, 523, 587, 0, 587, 659, 587, 0, 494, 0,
@@ -255,13 +339,14 @@ const SETTINGS = {
       try {
         const c = getCtx();
         this.stop();
-        const spb = 60 / this.song.bpm / 2;
+        this.rate = 1;
         this.next = c.currentTime + 0.1;
         this.step = 0;
         const self = this;
         this.timer = setInterval(function () {
           try {
             const cc = getCtx();
+            const spb = 60 / (self.song.bpm * self.rate) / 2;
             while (self.next < cc.currentTime + 0.25) {
               if (!muted && !document.hidden) {
                 const m = self.song.melody[self.step % self.song.melody.length];
@@ -281,7 +366,7 @@ const SETTINGS = {
   function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
   muteBtn.addEventListener("click", function () {
     muted = !muted;
-    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    lsSet("picotto-muted", muted ? "1" : "0");
     updateMuteBtn();
   });
   updateMuteBtn();
@@ -300,15 +385,26 @@ const SETTINGS = {
     c.fill();
   }
 
-  function drawDurian(c, x, y, rot) {
-    const glow = c.createRadialGradient(x, y, 4, x, y, 32);
-    glow.addColorStop(0, "rgba(255, 209, 102, 0.35)");
-    glow.addColorStop(1, "rgba(255, 209, 102, 0)");
+  // ドリアン（しゅるいごとに いろ・かたちを かえる）
+  const DURIAN_STYLE = {
+    normal: { spike: "#4f7028", hi: "#a7c463", lo: "#66883a", glow: "255, 209, 102" },
+    fast:   { spike: "#9a6a12", hi: "#ffd97a", lo: "#d99a2a", glow: "255, 170, 60" },
+    zig:    { spike: "#1f6b5c", hi: "#8fe3c8", lo: "#3aa58a", glow: "83, 224, 216" },
+    split:  { spike: "#5b3f8a", hi: "#d5b3ff", lo: "#9a6ad8", glow: "199, 125, 255" },
+    armor:  { spike: "#39485a", hi: "#b9c7d8", lo: "#6f8196", glow: "180, 200, 230" },
+    mini:   { spike: "#4f7028", hi: "#a7c463", lo: "#66883a", glow: "255, 209, 102" },
+  };
+  function drawDurian(c, x, y, rot, s, kind, hurt, angry) {
+    const st = DURIAN_STYLE[kind] || DURIAN_STYLE.normal;
+    s = s || 1;
+    const glow = c.createRadialGradient(x, y, 4 * s, x, y, 32 * s);
+    glow.addColorStop(0, "rgba(" + st.glow + ", 0.35)");
+    glow.addColorStop(1, "rgba(" + st.glow + ", 0)");
     c.fillStyle = glow;
-    c.beginPath(); c.arc(x, y, 32, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.arc(x, y, 32 * s, 0, Math.PI * 2); c.fill();
 
-    c.save(); c.translate(x, y); c.rotate(rot);
-    c.fillStyle = "#4f7028";
+    c.save(); c.translate(x, y); c.rotate(rot); c.scale(s, s);
+    c.fillStyle = st.spike;
     for (let k = 0; k < 12; k++) {
       const a = (Math.PI * 2 / 12) * k;
       c.beginPath();
@@ -319,18 +415,92 @@ const SETTINGS = {
       c.fill();
     }
     const g = c.createRadialGradient(-4, -5, 2, 0, 0, 16);
-    g.addColorStop(0, "#a7c463");
-    g.addColorStop(1, "#66883a");
+    g.addColorStop(0, hurt ? "#ffffff" : st.hi);
+    g.addColorStop(1, hurt ? "#dddddd" : st.lo);
     c.fillStyle = g;
     c.beginPath(); c.arc(0, 0, 15, 0, Math.PI * 2); c.fill();
+    c.restore();
+    // かおは まわさない（よみやすく）
+    c.save(); c.translate(x, y); c.scale(s, s);
     c.fillStyle = "#33471c";
+    c.strokeStyle = "#33471c";
     c.beginPath();
     c.arc(-5, -2, 2, 0, Math.PI * 2);
     c.arc(5, -2, 2, 0, Math.PI * 2);
     c.fill();
-    c.strokeStyle = "#33471c";
     c.lineWidth = 1.6;
-    c.beginPath(); c.arc(0, 6, 3.6, Math.PI * 1.15, Math.PI * 1.85); c.stroke();
+    if (angry) {
+      c.beginPath(); c.moveTo(-8, -7); c.lineTo(-3, -5); c.moveTo(8, -7); c.lineTo(3, -5); c.stroke();
+      c.beginPath(); c.arc(0, 8, 3.6, Math.PI * 1.15, Math.PI * 1.85); c.stroke();
+    } else {
+      c.beginPath(); c.arc(0, 4, 3.6, Math.PI * 0.15, Math.PI * 0.85); c.stroke();
+    }
+    if (kind === "armor") {
+      // ヘルメット（1かい あてると とれる）
+      c.fillStyle = "#c9d6e6";
+      c.beginPath(); c.arc(0, -4, 17, Math.PI * 1.05, Math.PI * 1.95); c.closePath(); c.fill();
+      c.fillStyle = "#8394aa";
+      c.fillRect(-15, -9, 30, 3);
+    }
+    if (kind === "zig") {
+      c.strokeStyle = "rgba(255,255,255,0.7)";
+      c.lineWidth = 1.4;
+      c.beginPath(); c.moveTo(-9, 9); c.lineTo(-4, 12); c.lineTo(0, 9); c.lineTo(4, 12); c.lineTo(9, 9); c.stroke();
+    }
+    if (kind === "split") {
+      c.strokeStyle = "rgba(60, 30, 90, 0.8)";
+      c.lineWidth = 1.6;
+      c.beginPath(); c.moveTo(0, -15); c.lineTo(2, -10); c.lineTo(-1, -6); c.stroke();
+    }
+    c.restore();
+  }
+
+  function drawCrown(c, x, y, s) {
+    c.save(); c.translate(x, y); c.scale(s, s);
+    c.fillStyle = "#ffc53d";
+    c.strokeStyle = "#d99a1a";
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(-14, 6); c.lineTo(-16, -8); c.lineTo(-7, 0); c.lineTo(0, -12); c.lineTo(7, 0); c.lineTo(16, -8); c.lineTo(14, 6);
+    c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = "#ff4f8f";
+    c.beginPath(); c.arc(0, 1, 2.5, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+
+  function drawHeart(c, x, y, s, color) {
+    c.save(); c.translate(x, y); c.scale(s, s);
+    c.fillStyle = color || "#ff4f8f";
+    c.beginPath();
+    c.moveTo(0, 7);
+    c.bezierCurveTo(-11, -1, -7, -10, 0, -4);
+    c.bezierCurveTo(7, -10, 11, -1, 0, 7);
+    c.fill();
+    c.restore();
+  }
+
+  function drawPickup(c, p, t) {
+    const bob = Math.sin(t / 200 + p.x) * 2;
+    c.save();
+    c.translate(p.x, p.y + bob);
+    const col = p.kind === "triple" ? "83, 224, 216" : p.kind === "rapid" ? "255, 209, 102" : "255, 95, 162";
+    const glow = c.createRadialGradient(0, 0, 3, 0, 0, 30);
+    glow.addColorStop(0, "rgba(" + col + ", 0.55)");
+    glow.addColorStop(1, "rgba(" + col + ", 0)");
+    c.fillStyle = glow;
+    c.beginPath(); c.arc(0, 0, 30, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#1b1836";
+    c.strokeStyle = "rgb(" + col + ")";
+    c.lineWidth = 3;
+    c.beginPath(); c.arc(0, 0, 16, 0, Math.PI * 2); c.fill(); c.stroke();
+    if (p.kind === "heart") drawHeart(c, 0, 0, 1.2);
+    else if (p.kind === "triple") {
+      c.strokeStyle = "#53e0d8"; c.lineWidth = 3; c.lineCap = "round";
+      c.beginPath(); c.moveTo(0, 8); c.lineTo(0, -9); c.moveTo(0, 8); c.lineTo(-8, -6); c.moveTo(0, 8); c.lineTo(8, -6); c.stroke();
+    } else {
+      c.fillStyle = "#ffd166";
+      c.beginPath(); c.moveTo(3, -11); c.lineTo(-6, 2); c.lineTo(0, 2); c.lineTo(-3, 11); c.lineTo(6, -2); c.lineTo(0, -2); c.closePath(); c.fill();
+    }
     c.restore();
   }
 
@@ -451,15 +621,21 @@ const SETTINGS = {
     }
   }
   const FW_COLORS = ["#ff5fa2", "#53e0d8", "#ffd166", "#c77dff"];
-  function launchFirework() {
-    const fx = 60 + Math.random() * (W - 120);
-    const fy = 70 + Math.random() * 150;
+  function launchFirework(fx, fy, big) {
+    fx = fx === undefined ? 60 + Math.random() * (W - 120) : fx;
+    fy = fy === undefined ? 70 + Math.random() * 150 : fy;
     const color = FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)];
-    for (let i = 0; i < 26; i++) {
-      const a = (Math.PI * 2 / 26) * i + Math.random() * 0.1;
-      const sp = 55 + Math.random() * 55;
+    const n = big ? 44 : 26;
+    for (let i = 0; i < n; i++) {
+      const a = (Math.PI * 2 / n) * i + Math.random() * 0.1;
+      const sp = (big ? 90 : 55) + Math.random() * 55;
       fireworks.push({ x: fx, y: fy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1 + Math.random() * 0.3, max: 1.3, color: color });
     }
+  }
+  function addPopup(x, y, text, color, size) { popups.push({ x: x, y: y, text: text, color: color, life: 0.9, size: size || 22 }); }
+  function showBanner(text, sub) { banner = { text: text, sub: sub || "", life: 2.2 }; }
+  function shake() {
+    stageEl.classList.remove("shake"); void stageEl.offsetWidth; stageEl.classList.add("shake");
   }
 
   // ---- そうさ ----
@@ -472,15 +648,27 @@ const SETTINGS = {
     if (e.key === "ArrowLeft") keys.left = false;
     if (e.key === "ArrowRight") keys.right = false;
   });
+  const AIM_MIN = 26, AIM_MAX = W - 58;
   function pointerMove(e) {
     const rect = canvas.getBoundingClientRect();
     const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    player.x = Math.max(40, Math.min(W - 40, (cx / rect.width) * W));
+    player.x = Math.max(AIM_MIN, Math.min(AIM_MAX, (cx / rect.width) * W)); // ゆびの まうえに みずが とぶ
   }
   canvas.addEventListener("pointermove", pointerMove);
   canvas.addEventListener("pointerdown", pointerMove);
 
   // ---- ゲームのながれ ----
+  function readBest() { return Number(lsGet(SETTINGS.storageKey) || 0); }
+  function readBestWave() { return Number(lsGet(SETTINGS.waveKey) || 0); }
+  function showTitleBest() {
+    const b = readBest(), bw = readBestWave();
+    if (b > 0) titleBestEl.textContent = "さいこう：" + b + "てん" + (bw ? "（ウェーブ" + bw + "）" : "") + "　そうさ：スライド / ←→キー";
+  }
+  showTitleBest();
+
+  function isBossWave(w) { return w % SETTINGS.bossEvery === 0; }
+  function killsNeeded(w) { return 8 + 2 * w; }
+
   function startGame() {
     score = 0;
     lives = SETTINGS.lives;
@@ -488,6 +676,7 @@ const SETTINGS = {
     bullets = [];
     enemies = [];
     stars = [];
+    pickups = [];
     popups = [];
     sparks = [];
     fireworks = [];
@@ -496,96 +685,212 @@ const SETTINGS = {
     shootTimer = 0;
     fwTimer = 3;
     invincible = 0;
-    player.x = W / 2;
+    wave = 1; waveKills = 0; kills = 0; bossesBeaten = 0;
+    boss = null;
+    triple = 0; rapid = 0; flash = 0;
+    player.x = W / 2 - MOUTH_DX;
     state = "play";
     titleScreen.classList.add("hidden");
     overScreen.classList.add("hidden");
     beep(660, 0.15);
     BGM.start();
+    showBanner("ウェーブ 1", "ドリアンを うちおとせ！");
   }
 
   function endGame() {
     state = "over";
     BGM.stop();
-    const best = Math.max(score, Number(localStorage.getItem(SETTINGS.storageKey) || 0));
-    localStorage.setItem(SETTINGS.storageKey, String(best));
+    const prev = readBest(), prevW = readBestWave();
+    const best = Math.max(score, prev);
+    const bestW = Math.max(wave, prevW);
+    lsSet(SETTINGS.storageKey, String(best));
+    lsSet(SETTINGS.waveKey, String(bestW));
+    waveLineEl.textContent = "ウェーブ " + wave + " まで いけた！";
     finalScoreEl.textContent = "スコア：" + score + "てん";
-    bestScoreEl.textContent = "さいこうきろく：" + best + "てん";
+    statLineEl.textContent = "うちおとした ドリアン " + kills + "こ" + (bossesBeaten ? "　ボス " + bossesBeaten + "たい" : "");
+    bestScoreEl.textContent = "さいこうきろく：" + best + "てん（ウェーブ" + bestW + "）";
+    const isNew = score > prev && score > 0;
+    newRecEl.classList.toggle("hidden", !isNew);
     overScreen.classList.remove("hidden");
     beep(220, 0.5, "sawtooth");
+    if (isNew) setTimeout(function () { arpeggio([659, 784, 1047, 1319], 0.09, "sine", 0.08); }, 500);
+    showTitleBest();
   }
 
   document.getElementById("start-btn").addEventListener("click", startGame);
   document.getElementById("retry-btn").addEventListener("click", startGame);
 
   function loseLife(x, y) {
-    if (invincible > 0) return;
+    if (invincible > 0 || state !== "play") return;
     lives--;
     invincible = 1.5;
-    popups.push({ x: x, y: y, text: "−❤️", color: "#ff5fa2", life: 0.9 });
+    popups.push({ x: x, y: y, text: "ライフ −1", color: "#ff5fa2", life: 0.9, size: 22 });
     burst(x, Math.min(y, WATER_Y), "#8fd8e8", 14, true);
     beep(150, 0.3, "sawtooth", 0.14);
+    flash = 0.3; flashColor = "#ff3d6e";
+    shake();
+    if (navigator.vibrate) { try { navigator.vibrate(80); } catch (e) {} }
     if (lives <= 0) endGame();
+  }
+
+  function nextWave() {
+    const bonus = 50 * wave;
+    score += bonus;
+    addPopup(W / 2, 200, "ウェーブクリア +" + bonus, "#ffd166", 26);
+    wave++;
+    waveKills = 0;
+    arpeggio([523, 659, 784, 1047], 0.08, "triangle", 0.08);
+    if (isBossWave(wave)) {
+      const n = wave / SETTINGS.bossEvery;
+      const hp = 26 + 14 * (n - 1);
+      boss = { x: W / 2, y: -70, hp: hp, max: hp, t: 0, spit: 2.2, hurt: 0, n: n };
+      showBanner("ボスドリアン！", "たくさん あてて たおそう");
+      BGM.rate = 1.12;
+    } else {
+      showBanner("ウェーブ " + wave, wave === 2 ? "はやい きいろドリアン" : wave === 3 ? "くねくね みどりドリアン" : wave === 5 ? "われる むらさきドリアン" : wave === 6 ? "ヘルメットドリアン（2かい）" : "どんどん はやくなるよ");
+    }
+  }
+
+  // ウェーブがすすむほど むずかしく（上限なしで ゆっくり 上がりつづける）
+  function speedFor(w) { return 80 + 11 * Math.min(w, 12) + 5 * Math.max(0, w - 12); }
+  function pickKind() {
+    const r = Math.random();
+    const table = [];
+    if (wave >= 6) table.push(["armor", Math.min(0.08 + 0.02 * (wave - 6), 0.2)]);
+    if (wave >= 5) table.push(["split", Math.min(0.1 + 0.02 * (wave - 5), 0.2)]);
+    if (wave >= 3) table.push(["zig", Math.min(0.12 + 0.02 * (wave - 3), 0.25)]);
+    if (wave >= 2) table.push(["fast", Math.min(0.12 + 0.03 * (wave - 2), 0.3)]);
+    let acc = 0;
+    for (const t of table) { acc += t[1]; if (r < acc) return t[0]; }
+    return "normal";
+  }
+  function spawnEnemy(kind, x, y, vx, vy) {
+    kind = kind || pickKind();
+    const base = speedFor(wave);
+    const en = {
+      kind: kind,
+      x: x !== undefined ? x : 40 + Math.random() * (W - 80),
+      y: y !== undefined ? y : -30,
+      vx: vx || 0,
+      vy: vy !== undefined ? vy : base + Math.random() * 30,
+      baseX: 0,
+      wobble: Math.random() * Math.PI * 2,
+      rot: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 2.4,
+      hp: kind === "armor" ? 2 : 1,
+      s: kind === "split" ? 1.2 : kind === "mini" ? 0.62 : 1,
+      hurt: 0,
+    };
+    if (kind === "fast") en.vy *= 1.5;
+    if (kind === "split") en.vy *= 0.85;
+    if (kind === "zig") { en.baseX = Math.max(90, Math.min(W - 90, en.x)); en.x = en.baseX; }
+    enemies.push(en);
+  }
+  function pointsFor(kind) { return kind === "mini" ? 10 : kind === "normal" ? SETTINGS.enemyPoint : kind === "armor" ? 40 : 30; }
+
+  function dropPickup(x, y, fromStar) {
+    let kind;
+    const r = Math.random();
+    if (lives < SETTINGS.lives && r < 0.4) kind = "heart";
+    else if (lives < SETTINGS.maxLives && r < 0.15) kind = "heart";
+    else kind = Math.random() < 0.5 ? "triple" : "rapid";
+    pickups.push({ kind: kind, x: Math.max(30, Math.min(W - 30, x)), y: y, vy: fromStar ? 95 : 110 });
+  }
+
+  function hitEnemy(en, i) {
+    en.hp--;
+    en.hurt = 0.12;
+    if (en.hp > 0) {
+      beep(600, 0.06, "square", 0.05);
+      burst(en.x, en.y, "#c9d6e6", 6);
+      en.kind = "normal"; // ヘルメットが とれた
+      return false;
+    }
+    const pts = pointsFor(en.kind);
+    score += pts;
+    kills++;
+    if (en.kind !== "mini") waveKills++;
+    addPopup(en.x, en.y, "+" + pts, "#53e0d8");
+    burst(en.x, en.y, DURIAN_STYLE[en.kind].hi, 10);
+    beep(900 + Math.random() * 200, 0.09, "triangle");
+    enemies.splice(i, 1);
+    if (en.kind === "split") {
+      spawnEnemy("mini", en.x - 8, en.y, -110, 140);
+      spawnEnemy("mini", en.x + 8, en.y, 110, 140);
+    }
+    if (en.kind !== "mini" && Math.random() < 0.06) dropPickup(en.x, en.y, false);
+    return true;
+  }
+
+  function fire() {
+    const ox = player.x, oy = player.y - 26;
+    bullets.push({ x: ox, y: oy, vx: 0 });
+    if (triple > 0) {
+      bullets.push({ x: ox, y: oy, vx: -130 });
+      bullets.push({ x: ox, y: oy, vx: 130 });
+    }
+    beep(760, 0.05, "sine", 0.045);
   }
 
   function update(dt) {
     elapsed += dt;
-    const ratio = Math.min(elapsed / 60, 1);
     if (invincible > 0) invincible -= dt;
+    if (triple > 0) triple -= dt;
+    if (rapid > 0) rapid -= dt;
+    if (flash > 0) flash -= dt;
+    if (banner) { banner.life -= dt; if (banner.life <= 0) banner = null; }
 
-    const kbSpeed = 340;
+    const kbSpeed = 360;
     if (keys.left) player.x -= kbSpeed * dt;
     if (keys.right) player.x += kbSpeed * dt;
-    player.x = Math.max(40, Math.min(W - 40, player.x));
+    player.x = Math.max(AIM_MIN, Math.min(AIM_MAX, player.x));
+    const bodyX = player.x + MOUTH_DX;
 
     shootTimer -= dt;
     if (shootTimer <= 0) {
-      bullets.push({ x: player.x - 18, y: player.y - 38 }); // マーライオンの口もとから
-      shootTimer = SETTINGS.shootInterval;
-      beep(760, 0.05, "sine", 0.045);
+      fire();
+      shootTimer = rapid > 0 ? SETTINGS.rapidInterval : SETTINGS.shootInterval;
     }
     for (let i = bullets.length - 1; i >= 0; i--) {
-      bullets[i].y -= 430 * dt;
-      if (bullets[i].y < -20) bullets.splice(i, 1);
+      bullets[i].y -= 440 * dt;
+      bullets[i].x += bullets[i].vx * dt;
+      if (bullets[i].y < -20 || bullets[i].x < -20 || bullets[i].x > W + 20) bullets.splice(i, 1);
     }
 
-    spawnTimer -= dt;
-    if (spawnTimer <= 0) {
-      enemies.push({
-        x: 40 + Math.random() * (W - 80),
-        y: -30,
-        vy: 85 + 105 * ratio + Math.random() * 30,
-        wobble: Math.random() * Math.PI * 2,
-        rot: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 2.4,
-      });
-      spawnTimer = 1.15 - 0.6 * ratio;
+    // ---- てきの でかた ----
+    if (!boss) {
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) {
+        spawnEnemy();
+        spawnTimer = Math.max(0.42, 1.15 - 0.075 * (wave - 1)) * (0.85 + Math.random() * 0.3);
+      }
     }
+
     for (let i = enemies.length - 1; i >= 0; i--) {
       const en = enemies[i];
       en.y += en.vy * dt;
       en.wobble += dt * 3;
       en.rot += en.rotSpeed * dt;
-      en.x += Math.sin(en.wobble) * 0.5;
+      if (en.hurt > 0) en.hurt -= dt;
+      if (en.kind === "zig") en.x = en.baseX + Math.sin(en.wobble * 0.9) * 70;
+      else if (en.kind === "mini") { en.x += en.vx * dt; en.vx *= (1 - 1.2 * dt); if (en.x < 20 || en.x > W - 20) en.vx *= -1; }
+      else en.x += Math.sin(en.wobble) * 0.5;
+      en.x = Math.max(18, Math.min(W - 18, en.x));
 
       let hit = false;
+      const rr = 26 * en.s;
       for (let j = bullets.length - 1; j >= 0; j--) {
         const b = bullets[j];
-        if (Math.abs(b.x - en.x) < 26 && Math.abs(b.y - en.y) < 28) {
+        if (Math.abs(b.x - en.x) < rr && Math.abs(b.y - en.y) < rr + 2) {
           bullets.splice(j, 1);
           hit = true;
           break;
         }
       }
       if (hit) {
-        score += SETTINGS.enemyPoint;
-        popups.push({ x: en.x, y: en.y, text: "+" + SETTINGS.enemyPoint, color: "#53e0d8", life: 0.8 });
-        burst(en.x, en.y, "#a7c463", 10);
-        enemies.splice(i, 1);
-        beep(1000, 0.1, "triangle");
-        continue;
+        if (hitEnemy(en, i)) continue;
       }
-      if (Math.abs(en.x - player.x) < 40 && Math.abs(en.y - player.y) < 42) {
+      if (Math.abs(en.x - bodyX) < 34 + 12 * en.s && Math.abs(en.y - player.y) < 42) {
         enemies.splice(i, 1);
         loseLife(en.x, en.y);
         continue;
@@ -595,7 +900,59 @@ const SETTINGS = {
         loseLife(en.x, WATER_Y);
       }
     }
+    if (state !== "play") return;
 
+    // ---- ボス ----
+    if (boss) {
+      boss.t += dt;
+      if (boss.hurt > 0) boss.hurt -= dt;
+      const targetY = 130 + boss.t * 6;
+      boss.y += (targetY - boss.y) * Math.min(1, dt * 1.5);
+      boss.x = W / 2 + Math.sin(boss.t * (0.7 + 0.08 * boss.n)) * 150;
+      boss.spit -= dt;
+      if (boss.spit <= 0 && boss.y > 60) {
+        spawnEnemy("mini", boss.x, boss.y + 40, (Math.random() - 0.5) * 220, 120 + 12 * boss.n);
+        boss.spit = Math.max(0.9, 2.0 - 0.25 * boss.n);
+        beep(260, 0.08, "square", 0.04);
+      }
+      for (let j = bullets.length - 1; j >= 0; j--) {
+        const b = bullets[j];
+        if (Math.hypot(b.x - boss.x, b.y - boss.y) < 52) {
+          bullets.splice(j, 1);
+          boss.hp--;
+          boss.hurt = 0.08;
+          score += 2;
+          burst(b.x, b.y, "#ffd166", 3);
+          if (Math.random() < 0.5) beep(500 + (1 - boss.hp / boss.max) * 500, 0.04, "square", 0.04);
+          if (boss.hp <= 0) break;
+        }
+      }
+      if (boss.y > 340 && boss.t > 1) { // ちかづきすぎ → ドスン
+        loseLife(boss.x, boss.y);
+        boss.y = 80; boss.t = 0;
+      }
+      if (boss && boss.hp <= 0) {
+        const pts = 300 * boss.n;
+        score += pts;
+        kills++;
+        bossesBeaten++;
+        addPopup(boss.x, boss.y, "ボスげきは！ +" + pts, "#ffd166", 28);
+        for (let k = 0; k < 4; k++) launchFirework(boss.x + (Math.random() - 0.5) * 160, boss.y + (Math.random() - 0.5) * 100, true);
+        burst(boss.x, boss.y, "#a7c463", 40);
+        flash = 0.35; flashColor = "#fff4c2";
+        shake();
+        arpeggio([784, 988, 1175, 1568, 1976], 0.08, "triangle", 0.09);
+        dropPickup(boss.x - 30, boss.y, true);
+        pickups.push({ kind: "heart", x: Math.max(30, Math.min(W - 30, boss.x + 30)), y: boss.y, vy: 95 });
+        boss = null;
+        BGM.rate = 1 + Math.min(wave, 12) * 0.01;
+        nextWave();
+      }
+    } else if (waveKills >= killsNeeded(wave)) {
+      nextWave();
+    }
+
+    // ---- ながれぼし ----
     starTimer -= dt;
     if (starTimer <= 0) {
       const fromLeft = Math.random() < 0.5;
@@ -605,7 +962,7 @@ const SETTINGS = {
         vx: (fromLeft ? 1 : -1) * (130 + Math.random() * 60),
         rot: 0,
       });
-      starTimer = 6 + Math.random() * 4;
+      starTimer = 7 + Math.random() * 4;
     }
     for (let i = stars.length - 1; i >= 0; i--) {
       const st = stars[i];
@@ -622,13 +979,39 @@ const SETTINGS = {
       }
       if (hit) {
         score += SETTINGS.bonusPoint;
-        popups.push({ x: st.x, y: st.y, text: "+" + SETTINGS.bonusPoint, color: "#ffd166", life: 0.9 });
+        popups.push({ x: st.x, y: st.y, text: "+" + SETTINGS.bonusPoint, color: "#ffd166", life: 0.9, size: 22 });
         burst(st.x, st.y, "#ffd166", 14);
+        dropPickup(st.x, st.y, true);
         stars.splice(i, 1);
         beep(1400, 0.15, "triangle");
         continue;
       }
       if (st.x < -30 || st.x > W + 30) stars.splice(i, 1);
+    }
+
+    // ---- アイテム ----
+    for (let i = pickups.length - 1; i >= 0; i--) {
+      const p = pickups[i];
+      p.y += p.vy * dt;
+      if (Math.abs(p.x - bodyX) < 42 && Math.abs(p.y - player.y) < 48) {
+        pickups.splice(i, 1);
+        if (p.kind === "heart") {
+          if (lives < SETTINGS.maxLives) { lives++; addPopup(p.x, p.y - 20, "ライフ +1", "#ff9fc6", 24); }
+          else { score += 100; addPopup(p.x, p.y - 20, "+100", "#ff9fc6", 24); }
+          arpeggio([659, 880, 1175], 0.07, "sine", 0.09);
+        } else if (p.kind === "triple") {
+          triple = SETTINGS.powerTime;
+          addPopup(p.x, p.y - 20, "3way！", "#53e0d8", 26);
+          arpeggio([523, 784, 1047], 0.06, "square", 0.05);
+        } else {
+          rapid = SETTINGS.powerTime;
+          addPopup(p.x, p.y - 20, "れんしゃ！", "#ffd166", 26);
+          arpeggio([659, 988, 1319], 0.05, "square", 0.05);
+        }
+        burst(p.x, p.y, "#ffffff", 12);
+        continue;
+      }
+      if (p.y > WATER_Y + 20) pickups.splice(i, 1);
     }
 
     // はなび（えんしゅつ）
@@ -638,6 +1021,10 @@ const SETTINGS = {
       if (!muted) beep(520, 0.12, "sine", 0.03);
       fwTimer = 6 + Math.random() * 4;
     }
+    updateFx(dt);
+  }
+
+  function updateFx(dt) {
     for (let i = fireworks.length - 1; i >= 0; i--) {
       const f = fireworks[i];
       f.x += f.vx * dt;
@@ -784,16 +1171,37 @@ const SETTINGS = {
   }
 
   function draw(t) {
-    drawBackground(t || 0);
+    t = t || 0;
+    drawBackground(t);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
+    // ねらいのガイド（みずが とぶ すじ）
+    if (state === "play") {
+      ctx.strokeStyle = "rgba(83, 224, 216, 0.18)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 10]);
+      ctx.beginPath(); ctx.moveTo(player.x, player.y - 34); ctx.lineTo(player.x, 70); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
     for (const b of bullets) drawDroplet(ctx, b.x, b.y);
     for (const st of stars) drawGoldStar(ctx, st.x, st.y, 15, st.rot);
-    for (const en of enemies) drawDurian(ctx, en.x, en.y, en.rot);
+    for (const p of pickups) drawPickup(ctx, p, t);
+    if (boss) {
+      drawDurian(ctx, boss.x, boss.y, Math.sin(boss.t * 2) * 0.2, 2.3, "normal", boss.hurt > 0, true);
+      drawCrown(ctx, boss.x, boss.y - 52, 1.3);
+    }
+    for (const en of enemies) drawDurian(ctx, en.x, en.y, en.rot, en.s, en.kind, en.hurt > 0, en.kind === "fast");
 
     const blink = invincible > 0 && Math.sin(invincible * 20) > 0;
-    drawMerlion(ctx, player.x, player.y - 8, t, blink);
+    drawMerlion(ctx, player.x + MOUTH_DX, player.y - 8, t, blink);
+    // パワーアップちゅうの わっか
+    if (triple > 0 || rapid > 0) {
+      ctx.strokeStyle = triple > 0 ? "rgba(83, 224, 216, 0.6)" : "rgba(255, 209, 102, 0.6)";
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(player.x + MOUTH_DX, player.y, 40 + Math.sin(t / 120) * 2, 0, Math.PI * 2); ctx.stroke();
+    }
 
     for (const p of sparks) {
       ctx.globalAlpha = Math.max(p.life / p.max, 0);
@@ -802,27 +1210,84 @@ const SETTINGS = {
     }
     ctx.globalAlpha = 1;
 
-    ctx.font = "900 22px 'Zen Maru Gothic', sans-serif";
     for (const p of popups) {
       ctx.globalAlpha = Math.max(p.life / 0.9, 0);
+      ctx.font = "900 " + (p.size || 22) + "px 'Zen Maru Gothic', sans-serif";
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(19,19,34,0.8)";
+      ctx.strokeText(p.text, p.x, p.y);
       ctx.fillStyle = p.color;
       ctx.fillText(p.text, p.x, p.y);
     }
     ctx.globalAlpha = 1;
 
+    if (flash > 0) {
+      ctx.globalAlpha = Math.min(flash, 0.3) * 0.9;
+      ctx.fillStyle = flashColor;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+    }
+
+    // HUD
     ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
-    roundRect(ctx, 12, 12, 160, 40, 12);
+    roundRect(ctx, 12, 12, 150, 40, 12);
+    roundRect(ctx, W / 2 - 62, 12, 124, 40, 12);
     roundRect(ctx, W - 132, 12, 120, 40, 12);
     ctx.fillStyle = "#53e0d8";
     ctx.font = "900 20px 'Zen Maru Gothic', sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("💧 " + score + " てん", 24, 33);
+    ctx.fillText("💧 " + score, 24, 33);
+    ctx.textAlign = "center";
+    ctx.fillStyle = boss ? "#ff9fc6" : "#ffd166";
+    ctx.font = "900 18px 'Zen Maru Gothic', sans-serif";
+    ctx.fillText(boss ? "ボス！" : "ウェーブ " + wave, W / 2, 33);
+    for (let k = 0; k < SETTINGS.maxLives; k++) {
+      if (k >= Math.max(lives, SETTINGS.lives)) break;
+      drawHeart(ctx, W - 110 + k * 22, 32, 1.1, k < lives ? "#ff4f8f" : "rgba(255,255,255,0.18)");
+    }
+    // ウェーブのすすみぐあい
+    if (state === "play" && !boss) {
+      const prog = Math.min(waveKills / killsNeeded(wave), 1);
+      ctx.fillStyle = "rgba(255,255,255,0.15)";
+      ctx.fillRect(W / 2 - 50, 47, 100, 3);
+      ctx.fillStyle = "#ffd166";
+      ctx.fillRect(W / 2 - 50, 47, 100 * prog, 3);
+    }
+    // ボスのHP
+    if (boss) {
+      ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
+      roundRect(ctx, 60, 60, W - 120, 16, 8);
+      ctx.fillStyle = "#ff5fa2";
+      roundRect(ctx, 63, 63, (W - 126) * Math.max(boss.hp / boss.max, 0), 10, 5);
+    }
+    // パワーアップののこり
+    let py = boss ? 92 : 70;
     ctx.textAlign = "right";
-    ctx.font = "18px serif";
-    ctx.fillText("❤️".repeat(Math.max(lives, 0)) || "💔", W - 24, 33);
+    ctx.font = "900 16px 'Zen Maru Gothic', sans-serif";
+    if (triple > 0) { ctx.fillStyle = "#53e0d8"; ctx.fillText("3way " + Math.ceil(triple), W - 18, py); py += 22; }
+    if (rapid > 0) { ctx.fillStyle = "#ffd166"; ctx.fillText("れんしゃ " + Math.ceil(rapid), W - 18, py); }
+
+    if (banner) {
+      const a = Math.min(1, banner.life / 0.4, (2.2 - banner.life) / 0.25);
+      ctx.globalAlpha = Math.max(a, 0);
+      ctx.fillStyle = "rgba(19, 19, 34, 0.82)";
+      roundRect(ctx, 50, 230, W - 100, banner.sub ? 90 : 64, 18);
+      ctx.textAlign = "center";
+      ctx.font = "900 30px 'Mochiy Pop One', 'Zen Maru Gothic', sans-serif";
+      ctx.fillStyle = "#ffd166";
+      ctx.fillText(banner.text, W / 2, 262);
+      if (banner.sub) {
+        ctx.font = "900 18px 'Zen Maru Gothic', sans-serif";
+        ctx.fillStyle = "#eeecfa";
+        ctx.fillText(banner.sub, W / 2, 298);
+      }
+      ctx.globalAlpha = 1;
+    }
   }
 
   function roundRect(c, x, y, w, h, r) {
+    if (w <= 0) return;
+    r = Math.min(r, w / 2, h / 2);
     c.beginPath();
     c.moveTo(x + r, y);
     c.arcTo(x + w, y, x + w, y + h, r);
@@ -837,6 +1302,7 @@ const SETTINGS = {
     const dt = Math.min((t - lastTime) / 1000, 0.05);
     lastTime = t;
     if (state === "play") update(dt);
+    else updateFx(dt);
     draw(t);
     requestAnimationFrame(loop);
   }
@@ -845,6 +1311,15 @@ const SETTINGS = {
     requestAnimationFrame(loop);
   });
   draw(0);
+
+  // テスト用のよみとりだけの窓口（ゲームにはえいきょうしない）
+  window.__ludotGame = {
+    get state() { return state; }, get score() { return score; }, get wave() { return wave; }, get lives() { return lives; },
+    get boss() { return boss ? { x: boss.x, y: boss.y, hp: boss.hp } : null; }, get elapsed() { return elapsed; },
+    get enemies() { return enemies.map(function (e) { return { x: e.x, y: e.y, vy: e.vy, kind: e.kind }; }); },
+    get pickups() { return pickups.map(function (p) { return { x: p.x, y: p.y, kind: p.kind }; }); },
+    get player() { return { x: player.x, y: player.y }; }, get power() { return { triple: triple, rapid: rapid }; },
+  };
 })();
 </script>
 </body>
