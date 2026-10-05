@@ -18,17 +18,18 @@
     background:var(--bg); color:var(--ink);
     font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
     min-height:100vh; display:flex; flex-direction:column; align-items:center;
-    padding:14px 10px 30px;
+    padding:10px 10px 30px;
   }
   .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
   .backbar a{color:var(--sub);text-decoration:none}
-  .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar a:focus-visible{color:var(--gold);outline:none}
+  @media(hover:hover){.backbar a:hover{color:var(--gold)}}
   .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
   .backbar button:hover{color:var(--gold);border-color:var(--gold)}
-  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;margin:2px 2px 6px}
   h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
-  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
-  #wrap{position:relative;width:min(480px,100%)}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:12px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%,calc((100vh - 185px) * 0.8))}
   canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
   .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
   .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
@@ -138,10 +139,14 @@
   // ---- state ---------------------------------------------------------------
   let board = [];                 // board[r][c], r=0 bottom; 0 empty, 1 P1, 2 P2
   let mode = '2p', level = 2, turn = 1, first = 1;
+  // 成績と先手はモード別に保持（CPU戦とふたり対戦で混ざらないように）
+  const tallies = { '2p': { 1: 0, 2: 0, d: 0 }, cpu: { 1: 0, 2: 0, d: 0 } };
+  const firsts = { '2p': 1, cpu: 1 };
+  let queued = -1;   // 落下中に押された次の1手（先行入力）
   let state = 'title';            // title | play | drop | over
   let falling = null, winCells = null, winner = 0, hoverCol = -1, cursorCol = 3;
   let history = [], particles = [], anim = 0, cpuTimer = 0;
-  let tally = { 1: 0, 2: 0, d: 0 };
+  let tally = tallies['2p'];
   let stats = { 1: { w: 0, l: 0, d: 0 }, 2: { w: 0, l: 0, d: 0 }, 3: { w: 0, l: 0, d: 0 } };
   try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) stats = Object.assign(stats, s); } catch (e) {}
   const overlay = document.getElementById('overlay');
@@ -223,6 +228,7 @@
   // ---- game flow --------------------------------------------------------------
   function startGame(m) {
     if (m) mode = m;
+    tally = tallies[mode]; first = firsts[mode]; queued = -1;
     newBoard(); history = []; winCells = null; winner = 0; particles = []; falling = null;
     turn = first; state = 'play'; overlay.classList.remove('show');
     document.getElementById('undoBtn').disabled = true;
@@ -247,13 +253,14 @@
     if (w) { finish(p, w); return; }
     if (boardFull(board)) { finish(0, null); return; }
     turn = 3 - turn; state = 'play';
-    if (mode === 'cpu' && turn === 2) scheduleCpu();
+    if (mode === 'cpu' && turn === 2) { queued = -1; scheduleCpu(); return; }
+    if (queued >= 0) { const q = queued; queued = -1; if (humanTurn()) dropPiece(q); }
   }
   function finish(p, cells) {
     state = 'over'; winner = p; winCells = cells;
     if (p) tally[p]++; else tally.d++;
     if (mode === 'cpu') { const s = stats[level]; if (p === 1) s.w++; else if (p === 2) s.l++; else s.d++; try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {} }
-    first = 3 - first;
+    first = 3 - first; firsts[mode] = first; queued = -1;
     if (p) { for (const [r, c] of cells) burst(BX + c * CELL + CELL / 2, BY + (ROWS - 1 - r) * CELL + CELL / 2, GLOW[p]); }
     if (p === 1 || (p === 2 && mode !== 'cpu')) SFX.win(); else if (p === 2) SFX.lose(); else SFX.draw();
     setTimeout(showResult, 1300);
@@ -277,7 +284,7 @@
     const n = (mode === 'cpu' && history.length >= 2) ? 2 : 1;
     for (let i = 0; i < n; i++) { const c = history.pop(); for (let r = ROWS - 1; r >= 0; r--) if (board[r][c]) { board[r][c] = 0; break; } turn = 3 - turn; }
     if (mode === 'cpu') turn = 1;
-    clearTimeout(cpuTimer);
+    clearTimeout(cpuTimer); queued = -1;
     document.getElementById('undoBtn').disabled = !history.length;
   }
   function burst(x, y, glow) { for (let i = 0; i < 16; i++) { const a = Math.random() * Math.PI * 2, sp = 40 + Math.random() * 180; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 60, life: 0.5 + Math.random() * 0.6, c: glow }); } }
@@ -289,16 +296,26 @@
     return Math.floor((x - BX) / CELL);
   }
   function humanTurn() { return state === 'play' && !(mode === 'cpu' && turn === 2); }
+  // 落下中の入力は、つぎが人の番なら1手だけ覚えておく
+  function tryDrop(c) {
+    if (c < 0 || c >= COLS) return;
+    if (humanTurn()) { dropPiece(c); return; }
+    if (state === 'drop' && falling) {
+      const next = 3 - falling.p; if (mode === 'cpu' && next === 2) return;
+      if (queued >= 0) { landPiece(); if (state !== 'drop' || !falling) return; }   // すばやく続けて押されたら、落下中のコマを すぐ着地させて入力を消さない
+      if (state === 'drop' && falling && !(mode === 'cpu' && 3 - falling.p === 2)) queued = c;
+    }
+  }
   cv.addEventListener('pointermove', e => { const c = colAt(e); if (c !== hoverCol) { hoverCol = c; if (c >= 0) cursorCol = c; } });
   cv.addEventListener('pointerleave', () => { hoverCol = -1; });
   cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); const c = colAt(e); hoverCol = c; if (c >= 0) cursorCol = c; });
-  cv.addEventListener('pointerup', e => { e.preventDefault(); const c = colAt(e); if (c >= 0 && humanTurn()) dropPiece(c); hoverCol = -1; });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); const c = colAt(e); if (c >= 0) tryDrop(c); hoverCol = -1; });
   document.addEventListener('keydown', e => {
     if (overlay.classList.contains('show')) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audio(); startGame(); } return; }
-    if (e.key >= '1' && e.key <= '7') { if (humanTurn()) dropPiece(+e.key - 1); return; }
+    if (e.key >= '1' && e.key <= '7') { tryDrop(+e.key - 1); return; }
     if (e.key === 'ArrowLeft') { e.preventDefault(); cursorCol = Math.max(0, cursorCol - 1); hoverCol = cursorCol; SFX.hover(); }
     if (e.key === 'ArrowRight') { e.preventDefault(); cursorCol = Math.min(COLS - 1, cursorCol + 1); hoverCol = cursorCol; SFX.hover(); }
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); if (humanTurn()) dropPiece(cursorCol); }
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); tryDrop(cursorCol); }
     if (e.key === 'z' || e.key === 'Backspace') { e.preventDefault(); undo(); }
   });
   document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
@@ -308,7 +325,7 @@
   document.getElementById('menuBtn').addEventListener('click', () => {
     clearTimeout(cpuTimer); state = 'title';
     document.getElementById('ovBig').innerHTML = 'よふかし<br>四目ならべ'; document.getElementById('ovBig').className = 'big';
-    document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>こんかいの せいせき： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">P2/CPU ' + tally[2] + '</i>';
+    document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>ふたりで： <i class="c1">P1 ' + tallies['2p'][1] + '</i> - <i class="c2">P2 ' + tallies['2p'][2] + '</i>（ひきわけ ' + tallies['2p'].d + '）<br>CPUと： <i class="c1">P1 ' + tallies.cpu[1] + '</i> - <i class="c2">CPU ' + tallies.cpu[2] + '</i>（ひきわけ ' + tallies.cpu.d + '）';
     document.getElementById('btn2p').textContent = 'ふたりで たいせん'; document.getElementById('btnCpu').textContent = 'ひとりで（CPU）';
     renderStats(); overlay.classList.add('show');
   });
@@ -389,7 +406,7 @@
     start: (m, lv) => { if (lv) level = lv; startGame(m); },
     drop: dropPiece,
     step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
-    state: () => ({ state, mode, level, turn, winner, winCells, history: history.slice(), tally: Object.assign({}, tally), board: board.map(r => r.join('')).reverse() }),
+    state: () => ({ state, mode, level, turn, winner, winCells, history: history.slice(), tally: Object.assign({}, tally), first, queued, tallies: JSON.parse(JSON.stringify(tallies)), board: board.map(r => r.join('')).reverse() }),
     ai: lv => aiMove(lv || level), undo, setBoard: rows => { newBoard(); rows.forEach((row, i) => { const r = ROWS - 1 - i; row.split('').forEach((ch, c) => { board[r][c] = +ch; }); }); },
     skipCpu: () => { clearTimeout(cpuTimer); if (state === 'play' && mode === 'cpu' && turn === 2) { const c = aiMove(level); if (c >= 0) dropPiece(c); } },
   };
