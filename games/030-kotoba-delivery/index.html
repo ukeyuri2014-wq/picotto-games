@@ -1,41 +1,201 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11182f"><title>ことば配達便｜無料ブラウザゲーム｜ルドット</title><style>
-:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#ffa6b7;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}button:hover:not(:disabled){background:#3b527e;transform:translateY(-1px)}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+:root{color-scheme:dark;--ink:#eef3ff;--muted:#b2bfd9;--bg:#10162b;--panel:#1b2644;--accent:#ffa6b7;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#243257,var(--bg) 65%);color:var(--ink);min-height:100dvh}header{max-width:1000px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:var(--muted);text-decoration:none}a:hover{color:white}.brand{font-weight:900;letter-spacing:.14em;color:var(--ink)}main{max-width:900px;margin:auto;padding:10px 18px 42px}h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:10px 0;letter-spacing:.02em}h2{font-size:1.4rem}p{line-height:1.8}button,input,select{font:inherit;font-size:1rem}button{border:1px solid #ffffff26;background:#2b3c62;color:var(--ink);border-radius:13px;padding:12px 18px;cursor:pointer;min-height:46px;touch-action:manipulation;transition:background .12s,transform .12s}button:active:not(:disabled){transform:scale(.97)}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:#11182f;font-weight:800;border:0}button.selected{outline:3px solid var(--accent);outline-offset:-3px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}input,select{background:#10182c;border:1px solid #607399;border-radius:10px;padding:12px;color:white;max-width:100%;min-width:0}input[type=range]{width:100%;accent-color:var(--accent)}.eyebrow{color:var(--accent);font-size:.88rem;font-weight:800;letter-spacing:.13em}.lead{color:var(--muted);margin:0 0 20px}.panel{background:linear-gradient(135deg,#21304e,#17213b);border:1px solid #ffffff1c;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0003}.intro{max-width:620px;margin:20px auto;text-align:center}.intro .icon{font-size:4.2rem;margin:16px}.intro p{color:var(--muted)}.toolbar,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar{justify-content:space-between;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#10192d;border:1px solid #ffffff14;border-radius:12px;padding:9px 15px;font-variant-numeric:tabular-nums}.stat small{display:block;color:var(--muted);font-size:.85rem}.stat b{font-size:1.2rem}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.center{text-align:center}.big{font-size:clamp(2rem,8vw,4rem);font-weight:900;margin:24px 0}.muted{color:var(--muted)}.notice{min-height:1.8em;color:#ffdd89;margin:14px 0;line-height:1.7}.badge{background:#304569;border-radius:8px;padding:5px 9px;display:inline-block}.result{border:2px solid var(--accent);text-align:center;margin-top:22px}.result strong{font-size:2rem;color:var(--accent)}.board{max-width:520px;margin:20px auto;display:grid;gap:5px}.cell{padding:0;min-width:0;min-height:0;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(1rem,4vw,1.8rem);border-radius:8px}.cell.on{background:var(--accent);color:#10162b}.cell.good{background:#2c816e}.cell.bad{background:#94395a}.card{background:#111c32;border:1px solid #ffffff22;border-radius:16px;padding:18px}.meter{height:14px;border-radius:12px;background:#10162b;overflow:hidden}.meter>i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}canvas{display:block;width:100%;max-width:640px;margin:16px auto;border-radius:18px;background:#0c1428;touch-action:none}.controls{justify-content:center;margin:16px 0}.controls button{min-width:64px}.tile{font-size:2rem;padding:18px}.wordrow{display:flex;gap:6px;justify-content:center;margin:10px 0}.letter{width:52px;height:54px;display:grid;place-items:center;background:#334263;border-radius:8px;font-size:1.6rem;font-weight:800}.letter.exact{background:#267c69}.letter.present{background:#946b20}.letter.absent{background:#323848}.story{font-size:1.15rem;line-height:2}.progress{color:var(--accent);font-weight:700}.notes{font-size:.9rem;color:var(--muted);line-height:1.7;margin-top:20px}footer{text-align:center;font-size:.85rem;color:var(--muted);padding:24px}.save-warning{background:#623940;padding:10px;border-radius:8px}.lane{height:300px;position:relative;overflow:hidden;background:#0c1428;border-radius:16px;border:1px solid #42516b}.rhythm-note{position:absolute;width:32%;height:15px;background:var(--accent);border-radius:8px;left:9%}.rhythm-note.right{left:59%;background:#ff9cbf}.judgment{position:absolute;top:240px;left:0;right:0;border-top:3px solid white;text-align:center;padding-top:10px;color:#b8c9ea}.fish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fish-grid .card{text-align:center;padding:12px}.suit-red{color:#b9294a}.playing-card{background:#f3f4ef;color:#12203d;border:2px solid #b0bdd4;border-radius:7px;padding:4px;font-weight:800;min-height:40px;width:100%;font-size:.9rem}.playing-card.suit-red{color:#b9294a}.playing-card:hover:not(:disabled){background:white}.playing-card.selected{outline:3px solid #e8ad20}.face-down{background:#364f89;color:#dae2ff}.pile{min-height:55px;border:1px dashed #7084a8;border-radius:9px;padding:3px;display:flex;flex-direction:column;gap:3px}.piles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.small{font-size:.88rem}.counter{font-variant-numeric:tabular-nums}.diffboard{grid-template-columns:repeat(4,1fr);max-width:320px;margin:10px auto}.diffboard button{font-size:clamp(1.5rem,5vw,2.8rem)}@media(max-width:520px){main{padding:4px 12px 30px}header{padding:14px}.panel{padding:18px 12px;border-radius:18px}.two.mobile-stack{grid-template-columns:1fr}.stat{padding:8px 10px}.toolbar>button{padding:10px}.piles{gap:3px}.playing-card{padding:3px 0;font-size:.8rem}.fish-grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+@media(hover:hover){button:hover:not(:disabled):not(.primary){background:#3b527e}button.primary:hover:not(:disabled){filter:brightness(1.08)}}
+button.primary{background:#ffa6b7}
+.intro{margin:10px auto}.intro .icon{font-size:3rem;margin:0 0 4px;line-height:1}.intro h2{margin:2px 0 6px}.intro p{margin:6px 0;line-height:1.6}
+.intro-top{display:flex;justify-content:flex-end;margin:-6px -6px 0}.icon-btn{min-height:40px;min-width:44px;padding:6px 10px}
+.seg{display:flex;gap:8px;justify-content:center;margin:10px 0 6px}.seg button{display:flex;flex-direction:column;align-items:center;min-width:104px;line-height:1.25;font-weight:800;flex:1;max-width:150px}.seg button small{font-weight:400;font-size:.8rem;color:var(--muted)}.seg button.on{background:#5a2f3c;outline:3px solid #ffa6b7;outline-offset:-3px}
+.big-btn{font-size:1.2rem;padding:14px 48px;margin:10px 0 4px}
+.panel.game{position:relative;overflow:hidden;padding:14px 16px}
+.panel.game .toolbar{margin-bottom:8px;flex-wrap:nowrap;gap:6px}.stat.inline{display:flex;align-items:baseline;gap:5px;padding:6px 10px;white-space:nowrap}.stat.inline small{display:inline;font-size:.82rem}.stat.inline b{font-size:1.15rem;min-width:1.3em;text-align:right}.row.tools{flex-wrap:nowrap;gap:6px}.panel.game .toolbar button{min-height:40px;padding:6px 12px}
+.timebar{height:8px;border-radius:8px;background:#10162b;overflow:hidden;margin:0 0 10px}.timebar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ffa6b7,#ffd278);border-radius:8px;transition:width .1s linear}.timebar i.low{background:#ff7a7a}
+.card-wrap{position:relative}
+.word-card{background:#fff8ec;color:#2a2233;border-radius:16px;padding:12px 14px 14px;text-align:center;box-shadow:0 6px 0 #d9c7a8,0 12px 30px #0005;position:relative;border:2px dashed #e7b9a4}
+.word-card .badge{background:#ffe1e7;color:#8a3550;font-weight:800;font-size:.85rem}
+.word-card.in{animation:cardin .28s cubic-bezier(.2,1.3,.4,1)}@keyframes cardin{from{transform:translateX(40px) rotate(3deg);opacity:0}}
+.word-card.shake{animation:shake .3s}@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.jp{font-size:clamp(1.6rem,6vw,2.4rem);font-weight:900;margin:6px 0 0;overflow-wrap:anywhere;line-height:1.3}.kana{font-size:1.05rem;color:#6b5a70;margin-top:2px;overflow-wrap:anywhere}
+.jp .done,.kana .done{color:#d25a7a}
+.roma{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:clamp(1.3rem,5vw,1.9rem);font-weight:800;margin-top:8px;letter-spacing:.06em;overflow-wrap:anywhere;line-height:1.35}
+.roma .done{color:#2f9b7e}.roma .cur{background:#ffd278;border-radius:4px;padding:0 2px;color:#2a2233}.roma .rest{color:#8d8196}.roma .cur.flash{animation:flash .3s}@keyframes flash{50%{background:#ff7a8a;color:#fff}}
+.mailbox{position:absolute;right:-4px;top:-14px;font-size:2rem;filter:drop-shadow(0 3px 4px #0006)}.mailbox.got{animation:got .45s}@keyframes got{40%{transform:scale(1.35) rotate(-10deg)}}
+.fly{position:absolute;left:62%;top:4px;font-size:2rem;animation:fly .6s ease-in forwards;pointer-events:none}@keyframes fly{to{left:88%;top:-10px;transform:scale(.5) rotate(20deg);opacity:.4}}
+.type-in{display:block;width:100%;margin:12px 0 0;font-size:1.2rem!important;text-align:center;letter-spacing:.1em;background:#10182c;border:2px solid #ffa6b7;caret-color:#ffa6b7}
+.panel.game .notice{text-align:center;margin:8px 0 4px;min-height:1.6em;font-weight:700}.notice.warn{color:#ff9fb0}.notice.good{color:#7ce0c1}
+.route{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;min-height:1.6em;font-size:1.2rem}.route span{animation:pop .3s}@keyframes pop{from{transform:scale(0)}}
+.countdown{position:absolute;inset:0;display:grid;place-items:center;font-size:5rem;font-weight:900;color:#ffd278;background:#0b1224cc;z-index:20;text-shadow:0 4px 20px #000}.countdown.pulse{animation:cd .6s}@keyframes cd{from{transform:scale(1.6);opacity:.2}}
+.modal-back{position:fixed;inset:0;background:#070b18b3;display:grid;place-items:center;z-index:40;padding:14px;animation:fade .25s}@keyframes fade{from{opacity:0}}
+.modal{width:min(420px,100%);background:linear-gradient(160deg,#3a2a48,#1a2140);border:2px solid #ffa6b7;border-radius:20px;padding:16px 18px;text-align:center;box-shadow:0 20px 60px #0008;animation:rise .35s cubic-bezier(.2,1.4,.4,1)}@keyframes rise{from{transform:translateY(24px) scale(.94);opacity:0}}
+.modal h2{margin:0 0 8px}.rank{font-size:3.4rem;font-weight:900;margin:0;line-height:1;color:#ffd278;text-shadow:0 0 18px #ffd27888}.rank-S{color:#ffe98a}.rank-D{color:#b8c9ea;text-shadow:none}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 10px}.res-grid div{background:#10192d;border-radius:12px;padding:8px}.res-grid small{display:block;color:var(--muted);font-size:.85rem}.res-grid b{font-size:1.5rem;color:#ffa6b7;margin-right:2px}
+.score-line{margin:4px 0 10px;line-height:1.6}.newrec{background:#ffd278;color:#11182f;border-radius:6px;padding:2px 8px;font-weight:800}.center-row{justify-content:center}
+body.playing .eyebrow,body.playing h1,body.playing .lead{display:none}
+@media(max-width:520px){
+ body.playing header{padding:8px 14px}body.playing main{padding-top:0}.lead{display:none}.intro{margin:4px auto}.intro .icon{font-size:2.4rem}.seg{gap:6px}.seg button{min-width:0;padding:8px 4px}
+ .panel.game{padding:10px 10px}.panel.game .toolbar button{padding:6px 9px}.mailbox{font-size:1.7rem;right:-2px}
+ .word-card .badge{display:none}.word-card{padding:8px 10px 10px}.jp{font-size:1.55rem;margin:0}.roma{font-size:1.3rem;margin-top:4px}.type-in{margin-top:8px;padding:9px}.timebar{margin-bottom:8px}
+}
+@media(prefers-reduced-motion:reduce){.word-card,.mailbox,.fly,.route span,.countdown,.modal,.roma .cur{animation:none!important}}
 </style><!-- LUDOT-SEO-START -->
-<meta name="description" content="60秒間でいくつ配達できるかな？ 表示されたローマ字をそのまま入力。最初の入力から計測が始まるよ。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="60秒で いくつ言葉を配達できるかな？ 3つのレベル・150こ以上のお題。ノーミスで届けると+1秒！ 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/030-kotoba-delivery/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ことば配達便","description":"60秒間でいくつ配達できるかな？ 表示されたローマ字をそのまま入力。最初の入力から計測が始まるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/030-kotoba-delivery/index.html","inLanguage":"ja","genre":"TYPING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ことば配達便","description":"60秒で いくつ言葉を配達できるかな？ 3つのレベル・150こ以上のお題。ノーミスで届けると+1秒！","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/030-kotoba-delivery/index.html","inLanguage":"ja","genre":"TYPING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="030"></script>
 <!-- LUDOT-SEO-END -->
-</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">TYPING · #030</div><h1>📮 ことば配達便</h1><p class="lead">ローマ字を打って、言葉を届けよう。</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>60秒間でいくつ配達できるかな？ 表示されたローマ字をそのまま入力。最初の入力から計測が始まるよ。</p><p>PCキーボード推奨。半角英数で入力。スマホの英字キーボードでも遊べます。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
+</head><body><header><a class="brand" href="../../index.html">LUDOT</a><a href="../../index.html">ゲーム一覧へ ↗</a></header><main><div class="eyebrow">TYPING · #030</div><h1>📮 ことば配達便</h1><p class="lead">ローマ字を打って、言葉を届けよう。</p><div id="app"></div><p id="storage-warning" class="save-warning" hidden>このブラウザでは記録を保存できません。この画面ではそのまま遊べます。</p><details class="notes"><summary>遊び方</summary><p>60秒で いくつ言葉を配達できるかな？ レベルは「たんご」「ことば」「ぶん」の3つ・お題は150こ以上。ノーミスで届けると +1秒。最後に正かくさと1分あたりのキー数、ランクが出るよ。</p><p>ローマ字で入力（shi/si・tsu/tu・chi/ti・ji/zi・nn・xtu など、どの打ちかたでもOK）。PCキーボード推奨。スマホは英字キーボードか、かな入力でも遊べます。</p></details></main><footer>無料・ダウンロード不要 · LUDOT</footer><script>
 'use strict';
-const CONFIG={"id": "030", "title": "ことば配達便", "genre": "TYPING", "emoji": "📮", "color": "#ffa6b7", "author": "スタッフ", "age": "8歳〜", "date": "2026-09-13", "description": "60秒間でいくつ配達できるかな？ 表示されたローマ字をそのまま入力。最初の入力から計測が始まるよ。", "controls": "PCキーボード推奨。半角英数で入力。スマホの英字キーボードでも遊べます。", "path": "games/030-kotoba-delivery/index.html", "tagline": "ローマ字を打って、言葉を届けよう。", "rules": "60秒間でいくつ配達できるかな？ 表示されたローマ字をそのまま入力。最初の入力から計測が始まるよ。"};
+const CONFIG={"id": "030", "title": "ことば配達便", "genre": "TYPING", "emoji": "📮", "color": "#ffa6b7", "author": "スタッフ", "age": "8歳〜", "date": "2026-09-13"};
 const app=document.getElementById('app');
 const $=(s,r=app)=>r.querySelector(s), $$=(s,r=app)=>[...r.querySelectorAll(s)];
-const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-let cleanup=[];const on=(el,type,fn,opts)=>{el.addEventListener(type,fn,opts);cleanup.push(()=>el.removeEventListener(type,fn,opts))};
-const every=(fn,ms)=>{const t=setInterval(fn,ms);cleanup.push(()=>clearInterval(t));return t};
-const later=(fn,ms)=>{const t=setTimeout(fn,ms);cleanup.push(()=>clearTimeout(t));return t};
-function stop(){cleanup.forEach(f=>f());cleanup=[]}
+let timers=[];const later=(fn,ms)=>{const t=setTimeout(fn,ms);timers.push(t);return t};let tick=0;
+function stopAll(){timers.forEach(clearTimeout);timers=[];clearInterval(tick)}
 function read(key,fallback){try{const s=localStorage.getItem('ludot-'+CONFIG.id+'-'+key);return s===null?fallback:JSON.parse(s)}catch{return fallback}}
 function save(key,val){try{localStorage.setItem('ludot-'+CONFIG.id+'-'+key,JSON.stringify(val))}catch{document.getElementById('storage-warning').hidden=false}}
-function best(n){const old=Number(read('best',0))||0;if(n>old)save('best',n);return Math.max(n,old)}
-function stat(label,value,id=''){return `<div class="stat"><small>${label}</small><b ${id?`id="${id}"`:''}>${value}</b></div>`}
-function stage(content,stats=''){app.innerHTML=`<section class="panel"><div class="toolbar"><div class="stats">${stats}</div><button id="restart">やり直す</button></div><div id="play">${content}</div><div id="notice" class="notice" role="status" aria-live="polite"></div></section>`;$('#restart').onclick=()=>{stop();launch()}}
-function say(s){const el=$('#notice');if(el)el.textContent=s}
-function result(title,text){stop();const p=$('#play');p.insertAdjacentHTML('beforeend',`<section class="panel result" role="status"><h2>${title}</h2><p>${text}</p><button id="again" class="primary">もう一度あそぶ</button></section>`);$('#again').onclick=()=>{stop();launch()}}
-let audioContext;function tone(freq=440,dur=.1){try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();if(audioContext.state==='suspended')audioContext.resume();const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.09,audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+dur);o.connect(g).connect(audioContext.destination);o.start();o.stop(audioContext.currentTime+dur)}catch{}}
-function canvas(w=600,h=420){return `<canvas id="canvas" width="${w}" height="${h}" aria-label="${CONFIG.title}のプレイ画面"></canvas>`}
-function loop(fn){let active=true,id,last=performance.now();function step(now){if(!active)return;const dt=Math.min((now-last)/1000,.05);last=now;fn(dt,now);if(active)id=requestAnimationFrame(step)}id=requestAnimationFrame(step);cleanup.push(()=>{active=false;cancelAnimationFrame(id)})}
-function point(e,c){const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}}
-function circle(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-function label(ctx,s,x,y,color='#eef3ff',size=20){ctx.fillStyle=color;ctx.font=`bold ${size}px system-ui`;ctx.textAlign='center';ctx.fillText(s,x,y)}
-const TYPING=[['さくら','sakura'],['ねこ','neko'],['おはよう','ohayou'],['ありがとう','arigatou'],['青い空','aoi sora'],['ゆっくり','yukkuri'],['みんなで遊ぼう','minnade asobou'],['おいしいりんご','oishii ringo'],['小さな花','chiisana hana'],['きらきら星','kirakira boshi'],['明日も元気','ashitamo genki'],['届けよう','todokeyou'],['たのしい時間','tanoshii jikan'],['虹を見つけた','nijiwo mitsuketa'],['森の郵便局','morino yuubinkyoku']];
-function mount(){let deck=shuffle(TYPING),i=0,count=0,typed=0,start=null,done=false;stage('<div class="center"><span class="badge">配達先の言葉</span><h2 id="jp"></h2><div id="target" class="big" style="font-size:clamp(1.3rem,4vw,2.5rem);overflow-wrap:anywhere"></div><label for="type">表示されたローマ字を入力（半角英数）</label><p><input id="type" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url" style="width:100%"></p><div class="meter"><i id="meter"></i></div></div>',stat('残り','60秒','time')+stat('配達','0件','delivered'));function draw(){$('#jp').textContent=deck[i][0];$('#target').textContent=deck[i][1];$('#type').value='';$('#meter').style.width='0%'}draw();$('#type').oninput=()=>{if(done)return;start??=performance.now();const s=$('#type').value.toLowerCase(),goal=deck[i][1];$('#meter').style.width=(s.length/goal.length*100)+'%';say(goal.startsWith(s)?'その調子！':'表示と違う文字があるよ。Backspaceで直そう。');if(s===goal){count++;typed+=goal.length;$('#delivered').textContent=count+'件';tone(600);i++;if(i===deck.length){deck=shuffle(TYPING);i=0}draw()}};every(()=>{if(!start||done)return;const left=Math.max(0,60-(performance.now()-start)/1000);$('#time').textContent=Math.ceil(left)+'秒';if(!left){done=true;$('#type').disabled=true;result('配達おつかれさま！',`${count}件・${typed}文字を配達。ベスト ${best(count)}件`) }},100);say('入力を始めると60秒スタート。日本語入力をOFFにしてね。')}
 
-function launch(){mount()}
-app.innerHTML=`<section class="panel intro"><div class="icon">${CONFIG.emoji}</div><h2>${CONFIG.title}</h2><p>${CONFIG.rules}</p><button class="primary" id="start">あそぶ</button><p class="small">${CONFIG.controls}</p></section>`;
-$('#start').onclick=launch;
-on(window,'keydown',e=>{if(e.key==='Enter'&&$('#start')){e.preventDefault();stop();launch()}});
+/* ---------- おと ---------- */
+let ac,muted=!!read('mute',false);
+function tone(f,d=.1,type='sine',vol=.07,delay=0){if(muted)return;try{ac??=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const t=ac.currentTime+delay,o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+d+.03)}catch{}}
+const SFX={
+ key:()=>tone(1100+Math.random()*120,.035,'triangle',.035),
+ miss:()=>tone(160,.14,'square',.04),
+ deliver:p=>{tone(784,.1,'triangle',.07);tone(1175,.16,'triangle',.07,.08);if(p)tone(1568,.18,'triangle',.06,.18)},
+ count:h=>tone(h?988:659,.14,'sine',.07),
+ end:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.24,'triangle',.07,i*.11)),
+};
+
+/* ---------- ローマ字エンジン（ヘボン式・訓令式・xtu/ltu など OK） ---------- */
+const K={あ:'a',い:'i,yi',う:'u,wu,whu',え:'e',お:'o',か:'ka,ca',き:'ki',く:'ku,cu,qu',け:'ke',こ:'ko,co',さ:'sa',し:'si,shi,ci',す:'su',せ:'se,ce',そ:'so',た:'ta',ち:'ti,chi',つ:'tu,tsu',て:'te',と:'to',な:'na',に:'ni',ぬ:'nu',ね:'ne',の:'no',は:'ha',ひ:'hi',ふ:'hu,fu',へ:'he',ほ:'ho',ま:'ma',み:'mi',む:'mu',め:'me',も:'mo',や:'ya',ゆ:'yu',よ:'yo',ら:'ra',り:'ri',る:'ru',れ:'re',ろ:'ro',わ:'wa',を:'wo',が:'ga',ぎ:'gi',ぐ:'gu',げ:'ge',ご:'go',ざ:'za',じ:'zi,ji',ず:'zu',ぜ:'ze',ぞ:'zo',だ:'da',ぢ:'di',づ:'du',で:'de',ど:'do',ば:'ba',び:'bi',ぶ:'bu',べ:'be',ぼ:'bo',ぱ:'pa',ぴ:'pi',ぷ:'pu',ぺ:'pe',ぽ:'po',ゔ:'vu',ぁ:'xa,la',ぃ:'xi,li',ぅ:'xu,lu',ぇ:'xe,le',ぉ:'xo,lo',ゃ:'xya,lya',ゅ:'xyu,lyu',ょ:'xyo,lyo',っ:'xtu,ltu,xtsu,ltsu',ー:'-','、':',','。':'.','！':'!','？':'?',' ':' '};
+const Y={き:'ky',し:'sy,sh',ち:'ty,ch,cy',に:'ny',ひ:'hy',み:'my',り:'ry',ぎ:'gy',じ:'zy,jy,j',ぢ:'dy',び:'by',ぴ:'py'};
+const EXTRA2={しぇ:'she,sye',ちぇ:'che,tye',じぇ:'je,zye,jye',ふぁ:'fa',ふぃ:'fi',ふぇ:'fe',ふぉ:'fo',てぃ:'thi',でぃ:'dhi',うぃ:'wi',うぇ:'we',とぅ:'twu',どぅ:'dwu'};
+const cands=k=>K[k]?K[k].split(','):null;
+function tokenize(s){const out=[],ch=[...s];
+ for(let i=0;i<ch.length;i++){const c=ch[i],n=ch[i+1];
+  let unit=null;
+  if(n&&'ゃゅょ'.includes(n)&&Y[c]){const v={ゃ:'a',ゅ:'u',ょ:'o'}[n];unit={kana:c+n,c:Y[c].split(',').map(p=>p+v)};unit.c.push(...cands(c).flatMap(a=>cands(n).map(b=>a+b)));i++}
+  else if(n&&EXTRA2[c+n]){unit={kana:c+n,c:EXTRA2[c+n].split(',')};unit.c.push(...cands(c).flatMap(a=>cands(n).map(b=>a+b)));i++}
+  else if(c==='ん'){unit={kana:'ん',c:['nn',"n'",'xn'],n:true}}
+  else if(cands(c))unit={kana:c,c:cands(c)};
+  else throw new Error('romaji?'+c);
+  out.push(unit)}
+ // ん：つぎが母音・や行・な行でなければ n 1回でもOK
+ out.forEach((u,i)=>{if(u.n){const nx=out[i+1];if(nx&&!nx.c.some(x=>/^[aiueoyn']/.test(x)))u.c.unshift('n')}});
+ // っ：つぎの子音を2回うつ（kka・tta・cchi など）
+ for(let i=out.length-2;i>=0;i--){if(out[i].kana==='っ'&&out[i+1].kana!=='っ'){const nx=out[i+1],dbl=nx.c.filter(x=>/^[bcdfghjkmpqrstvwxyz]/.test(x)).map(x=>x[0]+x);if(dbl.length){const merged={kana:'っ'+nx.kana,c:[...dbl,...out[i].c.flatMap(a=>nx.c.map(b=>a+b))]};out.splice(i,2,merged)}}}
+ return out}
+class Typer{
+ constructor(kana){this.units=tokenize(kana);this.i=0;this.buf='';this.done=[];}
+ get finished(){return this.i>=this.units.length}
+ key(k){ // true=正しい / false=ミス
+  if(this.finished)return false;const u=this.units[this.i],nb=this.buf+k,m=u.c.filter(c=>c.startsWith(nb));
+  if(m.length){this.buf=nb;if(m.length===1&&m[0]===nb||m.every(c=>c===nb))this.advance();return true}
+  // 「n」だけで ん を終えて、つぎの文字へ
+  if(u.c.includes(this.buf)&&this.buf){this.advance();return this.key(k)}
+  return false}
+ kanaKey(ch){ // かな入力にも対応
+  if(this.finished)return false;const u=this.units[this.i];if(this.buf)return false;
+  if(u.kana[0]===ch){if(u.kana.length===1){this.buf='';this.done.push(u.c[0]);this.i++;this.kanaRest=''}else{this.units[this.i]={kana:u.kana.slice(1),c:tokenize(u.kana.slice(1)).flatMap(x=>x.c)};this.done.push('')}return true}
+  return false}
+ advance(){this.done.push(this.buf);this.buf='';this.i++}
+ flush(){const u=this.units[this.i];if(u&&this.buf&&u.c.includes(this.buf))this.advance()}
+ guide(){ // [うった部分, のこり]
+  const typed=this.done.join('')+this.buf;let rest='';
+  for(let j=this.i;j<this.units.length;j++){const u=this.units[j];if(j===this.i&&this.buf){const c=u.c.find(x=>x.startsWith(this.buf))||u.c[0];rest+=c.slice(this.buf.length)}else rest+=u.c[0]}
+  return [typed,rest]}
+}
+
+/* ---------- お題 [ひょうじ, よみ] ---------- */
+const WORDS={
+ easy:{name:'たんご',sub:'みじかい言葉',list:`さくら ねこ いぬ りんご みかん すいか ゆき にじ ほし つき そら うみ やま かわ はな くも かぜ あめ きつね うさぎ たぬき くじら いるか かめ とり さかな ちょう とんぼ せみ ぶどう もも いちご ぱん おちゃ ごはん みず てがみ きって はがき でんしゃ ふね くるま えほん かばん ぼうし くつ とけい めがね かさ ほん つくえ いす まど にんじゃ おばけ こま たいこ ふえ どんぐり まつぼっくり`.split(' ').map(w=>[w,w]).concat([['パンダ','ぱんだ'],['ケーキ','けーき'],['メロン','めろん'],['バナナ','ばなな'],['トマト','とまと'],['ポスト','ぽすと'],['バス','ばす'],['ノート','のーと'],['ドア','どあ'],['ロボット','ろぼっと'],['ピアノ','ぴあの'],['ボール','ぼーる']])},
+ mid:{name:'ことば',sub:'ながめの言葉',list:[['青い空','あおいそら'],['白い雲','しろいくも'],['赤いりんご','あかいりんご'],['小さな花','ちいさなはな'],['大きな木','おおきなき'],['きらきら星','きらきらぼし'],['おはよう','おはよう'],['こんにちは','こんにちは'],['こんばんは','こんばんは'],['ありがとう','ありがとう'],['さようなら','さようなら'],['いただきます','いただきます'],['ごちそうさま','ごちそうさま'],['おやすみ','おやすみ'],['ゆっくり','ゆっくり'],['たのしい時間','たのしいじかん'],['森の郵便局','もりのゆうびんきょく'],['赤いポスト','あかいぽすと'],['お手紙','おてがみ'],['虹の橋','にじのはし'],['夏休み','なつやすみ'],['雪だるま','ゆきだるま'],['花火大会','はなびたいかい'],['お月見','おつきみ'],['運動会','うんどうかい'],['遠足','えんそく'],['誕生日','たんじょうび'],['動物園','どうぶつえん'],['水族館','すいぞくかん'],['遊園地','ゆうえんち'],['図書館','としょかん'],['新幹線','しんかんせん'],['消防車','しょうぼうしゃ'],['救急車','きゅうきゅうしゃ'],['自転車','じてんしゃ'],['宇宙飛行士','うちゅうひこうし'],['ジェットコースター','じぇっとこーすたー'],['チョコレート','ちょこれーと'],['ハンバーグ','はんばーぐ'],['オムライス','おむらいす'],['カレーライス','かれーらいす'],['ショートケーキ','しょーとけーき'],['シャボン玉','しゃぼんだま'],['かたつむり','かたつむり'],['かぶとむし','かぶとむし'],['ひまわり','ひまわり'],['たんぽぽ','たんぽぽ'],['チューリップ','ちゅーりっぷ'],['ペンギン','ぺんぎん'],['ライオン','らいおん'],['きょうりゅう','きょうりゅう'],['小包','こづつみ'],['切手をはる','きってをはる']]},
+ hard:{name:'ぶん',sub:'みじかい文',list:[['みんなで遊ぼう','みんなであそぼう'],['明日も元気','あしたもげんき'],['虹を見つけた','にじをみつけた'],['手紙を届けよう','てがみをとどけよう'],['今日はいい天気','きょうはいいてんき'],['おなかがすいた','おなかがすいた'],['星がきれいだね','ほしがきれいだね'],['公園で遊んだ','こうえんであそんだ'],['本を読むのが好き','ほんをよむのがすき'],['雨がふってきた','あめがふってきた'],['ねこがねている','ねこがねている'],['おかえりなさい','おかえりなさい'],['また明日ね','またあしたね'],['いっしょに帰ろう','いっしょにかえろう'],['早起きは三文の徳','はやおきはさんもんのとく'],['ちりも積もれば山となる','ちりもつもればやまとなる'],['花より団子','はなよりだんご'],['石の上にも三年','いしのうえにもさんねん'],['急がば回れ','いそがばまわれ'],['笑う門には福来る','わらうかどにはふくきたる'],['郵便屋さんありがとう','ゆうびんやさんありがとう'],['小包をお届けします','こづつみをおとどけします'],['はがきを出しに行く','はがきをだしにいく'],['夏祭りに行きたい','なつまつりにいきたい'],['宿題が終わった','しゅくだいがおわった'],['朝ごはんを食べた','あさごはんをたべた'],['きれいな夕焼け','きれいなゆうやけ'],['森のくまさん','もりのくまさん'],['ぼくの友だち','ぼくのともだち'],['にもつが届いたよ','にもつがとどいたよ'],['ポストに入れてね','ぽすとにいれてね'],['いい日になりますように','いいひになりますように']]},
+};
+const LIMIT=60;
+const MODES=['easy','mid','hard'];
+
+function muteBtn(){return `<button id="mute" class="icon-btn" aria-label="${muted?'おとを だす':'おとを けす'}">${muted?'🔇':'🔊'}</button>`}
+function bindMute(){const b=$('#mute');if(b)b.onclick=()=>{muted=!muted;save('mute',muted);b.textContent=muted?'🔇':'🔊';if(!muted)SFX.key();$('#type')?.focus()}}
+
+let mode=read('mode','easy');if(!MODES.includes(mode))mode='easy';
+function hi(m){const h=read('hiscore-'+m,null);return h&&typeof h.score==='number'?h:{score:0,kpm:0,acc:0,count:0}}
+function title(){stopAll();document.body.classList.remove('playing');game=null;
+ app.innerHTML=`<section class="panel intro"><div class="intro-top">${muteBtn()}</div><div class="icon">${CONFIG.emoji}</div><h2>${CONFIG.title}</h2>
+ <p>ローマ字を打って、60びょうで 言葉を たくさん とどけよう！<br><b>ノーミス</b>で とどけると <b>+1びょう</b>。</p>
+ <div class="seg" role="group" aria-label="むずかしさ">${MODES.map(m=>`<button data-m="${m}" class="${m===mode?'on':''}">${WORDS[m].name}<small>${WORDS[m].sub}</small></button>`).join('')}</div>
+ <p class="small muted" id="hi-line">${hiLine()}</p>
+ <button class="primary big-btn" id="start">スタート</button>
+ <p class="small muted">shi / si、tsu / tu、chi / ti、ji / zi、nn、xtu などの 打ちかたも OK。スマホは かな入力でも あそべるよ。</p></section>`;
+ bindMute();
+ $$('[data-m]').forEach(b=>b.onclick=()=>{mode=b.dataset.m;save('mode',mode);$$('[data-m]').forEach(x=>x.classList.toggle('on',x===b));$('#hi-line').textContent=hiLine();SFX.key()});
+ $('#start').onclick=start;}
+function hiLine(){const h=hi(mode);return `「${WORDS[mode].name}」のベスト：${h.score}点（${h.count}件・1分に${h.kpm}キー）`}
+
+let game=null;
+function start(){stopAll();document.body.classList.add('playing');
+ game={deck:shuffle(WORDS[mode].list),di:0,typer:null,count:0,ok:0,miss:0,wordMiss:0,left:LIMIT,bonus:0,started:false,over:false,t0:0,perfect:0};
+ app.innerHTML=`<section class="panel game"><div class="toolbar"><div class="stat inline"><small>のこり</small><b id="time">${LIMIT}</b><small>びょう　📮</small><b id="delivered">0</b><small>件</small></div><div class="row tools">${muteBtn()}<button id="quit" aria-label="やめて もどる">≡</button></div></div>
+ <div class="timebar" aria-hidden="true"><i id="tb"></i></div>
+ <div class="card-wrap"><div id="card" class="word-card"><span class="badge">✉️ 配達先の言葉</span><div id="jp" class="jp"></div><div id="kana" class="kana"></div><div id="roma" class="roma" aria-live="off"></div></div><div id="mailbox" class="mailbox">📫</div></div>
+ <input id="type" class="type-in" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="url" enterkeyhint="done" aria-label="ここにローマ字で入力">
+ <div id="notice" class="notice" role="status" aria-live="polite"></div>
+ <div id="route" class="route" aria-hidden="true"></div>
+ <div id="countdown" class="countdown">3</div></section>`;
+ bindMute();$('#quit').onclick=title;
+ const inp=$('#type');inp.focus();
+ inp.addEventListener('input',onInput);inp.addEventListener('compositionend',onCompEnd);
+ inp.addEventListener('keydown',e=>{if(e.key==='Escape'){title()}});
+ $('.panel.game').addEventListener('pointerdown',e=>{if(!e.target.closest('button'))later(()=>$('#type')?.focus({preventScroll:true}),0)});
+ nextWord();window.scrollTo(0,0);
+ let c=3;SFX.count(false);say('日本語入力は OFF にしてね（スマホは かな入力でもOK）');
+ const cd=()=>{c--;const el=$('#countdown');if(!el)return;if(c>0){el.textContent=c;el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse');SFX.count(false);later(cd,700)}else{el.textContent='GO!';SFX.count(true);later(()=>el.remove(),350);begin()}};
+ later(cd,700);}
+function begin(){game.started=true;game.t0=performance.now();say('');$('#type').focus({preventScroll:true});
+ tick=setInterval(()=>{if(!game||game.over)return;const el=(performance.now()-game.t0)/1000;game.left=Math.max(0,LIMIT+game.bonus-el);$('#time').textContent=Math.ceil(game.left);
+  $('#tb').style.width=Math.min(100,game.left/LIMIT*100)+'%';$('#tb').classList.toggle('low',game.left<10);if(game.left<=0)finish()},100)}
+function nextWord(){if(game.di>=game.deck.length){game.deck=shuffle(WORDS[mode].list);game.di=0}
+ const [jp,kana]=game.deck[game.di++];game.cur={jp,kana};game.typer=new Typer(kana);game.wordMiss=0;
+ $('#jp').textContent=jp;$('#kana').textContent=jp===kana?'':kana;$('#kana').hidden=jp===kana;render();
+ const c=$('#card');c.classList.remove('in');void c.offsetWidth;c.classList.add('in');}
+function render(){const [a,b]=game.typer.guide();$('#roma').innerHTML=`<span class="done">${a}</span><span class="cur">${b.slice(0,1)}</span><span class="rest">${b.slice(1)}</span>`;
+ // かなの進みぐあい
+ const t=game.typer;let kd='';for(let j=0;j<t.i;j++)kd+=t.units[j].kana;const shown=game.cur.kana;const n=Math.min([...shown].length,[...kd].length);
+ const target=$('#kana').hidden?$('#jp'):$('#kana');const ch=[...shown];target.innerHTML=`<span class="done">${ch.slice(0,n).join('')}</span>${ch.slice(n).join('')}`;}
+function onCompEnd(e){const inp=e.target;handleText(e.data||inp.value);inp.value=''}
+function onInput(e){if(e.isComposing)return;const inp=e.target;const v=inp.value;inp.value='';handleText(v)}
+function handleText(v){if(!game||!v)return;if(!game.started||game.over)return;
+ for(const ch of v){
+  if(/[ぁ-ゖー、。]/.test(ch)){ if(game.typer.kanaKey(ch))good();else bad();continue}
+  if(/[ァ-ヶ]/.test(ch)){const h=String.fromCharCode(ch.charCodeAt(0)-96);if(game.typer.kanaKey(h))good();else bad();continue}
+  const k=ch.normalize('NFKC').toLowerCase();if(!/[a-z\-'.,!? ]/.test(k)){bad(true);continue}
+  if(game.typer.key(k))good();else bad();
+  if(game.over)return}}
+function good(){game.ok++;SFX.key();if(game.typer.finished)deliver();else render()}
+function bad(ime){game.miss++;game.wordMiss++;SFX.miss();const c=$('#card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
+ const cur=$('#roma .cur');if(cur){cur.classList.remove('flash');void cur.offsetWidth;cur.classList.add('flash')}
+ say(ime?'日本語入力が ON かも。半角英数に きりかえてね':`「${($('#roma .cur')||{}).textContent||''}」を うってね`,'warn')}
+function deliver(){game.count++;const perfect=game.wordMiss===0;if(perfect){game.bonus+=1;game.perfect++}
+ SFX.deliver(perfect);$('#delivered').textContent=game.count;
+ const env=document.createElement('span');env.className='fly';env.textContent='✉️';$('.card-wrap').appendChild(env);later(()=>env.remove(),650);
+ const mb=$('#mailbox');mb.classList.remove('got');void mb.offsetWidth;mb.classList.add('got');
+ const r=$('#route');r.insertAdjacentHTML('beforeend',`<span class="${perfect?'p':''}" title="${game.cur.jp}">${perfect?'🏠':'🏡'}</span>`);if(r.children.length>24)r.firstElementChild.remove();
+ say(perfect?`ノーミス！ +1びょう（${game.cur.jp}）`:`とどけた！（${game.cur.jp}）`,perfect?'good':'');
+ nextWord()}
+function say(s,cls=''){const n=$('#notice');if(n){n.textContent=s;n.className='notice '+cls}}
+function finish(){if(!game||game.over)return;game.over=true;clearInterval(tick);game.typer.flush();
+ const secs=Math.max(1,(performance.now()-game.t0)/1000),acc=game.ok+game.miss?game.ok/(game.ok+game.miss):0,kpm=Math.round(game.ok/secs*60);
+ const score=Math.round(game.ok*acc*acc+game.count*5);
+ const rank=kpm>=240&&acc>=.95?['S','ゆうびん名人！']:kpm>=170?['A','はやうち配達員']:kpm>=110?['B','いちにんまえ配達員']:kpm>=60?['C','みならい配達員']:['D','はじめての配達'];
+ const h=hi(mode),isNew=score>h.score;if(isNew)save('hiscore-'+mode,{score,kpm,acc:Math.round(acc*100),count:game.count});
+ const oldBest=Number(read('best',0))||0;if(game.count>oldBest)save('best',game.count);
+ SFX.end();$('#type').blur();$('#type').disabled=true;
+ $('.panel.game').insertAdjacentHTML('beforeend',`<div class="modal-back"><section class="modal" role="dialog" aria-label="けっか">
+ <p class="rank rank-${rank[0]}">${rank[0]}</p><h2>${rank[1]}</h2>
+ <div class="res-grid"><div><small>とどけた</small><b>${game.count}</b>件</div><div><small>正しく打った</small><b>${game.ok}</b>キー</div><div><small>正かくさ</small><b>${Math.round(acc*100)}</b>%</div><div><small>1分あたり</small><b>${kpm}</b>キー</div></div>
+ <p class="score-line">とくてん <b>${score}</b>点 ${isNew?'<span class="newrec">ベスト更新！</span>':`（ベスト ${h.score}点）`}<br><span class="muted">ノーミス配達 ${game.perfect}件 ／ ミス ${game.miss}回</span></p>
+ <div class="row center-row"><button id="again" class="primary">もういちど</button><button id="menu">レベルをえらぶ</button></div></section></div>`);
+ $('#again').onclick=start;$('#menu').onclick=title;$('#again').focus({preventScroll:true});}
+window.addEventListener('keydown',e=>{if(!game&&e.key==='Enter'&&$('#start')&&document.activeElement===document.body){e.preventDefault();start()}});
+title();
+
 </script></body></html>
