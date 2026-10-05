@@ -1,0 +1,129 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c050sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#131322"/><stop offset="0.6" stop-color="#1c1c3a"/><stop offset="1" stop-color="#16203a"/>
+    </linearGradient>
+    <radialGradient id="c050glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff5fa2" stop-opacity="0.55"/><stop offset="0.5" stop-color="#a06bff" stop-opacity="0.22"/><stop offset="1" stop-color="#a06bff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c050gglow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd166" stop-opacity="0.6"/><stop offset="1" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c050ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2446"/><stop offset="1" stop-color="#0f1528"/>
+    </linearGradient>
+    <linearGradient id="c050mole" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2a872"/><stop offset="1" stop-color="#8f5c36"/>
+    </linearGradient>
+    <linearGradient id="c050gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3a8"/><stop offset="1" stop-color="#e6a21a"/>
+    </linearGradient>
+    <linearGradient id="c050chick" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff7b0"/><stop offset="1" stop-color="#ffc21f"/>
+    </linearGradient>
+    <linearGradient id="c050dirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f3276"/><stop offset="1" stop-color="#1d1740"/>
+    </linearGradient>
+    <linearGradient id="c050ham" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff9ac8"/><stop offset="0.5" stop-color="#ff5fa2"/><stop offset="1" stop-color="#c22f74"/>
+    </linearGradient>
+    <filter id="c050blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+
+  <rect width="400" height="225" fill="url(#c050sky)"/>
+  <g fill="#eeecfa">
+    <circle cx="28" cy="24" r="1.4" opacity="0.8"/><circle cx="70" cy="52" r="1" opacity="0.6"/><circle cx="118" cy="20" r="1.2" opacity="0.7"/>
+    <circle cx="336" cy="26" r="1.5" opacity="0.8"/><circle cx="372" cy="62" r="1" opacity="0.6"/><circle cx="300" cy="48" r="1" opacity="0.5"/>
+    <circle cx="160" cy="44" r="0.9" opacity="0.5"/><circle cx="20" cy="88" r="1" opacity="0.5"/><circle cx="384" cy="110" r="1.2" opacity="0.6"/>
+  </g>
+  <path d="M352 30l2.2 6.3 6.3 2.2-6.3 2.2-2.2 6.3-2.2-6.3-6.3-2.2 6.3-2.2z" fill="#53e0d8" opacity="0.9"/>
+  <path d="M46 60l1.8 5 5 1.8-5 1.8-1.8 5-1.8-5-5-1.8 5-1.8z" fill="#a06bff" opacity="0.9"/>
+
+  <ellipse cx="200" cy="120" rx="150" ry="110" fill="url(#c050glow)"/>
+  <path d="M0 150 Q200 128 400 150 V225 H0Z" fill="url(#c050ground)"/>
+  <path d="M0 150 Q200 128 400 150" fill="none" stroke="#53e0d8" stroke-opacity="0.35" stroke-width="1.5"/>
+  <g stroke="#53e0d8" stroke-opacity="0.5" stroke-width="1.6" stroke-linecap="round" fill="none">
+    <path d="M22 196l-3-8M22 196l1-10M22 196l4-7"/><path d="M134 212l-3-8M134 212l1-10M134 212l4-7"/>
+    <path d="M270 214l-3-8M270 214l1-10M270 214l4-7"/><path d="M380 198l-3-8M380 198l1-10M380 198l4-7"/>
+    <path d="M140 160l-2-6M140 160l1-8M140 160l3-5"/><path d="M262 160l-2-6M262 160l1-8M262 160l3-5"/>
+  </g>
+  <g><circle cx="12" cy="214" r="2" fill="#ff5fa2"/><circle cx="390" cy="216" r="2" fill="#ffd166"/><circle cx="118" cy="168" r="1.6" fill="#ffd166"/><circle cx="286" cy="170" r="1.6" fill="#ff5fa2"/></g>
+
+  <!-- left hole : chick (do not hit) -->
+  <ellipse cx="76" cy="182" rx="54" ry="20" fill="#3a2f6c"/>
+  <ellipse cx="76" cy="180" rx="44" ry="13" fill="#05050c"/>
+  <path d="M76 124 Q73 112 66 108 M76 124 Q77 110 76 104 M76 124 Q81 112 87 109" fill="none" stroke="#ffab00" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M46 193 V152 A30 30 0 0 1 106 152 V193Z" fill="url(#c050chick)" stroke="#7a5200" stroke-width="2.2"/>
+  <path d="M54 146 A24 24 0 0 1 70 128" fill="none" stroke="#ffffff" stroke-opacity="0.8" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="56" cy="158" rx="5.5" ry="4" fill="#ff5fa2" opacity="0.5"/><ellipse cx="96" cy="158" rx="5.5" ry="4" fill="#ff5fa2" opacity="0.5"/>
+  <path d="M68 151 H84 L76 162Z" fill="#ff8c42" stroke="#a34a12" stroke-width="1.4" stroke-linejoin="round"/>
+  <ellipse cx="63" cy="144" rx="4.4" ry="4.9" fill="#1a1020"/><ellipse cx="89" cy="144" rx="4.4" ry="4.9" fill="#1a1020"/>
+  <circle cx="61.6" cy="142.4" r="1.6" fill="#fff"/><circle cx="87.6" cy="142.4" r="1.6" fill="#fff"/>
+  <path d="M24 181 A52 20 0 0 0 128 181 L120 180 A44 13 0 0 1 32 180Z" fill="url(#c050dirt)"/>
+  <path d="M32 180 A44 13 0 0 0 120 180" fill="none" stroke="#b68cff" stroke-width="2.4"/>
+  <g transform="translate(112 112)">
+    <circle r="17" fill="#ff3b6b" opacity="0.35" filter="url(#c050blur)"/>
+    <circle r="14" fill="#1c1c33" stroke="#ff5fa2" stroke-width="2.4"/>
+    <path d="M-6 -6L6 6M6 -6L-6 6" stroke="#ff5fa2" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- right hole : gold mole -->
+  <ellipse cx="326" cy="150" rx="70" ry="60" fill="url(#c050gglow)"/>
+  <ellipse cx="326" cy="182" rx="54" ry="20" fill="#3a2f6c"/>
+  <ellipse cx="326" cy="180" rx="44" ry="13" fill="#05050c"/>
+  <path d="M294 193 V154 A32 32 0 0 1 358 154 V193Z" fill="url(#c050gold)" stroke="#6e4a00" stroke-width="2.2"/>
+  <path d="M302 148 A26 26 0 0 1 320 128" fill="none" stroke="#ffffff" stroke-opacity="0.9" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="326" cy="162" rx="16" ry="10.5" fill="#fffbe0"/>
+  <ellipse cx="326" cy="156" rx="7.6" ry="5.8" fill="#ff7fb4" stroke="#b03a66" stroke-width="0.9"/>
+  <ellipse cx="323.6" cy="154" rx="2.2" ry="1.5" fill="#fff" opacity="0.9"/>
+  <ellipse cx="313" cy="145" rx="3.5" ry="3.9" fill="#1a1020"/><ellipse cx="339" cy="145" rx="3.5" ry="3.9" fill="#1a1020"/>
+  <circle cx="311.9" cy="143.8" r="1.3" fill="#fff"/><circle cx="337.9" cy="143.8" r="1.3" fill="#fff"/>
+  <rect x="321.4" y="167" width="4.3" height="7" rx="1.4" fill="#fff" stroke="#6e4a00" stroke-width="1"/><rect x="326.3" y="167" width="4.3" height="7" rx="1.4" fill="#fff" stroke="#6e4a00" stroke-width="1"/>
+  <path d="M274 181 A52 20 0 0 0 378 181 L370 180 A44 13 0 0 1 282 180Z" fill="url(#c050dirt)"/>
+  <path d="M282 180 A44 13 0 0 0 370 180" fill="none" stroke="#b68cff" stroke-width="2.4"/>
+  <g fill="#ffffff">
+    <path d="M372 122l1.8 5 5 1.8-5 1.8-1.8 5-1.8-5-5-1.8 5-1.8z"/><path d="M286 116l1.4 4 4 1.4-4 1.4-1.4 4-1.4-4-4-1.4 4-1.4z" opacity="0.9"/>
+    <path d="M364 96l1.1 3.2 3.2 1.1-3.2 1.1-1.1 3.2-1.1-3.2-3.2-1.1 3.2-1.1z" opacity="0.8"/>
+  </g>
+
+  <!-- center hole : the mole -->
+  <ellipse cx="200" cy="192" rx="80" ry="27" fill="#3a2f6c"/>
+  <ellipse cx="200" cy="189" rx="66" ry="18" fill="#05050c"/>
+  <path d="M152 212 V110 A48 48 0 0 1 248 110 V212Z" fill="url(#c050mole)" stroke="#3d2413" stroke-width="2.8"/>
+  <path d="M164 104 A38 38 0 0 1 190 72" fill="none" stroke="#fff0d8" stroke-opacity="0.55" stroke-width="4.5" stroke-linecap="round"/>
+  <ellipse cx="200" cy="182" rx="27" ry="24" fill="#efcfa6"/>
+  <g stroke="#3d2413" stroke-opacity="0.55" stroke-width="1.6" stroke-linecap="round">
+    <path d="M177 124L159 119M177 130L159 132M223 124L241 119M223 130L241 132"/>
+  </g>
+  <ellipse cx="200" cy="126" rx="25" ry="16.5" fill="#f6dcb8"/>
+  <path d="M192 140a8 8 0 0 0 16 0" fill="#5a1f2e"/>
+  <rect x="193" y="138" width="6.6" height="10" rx="2" fill="#fff" stroke="#3d2413" stroke-width="1.4"/><rect x="200.4" y="138" width="6.6" height="10" rx="2" fill="#fff" stroke="#3d2413" stroke-width="1.4"/>
+  <ellipse cx="200" cy="117" rx="12" ry="9" fill="#ff5fa2" stroke="#8c1848" stroke-opacity="0.6" stroke-width="1.2"/>
+  <ellipse cx="196" cy="113.6" rx="3.6" ry="2.4" fill="#fff" opacity="0.9"/>
+  <path d="M174 93l9 5-9 5M226 93l-9 5 9 5" fill="none" stroke="#1a1020" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="160" cy="184" rx="11" ry="7.5" fill="#f7b6c8" stroke="#3d2413" stroke-width="1.8" transform="rotate(17 160 184)"/>
+  <ellipse cx="240" cy="184" rx="11" ry="7.5" fill="#f7b6c8" stroke="#3d2413" stroke-width="1.8" transform="rotate(-17 240 184)"/>
+  <path d="M120 191 A80 28 0 0 0 280 191 L266 189 A66 18 0 0 1 134 189Z" fill="url(#c050dirt)"/>
+  <path d="M134 189 A66 18 0 0 0 266 189" fill="none" stroke="#b68cff" stroke-width="5" opacity="0.4" filter="url(#c050blur)"/>
+  <path d="M134 189 A66 18 0 0 0 266 189" fill="none" stroke="#c9a6ff" stroke-width="2.8"/>
+
+  <!-- impact + dizzy stars -->
+  <path d="M200 30l6 17 17-7-9 16 16 9-18 3 3 18-13-13-13 13 3-18-18-3 16-9-9-16 17 7z" fill="#ffffff" opacity="0.92"/>
+  <path d="M200 40l3.6 9.6 9.6-3.2-5 8.8 8.6 5.2-10 1.6 1.6 10-7.4-7-7.4 7 1.6-10-10-1.6 8.6-5.2-5-8.8 9.6 3.2z" fill="#ffd166"/>
+  <g fill="#ffd166" stroke="#7a5200" stroke-width="0.8">
+    <path d="M150 62l2.6 7 7.4.3-5.8 4.6 2 7.2-6.2-4.2-6.2 4.2 2-7.2-5.8-4.6 7.4-.3z"/>
+    <path d="M254 86l2 5.4 5.8.2-4.6 3.6 1.6 5.6-4.8-3.3-4.8 3.3 1.6-5.6-4.6-3.6 5.8-.2z"/>
+  </g>
+
+  <!-- toy hammer -->
+  <g transform="translate(304 80) rotate(20) scale(0.86)">
+    <rect x="-82" y="-6.5" width="92" height="13" rx="6.5" fill="#ffd166" stroke="#7a5200" stroke-width="2"/>
+    <rect x="-8" y="-8" width="20" height="16" rx="7" fill="#ffb84a" stroke="#7a5200" stroke-width="2"/>
+    <rect x="-116" y="-38" width="46" height="76" rx="13" fill="url(#c050ham)" stroke="#6b1238" stroke-width="2.6"/>
+    <rect x="-114.5" y="-25" width="43" height="7" fill="#ffe9a8"/><rect x="-114.5" y="18" width="43" height="7" fill="#ffe9a8"/>
+    <path d="M-108 -30 V30" stroke="#ffffff" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g stroke="#ff5fa2" stroke-width="3" stroke-linecap="round" opacity="0.85">
+    <path d="M268 22l9 9M282 14l6 11M256 36l11 5"/>
+  </g>
+</svg>
