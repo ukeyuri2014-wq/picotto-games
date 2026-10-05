@@ -156,5 +156,12 @@
       if (state.recent[0]?.id !== currentId) record(g);
     }
   }
+  if (currentId) {
+    // ゲーム画面では星評価ボタンを読み込む（トップはindex.htmlが直接読み込む）
+    const rating = document.createElement('script');
+    rating.src = new URL('assets/ludot-rating.js?v=20261002', root).href;
+    rating.dataset.currentGame = currentId;
+    document.head.append(rating);
+  }
   window.LudotLibrary = {setGames};
 })();
