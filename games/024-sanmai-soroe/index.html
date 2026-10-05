@@ -24,17 +24,17 @@
   .backbar a{color:var(--sub);text-decoration:none}
   .backbar a:hover,.backbar a:focus-visible{color:var(--gold);outline:none}
   .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
-  .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+  @media(hover:hover){.backbar button:hover{color:var(--gold);border-color:var(--gold)}}
   header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
   h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
-  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:12px;letter-spacing:1px;white-space:nowrap}
   #wrap{position:relative;width:min(480px,100%)}
   canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
   .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
   .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;white-space:nowrap}
-  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  @media(hover:hover){.btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}}
   .btn:disabled{opacity:.4;cursor:default}
-  .btn small{display:block;font-size:10px;color:var(--sub);letter-spacing:0;margin-top:2px}
+  .btn small{display:block;font-size:12px;color:var(--sub);letter-spacing:0;margin-top:2px}
   .btn.tool{padding:7px 0 6px}
   .btn.used{opacity:.35}
   #overlay{
@@ -53,10 +53,15 @@
   .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:6px;padding:9px 16px;cursor:pointer;letter-spacing:1px}
   .modes button.alt{background:var(--pink);color:#2b0014}
   .modes button.hidden{display:none}
+  .modes button:disabled{opacity:.45;cursor:default}
+  #overlay .note .warn{color:var(--pink)}
   #overlay .rule{font-size:12px;color:var(--sub)}
   .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
   .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal}
   .help b{color:var(--ink);font-weight:400}
+  /* keep the board + どうぐ buttons inside short phone screens */
+  #wrap,.row{width:min(480px,100%,max(300px,calc((100vh - 205px) * .784)))}
+  @supports(height:100dvh){#wrap,.row{width:min(480px,100%,max(300px,calc((100dvh - 205px) * .784)))}}
 </style>
 <!-- LUDOT-SEO-START -->
 <meta name="description" content="何層にも重なった絵柄タイルを上から取って、下のトレイ（7枠）に集めるじっくりパズル。同じ絵が3枚そろうと弾けて消え、全部消せばクリア。レベルが上がるほど枚数と層が増え（配置は必ず解けるように生成）、道具3種「もどす・シャッフル・3まいだし」で切り抜けよう。タイマーなし、進んだレベルは自動保存。 無料・ダウンロード不要。ルドットで遊べます。">
@@ -467,7 +472,9 @@
 
   // ---- overlay / buttons ------------------------------------------------------------
   const RULES = 'かさなった タイルを タップして、したの <i class="c3">トレイ</i>に いれよう。<br>おなじ 絵が <b>3まい</b> そろうと きえる！ ぜんぶ きえたら クリア。<br>うえに なにも のっていない タイルだけ とれるよ。<br>トレイが <i class="c2">7こ いっぱい</i>に なると ゲームオーバー…<br><br>📱 タイルをタップ ／ ⌨️ 矢印キーで えらんで Enter';
+  let confirmReset = null;   // saved overlay while asking 'レベル1から？'
   function setOverlay(big, cls, note, mainLabel, subLabel) {
+    confirmReset = null; $('btnSub').disabled = false;
     $('ovBig').innerHTML = big; $('ovBig').className = 'big ' + (cls || '');
     $('ovNote').innerHTML = note; $('btnMain').textContent = mainLabel;
     $('btnSub').textContent = subLabel || ''; $('btnSub').classList.toggle('hidden', !subLabel);
@@ -626,7 +633,7 @@
     const remain = tiles.filter(t => !t.removed).length;
     ctx.textAlign = 'center'; ctx.fillStyle = CYAN; ctx.fillText('のこり ' + remain + 'まい', W / 2, 38);
     ctx.textAlign = 'right'; ctx.fillStyle = SUB; ctx.fillText('手数 ' + moves, W - 20, 38);
-    ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.6)'; ctx.textAlign = 'center';
+    ctx.font = '14px DotGothic16, monospace'; ctx.fillStyle = 'rgba(157,153,192,.75)'; ctx.textAlign = 'center';
     ctx.fillText('TILE MATCH ・ おなじ絵を 3まい', W / 2, 56);
   }
   function drawField() {
@@ -648,7 +655,7 @@
     ctx.fillStyle = '#17172f'; ctx.strokeStyle = warn === 1 ? PINK : warn ? GOLD : VIOLET; ctx.lineWidth = 3;
     ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 10 + pulse * 16 * warn;
     rr(TRAY_X - 12, TRAY_Y, TRAY_W + 24, TRAY_H, 14); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
-    ctx.font = '12px DotGothic16, monospace'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'right';
+    ctx.font = '15px DotGothic16, monospace'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'right';
     ctx.fillStyle = warn === 1 ? PINK : SUB; ctx.fillText('トレイ ' + tray.length + ' / ' + TRAY_N + (warn === 1 ? '  あぶない！' : ''), TRAY_X + TRAY_W + 10, TRAY_Y - 6);
     ctx.textAlign = 'left'; ctx.fillStyle = SUB; ctx.fillText('おなじ絵が 3まいで きえる', TRAY_X - 10, TRAY_Y - 6);
     for (let i = 0; i < TRAY_N; i++) {
@@ -681,7 +688,7 @@
     ctx.globalAlpha = 1;
     for (const t of texts) {
       const k = t.t; ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.4;
-      ctx.font = (t.big ? 30 : t.small ? 13 : 20) + 'px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      ctx.font = (t.big ? 30 : t.small ? 16 : 20) + 'px DotGothic16, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = t.color; ctx.shadowColor = t.color; ctx.shadowBlur = 12;
       const y = t.y - easeOut(k) * 34, sc = t.big ? 1 + Math.sin(Math.min(1, k * 3) * Math.PI) * 0.25 : 1;
       ctx.save(); ctx.translate(t.x, y); ctx.scale(sc, sc); ctx.fillText(t.s, 0, 0); ctx.restore(); ctx.shadowBlur = 0;
@@ -720,8 +727,20 @@
     else if (k === 'd' || k === '3') { e.preventDefault(); audio(); useTool('out'); }
     else if (k === 'r') { e.preventDefault(); audio(); startLevel(); }
   });
-  $('btnMain').addEventListener('click', () => { audio(); if (phase === 'cleared') nextLevel(); else startLevel(); });
-  $('btnSub').addEventListener('click', () => { audio(); resetAll(); });
+  function askReset() {
+    const keep = { big: $('ovBig').innerHTML, cls: $('ovBig').className, note: $('ovNote').innerHTML, main: $('btnMain').textContent, sub: $('btnSub').textContent };
+    $('ovBig').innerHTML = 'レベル1から？'; $('ovBig').className = 'big bad';
+    $('ovNote').innerHTML = 'いまは レベル <i class="c3">' + (phase === 'cleared' ? level + 1 : level) + '</i> まで すすんでいるよ。<br><i class="warn">レベル1に もどると、いまの レベルから<br>やりなおせなくなるよ。</i><br>（さいこう記録は のこるよ）';
+    $('btnMain').textContent = 'やめる'; $('btnSub').textContent = 'はい、レベル1から';
+    confirmReset = keep; keep.at = performance.now();
+    const sub = $('btnSub'); sub.disabled = true; setTimeout(() => { if (confirmReset === keep) sub.disabled = false; }, 700);   // no accidental double-tap
+  }
+  function cancelReset() {
+    const k = confirmReset; confirmReset = null; if (!k) return;
+    $('ovBig').innerHTML = k.big; $('ovBig').className = k.cls; $('ovNote').innerHTML = k.note; $('btnMain').textContent = k.main; $('btnSub').textContent = k.sub; $('btnSub').disabled = false;
+  }
+  $('btnMain').addEventListener('click', () => { audio(); if (confirmReset) { cancelReset(); return; } if (phase === 'cleared') nextLevel(); else startLevel(); });
+  $('btnSub').addEventListener('click', () => { audio(); if (!confirmReset) { askReset(); return; } if (performance.now() - confirmReset.at < 700) return; confirmReset = null; resetAll(); });
   $('toolUndo').addEventListener('click', () => { audio(); useTool('undo'); });
   $('toolShuffle').addEventListener('click', () => { audio(); useTool('shuffle'); });
   $('toolOut').addEventListener('click', () => { audio(); useTool('out'); });
