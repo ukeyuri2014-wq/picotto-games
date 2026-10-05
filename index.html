@@ -899,6 +899,33 @@
     .new-arrivals-grid { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:16px; padding:4px 2px 20px; }
     .new-arrivals .card { flex:0 0 72vw; scroll-snap-align:start; }
   }
+  /* ============ 2026-10-06：ジャンルでしぼるチップ／スマホは2列のコンパクト表示 ============ */
+  .genre-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+  .genre-filter button { font: inherit; font-weight: 700; font-size: .86rem; line-height: 1; padding: 0 16px; min-height: 42px; border-radius: 999px; border: 1.5px solid rgba(23,33,61,.14); background: rgba(255,255,255,.9); color: #33405c; cursor: pointer; white-space: nowrap; transition: background .15s, color .15s, border-color .15s; }
+  .genre-filter button:hover { border-color: #17213d; }
+  .genre-filter button[aria-pressed="true"] { background: #17213d; border-color: #17213d; color: #fff; }
+  .genre-filter button:focus-visible { outline: 3px solid #7c5cff; outline-offset: 2px; }
+  .genre-filter .n { font-family: var(--mono); font-size: .7rem; opacity: .62; margin-left: 6px; }
+  @media (max-width: 640px) {
+    .genre-filter { flex-wrap: nowrap; overflow-x: auto; margin-bottom: 16px; padding: 2px 2px 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .genre-filter::-webkit-scrollbar { display: none; }
+    .genre-filter button { flex: none; min-height: 40px; padding: 0 14px; font-size: .82rem; }
+    #game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    #game-grid .card .desc, #game-grid .card .meta, #game-grid .card .card-foot, #game-grid .chips .age, #game-grid .chips .no { display: none; }
+    #game-grid .card-body { padding: 10px 12px 13px; gap: 7px; }
+    #game-grid .card-body h3 { font-size: .98rem; line-height: 1.4; }
+    #game-grid .chips { gap: 5px; flex-wrap: wrap; }
+    #game-grid .chips .chip { font-size: .56rem; padding: 3px 7px; letter-spacing: .08em; }
+    #game-grid .game-tile > .favorite-button { right: 6px; top: 6px; min-height: 30px; padding: 3px 9px; font-size: .66rem; }
+  }
+  /* スマホの最初の画面：見出しを2行におさめ、絵を少し低くして「あそぶ」ボタンまで早く届くように */
+  @media (max-width: 720px) {
+    .hero-stage { min-height: 0; }
+    .hero-stage::before { background-size: auto 330px; }
+    .hero-stage::after { background: linear-gradient(180deg, rgba(255,249,233,0) 0, rgba(255,249,233,0) 200px, rgba(255,249,233,.8) 290px, #fff9e9 328px, #fff9e9 100%); }
+    .hero-stage .hero { padding: 322px 0 40px; }
+    .hero-stage .hero h1 { font-size: clamp(2rem, 10.2vw, 3rem); }
+  }
 </style>
 <meta name="google-site-verification" content="phPPCuL0M-oXA27EPZqe92ctgHxwwvjLBnGJCQ-ECVY">
 <meta name="application-name" content="ルドット">
@@ -986,6 +1013,7 @@
       <div class="label">ALL GAMES</div>
       <h2>今日は、どこへ行く？ <span class="count" id="game-count"></span></h2>
     </div>
+    <div class="genre-filter" id="genre-filter" role="group" aria-label="ジャンルでしぼる"></div>
     <div class="grid" id="game-grid"><!-- STATIC-GAMES-START -->
 <a class="card" data-game-id="057" href="games/057-dark-tile-tap/index.html"><div class="art"><div class="fallback">🎹</div></div><div class="card-body"><div class="chips"><span class="chip">RHYTHM</span></div><h3>くろタイルタップ</h3><p class="desc">ながれてくる くろいタイルを 下からじゅんにタップ。たたくたびにメロディが1音ずつ鳴って、曲になるよ。白をふむとライフがへる。オリジナル6曲×3つのむずかしさ、1しゅうごとに速くなり、ならびは毎回かわる。★の記録と、メドレーがどんどん速くなるエンドレスつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="056" href="games/056-slide-number/index.html"><div class="art"><div class="fallback">🔢</div></div><div class="card-body"><div class="chips"><span class="chip">PUZZLE</span></div><h3>すべらせナンバー</h3><p class="desc">タイルをあきマスへすべらせて、1からじゅんばんにならべるスライドパズル。3×3・4×4・5×5の全9ステージで、もんだいは毎回かわる（かならずとけるならびだけ）。すうじモードと絵がらモード、1もん3回までのヒント、つぎのもくひょう表示、ステージごとの手数・タイムのベストと★、絵のコレクションつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
@@ -1922,6 +1950,28 @@
   // ============ 描画 ============
   const PAGE_SIZE = 24;
   let shownCount = PAGE_SIZE;
+  // ジャンルでしぼる：細かいジャンル表記（44種類ある）を、えらびやすい7つにまとめる
+  let activeCat = "all";
+  const CAT_TABS = [
+    ["all", "すべて"], ["action", "アクション"], ["shooter", "シューティング"], ["puzzle", "パズル"],
+    ["brain", "ことば・ちえ"], ["board", "ボード・カード"], ["versus", "たいせん"], ["sim", "ぼうけん・そだてる"],
+  ];
+  const CAT_MERGE = { arcade: "action", rhythm: "action", sports: "action", word: "brain", kids: "brain", card: "board", adventure: "sim", creative: "sim" };
+  function catOf(g) {
+    let c = typeof g.cat === "string" ? g.cat : "";
+    if (!c) {
+      const t = String(g.genre || "").toUpperCase();
+      if (/2P|VERSUS|たいせん|対戦/.test(t)) c = "versus";
+      else if (/SHOOT|BOSS RUSH|シューティング/.test(t)) c = "shooter";
+      else if (/BOARD|CARD|CASINO|SOLITAIRE|ボード|カード/.test(t)) c = "board";
+      else if (/WORD|QUIZ|TYPING|BRAIN|クイズ|ことば/.test(t)) c = "brain";
+      else if (/PUZZLE|MERGE|LOGIC|SOKOBAN|NONOGRAM|ESCAPE|MEMORY|MATCH|パズル/.test(t)) c = "puzzle";
+      else if (/RPG|ADVENTURE|IDLE|MANAGEMENT|PET|FISHING|DEFENSE|SIM|ぼうけん/.test(t)) c = "sim";
+      else if (/ACTION|ARCADE|RHYTHM|SPORTS|TIMING|ONE BUTTON|アクション/.test(t)) c = "action";
+    }
+    c = CAT_MERGE[c] || c;
+    return CAT_TABS.some(function (t) { return t[0] === c; }) ? c : "other";
+  }
   function renderGames(availableGames) {
     const grid = document.getElementById("game-grid");
     const count = document.getElementById("game-count");
@@ -1976,7 +2026,7 @@
       .map(function (g) {
         const ac = g.color || "#ff2e88";
         return (
-          '<a class="card" data-game-id="' + g.id + '" style="--ac:' + ac + '" href="' + g.path + '">' +
+          '<a class="card" data-game-id="' + g.id + '" data-cat="' + catOf(g) + '" style="--ac:' + ac + '" href="' + g.path + '">' +
           '<div class="art">' + artOf(g) + "</div>" +
           '<div class="card-body">' +
           '<div class="chips"><span class="chip">' + (g.genre || "GAME") + "</span>" +
@@ -1992,20 +2042,43 @@
       })
       .join("");
 
-    // 一覧は24本ずつ表示（ゲームが増えても最初の表示を軽く保つ）
+    // 一覧は24本ずつ表示（ゲームが増えても最初の表示を軽く保つ）。ジャンルでしぼった時は、合うものだけを数える。
     const more = document.getElementById("more-games");
+    const filterBox = document.getElementById("genre-filter");
     const applyPager = function () {
       const cards = grid.querySelectorAll(".card");
-      cards.forEach(function (c, i) {
-        c.hidden = i >= shownCount;
+      let match = 0, shown = 0;
+      cards.forEach(function (c) {
+        const ok = activeCat === "all" || c.dataset.cat === activeCat;
+        if (ok) match++;
+        const show = ok && shown < shownCount;
+        if (show) shown++;
+        c.hidden = !show;
         // 保存ボタンつきの外わく（.game-tile）も一緒にかくす。カードだけかくすと保存ボタンが残って積み重なる。
         const tile = c.parentElement;
         if (tile && tile.classList.contains("game-tile")) tile.hidden = c.hidden;
       });
-      more.hidden = shownCount >= cards.length;
-      more.textContent = "もっと見る（のこり " + Math.max(0, cards.length - shownCount) + "本）";
+      more.hidden = shown >= match;
+      more.textContent = "もっと見る（のこり " + Math.max(0, match - shown) + "本）";
     };
     more.onclick = function () { shownCount += PAGE_SIZE; applyPager(); };
+    if (filterBox) {
+      const counts = {};
+      sorted.forEach(function (g) { const c = catOf(g); counts[c] = (counts[c] || 0) + 1; });
+      if (activeCat !== "all" && !counts[activeCat]) activeCat = "all";
+      filterBox.innerHTML = CAT_TABS.filter(function (t) { return t[0] === "all" || counts[t[0]]; }).map(function (t) {
+        const n = t[0] === "all" ? sorted.length : counts[t[0]];
+        return '<button type="button" data-cat="' + t[0] + '" aria-pressed="' + (t[0] === activeCat) + '">' + t[1] + '<span class="n">' + n + "</span></button>";
+      }).join("");
+      filterBox.onclick = function (e) {
+        const b = e.target.closest("button[data-cat]");
+        if (!b) return;
+        activeCat = b.dataset.cat;
+        shownCount = PAGE_SIZE;
+        filterBox.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        applyPager();
+      };
+    }
     applyPager();
 
     // 数字を見せないTOP 3。初回は編集部セレクト、以降はこの端末のプレイ履歴で並び替える。
