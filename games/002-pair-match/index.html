@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden;
   }
   .topbar {
     width: 100%;
@@ -27,7 +28,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    padding: 14px 16px 8px;
+    padding: 12px 12px 6px;
   }
   .topbar a, .topbar button.mute {
     color: #53e0d8;
@@ -37,11 +38,15 @@
     background: #1e1e36;
     border: 1px solid #2c2c4d;
     border-radius: 999px;
-    padding: 6px 14px;
+    padding: 6px 12px;
     cursor: pointer;
     font-family: inherit;
+    white-space: nowrap;
+    flex: none;
   }
-  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  @media (hover: hover) {
+    .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  }
   .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
   .topbar h1 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
@@ -51,37 +56,53 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @media (max-width: 420px) {
+    .topbar { gap: 6px; padding: 10px 10px 6px; }
+    .topbar a, .topbar button.mute { padding: 6px 10px; }
+    .topbar h1 { font-size: 0.86rem; }
   }
   .stage {
     position: relative;
     width: min(94vw, 480px);
-    margin: 6px 0 24px;
+    min-height: 440px;
+    margin: 4px 0 24px;
     background: #191930;
     border: 1px solid #2c2c4d;
     border-radius: 20px;
     box-shadow: 0 0 40px rgba(83, 224, 216, 0.12), 0 14px 34px rgba(0, 0, 0, 0.45);
-    padding: 16px;
+    padding: 14px;
   }
   .hud {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 14px;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
   }
   .chip {
     background: rgba(19, 19, 34, 0.85);
     border: 1px solid #2c2c4d;
     border-radius: 12px;
-    padding: 6px 14px;
+    padding: 6px 12px;
     font-weight: 900;
     font-size: 0.95rem;
+    white-space: nowrap;
   }
   .chip.moves { color: #ff5fa2; }
   .chip.time { color: #53e0d8; }
+  .chip.level { color: #ffd166; font-size: 0.85rem; }
   .board {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
+  .board.cols5 { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .board.cols6 { grid-template-columns: repeat(6, 1fr); gap: 6px; }
   .card {
     aspect-ratio: 1;
     position: relative;
@@ -90,6 +111,7 @@
     background: none;
     padding: 0;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   .card-inner {
     position: absolute;
@@ -103,6 +125,7 @@
     justify-content: center;
     border-radius: 14px;
   }
+  .board.cols6 .face { border-radius: 10px; }
   /* 2Dフリップ（横につぶれて→ひろがる）。3D変形なしで全ブラウザ対応 */
   .face.front {
     background:
@@ -119,15 +142,17 @@
     transition: transform 0.16s ease 0.16s;
     text-shadow: 0 0 10px rgba(199, 125, 255, 0.5);
   }
+  .board.cols6 .face.front { font-size: 1.1rem; }
   .face.front::before, .face.front::after {
     content: "✦";
     position: absolute;
-    font-size: 0.55rem;
+    font-size: 0.7rem;
     color: #53e0d8;
     opacity: 0.7;
   }
-  .face.front::before { top: 6px; left: 8px; }
-  .face.front::after { bottom: 6px; right: 8px; color: #ff5fa2; }
+  .face.front::before { top: 5px; left: 7px; }
+  .face.front::after { bottom: 5px; right: 7px; color: #ff5fa2; }
+  .board.cols6 .face.front::before, .board.cols6 .face.front::after { display: none; }
   .card.open .face.front {
     transform: scaleX(0);
     transition: transform 0.16s ease 0s;
@@ -135,31 +160,68 @@
   .face.back {
     background: linear-gradient(150deg, #2d2250, #241f42);
     border: 1px solid #53e0d8;
-    font-size: 2.1rem;
     transform: scaleX(0);
     transition: transform 0.16s ease 0s;
   }
+  .face.back svg { width: 72%; height: 72%; display: block; }
   .card.open .face.back {
     transform: scaleX(1);
     transition: transform 0.16s ease 0.16s;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .face.front, .face.back, .card.open .face.front, .card.open .face.back { transition: none; }
+  @media (hover: hover) {
+    .card:hover .face.front { border-color: #ff5fa2; }
   }
-  .card:hover .face.front { border-color: #ff5fa2; }
   .card:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; border-radius: 14px; }
   .card.matched .face.back {
     border-color: #ffd166;
     box-shadow: 0 0 14px rgba(255, 209, 102, 0.5);
-    animation: match-pop 0.45s ease;
   }
-  @keyframes match-pop {
-    0% { scale: 1; }
-    40% { scale: 1.14; rotate: 4deg; }
-    70% { scale: 0.96; rotate: -2deg; }
-    100% { scale: 1; rotate: 0deg; }
+  .card.matched .card-inner { animation: match-hop 0.5s ease; }
+  @keyframes match-hop {
+    0% { transform: translateY(0) scale(1); }
+    35% { transform: translateY(-12px) scale(1.12) rotate(4deg); }
+    65% { transform: translateY(0) scale(0.95) rotate(-2deg); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .card.miss .card-inner { animation: miss-shake 0.36s ease; }
+  @keyframes miss-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
   }
   .card.matched { cursor: default; }
+  .spark {
+    position: absolute;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 4;
+    animation: spark-fly 0.6s ease-out forwards;
+  }
+  @keyframes spark-fly {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+  }
+  .toast {
+    position: absolute;
+    left: 50%; top: 46%;
+    transform: translate(-50%, -50%);
+    font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
+    font-size: 1.6rem;
+    color: #ffd166;
+    text-shadow: 0 2px 0 #131322, 0 0 18px rgba(255, 209, 102, 0.6);
+    pointer-events: none;
+    z-index: 6;
+    white-space: nowrap;
+    animation: toast 0.9s ease forwards;
+  }
+  @keyframes toast {
+    0% { opacity: 0; transform: translate(-50%, -30%) scale(0.6); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    70% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
+  }
   .confetti-layer {
     position: absolute;
     inset: 0;
@@ -181,62 +243,113 @@
     100% { transform: translateY(620px) rotate(660deg); opacity: 0.6; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .card.matched .face.back { animation: none; }
+    .face.front, .face.back, .card.open .face.front, .card.open .face.back { transition: none; }
+    .card.matched .card-inner, .card.miss .card-inner, .spark, .toast { animation: none; }
+    .spark, .toast { display: none; }
     .confetti-piece { animation: none; display: none; }
   }
   .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(19, 19, 34, 0.93);
+    background: rgba(19, 19, 34, 0.95);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 24px;
-    gap: 14px;
+    padding: 16px;
+    gap: 10px;
     z-index: 5;
   }
   .overlay.hidden { display: none; }
-  .overlay .big { font-size: 3rem; }
+  .overlay .big { font-size: 2.4rem; line-height: 1.1; }
   .overlay h2 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
-    font-size: 1.55rem;
+    font-size: 1.5rem;
     background: linear-gradient(100deg, #ff5fa2, #53e0d8);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .overlay p { font-size: 0.95rem; line-height: 1.8; color: #c9c5e6; }
+  .overlay p { font-size: 0.92rem; line-height: 1.6; color: #c9c5e6; }
   .overlay p b { color: #eeecfa; }
   .overlay .score-line { font-size: 1.2rem; font-weight: 900; color: #eeecfa; }
   .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
+  .overlay .rule-line { font-size: 0.82rem; color: #9d99c0; }
+  .levels { display: flex; gap: 8px; width: 100%; max-width: 400px; }
+  .lvl {
+    flex: 1;
+    border: 2px solid #3a3470;
+    background: linear-gradient(160deg, #2a2352, #1f1b3d);
+    color: #eeecfa;
+    font-family: inherit;
+    border-radius: 16px;
+    padding: 10px 4px 8px;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-height: 88px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .lvl .ln { font-weight: 900; font-size: 1rem; }
+  .lvl .ls { font-size: 0.8rem; color: #9d99c0; font-weight: 700; }
+  .lvl .lstar { font-size: 0.95rem; letter-spacing: 1px; color: #ffd166; }
+  .lvl.easy { border-color: #53e0d8; }
+  .lvl.normal { border-color: #ff5fa2; }
+  .lvl.hard { border-color: #c77dff; }
+  @media (hover: hover) {
+    .lvl:hover { filter: brightness(1.15); }
+  }
+  .lvl:active { transform: translateY(2px); }
+  .lvl:focus-visible { outline: 2px solid #ffd166; outline-offset: 2px; }
+  .stars { display: flex; gap: 8px; font-size: 2.2rem; line-height: 1; }
+  .stars span { opacity: 0.18; filter: grayscale(1); transform: scale(0.6); transition: transform 0.25s cubic-bezier(.3,1.8,.5,1), opacity 0.2s; }
+  .stars span.on { opacity: 1; filter: none; transform: scale(1); }
+  .overlay .newrec {
+    font-weight: 900; font-size: 0.92rem; color: #131322;
+    background: linear-gradient(100deg, #ffd166, #ff9fc6);
+    border-radius: 999px; padding: 4px 14px;
+  }
+  .overlay .newrec.hidden { display: none; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .btn {
     border: none;
     background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
     color: #fff;
     font-family: inherit;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 900;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
     border-radius: 999px;
-    padding: 12px 46px;
+    padding: 12px 30px;
+    min-height: 48px;
     cursor: pointer;
     box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
+    -webkit-tap-highlight-color: transparent;
   }
-  .btn:hover { filter: brightness(1.12); }
+  .btn.sub {
+    background: #26224a;
+    border: 1px solid #4a4380;
+    box-shadow: none;
+    color: #eeecfa;
+    font-size: 0.95rem;
+    padding: 12px 18px;
+  }
+  @media (hover: hover) {
+    .btn:hover { filter: brightness(1.12); }
+  }
   .btn:active { transform: translateY(2px); }
   .btn:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
   .hint { font-size: 0.78rem; color: #9d99c0; }
   .hint a { color: #9d99c0; }
-  .age-badge { display:inline-flex; width:fit-content; margin:0; padding:5px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
+  .age-badge { display:inline-flex; width:fit-content; margin:0; padding:4px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="裏返ったカードをめくり、同じ絵柄のペアを揃える神経衰弱。全16枚をそろえるまでのタイムアタック。最速記録に挑め。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="カードをめくって同じ絵のペアをさがそう。かんたん・ふつう・むずかしいから選べて、少ない回数でそろえると⭐がふえるよ。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/002-pair-match/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"よふかしペアさがし","description":"裏返ったカードをめくり、同じ絵柄のペアを揃える神経衰弱。全16枚をそろえるまでのタイムアタック。最速記録に挑め。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/002-pair-match/index.html","inLanguage":"ja","genre":"MEMORY","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"よふかしペアさがし","description":"カードをめくって同じ絵のペアをさがそう。かんたん・ふつう・むずかしいから選べて、少ない回数でそろえると⭐がふえるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/002-pair-match/index.html","inLanguage":"ja","genre":"MEMORY","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="002"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -248,9 +361,10 @@
   <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
 </div>
 
-<div class="stage">
+<div class="stage" id="stage">
   <div class="hud">
     <span class="chip moves">🃏 <span id="moves">0</span> かい</span>
+    <span class="chip level" id="level-chip">かんたん</span>
     <span class="chip time">⏰ <span id="time">0</span> びょう</span>
   </div>
   <div class="board" id="board"></div>
@@ -260,20 +374,28 @@
     <h2>よふかしペアさがし</h2>
     <p class="age-badge">対象年齢の目安：6歳〜</p>
     <p>
-      うらがえったカードを2まいずつめくって、<br>
-      おなじえもじの<b>ペア</b>をみつけよう！<br>
-      ぜんぶそろえるまでの<b>タイム</b>にちょうせん。
+      2まいずつめくって <b>おなじえ</b>をさがそう！<br>
+      すくない<b>かいすう</b>なら ⭐がふえるよ。
     </p>
-    <button class="btn" id="start-btn">スタート！</button>
-    <p class="hint">そうさ：タップ / クリック</p>
+    <div class="levels" id="levels">
+      <button class="lvl easy" data-level="easy"><span class="ln">かんたん</span><span class="ls">16まい</span><span class="lstar" data-star="easy">☆☆☆</span></button>
+      <button class="lvl normal" data-level="normal"><span class="ln">ふつう</span><span class="ls">20まい</span><span class="lstar" data-star="normal">☆☆☆</span></button>
+      <button class="lvl hard" data-level="hard"><span class="ln">むずかしい</span><span class="ls">36まい</span><span class="lstar" data-star="hard">☆☆☆</span></button>
+    </div>
+    <p class="hint">えらんでスタート！ タイムは1まいめから</p>
   </div>
 
   <div class="overlay hidden" id="clear-screen">
-    <div class="big">🎉</div>
     <h2>ぜんぶそろった！</h2>
+    <div class="stars" id="stars" aria-label="ほしのかず"><span>⭐</span><span>⭐</span><span>⭐</span></div>
     <p class="score-line" id="final-score">タイム：0びょう</p>
+    <p class="newrec hidden" id="newrec">🎉 じこベストこうしん！</p>
     <p class="best-line" id="best-score"></p>
-    <button class="btn" id="retry-btn">もういちど！</button>
+    <p class="rule-line" id="rule-line"></p>
+    <div class="btn-row">
+      <button class="btn" id="retry-btn">もういちど！</button>
+      <button class="btn sub" id="level-btn">むずかしさ</button>
+    </div>
     <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
   </div>
 </div>
@@ -281,36 +403,99 @@
 <script>
 // ================================================================
 // ★カスタマイズポイント★
-// えもじをかえると、じぶんだけのペアさがしになるよ！（8しゅるい）
 // ================================================================
 const SETTINGS = {
-  emojis: ["🌸", "⭐", "👻", "🌙", "🍬", "🎀", "🐱", "🍒"],
-  storageKey: "pair-match-best",
+  levels: {
+    easy:   { name: "かんたん",   pairs: 8,  cols: 4 },
+    normal: { name: "ふつう",     pairs: 10, cols: 5 },
+    hard:   { name: "むずかしい", pairs: 18, cols: 6 },
+  },
+  star3: 1.6,   // ★3 = ペアのかず × 1.6 かい いない
+  star2: 2.3,   // ★2 = ペアのかず × 2.3 かい いない
+  storageKey: "pair-match-best",          // むかしの きろく（かんたん のタイム）
+  recordKey: "pair-match-records-v2",     // むずかしさべつの きろく
 };
 // ================================================================
 
 (function () {
+  // ============ カードのえ（SVGで手がき・どの端末でもおなじ見た目） ============
+  const ART = {
+    flower: '<g transform="translate(20 20)"><g fill="#ff5fa2"><ellipse cx="0" cy="-9" rx="6" ry="9"/><ellipse cx="0" cy="-9" rx="6" ry="9" transform="rotate(72)"/><ellipse cx="0" cy="-9" rx="6" ry="9" transform="rotate(144)"/><ellipse cx="0" cy="-9" rx="6" ry="9" transform="rotate(216)"/><ellipse cx="0" cy="-9" rx="6" ry="9" transform="rotate(288)"/></g><circle r="5" fill="#ffd166"/></g>',
+    star: '<path d="M20 3l4.9 10.6 11.6 1.3-8.6 7.9 2.4 11.4L20 28.4 9.7 34.2l2.4-11.4-8.6-7.9 11.6-1.3z" fill="#ffd166" stroke="#e8a92a" stroke-width="1.5" stroke-linejoin="round"/><circle cx="16" cy="15" r="2" fill="#fff" opacity=".8"/>',
+    ghost: '<path d="M8 34V18a12 12 0 0 1 24 0v16l-4-3-4 3-4-3-4 3-4-3z" fill="#f1edff"/><circle cx="15.5" cy="18" r="2.2" fill="#3a3355"/><circle cx="24.5" cy="18" r="2.2" fill="#3a3355"/><ellipse cx="12.5" cy="23" rx="2.4" ry="1.5" fill="#ff9fc6"/><ellipse cx="27.5" cy="23" rx="2.4" ry="1.5" fill="#ff9fc6"/>',
+    moon: '<path d="M26 5a15 15 0 1 0 9 22A12 12 0 0 1 26 5z" fill="#fff1a8" stroke="#e5c860" stroke-width="1.2"/><circle cx="16" cy="22" r="1.8" fill="#3a3355"/><path d="M17 28q3 2 6 0" stroke="#3a3355" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    candy: '<path d="M4 13l8 7-8 7zM36 13l-8 7 8 7z" fill="#e0a8ff"/><circle cx="20" cy="20" r="10" fill="#c77dff"/><path d="M13 15q7-4 14 3M12 22q8 4 16-2" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+    ribbon: '<path d="M20 20L5 11v18zM20 20l15-9v18z" fill="#6f8cff"/><path d="M18 21l-5 13 4-2 3 4zM22 21l5 13-4-2-3 4z" fill="#4f6be0"/><circle cx="20" cy="20" r="4.5" fill="#9bb0ff"/>',
+    cat: '<path d="M8 10l5 8h14l5-8 1 14a13 11 0 0 1-26 0z" fill="#ffa94d"/><ellipse cx="20" cy="25" rx="13" ry="10" fill="#ffa94d"/><circle cx="15" cy="24" r="2" fill="#3a3355"/><circle cx="25" cy="24" r="2" fill="#3a3355"/><path d="M18 28l2 1.5 2-1.5" stroke="#3a3355" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M4 26h7M4 29l7-1M36 26h-7M36 29l-7-1" stroke="#fff" stroke-width="1.2" opacity=".8"/>',
+    cherry: '<path d="M20 5q-2 10-8 18M20 5q4 10 9 16" stroke="#4caf50" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M20 5q7-3 11 2-6 2-11-2z" fill="#6fd36f"/><circle cx="12" cy="27" r="7.5" fill="#e8344e"/><circle cx="28" cy="25" r="7.5" fill="#e8344e"/><circle cx="9.5" cy="24.5" r="2" fill="#fff" opacity=".7"/><circle cx="25.5" cy="22.5" r="2" fill="#fff" opacity=".7"/>',
+    heart: '<path d="M20 34S5 25 5 15a7.5 7.5 0 0 1 15-2 7.5 7.5 0 0 1 15 2c0 10-15 19-15 19z" fill="#ff4f8f"/><ellipse cx="12" cy="14" rx="2.5" ry="3.5" fill="#fff" opacity=".6" transform="rotate(-30 12 14)"/>',
+    drop: '<path d="M20 4C14 14 9 19 9 25a11 11 0 0 0 22 0c0-6-5-11-11-21z" fill="#53e0d8"/><ellipse cx="15" cy="25" rx="2.5" ry="4" fill="#fff" opacity=".7"/>',
+    leaf: '<path d="M7 33C7 17 17 6 34 6c0 17-11 27-27 27z" fill="#5fcf6a"/><path d="M8 32L30 10" stroke="#2f8f3a" stroke-width="2" stroke-linecap="round"/><path d="M15 25l-1-7M21 19l-1-6M20 25l7-1" stroke="#2f8f3a" stroke-width="1.4" stroke-linecap="round"/>',
+    mushroom: '<rect x="14" y="20" width="12" height="14" rx="5" fill="#fff3e0"/><path d="M4 22a16 14 0 0 1 32 0z" fill="#c9773f"/><circle cx="13" cy="14" r="2.6" fill="#fff3e0"/><circle cx="22" cy="11" r="2.2" fill="#fff3e0"/><circle cx="29" cy="17" r="2.2" fill="#fff3e0"/>',
+    fish: '<path d="M6 20q12-13 24 0-12 13-24 0z" fill="#4db8ff"/><path d="M29 20l8-7v14z" fill="#2f8ed8"/><circle cx="13" cy="18.5" r="2" fill="#13233a"/><path d="M18 14q3 6 0 12" stroke="#bfe6ff" stroke-width="1.5" fill="none"/>',
+    cloud: '<path d="M10 30a7 7 0 0 1 0-14 9 9 0 0 1 17-3 7.5 7.5 0 0 1 3 17z" fill="#e6eeff"/><circle cx="15" cy="22" r="1.6" fill="#3a3355"/><circle cx="23" cy="22" r="1.6" fill="#3a3355"/><path d="M17 25.5q2 1.6 4 0" stroke="#3a3355" stroke-width="1.4" fill="none" stroke-linecap="round"/>',
+    crown: '<path d="M5 30L7 11l8 9 5-12 5 12 8-9 2 19z" fill="#ffc53d" stroke="#d99a1a" stroke-width="1.4" stroke-linejoin="round"/><rect x="5" y="29" width="30" height="5" rx="2" fill="#e8a92a"/><circle cx="20" cy="23" r="2.6" fill="#ff4f8f"/><circle cx="12" cy="25" r="1.8" fill="#53e0d8"/><circle cx="28" cy="25" r="1.8" fill="#53e0d8"/>',
+    note: '<path d="M15 29V9l17-4v19" stroke="#3ddc97" stroke-width="3" fill="none" stroke-linejoin="round"/><ellipse cx="11" cy="29" rx="5.5" ry="4.2" fill="#3ddc97"/><ellipse cx="28" cy="24" rx="5.5" ry="4.2" fill="#3ddc97"/><path d="M15 13l17-4" stroke="#3ddc97" stroke-width="3"/>',
+    planet: '<circle cx="20" cy="20" r="10" fill="#ffb38a"/><path d="M13 16q7-2 14 1M11 22q9 2 18-1" stroke="#e8875a" stroke-width="1.6" fill="none"/><ellipse cx="20" cy="21" rx="18" ry="5" fill="none" stroke="#ffe0cc" stroke-width="2.4" transform="rotate(-15 20 21)"/>',
+    rocket: '<path d="M20 3c7 6 8 15 6 23H14c-2-8-1-17 6-23z" fill="#f2f2ff"/><circle cx="20" cy="14" r="3.4" fill="#53e0d8" stroke="#6f8cff" stroke-width="1.4"/><path d="M14 20l-6 8 6-1zM26 20l6 8-6-1z" fill="#ff5a6e"/><path d="M16 26q4 10 8 0z" fill="#ffb13d"/>',
+  };
+  const ART_KEYS = Object.keys(ART);
+  const ART_NAMES = { flower: "おはな", star: "ほし", ghost: "おばけ", moon: "おつきさま", candy: "あめ", ribbon: "リボン", cat: "ねこ", cherry: "さくらんぼ", heart: "ハート", drop: "しずく", leaf: "はっぱ", mushroom: "きのこ", fish: "さかな", cloud: "くも", crown: "おうかん", note: "おんぷ", planet: "わくせい", rocket: "ロケット" };
+  function svgFor(key) { return '<svg viewBox="0 0 40 40" aria-hidden="true">' + ART[key] + "</svg>"; }
+
+  const stage = document.getElementById("stage");
   const board = document.getElementById("board");
   const movesEl = document.getElementById("moves");
   const timeEl = document.getElementById("time");
+  const levelChip = document.getElementById("level-chip");
   const titleScreen = document.getElementById("title-screen");
   const clearScreen = document.getElementById("clear-screen");
   const finalScoreEl = document.getElementById("final-score");
   const bestScoreEl = document.getElementById("best-score");
+  const ruleLineEl = document.getElementById("rule-line");
+  const newRecEl = document.getElementById("newrec");
+  const starEls = document.querySelectorAll("#stars span");
 
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  let level = "easy";
   let first = null;      // 1まいめにめくったカード
   let lock = false;      // はんてい中はめくれない
   let moves = 0;
   let matched = 0;
-  let seconds = 0;
+  let streak = 0;
+  let startAt = 0;       // 1まいめをめくった時刻（0 = まだ）
+  let elapsedSec = 0;
   let timerId = null;
+  let playing = false;
+
+  // ============ きろく ============
+  function readRecords() {
+    let rec = {};
+    try { rec = JSON.parse(lsGet(SETTINGS.recordKey) || "{}") || {}; } catch (e) { rec = {}; }
+    const legacy = Number(lsGet(SETTINGS.storageKey) || 0);
+    if (legacy > 0 && !(rec.easy && rec.easy.time)) rec.easy = Object.assign({}, rec.easy || {}, { time: legacy });
+    return rec;
+  }
+  function writeRecords(rec) { lsSet(SETTINGS.recordKey, JSON.stringify(rec)); }
+  function starsText(n) { return "★★★".slice(0, n) + "☆☆☆".slice(0, 3 - n); }
+  function refreshLevelStars() {
+    const rec = readRecords();
+    document.querySelectorAll("[data-star]").forEach(function (el) {
+      const r = rec[el.dataset.star];
+      el.textContent = starsText(r && r.stars ? r.stars : 0);
+    });
+  }
+  refreshLevelStars();
 
   // ============ おと（BGM＋こうかおん・ミュート対応） ============
   let audioCtx = null;
-  let muted = localStorage.getItem("picotto-muted") === "1";
+  let muted = lsGet("picotto-muted") === "1";
   const muteBtn = document.getElementById("mute-btn");
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") { try { audioCtx.resume(); } catch (e) {} }
     return audioCtx;
   }
   function tone(freq, t, dur, type, vol) {
@@ -323,9 +508,9 @@ const SETTINGS = {
     o.connect(g).connect(c.destination);
     o.start(t); o.stop(t + dur + 0.1);
   }
-  function beep(freq, dur, type, vol) {
+  function beep(freq, dur, type, vol, delay) {
     if (muted) return;
-    try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.1); } catch (e) {}
+    try { tone(freq, getCtx().currentTime + (delay || 0), dur, type || "sine", vol || 0.1); } catch (e) {}
   }
   // オルゴールふうのしずかなループBGM
   const BGM = {
@@ -366,18 +551,14 @@ const SETTINGS = {
   function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
   muteBtn.addEventListener("click", function () {
     muted = !muted;
-    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    lsSet("picotto-muted", muted ? "1" : "0");
     updateMuteBtn();
   });
   updateMuteBtn();
 
-  // カードの絵ごとに、うっすら色のハロー（後光）をつける
-  const EMOJI_HUES = { "🌸": 330, "⭐": 45, "👻": 260, "🌙": 55, "🍬": 300, "🎀": 335, "🐱": 25, "🍒": 350 };
-
-  // クリアのとき紙ふぶきをふらせる
+  // ============ えんしゅつ ============
   const CONFETTI_COLORS = ["#ff5fa2", "#53e0d8", "#ffd166", "#c77dff", "#ffffff"];
   function throwConfetti() {
-    const stage = document.querySelector(".stage");
     const layer = document.createElement("div");
     layer.className = "confetti-layer";
     for (let i = 0; i < 46; i++) {
@@ -392,6 +573,31 @@ const SETTINGS = {
     stage.appendChild(layer);
     setTimeout(function () { layer.remove(); }, 4200);
   }
+  function sparkle(card) {
+    const sr = stage.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
+    const cx = r.left - sr.left + r.width / 2, cy = r.top - sr.top + r.height / 2;
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement("span");
+      s.className = "spark";
+      const a = (Math.PI * 2 / 10) * i + Math.random() * 0.4;
+      const d = r.width * (0.55 + Math.random() * 0.35);
+      s.style.left = cx - 3.5 + "px";
+      s.style.top = cy - 3.5 + "px";
+      s.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      s.style.setProperty("--dx", Math.cos(a) * d + "px");
+      s.style.setProperty("--dy", Math.sin(a) * d + "px");
+      stage.appendChild(s);
+      setTimeout(function () { s.remove(); }, 650);
+    }
+  }
+  function toast(text) {
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = text;
+    stage.appendChild(t);
+    setTimeout(function () { t.remove(); }, 950);
+  }
 
   function shuffle(arr) {
     const a = [...arr];
@@ -403,50 +609,63 @@ const SETTINGS = {
   }
 
   function buildBoard() {
-    const deck = shuffle([...SETTINGS.emojis, ...SETTINGS.emojis]);
+    const L = SETTINGS.levels[level];
+    const picks = shuffle(ART_KEYS).slice(0, L.pairs);
+    const deck = shuffle([...picks, ...picks]);
     board.innerHTML = "";
-    deck.forEach(function (emoji) {
+    board.className = "board" + (L.cols === 5 ? " cols5" : L.cols === 6 ? " cols6" : "");
+    levelChip.textContent = L.name;
+    deck.forEach(function (key, i) {
       const card = document.createElement("button");
       card.className = "card";
       card.type = "button";
-      card.setAttribute("aria-label", "カード");
-      card.dataset.emoji = emoji;
-      const hue = EMOJI_HUES[emoji] !== undefined ? EMOJI_HUES[emoji] : 200;
+      card.setAttribute("aria-label", "カード " + (i + 1));
+      card.dataset.art = key;
       card.innerHTML =
         '<span class="card-inner">' +
         '<span class="face front">?</span>' +
-        '<span class="face back" style="background: radial-gradient(circle at 50% 42%, hsla(' + hue + ', 80%, 65%, 0.4) 0%, transparent 68%), linear-gradient(150deg, #2d2250, #241f42);">' + emoji + "</span>" +
+        '<span class="face back">' + svgFor(key) + "</span>" +
         "</span>";
       card.addEventListener("click", function () { flip(card); });
       board.appendChild(card);
     });
   }
 
-  function startGame() {
+  function tick() {
+    if (!startAt) return;
+    elapsedSec = (performance.now() - startAt) / 1000;
+    timeEl.textContent = String(Math.floor(elapsedSec));
+  }
+
+  function startGame(lv) {
+    if (lv) level = lv;
     first = null;
     lock = false;
     moves = 0;
     matched = 0;
-    seconds = 0;
+    streak = 0;
+    startAt = 0;
+    elapsedSec = 0;
+    playing = true;
     movesEl.textContent = "0";
     timeEl.textContent = "0";
     buildBoard();
     titleScreen.classList.add("hidden");
     clearScreen.classList.add("hidden");
     if (timerId) clearInterval(timerId);
-    timerId = setInterval(function () {
-      seconds++;
-      timeEl.textContent = String(seconds);
-    }, 1000);
+    timerId = setInterval(tick, 200);
     beep(660, 0.15);
     BGM.start();
   }
 
   function flip(card) {
-    if (lock) return;
+    if (!playing || lock) return;
     if (card.classList.contains("open") || card.classList.contains("matched")) return;
+    if (!startAt) startAt = performance.now(); // タイムは さいしょの1まいで スタート
 
     card.classList.add("open");
+    card.classList.remove("miss");
+    card.setAttribute("aria-label", ART_NAMES[card.dataset.art] || "カード");
     beep(520, 0.07);
 
     if (!first) {
@@ -458,53 +677,107 @@ const SETTINGS = {
     moves++;
     movesEl.textContent = String(moves);
 
-    if (first.dataset.emoji === card.dataset.emoji) {
-      first.classList.add("matched");
+    if (first.dataset.art === card.dataset.art) {
+      const a = first;
+      a.classList.add("matched");
       card.classList.add("matched");
       first = null;
       matched++;
-      beep(1040, 0.12, "triangle");
-      if (matched === SETTINGS.emojis.length) finishGame();
+      streak++;
+      sparkle(a); sparkle(card);
+      beep(880 + Math.min(streak, 6) * 90, 0.12, "triangle");
+      beep(1320 + Math.min(streak, 6) * 90, 0.12, "triangle", 0.06, 0.08);
+      if (streak >= 2) toast(streak + "れんぞく！");
+      if (matched === SETTINGS.levels[level].pairs) finishGame();
     } else {
       lock = true;
+      streak = 0;
       const a = first, b = card;
       first = null;
-      beep(180, 0.18, "sawtooth");
+      beep(180, 0.18, "sawtooth", 0.07);
       setTimeout(function () {
-        a.classList.remove("open");
-        b.classList.remove("open");
+        a.classList.add("miss"); b.classList.add("miss");
+      }, 380);
+      setTimeout(function () {
+        a.classList.remove("open", "miss");
+        b.classList.remove("open", "miss");
+        a.setAttribute("aria-label", "カード");
+        b.setAttribute("aria-label", "カード");
         lock = false;
-      }, 750);
+      }, 800);
     }
   }
 
+  function starCount(pairs, mv) {
+    if (mv <= Math.round(pairs * SETTINGS.star3)) return 3;
+    if (mv <= Math.round(pairs * SETTINGS.star2)) return 2;
+    return 1;
+  }
+
   function finishGame() {
+    playing = false;
+    tick();
     clearInterval(timerId);
     timerId = null;
     BGM.stop();
-    const prev = Number(localStorage.getItem(SETTINGS.storageKey) || 0);
-    const best = prev > 0 ? Math.min(prev, seconds) : seconds;
-    localStorage.setItem(SETTINGS.storageKey, String(best));
-    finalScoreEl.textContent = "タイム：" + seconds + "びょう（" + moves + "かい）";
-    bestScoreEl.textContent = "さいそくきろく：" + best + "びょう";
+    const L = SETTINGS.levels[level];
+    const t = Math.round(elapsedSec * 10) / 10;
+    const n = starCount(L.pairs, moves);
+    const rec = readRecords();
+    const prev = rec[level] || {};
+    const newTime = !prev.time || t < prev.time;
+    const newMoves = !prev.moves || moves < prev.moves;
+    rec[level] = {
+      time: newTime ? t : prev.time,
+      moves: newMoves ? moves : prev.moves,
+      stars: Math.max(prev.stars || 0, n),
+    };
+    writeRecords(rec);
+    if (level === "easy") {
+      const old = Number(lsGet(SETTINGS.storageKey) || 0);
+      lsSet(SETTINGS.storageKey, String(old > 0 ? Math.min(old, t) : t));
+    }
+    finalScoreEl.textContent = "タイム " + t.toFixed(1) + "びょう ／ " + moves + "かい";
+    bestScoreEl.textContent = L.name + "のきろく：" + rec[level].time.toFixed(1) + "びょう ／ " + rec[level].moves + "かい";
+    ruleLineEl.textContent = n < 3
+      ? "⭐3は " + Math.round(L.pairs * SETTINGS.star3) + "かい いないで そろえよう"
+      : "さいこうランク！ つぎは もっとむずかしいのにも ちょうせん！";
+    const firstClear = !(prev.time || prev.moves);
+    const isNew = firstClear || newTime || newMoves;
+    newRecEl.textContent = firstClear ? "🎉 はじめてクリア！" : newTime && newMoves ? "🎉 タイムも かいすうも じこベスト！" : newTime ? "🎉 タイムが じこベスト！" : "🎉 かいすうが じこベスト！";
+    newRecEl.classList.toggle("hidden", !isNew);
+    starEls.forEach(function (s) { s.classList.remove("on"); });
+    refreshLevelStars();
     setTimeout(function () {
       clearScreen.classList.remove("hidden");
       throwConfetti();
-      try {
-        const c = getCtx();
-        if (!muted) {
-          tone(659, c.currentTime + 0.05, 0.18, "sine", 0.07);
-          tone(784, c.currentTime + 0.22, 0.18, "sine", 0.07);
-          tone(1047, c.currentTime + 0.39, 0.35, "sine", 0.08);
-        }
-      } catch (e) {}
-    }, 500);
+      beep(659, 0.18, "sine", 0.07, 0.05);
+      beep(784, 0.18, "sine", 0.07, 0.22);
+      beep(1047, 0.35, "sine", 0.08, 0.39);
+      for (let i = 0; i < n; i++) {
+        setTimeout(function () { starEls[i].classList.add("on"); beep(988 + i * 200, 0.14, "triangle", 0.08); }, 500 + i * 300);
+      }
+    }, 550);
   }
 
-  document.getElementById("start-btn").addEventListener("click", startGame);
-  document.getElementById("retry-btn").addEventListener("click", startGame);
+  document.querySelectorAll(".lvl").forEach(function (b) {
+    b.addEventListener("click", function () { startGame(b.dataset.level); });
+  });
+  document.getElementById("retry-btn").addEventListener("click", function () { startGame(); });
+  document.getElementById("level-btn").addEventListener("click", function () {
+    clearScreen.classList.add("hidden");
+    refreshLevelStars();
+    titleScreen.classList.remove("hidden");
+  });
 
   buildBoard(); // タイトル画面のうしろに1回ならべておく
+
+  // テスト用のよみとりだけの窓口（ゲームにはえいきょうしない）
+  window.__ludotGame = {
+    get level() { return level; }, get moves() { return moves; }, get matched() { return matched; },
+    get playing() { return playing; }, get startAt() { return startAt; }, get elapsed() { return elapsedSec; },
+    get lock() { return lock; },
+  };
 })();
 </script>
 </body>
