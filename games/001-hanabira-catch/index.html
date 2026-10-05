@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden;
   }
   .topbar {
     width: 100%;
@@ -27,7 +28,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    padding: 14px 16px 8px;
+    padding: 12px 12px 6px;
   }
   .topbar a, .topbar button.mute {
     color: #53e0d8;
@@ -37,11 +38,15 @@
     background: #1e1e36;
     border: 1px solid #2c2c4d;
     border-radius: 999px;
-    padding: 6px 14px;
+    padding: 6px 12px;
     cursor: pointer;
     font-family: inherit;
+    white-space: nowrap;
+    flex: none;
   }
-  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  @media (hover: hover) {
+    .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  }
   .topbar h1 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
@@ -50,8 +55,20 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .stage { position: relative; width: min(94vw, 480px); margin: 6px 0 24px; }
+  .stage { position: relative; width: min(94vw, 480px, calc((100vh - 70px) * 0.75)); min-width: 300px; margin: 4px 0 24px; }
+  .stage.shake { animation: shake 0.28s linear; }
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-6px, 2px); }
+    40% { transform: translate(5px, -2px); }
+    60% { transform: translate(-4px, 1px); }
+    80% { transform: translate(3px, 0); }
+  }
   canvas {
     display: block;
     width: 100%;
@@ -59,6 +76,8 @@
     border: 1px solid #2c2c4d;
     box-shadow: 0 0 40px rgba(255, 95, 162, 0.15), 0 14px 34px rgba(0, 0, 0, 0.45);
     touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .overlay {
     position: absolute;
@@ -70,24 +89,55 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 24px;
-    gap: 14px;
+    padding: 18px;
+    gap: 10px;
   }
   .overlay.hidden { display: none; }
-  .overlay .big { font-size: 3rem; }
+  .overlay .big { font-size: 2.4rem; line-height: 1.1; }
   .overlay h2 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
-    font-size: 1.55rem;
+    font-size: 1.5rem;
     background: linear-gradient(100deg, #ff5fa2, #53e0d8);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .overlay p { font-size: 0.95rem; line-height: 1.8; color: #c9c5e6; }
+  .overlay p { font-size: 0.92rem; line-height: 1.6; color: #c9c5e6; }
   .overlay p b { color: #eeecfa; }
-  .overlay .score-line { font-size: 1.25rem; font-weight: 900; color: #eeecfa; }
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 14px;
+    text-align: left;
+    font-size: 0.88rem;
+    color: #c9c5e6;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid #2c2c4d;
+    border-radius: 14px;
+    padding: 8px 14px;
+  }
+  .legend b { color: #eeecfa; }
+  .overlay .score-line { font-size: 1.35rem; font-weight: 900; color: #eeecfa; }
   .overlay .best-line { font-size: 0.9rem; color: #53e0d8; font-weight: 700; }
+  .overlay .stat-line { font-size: 0.88rem; color: #c9c5e6; font-weight: 700; }
+  .stars { display: flex; gap: 8px; font-size: 2.3rem; line-height: 1; }
+  .stars span { opacity: 0.18; filter: grayscale(1); transform: scale(0.6); transition: transform 0.25s cubic-bezier(.3,1.8,.5,1), opacity 0.2s; }
+  .stars span.on { opacity: 1; filter: none; transform: scale(1); }
+  .rank-msg { font-size: 0.95rem; font-weight: 900; color: #ffd166; min-height: 1.4em; }
+  .overlay .newrec {
+    font-weight: 900; font-size: 0.95rem; color: #131322;
+    background: linear-gradient(100deg, #ffd166, #ff9fc6);
+    border-radius: 999px; padding: 4px 14px;
+    animation: pop 0.6s ease infinite alternate;
+  }
+  .overlay .newrec.hidden { display: none; }
+  @media (max-width: 420px) {
+    .topbar { gap: 6px; padding: 10px 10px 6px; }
+    .topbar a, .topbar button.mute { padding: 6px 10px; }
+    .topbar h1 { font-size: 0.9rem; }
+  }
+  @keyframes pop { from { transform: scale(1); } to { transform: scale(1.08); } }
   .btn {
     border: none;
     background: linear-gradient(100deg, #ff3d8c, #ff5fa2);
@@ -98,20 +148,27 @@
     letter-spacing: 0.14em;
     border-radius: 999px;
     padding: 12px 46px;
+    min-height: 48px;
     cursor: pointer;
     box-shadow: 0 4px 22px rgba(255, 61, 140, 0.5);
+    -webkit-tap-highlight-color: transparent;
   }
-  .btn:hover { filter: brightness(1.12); }
+  @media (hover: hover) {
+    .btn:hover { filter: brightness(1.12); }
+  }
   .btn:active { transform: translateY(2px); }
   .btn:focus-visible, .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
   .hint { font-size: 0.78rem; color: #9d99c0; }
   .hint a { color: #9d99c0; }
-  .age-badge { display:inline-flex; width:fit-content; margin:0; padding:5px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
+  .age-badge { display:inline-flex; width:fit-content; margin:0; padding:4px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
+  @media (prefers-reduced-motion: reduce) {
+    .stage.shake, .overlay .newrec { animation: none; }
+  }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="夜空から降る花をかごでキャッチする45秒のスコアアタック。星はボーナス、おばけに触れると減点。連続キャッチでハイスコアを狙え。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="夜空から降る花をかごでキャッチ！つづけて取るとコンボで点数アップ、とけいで時間をのばし、じしゃくで花をあつめよう。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/001-hanabira-catch/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"はなびらキャッチ","description":"夜空から降る花をかごでキャッチする45秒のスコアアタック。星はボーナス、おばけに触れると減点。連続キャッチでハイスコアを狙え。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/001-hanabira-catch/index.html","inLanguage":"ja","genre":"ACTION","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"はなびらキャッチ","description":"夜空から降る花をかごでキャッチ！つづけて取るとコンボで点数アップ、とけいで時間をのばし、じしゃくで花をあつめよう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/001-hanabira-catch/index.html","inLanguage":"ja","genre":"ACTION","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="001"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -123,28 +180,33 @@
   <button class="mute" id="mute-btn" aria-label="おとのオンオフ">🔊</button>
 </div>
 
-<div class="stage">
+<div class="stage" id="stage">
   <canvas id="game" width="480" height="640"></canvas>
 
   <div class="overlay" id="title-screen">
     <div class="big">🌸🧺⭐</div>
     <h2>はなびらキャッチ</h2>
     <p class="age-badge">対象年齢の目安：6歳〜</p>
-    <p>
-      かごをうごかして よぞらからおちてくるものをキャッチ！<br>
-      🌸 おはな = <b>+10てん</b><br>
-      ⭐ ほし = <b>+30てん</b><br>
-      👻 おばけ = <b>−20てん</b>（とっちゃダメ！）<br>
-      せいげんじかんは <b>45びょう</b>だよ。
-    </p>
+    <p>かごをうごかして おちてくるものをキャッチ！<br><b>つづけてとると コンボ</b>で てんすうアップ！</p>
+    <div class="legend">
+      <span>🌸 おはな <b>+10</b></span>
+      <span>⭐ ほし <b>+30</b></span>
+      <span>⏰ とけい <b>+5びょう</b></span>
+      <span>🧲 じしゃく <b>すいよせ</b></span>
+      <span>👻 おばけ <b>−20</b></span>
+      <span>💨 とちゅうで <b>かぜ</b></span>
+    </div>
     <button class="btn" id="start-btn">スタート！</button>
-    <p class="hint">そうさ：←→キー / マウス / ゆびでスライド</p>
+    <p class="hint" id="title-best">そうさ：ゆびでスライド / マウス / ←→キー</p>
   </div>
 
   <div class="overlay hidden" id="over-screen">
-    <div class="big">🎉</div>
     <h2>じかんぎれ！</h2>
+    <div class="stars" id="stars" aria-label="ほしのかず"><span>⭐</span><span>⭐</span><span>⭐</span></div>
+    <p class="rank-msg" id="rank-msg"></p>
     <p class="score-line" id="final-score">スコア：0てん</p>
+    <p class="newrec hidden" id="newrec">🎉 じこベストこうしん！</p>
+    <p class="stat-line" id="stat-line"></p>
     <p class="best-line" id="best-score"></p>
     <button class="btn" id="retry-btn">もういちど！</button>
     <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
@@ -160,8 +222,11 @@ const SETTINGS = {
   goodPoint: 10,       // おはな
   bonusPoint: 30,      // ほし
   badPoint: -20,       // おばけ
+  clockBonus: 5,       // とけい（びょう）
+  magnetTime: 7,       // じしゃく（びょう）
   fallSpeedStart: 130,
-  fallSpeedMax: 260,
+  fallSpeedMax: 270,
+  starLine: [300, 800, 1600], // ★1 / ★2 / ★3 のめやす
   storageKey: "hanabira-catch-best",
 };
 // ================================================================
@@ -176,23 +241,44 @@ const SETTINGS = {
   canvas.height = H * dpr;
   ctx.scale(dpr, dpr);
 
+  const stageEl = document.getElementById("stage");
   const titleScreen = document.getElementById("title-screen");
   const overScreen = document.getElementById("over-screen");
   const finalScoreEl = document.getElementById("final-score");
   const bestScoreEl = document.getElementById("best-score");
+  const statLineEl = document.getElementById("stat-line");
+  const rankMsgEl = document.getElementById("rank-msg");
+  const newRecEl = document.getElementById("newrec");
+  const starEls = document.querySelectorAll("#stars span");
+  const titleBestEl = document.getElementById("title-best");
   const muteBtn = document.getElementById("mute-btn");
 
-  let state = "title";
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  let state = "title"; // title / count / play / over
   let score = 0;
   let timeLeft = SETTINGS.gameTime;
   let elapsed = 0;
+  let countdown = 0;
   let items = [];
   let popups = [];
   let sparks = [];
+  let rings = [];
+  let streaks = [];
   let spawnTimer = 0;
   let player = { x: W / 2, y: H - 70 };
   let keys = { left: false, right: false };
   let lastTime = 0;
+  let combo = 0, maxCombo = 0, caughtFlowers = 0, caughtStars = 0;
+  let magnet = 0;
+  let squash = 0;
+  let flash = 0, flashColor = "#fff";
+  let phase = 0;
+  let banner = null; // {text, sub, life}
+  let wind = 0;
+  let lastTick = 0;
+  let clocks = 0;
 
   const bgStars = [];
   for (let i = 0; i < 40; i++) {
@@ -201,9 +287,10 @@ const SETTINGS = {
 
   // ============ おと（BGM＋こうかおん・ミュート対応） ============
   let audioCtx = null;
-  let muted = localStorage.getItem("picotto-muted") === "1";
+  let muted = lsGet("picotto-muted") === "1";
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") { try { audioCtx.resume(); } catch (e) {} }
     return audioCtx;
   }
   function tone(freq, t, dur, type, vol) {
@@ -216,13 +303,16 @@ const SETTINGS = {
     o.connect(g).connect(c.destination);
     o.start(t); o.stop(t + dur + 0.1);
   }
-  function beep(freq, dur, type, vol) {
+  function beep(freq, dur, type, vol, delay) {
     if (muted) return;
-    try { tone(freq, getCtx().currentTime, dur, type || "sine", vol || 0.1); } catch (e) {}
+    try { tone(freq, getCtx().currentTime + (delay || 0), dur, type || "sine", vol || 0.1); } catch (e) {}
+  }
+  function arpeggio(notes, gap, type, vol) {
+    notes.forEach(function (n, i) { beep(n, 0.14, type || "triangle", vol || 0.08, i * (gap || 0.07)); });
   }
   // やさしいワルツ調のループBGM
   const BGM = {
-    timer: null, step: 0, next: 0,
+    timer: null, step: 0, next: 0, rate: 1,
     song: {
       bpm: 100, lead: "sine",
       melody: [659, 0, 523, 0, 587, 0, 392, 0, 440, 0, 523, 0, 494, 0, 392, 0,
@@ -233,13 +323,14 @@ const SETTINGS = {
       try {
         const c = getCtx();
         this.stop();
-        const spb = 60 / this.song.bpm / 2;
+        this.rate = 1;
         this.next = c.currentTime + 0.1;
         this.step = 0;
         const self = this;
         this.timer = setInterval(function () {
           try {
             const cc = getCtx();
+            const spb = 60 / (self.song.bpm * self.rate) / 2;
             while (self.next < cc.currentTime + 0.25) {
               if (!muted && !document.hidden) {
                 const m = self.song.melody[self.step % self.song.melody.length];
@@ -259,7 +350,7 @@ const SETTINGS = {
   function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
   muteBtn.addEventListener("click", function () {
     muted = !muted;
-    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    lsSet("picotto-muted", muted ? "1" : "0");
     updateMuteBtn();
   });
   updateMuteBtn();
@@ -332,8 +423,51 @@ const SETTINGS = {
     c.restore();
   }
 
-  function drawBasket(c, x, y) {
+  // とけい（+じかん）
+  function drawClock(c, x, y, r, t) {
     c.save(); c.translate(x, y);
+    const glow = c.createRadialGradient(0, 0, 2, 0, 0, r * 2);
+    glow.addColorStop(0, "rgba(83, 224, 216, 0.45)");
+    glow.addColorStop(1, "rgba(83, 224, 216, 0)");
+    c.fillStyle = glow;
+    c.beginPath(); c.arc(0, 0, r * 2, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#53e0d8";
+    c.beginPath(); c.arc(-r * 0.62, -r * 0.78, r * 0.3, 0, Math.PI * 2); c.arc(r * 0.62, -r * 0.78, r * 0.3, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#ffffff";
+    c.strokeStyle = "#53e0d8";
+    c.lineWidth = 3;
+    c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.strokeStyle = "#3a3355";
+    c.lineWidth = 2.4;
+    c.lineCap = "round";
+    const a = t / 300;
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.62); c.stroke();
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(0, -r * 0.45); c.stroke();
+    c.restore();
+  }
+
+  // じしゃく
+  function drawMagnet(c, x, y, r, rot) {
+    c.save(); c.translate(x, y); c.rotate(Math.sin(rot) * 0.3);
+    const glow = c.createRadialGradient(0, 0, 2, 0, 0, r * 2);
+    glow.addColorStop(0, "rgba(199, 125, 255, 0.45)");
+    glow.addColorStop(1, "rgba(199, 125, 255, 0)");
+    c.fillStyle = glow;
+    c.beginPath(); c.arc(0, 0, r * 2, 0, Math.PI * 2); c.fill();
+    c.lineWidth = r * 0.62;
+    c.strokeStyle = "#ff5a6e";
+    c.beginPath(); c.arc(0, -r * 0.1, r * 0.62, Math.PI, 0); c.stroke();
+    c.beginPath(); c.moveTo(-r * 0.62, -r * 0.1); c.lineTo(-r * 0.62, r * 0.45); c.moveTo(r * 0.62, -r * 0.1); c.lineTo(r * 0.62, r * 0.45); c.stroke();
+    c.strokeStyle = "#e8e4ff";
+    c.beginPath(); c.moveTo(-r * 0.62, r * 0.45); c.lineTo(-r * 0.62, r * 0.9); c.moveTo(r * 0.62, r * 0.45); c.lineTo(r * 0.62, r * 0.9); c.stroke();
+    c.restore();
+  }
+
+  function drawBasket(c, x, y) {
+    c.save(); c.translate(x, y + 28);
+    const sq = Math.sin(Math.min(squash, 1) * Math.PI) * 0.16;
+    c.scale(1 + sq, 1 - sq);
+    c.translate(0, -28);
     c.strokeStyle = "#a97b4d";
     c.lineWidth = 5;
     c.beginPath(); c.arc(0, -8, 24, Math.PI * 1.08, Math.PI * 1.92); c.stroke();
@@ -364,10 +498,14 @@ const SETTINGS = {
   function burst(x, y, color, n) {
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2;
-      const sp = 60 + Math.random() * 130;
+      const sp = 60 + Math.random() * 150;
       sparks.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.55 + Math.random() * 0.35, max: 0.9, color: color });
     }
   }
+  function addPopup(x, y, text, color, size) {
+    popups.push({ x: x, y: y, text: text, color: color, life: 0.9, size: size || 22 });
+  }
+  function showBanner(text, sub) { banner = { text: text, sub: sub || "", life: 2.2 }; }
 
   // ---- そうさ ----
   document.addEventListener("keydown", function (e) {
@@ -388,6 +526,13 @@ const SETTINGS = {
   canvas.addEventListener("pointerdown", pointerMove);
 
   // ---- ゲームのながれ ----
+  function readBest() { return Number(lsGet(SETTINGS.storageKey) || 0); }
+  function showTitleBest() {
+    const b = readBest();
+    if (b > 0) titleBestEl.textContent = "さいこうきろく：" + b + "てん　そうさ：スライド / ←→キー";
+  }
+  showTitleBest();
+
   function startGame() {
     score = 0;
     timeLeft = SETTINGS.gameTime;
@@ -395,41 +540,78 @@ const SETTINGS = {
     items = [];
     popups = [];
     sparks = [];
-    spawnTimer = 0;
+    rings = [];
+    streaks = [];
+    spawnTimer = 0.3;
+    combo = 0; maxCombo = 0; caughtFlowers = 0; caughtStars = 0;
+    magnet = 0; squash = 0; flash = 0; phase = 0; wind = 0; banner = null;
+    lastTick = 0;
+    clocks = 0;
     player.x = W / 2;
-    state = "play";
+    countdown = 3;
+    state = "count";
     titleScreen.classList.add("hidden");
     overScreen.classList.add("hidden");
-    beep(660, 0.15);
+    beep(520, 0.12);
     BGM.start();
   }
 
   function endGame() {
     state = "over";
     BGM.stop();
-    const best = Math.max(score, Number(localStorage.getItem(SETTINGS.storageKey) || 0));
-    localStorage.setItem(SETTINGS.storageKey, String(best));
+    const prev = readBest();
+    const best = Math.max(score, prev);
+    lsSet(SETTINGS.storageKey, String(best));
     finalScoreEl.textContent = "スコア：" + score + "てん";
     bestScoreEl.textContent = "さいこうきろく：" + best + "てん";
+    statLineEl.textContent = "さいだいコンボ " + maxCombo + "　🌸" + caughtFlowers + "こ　⭐" + caughtStars + "こ";
+    let n = 0;
+    SETTINGS.starLine.forEach(function (v) { if (score >= v) n++; });
+    starEls.forEach(function (s) { s.classList.remove("on"); });
+    const msgs = ["つぎは コンボを ねらってみよう！", "いいかんじ！", "すごい！ はなびらマスター！", "かんぺき！ よぞらのめいじん！"];
+    rankMsgEl.textContent = msgs[n];
+    newRecEl.classList.toggle("hidden", !(score > prev && score > 0));
     overScreen.classList.remove("hidden");
-    beep(440, 0.4);
+    beep(440, 0.3);
+    for (let i = 0; i < n; i++) {
+      setTimeout(function () {
+        starEls[i].classList.add("on");
+        beep(880 + i * 220, 0.15, "triangle", 0.09);
+      }, 350 + i * 320);
+    }
+    if (score > prev && score > 0) setTimeout(function () { arpeggio([659, 784, 1047, 1319], 0.09, "sine", 0.08); }, 400 + n * 320);
+    showTitleBest();
   }
 
   document.getElementById("start-btn").addEventListener("click", startGame);
   document.getElementById("retry-btn").addEventListener("click", startGame);
 
-  function spawnItem() {
+  function pickType() {
     const r = Math.random();
-    let type;
-    if (r < 0.62) type = "good";
-    else if (r < 0.82) type = "bad";
-    else type = "bonus";
-    const speedRatio = Math.min(elapsed / SETTINGS.gameTime, 1);
-    const vy = SETTINGS.fallSpeedStart + (SETTINGS.fallSpeedMax - SETTINGS.fallSpeedStart) * speedRatio + Math.random() * 40;
+    // 後半ほど ほし と おばけ がふえる
+    const table = phase === 2
+      ? [["good", 0.46], ["bad", 0.24], ["bonus", 0.22], ["clock", 0.04], ["magnet", 0.04]]
+      : phase === 1
+      ? [["good", 0.55], ["bad", 0.22], ["bonus", 0.15], ["clock", 0.04], ["magnet", 0.04]]
+      : [["good", 0.64], ["bad", 0.16], ["bonus", 0.12], ["clock", 0.03], ["magnet", 0.05]];
+    let acc = 0;
+    for (const t of table) { acc += t[1]; if (r < acc) return t[0]; }
+    return "good";
+  }
+
+  function spawnItem() {
+    let type = pickType();
+    if (type === "magnet" && magnet > 0) type = "good";
+    if (type === "clock") { if (clocks >= 3) type = "good"; else clocks++; }
+    const speedRatio = Math.min(elapsed / 42, 1);
+    let vy = SETTINGS.fallSpeedStart + (SETTINGS.fallSpeedMax - SETTINGS.fallSpeedStart) * speedRatio + Math.random() * 40;
+    if (type === "clock" || type === "magnet") vy *= 0.85;
+    if (type === "bonus") vy *= 1.08;
     items.push({
       x: 40 + Math.random() * (W - 80),
       y: -30,
       vy: vy,
+      vx: 0,
       type: type,
       wobble: Math.random() * Math.PI * 2,
       rot: Math.random() * Math.PI * 2,
@@ -437,7 +619,80 @@ const SETTINGS = {
     });
   }
 
+  function multiplier() { return Math.min(1 + Math.floor(combo / 5) * 0.5, 3); }
+
+  function catchItem(it) {
+    squash = 0.001;
+    rings.push({ x: it.x, y: player.y - 10, r: 12, life: 0.4, color: it.type === "bad" ? "#c77dff" : it.type === "bonus" ? "#ffd166" : "#ff8fba" });
+    if (it.type === "bad") {
+      score = Math.max(0, score + SETTINGS.badPoint);
+      addPopup(it.x, player.y - 40, String(SETTINGS.badPoint), "#c77dff");
+      if (combo >= 5) addPopup(W / 2, 150, "コンボ とぎれた…", "#c9c5e6", 20);
+      combo = 0;
+      beep(150, 0.25, "sawtooth");
+      burst(it.x, it.y, "#c77dff", 10);
+      flash = 0.35; flashColor = "#7b4dcc";
+      stageEl.classList.remove("shake"); void stageEl.offsetWidth; stageEl.classList.add("shake");
+      if (navigator.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+      return;
+    }
+    if (it.type === "clock") {
+      timeLeft += SETTINGS.clockBonus;
+      addPopup(it.x, player.y - 40, "+" + SETTINGS.clockBonus + "びょう", "#53e0d8");
+      arpeggio([784, 988, 1175], 0.06, "triangle");
+      burst(it.x, it.y, "#53e0d8", 12);
+      flash = 0.2; flashColor = "#53e0d8";
+      return;
+    }
+    if (it.type === "magnet") {
+      magnet = SETTINGS.magnetTime;
+      addPopup(it.x, player.y - 40, "じしゃく！", "#ff9fc6");
+      arpeggio([523, 659, 784, 1047], 0.05, "square", 0.05);
+      burst(it.x, it.y, "#c77dff", 12);
+      return;
+    }
+    const before = multiplier();
+    combo++;
+    if (combo > maxCombo) maxCombo = combo;
+    const m = multiplier();
+    const base = it.type === "bonus" ? SETTINGS.bonusPoint : SETTINGS.goodPoint;
+    const pts = Math.round(base * m);
+    score += pts;
+    if (it.type === "bonus") {
+      caughtStars++;
+      beep(1320, 0.15, "triangle");
+      burst(it.x, it.y, "#ffd166", 16);
+      flash = 0.22; flashColor = "#fff4c2";
+    } else {
+      caughtFlowers++;
+      beep(700 + Math.min(combo, 20) * 30, 0.09);
+      burst(it.x, it.y, "#ff8fba", 8);
+    }
+    addPopup(it.x, player.y - 40, "+" + pts, it.type === "bonus" ? "#ffd166" : "#ff5fa2");
+    if (m > before) {
+      addPopup(W / 2, 170, "コンボ ×" + m + "！", "#ffd166", 34);
+      arpeggio([784, 988, 1175, 1568], 0.06);
+      burst(player.x, player.y - 20, "#ffd166", 18);
+    }
+  }
+
+  function setPhase(p) {
+    if (p === phase) return;
+    phase = p;
+    if (p === 1) { showBanner("💨 かぜがふいてきた！", "よこにながれるよ"); BGM.rate = 1.1; }
+    if (p === 2) { showBanner("⭐ ほしがいっぱい！", "おばけにも ちゅうい"); BGM.rate = 1.22; }
+    arpeggio([523, 659, 784], 0.08, "sine", 0.07);
+  }
+
   function update(dt) {
+    if (state === "count") {
+      const before = Math.ceil(countdown);
+      countdown -= dt;
+      if (Math.ceil(countdown) !== before && countdown > 0) beep(520, 0.12);
+      if (countdown <= 0) { state = "play"; beep(1040, 0.2, "triangle"); showBanner("スタート！", "コンボをつなげよう"); }
+      updateFx(dt);
+      return;
+    }
     elapsed += dt;
     timeLeft -= dt;
     if (timeLeft <= 0) {
@@ -445,16 +700,25 @@ const SETTINGS = {
       endGame();
       return;
     }
-    const kbSpeed = 340;
+    if (timeLeft <= 5 && Math.ceil(timeLeft) !== lastTick) { lastTick = Math.ceil(timeLeft); beep(1200, 0.06, "square", 0.05); }
+    setPhase(elapsed >= 30 ? 2 : elapsed >= 15 ? 1 : 0);
+    if (phase >= 1) {
+      wind = Math.sin(elapsed * 0.55) * 95;
+      if (Math.random() < dt * 14) streaks.push({ x: wind > 0 ? -20 : W + 20, y: 60 + Math.random() * (H - 160), len: 30 + Math.random() * 40, life: 1 });
+    } else wind = 0;
+
+    const kbSpeed = 360;
     if (keys.left) player.x -= kbSpeed * dt;
     if (keys.right) player.x += kbSpeed * dt;
     player.x = Math.max(40, Math.min(W - 40, player.x));
+    if (magnet > 0) magnet -= dt;
+    if (squash > 0) { squash += dt * 6; if (squash >= 1) squash = 0; }
 
     spawnTimer -= dt;
     if (spawnTimer <= 0) {
       spawnItem();
-      const ratio = Math.min(elapsed / SETTINGS.gameTime, 1);
-      spawnTimer = 0.85 - 0.4 * ratio;
+      const ratio = Math.min(elapsed / 42, 1);
+      spawnTimer = 0.82 - 0.4 * ratio;
     }
 
     for (let i = items.length - 1; i >= 0; i--) {
@@ -462,27 +726,28 @@ const SETTINGS = {
       it.y += it.vy * dt;
       it.wobble += dt * 3;
       it.rot += it.rotSpeed * dt;
-      it.x += Math.sin(it.wobble) * 0.4;
+      it.x += Math.sin(it.wobble) * 0.4 + wind * dt * (it.type === "bad" ? 1.2 : 0.9);
+      if (magnet > 0 && it.type !== "bad" && it.y > 120 && it.y < player.y + 10) {
+        const dx = player.x - it.x;
+        it.x += Math.sign(dx) * Math.min(Math.abs(dx), 330 * dt);
+      }
+      if (it.x < 20) it.x = 20;
+      if (it.x > W - 20) it.x = W - 20;
 
       const caught = it.y > player.y - 26 && it.y < player.y + 26 && Math.abs(it.x - player.x) < 46;
       if (caught) {
-        let pts = 0;
-        if (it.type === "good") { pts = SETTINGS.goodPoint; beep(880, 0.1); burst(it.x, it.y, "#ff8fba", 8); }
-        if (it.type === "bonus") { pts = SETTINGS.bonusPoint; beep(1320, 0.15, "triangle"); burst(it.x, it.y, "#ffd166", 12); }
-        if (it.type === "bad") { pts = SETTINGS.badPoint; beep(150, 0.25, "sawtooth"); burst(it.x, it.y, "#c77dff", 8); }
-        score = Math.max(0, score + pts);
-        popups.push({
-          x: it.x, y: player.y - 40,
-          text: (pts > 0 ? "+" : "") + pts,
-          color: pts > 0 ? (it.type === "bonus" ? "#ffd166" : "#ff5fa2") : "#c77dff",
-          life: 0.8,
-        });
+        catchItem(it);
         items.splice(i, 1);
       } else if (it.y > H + 40) {
+        if (it.type === "good" && combo >= 5) addPopup(W / 2, 150, "コンボ とぎれた…", "#c9c5e6", 20);
+        if (it.type === "good") combo = 0;
         items.splice(i, 1);
       }
     }
+    updateFx(dt);
+  }
 
+  function updateFx(dt) {
     for (let i = popups.length - 1; i >= 0; i--) {
       popups[i].y -= 50 * dt;
       popups[i].life -= dt;
@@ -496,11 +761,24 @@ const SETTINGS = {
       p.life -= dt;
       if (p.life <= 0) sparks.splice(i, 1);
     }
+    for (let i = rings.length - 1; i >= 0; i--) {
+      rings[i].r += 160 * dt;
+      rings[i].life -= dt;
+      if (rings[i].life <= 0) rings.splice(i, 1);
+    }
+    for (let i = streaks.length - 1; i >= 0; i--) {
+      const s = streaks[i];
+      s.x += (wind > 0 ? 1 : -1) * 520 * dt;
+      s.life -= dt;
+      if (s.life <= 0 || s.x < -80 || s.x > W + 80) streaks.splice(i, 1);
+    }
+    if (flash > 0) flash -= dt;
+    if (banner) { banner.life -= dt; if (banner.life <= 0) banner = null; }
   }
 
   function drawBackground(t) {
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#1b1836");
+    sky.addColorStop(0, phase === 2 ? "#241a45" : "#1b1836");
     sky.addColorStop(0.55, "#2b2050");
     sky.addColorStop(1, "#3a2a5e");
     ctx.fillStyle = sky;
@@ -511,10 +789,20 @@ const SETTINGS = {
       ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
     }
     ctx.globalAlpha = 1;
-    ctx.font = "40px serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("🌙", 415, 88);
+    // おつきさま（えもじにたよらず手がき）
+    ctx.fillStyle = "#ffe9a8";
+    ctx.beginPath(); ctx.arc(415, 88, 22, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = phase === 2 ? "#241a45" : "#1d1939";
+    ctx.beginPath(); ctx.arc(426, 80, 19, 0, Math.PI * 2); ctx.fill();
+    // かぜのすじ
+    ctx.strokeStyle = "rgba(200, 230, 255, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    for (const s of streaks) {
+      ctx.globalAlpha = Math.max(s.life, 0) * 0.8;
+      ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - Math.sign(wind || 1) * s.len, s.y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
     ctx.fillStyle = "#241f42";
     ctx.fillRect(0, H - 36, W, 36);
     ctx.fillStyle = "#53e0d8";
@@ -526,18 +814,37 @@ const SETTINGS = {
   }
 
   function draw(t) {
-    drawBackground(t || 0);
+    t = t || 0;
+    drawBackground(t);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
     for (const it of items) {
       if (it.type === "good") drawPetalFlower(ctx, it.x, it.y, 17, it.rot);
       else if (it.type === "bonus") drawStar(ctx, it.x, it.y, 15, it.rot);
+      else if (it.type === "clock") drawClock(ctx, it.x, it.y, 14, t);
+      else if (it.type === "magnet") drawMagnet(ctx, it.x, it.y, 15, it.wobble);
       else drawGhost(ctx, it.x, it.y, 18, t + it.wobble * 300);
+    }
+
+    // じしゃくのわっか
+    if (magnet > 0) {
+      ctx.strokeStyle = "rgba(199, 125, 255, " + (0.35 + 0.25 * Math.sin(t / 90)) + ")";
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(player.x, player.y + 6, 48, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = "#c77dff";
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(player.x, player.y + 6, 48, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (magnet / SETTINGS.magnetTime)); ctx.stroke();
     }
 
     drawBasket(ctx, player.x, player.y);
 
+    for (const r of rings) {
+      ctx.globalAlpha = Math.max(r.life / 0.4, 0);
+      ctx.strokeStyle = r.color;
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke();
+    }
     for (const p of sparks) {
       ctx.globalAlpha = Math.max(p.life / p.max, 0);
       ctx.fillStyle = p.color;
@@ -545,14 +852,25 @@ const SETTINGS = {
     }
     ctx.globalAlpha = 1;
 
-    ctx.font = "900 22px 'Zen Maru Gothic', sans-serif";
     for (const p of popups) {
-      ctx.globalAlpha = Math.max(p.life / 0.8, 0);
+      ctx.globalAlpha = Math.max(p.life / 0.9, 0);
+      ctx.font = "900 " + p.size + "px 'Zen Maru Gothic', sans-serif";
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(19,19,34,0.8)";
+      ctx.strokeText(p.text, p.x, p.y);
       ctx.fillStyle = p.color;
       ctx.fillText(p.text, p.x, p.y);
     }
     ctx.globalAlpha = 1;
 
+    if (flash > 0) {
+      ctx.globalAlpha = Math.min(flash, 0.35) * 0.8;
+      ctx.fillStyle = flashColor;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+    }
+
+    // HUD
     ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
     roundRect(ctx, 12, 12, 150, 40, 12);
     roundRect(ctx, W - 162, 12, 150, 40, 12);
@@ -563,6 +881,58 @@ const SETTINGS = {
     ctx.fillStyle = timeLeft <= 10 ? "#ffd166" : "#53e0d8";
     ctx.textAlign = "right";
     ctx.fillText("⏰ " + Math.ceil(timeLeft) + " びょう", W - 24, 33);
+    if (state === "play" || state === "count") {
+      // コンボ
+      if (combo > 0) {
+        const m = multiplier();
+        ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
+        roundRect(ctx, W / 2 - 70, 60, 140, 34, 12);
+        ctx.textAlign = "center";
+        ctx.font = "900 18px 'Zen Maru Gothic', sans-serif";
+        ctx.fillStyle = m >= 2 ? "#ffd166" : "#ff9fc6";
+        ctx.fillText(combo + "コンボ  ×" + m, W / 2, 78);
+        // つぎの ばいりつまで
+        if (m < 3) {
+          const prog = (combo % 5) / 5;
+          ctx.fillStyle = "rgba(255,255,255,0.15)";
+          ctx.fillRect(W / 2 - 56, 90, 112, 3);
+          ctx.fillStyle = "#ffd166";
+          ctx.fillRect(W / 2 - 56, 90, 112 * prog, 3);
+        }
+      }
+      if (wind !== 0) {
+        ctx.textAlign = "left";
+        ctx.font = "900 16px 'Zen Maru Gothic', sans-serif";
+        ctx.fillStyle = "#bfe3ff";
+        ctx.fillText(wind > 0 ? "💨 かぜ →" : "← かぜ 💨", 20, 70);
+      }
+    }
+    if (banner) {
+      const a = Math.min(1, banner.life / 0.4, (2.2 - banner.life) / 0.25);
+      ctx.globalAlpha = Math.max(a, 0);
+      ctx.fillStyle = "rgba(19, 19, 34, 0.82)";
+      roundRect(ctx, 50, 250, W - 100, banner.sub ? 90 : 64, 18);
+      ctx.textAlign = "center";
+      ctx.font = "900 28px 'Mochiy Pop One', 'Zen Maru Gothic', sans-serif";
+      ctx.fillStyle = "#ffd166";
+      ctx.fillText(banner.text, W / 2, 282);
+      if (banner.sub) {
+        ctx.font = "900 18px 'Zen Maru Gothic', sans-serif";
+        ctx.fillStyle = "#eeecfa";
+        ctx.fillText(banner.sub, W / 2, 318);
+      }
+      ctx.globalAlpha = 1;
+    }
+    if (state === "count") {
+      const n = Math.ceil(countdown);
+      const f = countdown - Math.floor(countdown);
+      ctx.textAlign = "center";
+      ctx.font = "900 " + Math.round(90 + 40 * f) + "px 'Mochiy Pop One', 'Zen Maru Gothic', sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.globalAlpha = 0.4 + 0.6 * f;
+      ctx.fillText(String(n), W / 2, 300);
+      ctx.globalAlpha = 1;
+    }
   }
 
   function roundRect(c, x, y, w, h, r) {
@@ -579,7 +949,8 @@ const SETTINGS = {
   function loop(t) {
     const dt = Math.min((t - lastTime) / 1000, 0.05);
     lastTime = t;
-    if (state === "play") update(dt);
+    if (state === "play" || state === "count") update(dt);
+    else if (state === "over") updateFx(dt);
     draw(t);
     requestAnimationFrame(loop);
   }
@@ -588,6 +959,14 @@ const SETTINGS = {
     requestAnimationFrame(loop);
   });
   draw(0);
+
+  // テスト用のよみとりだけの窓口（ゲームにはえいきょうしない）
+  window.__ludotGame = {
+    get state() { return state; }, get score() { return score; }, get combo() { return combo; }, get maxCombo() { return maxCombo; },
+    get timeLeft() { return timeLeft; }, get phase() { return phase; },
+    get items() { return items.map(function (i) { return { x: i.x, y: i.y, type: i.type, vy: i.vy }; }); },
+    get player() { return { x: player.x, y: player.y }; },
+  };
 })();
 </script>
 </body>
