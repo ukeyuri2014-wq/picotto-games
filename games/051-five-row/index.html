@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ほしぞら五目ならべ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 10px 30px; touch-action:manipulation; -webkit-text-size-adjust:100%;
+  }
+  #app{width:min(480px,100%,max(300px,calc((100vh - 236px) * 0.8696)))}
+  .backbar{margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar a:focus-visible{color:var(--gold);outline:none}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;min-width:46px;min-height:32px;padding:4px 12px;cursor:pointer;font-family:inherit}
+  header{display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:1px;color:#c9b0ff;text-shadow:0 0 12px rgba(160,107,255,.65);font-weight:400;white-space:nowrap}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(160,107,255,.45);border-radius:999px;color:#c9b0ff;background:rgba(160,107,255,.1);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:100%}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:8px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+  .row{display:flex;gap:6px;margin-top:6px}
+  .btn{flex:1;min-height:40px;font-family:inherit;font-size:13px;padding:6px 2px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:.5px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-width:0;overflow:hidden}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.main{flex:1.12;min-height:44px;font-size:15px;letter-spacing:1px}
+  .btn.main.ready{background:var(--gold);color:#2a1d00;border-color:var(--gold);box-shadow:0 0 14px rgba(255,209,102,.55);animation:ready 1s ease-in-out infinite}
+  .btn.r1{min-height:44px;font-size:13px}
+  .row.r2 .btn{flex:1 1 auto;padding:6px 6px}
+  .btn.tgl{color:var(--sub)}
+  .btn.tgl.on{border-color:rgba(160,107,255,.7);color:#c9b0ff;background:rgba(160,107,255,.1)}
+  @keyframes ready{50%{box-shadow:0 0 22px rgba(255,209,102,.9)}}
+  #overlay{
+    position:absolute;left:0;right:0;top:0;min-height:100%;z-index:2;display:none;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;background:rgba(15,15,30,.94);
+    border-radius:8px;text-align:center;padding:10px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:27px;letter-spacing:3px;color:#c9b0ff;text-shadow:0 0 16px rgba(160,107,255,.75);line-height:1.2}
+  #overlay .big.p1{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .big.dr{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.75}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .up{color:var(--gold);text-shadow:0 0 10px rgba(255,209,102,.6)}
+  .demo{display:block;width:210px;height:34px}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:14px;min-height:44px;background:var(--cyan);color:#062a28;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(83,224,216,.35)}
+  .modes button.alt{background:var(--pink);color:#2b0014;box-shadow:0 0 14px rgba(255,95,162,.3)}
+  .levels{display:flex;gap:6px;justify-content:center}
+  .levels button{font-family:inherit;font-size:13px;min-height:38px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+  .levels button.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08)}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.6}
+  #overlay .rule b{color:var(--gold);font-weight:400}
+  #btnView{font-family:inherit;font-size:13px;min-height:38px;background:none;border:1px solid var(--sub);color:var(--ink);border-radius:999px;padding:5px 18px;cursor:pointer;display:none}
+  #btnView.show{display:inline-block}
+  .help{color:var(--sub);font-size:13px;margin-top:12px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled):not(.ready){border-color:var(--gold);color:var(--gold)}
+    .levels button:hover{border-color:var(--gold);color:var(--gold)}
+    .modes button:hover{filter:brightness(1.12)}
+    #btnView:hover{border-color:var(--gold);color:var(--gold)}
+  }
+  @media (max-width:420px){ .row.r2 .btn{font-size:12px;padding:6px 3px} }
+  @media (max-width:360px){
+    h1{font-size:19px} .btn{font-size:12px;letter-spacing:0} .btn.main{font-size:14px} .btn.r1{font-size:12px}
+    .row.r2 .btn{font-size:11px;padding:6px 1px} .modes{gap:6px} .modes button{font-size:13px;padding:8px 7px;letter-spacing:0}
+    .levels{gap:4px} .levels button{font-size:12px;padding:5px 8px}
+    #overlay{gap:6px;padding:8px 4px} #overlay .big{font-size:22px} .demo{height:26px}
+    #overlay .note{font-size:12px} #overlay .rule{font-size:11px}
+  }
+  @media (max-height:480px){ .demo{display:none} #overlay{gap:5px} #overlay .big{font-size:20px} #overlay .big br{display:none} #overlay .note{line-height:1.5} }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="13×13のばんに石をこうたいでおき、たて・よこ・ななめに先に5つならべたら勝ち。CPUは3段階（つよいは先読みつき）、ふたり対戦もOK。虫めがねと2回タップでおきまちがえにくく、きけんサイン・ヒント・1手もどす、強さ別の成績としょうごうつき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/051-five-row/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ほしぞら五目ならべ","description":"13×13のばんに石をこうたいでおき、たて・よこ・ななめに先に5つならべたら勝ち。CPUは3段階（つよいは先読みつき）、ふたり対戦もOK。虫めがねと2回タップでおきまちがえにくく、きけんサイン・ヒント・1手もどす、強さ別の成績としょうごうつき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/051-five-row/index.html","inLanguage":"ja","genre":"BOARD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="051"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+<div id="app">
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ほしぞら五目ならべ</h1>
+  <div class="age-badge">めやす 6歳〜・1〜2人</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="960" height="1104"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">ほしぞら<br>五目ならべ</div>
+    <svg class="demo" id="ovDemo" viewBox="0 0 210 34" aria-hidden="true">
+      <line x1="6" y1="17" x2="204" y2="17" stroke="#3a3a66" stroke-width="2"/>
+      <line x1="33" y1="17" x2="177" y2="17" stroke="#ffd166" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+      <g fill="#f4f2ff" stroke="#53e0d8" stroke-width="2"><circle cx="33" cy="17" r="12"/><circle cx="69" cy="17" r="12"/><circle cx="105" cy="17" r="12"/><circle cx="141" cy="17" r="12"/><circle cx="177" cy="17" r="12"/></g>
+      <g fill="#ffd166"><circle cx="33" cy="17" r="3"/><circle cx="69" cy="17" r="3"/><circle cx="105" cy="17" r="3"/><circle cx="141" cy="17" r="3"/><circle cx="177" cy="17" r="3"/></g>
+    </svg>
+    <div class="note" id="ovNote"></div>
+    <div class="modes">
+      <button id="btnCpu">ひとりで はじめる</button>
+      <button id="btn2p" class="alt">ふたりで はじめる</button>
+    </div>
+    <div class="levels" id="levels">
+      <button data-l="1">CPU よわい</button><button data-l="2" class="on">CPU ふつう</button><button data-l="3">CPU つよい</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+    <button id="btnView">ばんめんを 見る</button>
+  </div>
+</div>
+<div class="row">
+  <button class="btn main" id="okBtn" disabled>✔ ここに おく</button>
+  <button class="btn r1" id="undoBtn" disabled>↩ 1手 もどす</button>
+</div>
+<div class="row r2">
+  <button class="btn" id="hintBtn" disabled>💡 ヒント</button>
+  <button class="btn tgl on" id="signBtn">⚠ きけんサイン ON</button>
+  <button class="btn" id="menuBtn">☰ メニュー</button>
+</div>
+<div class="row">
+  <button class="btn tgl" id="modeBtn">おきかた</button>
+</div>
+
+<div class="help">
+  <p><b>ルール</b>：くろ と しろ が こうたいで、線が まじわる ところに 石を 1つずつ おく。たて・よこ・ななめ の どれかに、じぶんの石を <b>先に 5つ つづけて ならべた人の かち</b>（6つ以上でも かち）。ばんが ぜんぶ うまったら ひきわけ。くろ が せんて（さきに おく）で、せんては 1きょくごとに こうたいするよ。</p>
+  <p><b>コツ</b>：りょうがわが あいている「3つ」は、ほうっておくと とめられない「4つ」に なる。あいての 3つ は すぐ とめよう。じぶんは「3つ」と「4つ」を <b>いっぺんに 2つ</b> つくれると、あいては かたほうしか とめられない！</p>
+  <p><b>べんりボタン</b>：「きけんサイン」は あいての あぶない ところ（！）と じぶんの チャンス（★）を 光らせる。「ヒント」は おすすめの ばしょを 教えてくれる（1きょく 3回）。「1手 もどす」は CPUせんでは 1きょく 3回まで。</p>
+  <p>📱 おきたい ところを タップ（ゆびを すべらせると 虫めがねで ねらえる）→ もういちど タップ か「ここに おく」で けってい。<br>🖱 マウスは おきたい ところを クリック。<br>⌨️ やじるしキーで えらんで Enter ／ Z＝もどす ／ H＝ヒント</p>
+</div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = 480, H = 552, SC = 2;
+  const CELL = 34, GX = 36, GY = 85, BGX = 13, BGY = 62, BGW = 454, R = 15;
+  const KEY = 'ludot_five-row_';
+  const MUTE_KEY = KEY + 'mute', STAT_KEY = KEY + 'stats', OPT_KEY = KEY + 'opts';
+  const BLACK = 1, WHITE = 2;
+  const COLOR_NAME = ['', 'くろ', 'しろ'];
+  const SEAT_COL = ['', '#53e0d8', '#ff5fa2'];
+  const STONE_GLOW = ['', 'rgba(160,107,255,', 'rgba(83,224,216,'];
+  const LEVEL_NAME = ['', 'よわい', 'ふつう', 'つよい'];
+  const PTS = [0, 1, 3, 6];
+  const RANKS = [[0, 'ほしみならい'], [3, 'ほしひろい'], [8, 'ほしつなぎ'], [16, 'せいざづくり'], [30, 'ほしぞらはかせ'], [50, 'ぎんがの めいじん']];
+  const POP_DUR = 0.24, UNDO_MAX = 3, HINT_MAX = 3;
+  const FONT = 'px DotGothic16, monospace';
+
+  // ---- engine: board + pattern table + CPU ------------------------------------
+  const N = 13, PW = N + 8, PSZ = PW * PW, MID = (N - 1) / 2;
+  const STEP = [1, PW, PW + 1, 1 - PW];
+  const P = new Int8Array(PSZ).fill(3);                       // 0 empty / 1 black / 2 white / 3 wall
+  const K = [null, new Int8Array(PSZ * 4), new Int8Array(PSZ * 4)];   // line shape through a cell, per player & direction
+  const cnt = [null, new Int32Array(8), new Int32Array(8)];  // how many (stone,direction) pairs have each shape
+  const near = new Int16Array(PSZ);
+  const CENTER = new Float32Array(PSZ);
+  const CELLS = [];
+  const pid = (x, y) => (y + 4) * PW + x + 4;
+  const cx = i => i % PW - 4, cy = i => (i / PW | 0) - 4;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const i = pid(x, y); CELLS.push(i); CENTER[i] = MID - Math.max(Math.abs(x - MID), Math.abs(y - MID)); }
+  CELLS.sort((a, b) => CENTER[b] - CENTER[a]);
+  let stones = 0;
+  let seed = (Math.random() * 4294967296) >>> 0;
+  function rand() { seed = (seed + 0x6D2B79F5) >>> 0; let t = seed; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+
+  // shape classes: 7 five / 6 open four / 5 four / 4 open three / 3 three / 2 open two / 1 two / 0 none
+  const POW = [1, 3, 9, 27, 81, 243, 729, 2187];
+  const SHAPE = new Int8Array(6561).fill(-1);
+  function shapeOf(c) {
+    let s = SHAPE[c]; if (s >= 0) return s;
+    const dg = []; for (let k = 0; k < 8; k++) dg.push((c / POW[k] | 0) % 3);
+    let run = 1; for (let k = 3; k >= 0 && dg[k] === 1; k--) run++; for (let k = 4; k < 8 && dg[k] === 1; k++) run++;
+    if (run >= 5) s = 7;
+    else {
+      let n5 = 0, best = 0;
+      for (let k = 0; k < 8; k++) if (dg[k] === 0) { const t = shapeOf(c + POW[k]); if (t === 7) n5++; else if (t > best) best = t; }
+      s = n5 >= 2 ? 6 : n5 === 1 ? 5 : best === 6 ? 4 : best === 5 ? 3 : best === 4 ? 2 : best === 3 ? 1 : 0;
+    }
+    SHAPE[c] = s; return s;
+  }
+  for (let c = 0; c < 6561; c++) shapeOf(c);
+  function code(j, q, st) {
+    let c = 0, v;
+    v = P[j - 4 * st]; if (v) c += v === q ? 1 : 2;
+    v = P[j - 3 * st]; if (v) c += v === q ? 3 : 6;
+    v = P[j - 2 * st]; if (v) c += v === q ? 9 : 18;
+    v = P[j - st]; if (v) c += v === q ? 27 : 54;
+    v = P[j + st]; if (v) c += v === q ? 81 : 162;
+    v = P[j + 2 * st]; if (v) c += v === q ? 243 : 486;
+    v = P[j + 3 * st]; if (v) c += v === q ? 729 : 1458;
+    v = P[j + 4 * st]; if (v) c += v === q ? 2187 : 4374;
+    return c;
+  }
+  function recalc(j, d) {
+    const v = P[j], st = STEP[d], b = j * 4 + d;
+    if (v === 0) { K[1][b] = SHAPE[code(j, 1, st)]; K[2][b] = SHAPE[code(j, 2, st)]; }
+    else { const s = SHAPE[code(j, v, st)], k = K[v]; cnt[v][k[b]]--; cnt[v][s]++; k[b] = s; }
+  }
+  function engReset() {
+    P.fill(3); for (const i of CELLS) P[i] = 0;
+    K[1].fill(0); K[2].fill(0); cnt[1].fill(0); cnt[2].fill(0); near.fill(0); stones = 0;
+    for (const i of CELLS) for (let d = 0; d < 4; d++) recalc(i, d);
+  }
+  function put(i, p) {
+    P[i] = p; stones++;
+    const k = K[p], b = i * 4;
+    for (let d = 0; d < 4; d++) {
+      cnt[p][k[b + d]]++;
+      const st = STEP[d];
+      for (let j = i + st, n = 0; n < 4 && P[j] !== 3; j += st, n++) recalc(j, d);
+      for (let j = i - st, n = 0; n < 4 && P[j] !== 3; j -= st, n++) recalc(j, d);
+    }
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) near[i + dy * PW + dx]++;
+  }
+  function take(i) {
+    const p = P[i], k = K[p], b = i * 4;
+    for (let d = 0; d < 4; d++) cnt[p][k[b + d]]--;
+    P[i] = 0; stones--;
+    for (let d = 0; d < 4; d++) {
+      const st = STEP[d];
+      recalc(i, d);
+      for (let j = i + st, n = 0; n < 4 && P[j] !== 3; j += st, n++) recalc(j, d);
+      for (let j = i - st, n = 0; n < 4 && P[j] !== 3; j -= st, n++) recalc(j, d);
+    }
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) near[i + dy * PW + dx]--;
+  }
+  // value of playing at empty cell i, read from one player's shape table
+  const BASE = [0, 14, 120, 140, 1000, 1100, 0, 0];
+  function mscore(k, i) {
+    const b = i * 4; let n4 = 0, n3 = 0, s = 0;
+    for (let d = 0; d < 4; d++) {
+      const c = k[b + d];
+      if (c === 7) return 1e7;
+      if (c === 6) n4 += 2; else if (c === 5) n4++; else if (c === 4) n3++;
+      s += BASE[c];
+    }
+    if (n4 >= 2) return 1e6;       // open four or double four: cannot be stopped
+    if (n4 && n3) return 4e5;      // four + open three
+    if (n3 >= 2) return 1e5;       // double open three
+    return s;
+  }
+  function plain(k, i) { const b = i * 4; let s = 0; for (let d = 0; d < 4; d++) { const c = k[b + d]; s += c >= 6 ? 3000 : BASE[c]; } return s; }
+  function maxShape(k, i) { const b = i * 4; return Math.max(k[b], k[b + 1], k[b + 2], k[b + 3]); }
+  function hasFour(k, i) { const b = i * 4; return k[b] >= 5 || k[b + 1] >= 5 || k[b + 2] >= 5 || k[b + 3] >= 5; }
+  function cellsWith(q, min) {          // empty cells where q's move is worth >= min
+    const out = [], k = K[q];
+    for (const i of CELLS) if (P[i] === 0 && near[i] && mscore(k, i) >= min) out.push(i);
+    return out;
+  }
+  function winLine(i) {                 // five (or more) through stone i, or null
+    const p = P[i];
+    for (let d = 0; d < 4; d++) {
+      const st = STEP[d]; const line = [i];
+      for (let j = i + st; P[j] === p; j += st) line.push(j);
+      for (let j = i - st; P[j] === p; j -= st) line.unshift(j);
+      if (line.length >= 5) return line;
+    }
+    return null;
+  }
+
+  // ---- search ---------------------------------------------------------------
+  const WIN = 1000000, ABORT = { abort: true }, MAXD = 40;
+  const SV = [0, 4, 25, 35, 220, 230, 0, 0];
+  let nodes = 0, deadline = 0, maxPly = 0, vnodes = 0, vmax = 0, thinkMs = 420, lastInfo = null;
+  const sstack = new Int32Array(256); let sp = 0;
+  const CI = [], CS = [];
+  for (let i = 0; i < MAXD; i++) { CI.push(new Int32Array(N * N)); CS.push(new Float64Array(N * N)); }
+  const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  function sput(i, p) { put(i, p); sstack[sp++] = i; }
+  function stake() { take(sstack[--sp]); }
+  function evaluate(p, ply) {
+    const o = 3 - p, me = cnt[p], op = cnt[o];
+    if (me[5] || me[6]) return WIN - ply;
+    if (op[6]) return -(WIN - ply - 1);
+    let s = 0; for (let c = 1; c < 5; c++) s += SV[c] * (me[c] - op[c]);
+    if (op[5]) s -= op[5] > 4 ? 6000 : 200;
+    else if (me[4]) s += 2500;
+    else if (op[4]) s -= op[4] > 3 ? 2500 : 260;
+    return s;
+  }
+  function ab(p, depth, alpha, beta, ply) {
+    if ((++nodes & 255) === 0 && clock() > deadline) throw ABORT;
+    const o = 3 - p, me = cnt[p], op = cnt[o];
+    if (me[5] || me[6]) return WIN - ply;
+    const must = op[5] || op[6];
+    if (ply >= MAXD - 1 || (depth <= 0 && (!must || ply >= maxPly))) return evaluate(p, ply);
+    if (stones >= N * N) return 0;
+    const kp = K[p], ko = K[o];
+    if (must) {
+      let f = -1, n = 0;
+      for (const i of CELLS) { if (P[i] !== 0 || !near[i]) continue; if (maxShape(ko, i) === 7) { n++; if (f < 0) f = i; if (n >= 2) break; } }
+      if (n >= 2) return -(WIN - ply - 1);
+      if (f < 0) return evaluate(p, ply);
+      sput(f, p); const v = -ab(o, depth, -beta, -alpha, ply + 1); stake();
+      return v;
+    }
+    const ci = CI[ply], cs = CS[ply]; let n = 0, oppWin = false;
+    for (const i of CELLS) {
+      if (P[i] !== 0 || !near[i]) continue;
+      const a = mscore(kp, i), d = mscore(ko, i);
+      if (a >= 1e6) return WIN - ply - 2;
+      if (d >= 1e6) oppWin = true;
+      ci[n] = i; cs[n] = a + d * 0.9 + (d >= 1e6 ? 1e9 : 0) + (hasFour(kp, i) ? 5e8 : 0); n++;
+    }
+    if (!n) return 0;
+    let kmax = ply < 2 ? 9 : ply < 4 ? 7 : 6;
+    if (oppWin) { let m = 0; for (let j = 0; j < n; j++) if (cs[j] >= 5e8) { ci[m] = ci[j]; cs[m] = cs[j]; m++; } n = m; kmax = n; }
+    if (kmax > n) kmax = n;
+    let best = -Infinity;
+    for (let t = 0; t < kmax; t++) {
+      let bj = t; for (let j = t + 1; j < n; j++) if (cs[j] > cs[bj]) bj = j;
+      const m = ci[bj]; ci[bj] = ci[t]; cs[bj] = cs[t]; ci[t] = m;
+      sput(m, p); const v = -ab(o, depth - 1, -beta, -alpha, ply + 1); stake();
+      if (v > best) { best = v; if (v > alpha) { alpha = v; if (alpha >= beta) break; } }
+    }
+    return best;
+  }
+  // victory by continuous fours: returns the first move of a forced win for p, or -1
+  function vcf(p, depth) {
+    if (++vnodes > vmax) return -1;
+    const o = 3 - p, kp = K[p], ko = K[o];
+    let block = -1, nb = 0;
+    if (cnt[o][5] || cnt[o][6]) for (const i of CELLS) if (P[i] === 0 && near[i] && maxShape(ko, i) === 7) { nb++; block = i; }
+    if (nb >= 2) return -1;
+    let list = [];
+    if (nb === 1) { const mx = maxShape(kp, block); if (mx === 7) return block; if (mx < 5) return -1; list.push(block); }
+    else {
+      for (const i of CELLS) { if (P[i] !== 0 || !near[i]) continue; const mx = maxShape(kp, i); if (mx === 7) return i; if (mx >= 5) list.push(i); }
+      if (list.length > 1) list = list.map(i => [mscore(kp, i), i]).sort((a, b) => b[0] - a[0]).map(e => e[1]);
+    }
+    for (const m of list) {
+      if (mscore(kp, m) >= 1e6) return m;
+      sput(m, p);
+      let r = -1, ok = false;
+      for (let d = 0; d < 4 && r < 0; d++) {
+        const st = STEP[d];
+        for (let j = m + st, n = 0; n < 4 && P[j] !== 3; j += st, n++) if (P[j] === 0 && kp[j * 4 + d] === 7) { r = j; break; }
+        if (r < 0) for (let j = m - st, n = 0; n < 4 && P[j] !== 3; j -= st, n++) if (P[j] === 0 && kp[j * 4 + d] === 7) { r = j; break; }
+      }
+      if (r >= 0 && depth > 1) { sput(r, o); ok = vcf(p, depth - 1) >= 0; stake(); }
+      stake();
+      if (ok) return m;
+    }
+    return -1;
+  }
+  function candidates(p) {
+    const o = 3 - p, kp = K[p], ko = K[o], out = [];
+    for (const i of CELLS) if (P[i] === 0 && near[i]) out.push({ i, a: mscore(kp, i), d: mscore(ko, i) });
+    return out;
+  }
+  function pick(list) { return list[Math.floor(rand() * list.length)]; }
+  function opening(p) {
+    if (!stones) { const c = []; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) c.push(pid(MID + dx, MID + dy)); return pick(c); }
+    if (stones === 1) {
+      let s = -1; for (const i of CELLS) if (P[i]) s = i;
+      const c = [];
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const j = s + dy * PW + dx; if (P[j] === 0 && CENTER[j] >= Math.min(CENTER[s], 3)) c.push(j); }
+      if (c.length) return pick(c);
+    }
+    return -1;
+  }
+  function think3(p, ms) {
+    const o = 3 - p, ko = K[o], kp = K[p];
+    const op = opening(p); if (op >= 0) return op;
+    const cands = candidates(p); if (!cands.length) return -1;
+    const top = (f) => { const l = cands.filter(f); if (!l.length) return -1; l.sort((x, y) => (y.a + y.d * 0.9) - (x.a + x.d * 0.9)); return l[0].i; };
+    let m = top(c => c.a >= 1e7); if (m >= 0) return m;
+    m = top(c => c.d >= 1e7); if (m >= 0) return m;
+    m = top(c => c.a >= 1e6); if (m >= 0) return m;
+    sp = 0; vnodes = 0; vmax = 30000; m = vcf(p, 14); if (m >= 0) { lastInfo = { vcf: true }; return m; }
+    let roots;
+    if (cands.some(c => c.d >= 1e6)) {
+      roots = cands.filter(c => {
+        if (hasFour(kp, c.i)) return true;
+        put(c.i, p); let ok = true;
+        for (const t of CELLS) if (P[t] === 0 && near[t] && mscore(ko, t) >= 1e6) { ok = false; break; }
+        take(c.i); return ok;
+      });
+      if (!roots.length) roots = cands.filter(c => c.d >= 1e6);
+    } else roots = cands.slice();
+    roots.sort((x, y) => (y.a + y.d * 0.9 + CENTER[y.i]) - (x.a + x.d * 0.9 + CENTER[x.i]));
+    roots = roots.slice(0, 12).map(c => ({ i: c.i, v: 0 }));
+    if (roots.length === 1) return roots[0].i;
+    const t0 = clock(); nodes = 0; let done = 0;
+    for (let depth = 2; depth <= 12; depth++) {
+      deadline = depth <= 2 ? Infinity : t0 + ms; maxPly = Math.min(MAXD - 2, depth + 10);
+      const res = [];
+      try {
+        let best = -Infinity;
+        for (const r of roots) {
+          sput(r.i, p); const v = -ab(o, depth - 1, -Infinity, -(best - 60), 1); stake();
+          res.push({ i: r.i, v }); if (v > best) best = v;
+        }
+      } catch (e) { if (e !== ABORT) throw e; while (sp > 0) stake(); break; }
+      res.sort((x, y) => y.v - x.v); roots = res; done = depth;
+      if (res[0].v > WIN - 100 || res[1].v < -WIN + 100) break;
+      if (clock() - t0 > ms * 0.4) break;
+    }
+    // do not walk into a forced run of fours
+    let safe = [];
+    for (const r of roots.slice(0, 6)) {
+      if (r.v < -WIN + 100) break;
+      if (safe.length && r.v < roots[0].v - 25) break;
+      put(r.i, p); vnodes = 0; vmax = 6000; sp = 0; const bad = vcf(o, 10) >= 0; while (sp > 0) stake(); take(r.i);
+      if (!bad) { safe.push(r); if (stones > 6) break; }
+    }
+    lastInfo = { depth: done, nodes, scores: roots.map(r => [cx(r.i), cy(r.i), Math.round(r.v)]) };
+    if (!safe.length) return roots[0].i;
+    return stones <= 6 ? pick(safe).i : safe[0].i;
+  }
+  function think2(p) {
+    const o = 3 - p, ko = K[o];
+    const op = opening(p); if (op >= 0) return op;
+    const cands = candidates(p); if (!cands.length) return -1;
+    let best = -1, bs = -Infinity;
+    for (const c of cands) {
+      let s;
+      if (c.a >= 1e7) s = 1e12; else if (c.d >= 1e7) s = 1e11;
+      else s = c.a + (c.d >= 1e6 ? c.d : plain(ko, c.i)) * 0.85;      // does not see the other side's forks coming
+      s = s * (0.92 + rand() * 0.16) + near[c.i] * 1.5 + CENTER[c.i] * 0.6 + rand() * 6;
+      if (s > bs) { bs = s; best = c.i; }
+    }
+    return best;
+  }
+  let L1_LAZY = 0.3, L1_CAP = 1200, L1_B4 = 0.9, L1_B3 = 0.8;
+  function think1(p) {
+    const o = 3 - p, kp = K[p], ko = K[o];
+    const op = opening(p); if (op >= 0) return op;
+    const cands = candidates(p); if (!cands.length) return -1;
+    const f = (g) => { const l = cands.filter(g); return l.length ? pick(l).i : -1; };
+    let m = f(c => c.a >= 1e7); if (m >= 0) return m;
+    m = f(c => c.d >= 1e7); if (m >= 0 && rand() < L1_B4) return m;      // sometimes overlooks a four
+    m = f(c => c.d >= 1e6); if (m >= 0 && rand() < L1_B3) return m;      // sometimes overlooks an open three
+    if (rand() < L1_LAZY) { m = f(c => near[c.i] >= 2 && c.a < 1e6); if (m >= 0) return m; }   // a careless move now and then
+    let best = -1, bs = -Infinity;
+    for (const c of cands) {
+      const s = Math.min(plain(kp, c.i), L1_CAP) + Math.min(plain(ko, c.i), 260) * 0.35 + rand() * 170 + near[c.i] * 4 + CENTER[c.i];
+      if (s > bs) { bs = s; best = c.i; }
+    }
+    return best;
+  }
+  function think(lv, p, ms) {
+    if (stones >= N * N) return -1;
+    lastInfo = null;
+    return lv >= 3 ? think3(p, ms || thinkMs) : lv === 2 ? think2(p) : think1(p);
+  }
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null, noiseBuf = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function click(freq, vol, delay = 0) {          // short filtered noise = stone on wood
+    if (muted) return; const a = audio(); if (!a) return;
+    if (!noiseBuf) { noiseBuf = a.createBuffer(1, Math.floor(a.sampleRate * 0.06), a.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length); }
+    const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); const t = a.currentTime + delay;
+    s.buffer = noiseBuf; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 2.5; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+    s.connect(f); f.connect(g); g.connect(a.destination); s.start(t);
+  }
+  const SFX = {
+    place(p) { click(p === BLACK ? 1500 : 2300, 0.5); tone('triangle', p === BLACK ? 250 : 340, 110, 0.1, 0.1); },
+    select() { tone('square', 880, 990, 0.04, 0.03); },
+    move() { tone('square', 700, 700, 0.025, 0.018); },
+    bad() { tone('square', 200, 120, 0.09, 0.045); },
+    undo() { tone('triangle', 520, 240, 0.16, 0.06); },
+    toggle() { tone('square', 700, 950, 0.05, 0.03); },
+    hint() { [988, 1319, 1976].forEach((f, i) => tone('triangle', f, f, 0.12, 0.05, i * 0.06)); },
+    warn(d) { tone('square', 620, 620, 0.09, 0.05, d); tone('square', 494, 494, 0.14, 0.05, d + 0.11); },
+    chance(d) { tone('triangle', 784, 784, 0.08, 0.05, d); tone('triangle', 1175, 1175, 0.14, 0.05, d + 0.08); },
+    start() { [523, 659, 784].forEach((f, i) => tone('triangle', f, f, 0.1, 0.06, i * 0.07)); },
+    star(i) { const f = [659, 784, 988, 1175, 1319, 1568, 1760][Math.min(i, 6)]; tone('triangle', f, f, 0.22, 0.08); tone('sine', f * 2, f * 2, 0.16, 0.03); },
+    win(d) { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.16, 0.06, d + i * 0.09)); },
+    lose(d) { tone('sawtooth', 300, 90, 0.5, 0.06, d); tone('sawtooth', 220, 70, 0.6, 0.04, d + 0.12); },
+    draw(d) { tone('triangle', 440, 440, 0.15, 0.06, d); tone('triangle', 440, 440, 0.15, 0.06, d + 0.2); },
+    rank(d) { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.2, 0.06, d + i * 0.08)); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ---------------------------------------------------------------
+  let turn = BLACK, mode = 'cpu', level = 2, gameLevel = 2, phase = 'title', over = false, winner = 0;
+  let blackSeat = 1;                        // seat (1 = P1 / you, 2 = P2 / CPU) that plays black
+  let history = [], lastMove = -1, winFx = null, resultT = 0, lastResult = null;
+  let sel = -1, hoverIdx = -1, cur = pid(MID, MID), kb = false, down = null, hintIdx = -1;
+  let cpuT = 0, thinking = false, autoCpu = true, animT = 0;
+  let stonePop = new Map(), ripples = [], particles = [], texts = [];
+  let signs = { my5: [], opp5: [], opp3: [] };
+  let undoLeft = UNDO_MAX, hintLeft = [0, HINT_MAX, HINT_MAX];
+  const tallies = { '2p': { 1: 0, 2: 0, d: 0 }, cpu: { 1: 0, 2: 0, d: 0 } }, firsts = { '2p': 1, cpu: 1 };
+  let tally = tallies.cpu;
+  const blankStat = () => ({ w: 0, l: 0, d: 0, best: 0, cur: 0, max: 0 });
+  let stats = { 1: blankStat(), 2: blankStat(), 3: blankStat() };
+  try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) for (const l of [1, 2, 3]) if (s[l]) for (const k in stats[l]) if (typeof s[l][k] === 'number' && isFinite(s[l][k])) stats[l][k] = s[l][k]; } catch (e) {}
+  let coarse = false, narrow = false;
+  try { coarse = window.matchMedia('(pointer: coarse)').matches; narrow = window.matchMedia('(max-width: 360px)').matches; } catch (e) {}
+  let signsOn = true, confirmMode = coarse;
+  try { const o = JSON.parse(localStorage.getItem(OPT_KEY) || 'null'); if (o) { if (typeof o.signs === 'boolean') signsOn = o.signs; if (typeof o.confirm === 'boolean') confirmMode = o.confirm; if (o.level >= 1 && o.level <= 3) level = o.level | 0; } } catch (e) {}
+  function saveOpts() { try { localStorage.setItem(OPT_KEY, JSON.stringify({ signs: signsOn, confirm: confirmMode, level })); } catch (e) {} }
+  function saveStats() { try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {} }
+
+  const overlay = document.getElementById('overlay');
+  const okBtn = document.getElementById('okBtn'), undoBtn = document.getElementById('undoBtn'), hintBtn = document.getElementById('hintBtn');
+  const signBtn = document.getElementById('signBtn'), menuBtn = document.getElementById('menuBtn'), modeBtn = document.getElementById('modeBtn'), btnView = document.getElementById('btnView');
+  const ovBig = document.getElementById('ovBig'), ovNote = document.getElementById('ovNote'), ovStats = document.getElementById('ovStats'), ovDemo = document.getElementById('ovDemo');
+
+  const seatOf = col => (col === blackSeat ? 1 : 2);
+  const colorOf = seat => (seat === blackSeat ? BLACK : WHITE);
+  const humanColor = () => colorOf(1), cpuColor = () => colorOf(2);
+  const seatName = seat => (mode === 'cpu' ? (seat === 1 ? 'あなた' : 'CPU') : 'P' + seat);
+  const xyOf = i => [GX + cx(i) * CELL, GY + cy(i) * CELL];
+  const shown = () => overlay.classList.contains('show');
+  const points = () => stats[1].w * PTS[1] + stats[2].w * PTS[2] + stats[3].w * PTS[3];
+  function rankOf(pt) { let r = 0; for (let i = 0; i < RANKS.length; i++) if (pt >= RANKS[i][0]) r = i; return r; }
+  function humanTurn() { return phase === 'play' && !over && !shown() && !(mode === 'cpu' && turn !== humanColor()); }
+
+  // ---- game flow --------------------------------------------------------------
+  function refresh() {
+    const o = 3 - turn;
+    signs = { my5: [], opp5: [], opp3: [] };
+    if (phase === 'play' && !over && stones > 2) {
+      signs.my5 = cellsWith(turn, 1e7);
+      signs.opp5 = cellsWith(o, 1e7);
+      if (!signs.opp5.length) signs.opp3 = cellsWith(o, 1e6);
+    }
+    updateButtons();
+  }
+  function canUndo() {
+    if (phase !== 'play' || over || shown() || !history.length) return false;
+    if (mode === 'cpu') { if (undoLeft <= 0) return false; const hc = humanColor(); return history.some(h => h.p === hc); }
+    return true;
+  }
+  function canHint() { return humanTurn() && hintLeft[seatOf(turn)] > 0 && stones < N * N; }
+  function updateButtons() {
+    const reviewing = phase === 'over' && !shown();
+    okBtn.style.display = (confirmMode || reviewing) ? '' : 'none';
+    if (reviewing) { okBtn.textContent = '▶ けっかを 見る'; okBtn.disabled = false; okBtn.classList.add('ready'); }
+    else { const ok = humanTurn() && sel >= 0 && P[sel] === 0; okBtn.textContent = '✔ ここに おく'; okBtn.disabled = !ok; okBtn.classList.toggle('ready', ok); }
+    undoBtn.textContent = mode === 'cpu' ? (narrow ? '↩ もどす（あと' : '↩ 1手 もどす（あと') + undoLeft + '）' : '↩ 1手 もどす';
+    undoBtn.disabled = !canUndo();
+    hintBtn.textContent = '💡 ヒント（あと' + hintLeft[phase === 'play' && mode !== 'cpu' ? seatOf(turn) : 1] + '）';
+    hintBtn.disabled = !canHint();
+    signBtn.textContent = '⚠ きけんサイン ' + (signsOn ? 'ON' : 'OFF'); signBtn.classList.toggle('on', signsOn);
+    modeBtn.textContent = confirmMode ? 'おきかた：2かいタップで おく（まちがえにくい）' : 'おきかた：1かいで すぐ おく';
+    modeBtn.classList.toggle('on', confirmMode);
+  }
+  function startGame(m) {
+    if (m) mode = m;
+    tally = tallies[mode]; blackSeat = firsts[mode]; gameLevel = level;
+    engReset();
+    turn = BLACK; history = []; lastMove = -1; over = false; winner = 0; winFx = null; resultT = 0; lastResult = null;
+    sel = -1; hintIdx = -1; down = null; kb = false; cur = pid(MID, MID); cpuT = 0; thinking = false;
+    stonePop = new Map(); ripples = []; particles = []; texts = [];
+    undoLeft = UNDO_MAX; hintLeft = [0, HINT_MAX, HINT_MAX];
+    phase = 'play'; overlay.classList.remove('show');
+    SFX.start(); refresh();
+    if (mode === 'cpu' && turn === cpuColor() && autoCpu) scheduleCpu();
+  }
+  function place(i) {
+    if (phase !== 'play' || over || i < 0 || P[i] !== 0) return false;
+    const p = turn;
+    put(i, p); history.push({ i, p }); lastMove = i; sel = -1; hintIdx = -1;
+    const [x, y] = xyOf(i);
+    stonePop.set(i, 0); ripples.push({ x, y, t: 0, c: p });
+    burst(x, y, STONE_GLOW[p], 7, 70); SFX.place(p);
+    const line = winLine(i);
+    if (line) { finish(p, line); return true; }
+    if (stones >= N * N) { finish(0, null); return true; }
+    turn = 3 - p; refresh();
+    if (mode === 'cpu' && turn === cpuColor()) { if (autoCpu) scheduleCpu(); }
+    else if (signsOn) { if (signs.my5.length) SFX.chance(0.3); else if (signs.opp5.length) SFX.warn(0.3); }
+    return true;
+  }
+  function finish(w, line) {
+    over = true; phase = 'over'; winner = w; thinking = false; cpuT = 0; sel = -1; hintIdx = -1; down = null;
+    const ws = w ? seatOf(w) : 0;
+    if (ws) tally[ws]++; else tally.d++;
+    const res = { ws, moves: stones, mine: w ? history.filter(h => h.p === w).length : 0, newBest: false, gain: 0, rankUp: false };
+    if (mode === 'cpu') {
+      const s = stats[gameLevel], before = rankOf(points());
+      if (ws === 1) {
+        s.w++; s.cur++; if (s.cur > s.max) s.max = s.cur;
+        if (!s.best || res.mine < s.best) { res.newBest = s.best > 0; s.best = res.mine; }
+        res.gain = PTS[gameLevel];
+      } else if (ws === 2) { s.l++; s.cur = 0; } else { s.d++; s.cur = 0; }
+      res.rankUp = rankOf(points()) > before;
+      saveStats();
+    }
+    lastResult = res;
+    firsts[mode] = 3 - firsts[mode];
+    if (line) { winFx = { line, t: 0, next: 0 }; const ay = line.reduce((a, i) => a + cy(i), 0) / line.length; texts.push({ x: W / 2, y: ay < MID ? BGY + BGW - 56 : BGY + 76, text: '5つ そろった！', t: -0.75, dur: 1.5, color: '#ffd166', size: 34 }); }
+    const d = line ? 0.95 : 0.2;
+    if (!ws) SFX.draw(d); else if (mode === 'cpu' && ws === 2) SFX.lose(d); else SFX.win(d);
+    if (res.rankUp) SFX.rank(d + 0.7);
+    resultT = line ? 2.3 : 1.2;
+    signs = { my5: [], opp5: [], opp3: [] };
+    updateButtons();
+  }
+  function statLine() {
+    const s = stats[level];
+    return 'CPU' + LEVEL_NAME[level] + '： かち ' + s.w + '・まけ ' + s.l + '・ひきわけ ' + s.d +
+      (s.best ? '・さいたん ' + s.best + '手' : '') + (s.max > 1 ? '・れんしょう ' + s.cur + '（さいこう ' + s.max + '）' : '');
+  }
+  function rankLine() {
+    const pt = points(), r = rankOf(pt);
+    return '🏅 しょうごう「<b>' + RANKS[r][1] + '</b>」★' + pt + (r + 1 < RANKS.length ? '・つぎまで あと' + (RANKS[r + 1][0] - pt) : '・さいこうランク！');
+  }
+  function renderStats() { ovStats.innerHTML = statLine() + '<br>' + rankLine(); }
+  function tallyLine() {
+    return 'こんかい： <i class="c1">' + seatName(1) + ' ' + tally[1] + '</i> - <i class="c2">' + tally[2] + ' ' + seatName(2) + '</i>（ひきわけ ' + tally.d + '）';
+  }
+  function showResult() {
+    resultT = 0;
+    const r = lastResult || { ws: 0, moves: stones, mine: 0 };
+    if (r.ws === 1) { ovBig.textContent = mode === 'cpu' ? 'あなたの かち！' : 'P1 の かち！'; ovBig.className = 'big p1'; }
+    else if (r.ws === 2) { ovBig.textContent = mode === 'cpu' ? 'CPU の かち…' : 'P2 の かち！'; ovBig.className = 'big p2'; }
+    else { ovBig.textContent = 'ひきわけ'; ovBig.className = 'big dr'; }
+    let h = r.ws ? '<i class="c' + r.ws + '">' + seatName(r.ws) + '</i>が <b>' + r.mine + 'こめ</b>の 石で 5つ そろえた！' + (r.newBest ? ' <span class="up">✨さいたん きろく！</span>' : '')
+      : 'ばんが ぜんぶ うまったよ。いい しょうぶ！';
+    h += '<br>' + tallyLine();
+    if (mode === 'cpu') {
+      if (r.gain) h += '<br>しょうごうポイント <b>+' + r.gain + '</b>' + (r.rankUp ? ' <span class="up">⬆ しょうごう アップ！</span>' : '');
+      else if (r.ws === 2) h += '<br>「きけんサイン」と「ヒント」も つかってみよう';
+    }
+    const nf = firsts[mode];
+    h += '<br>つぎは <i class="c' + nf + '">' + seatName(nf) + '</i> が くろ（せんて）';
+    ovNote.innerHTML = h; ovDemo.style.display = 'none';
+    document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど はじめる' : 'ひとりで はじめる';
+    document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど はじめる' : 'ふたりで はじめる';
+    btnView.textContent = 'ばんめんを 見る'; btnView.classList.add('show');
+    renderStats(); overlay.classList.add('show'); updateButtons();
+  }
+  function showMenu() {
+    resultT = 0;
+    ovBig.innerHTML = 'ほしぞら<br>五目ならべ'; ovBig.className = 'big';
+    ovDemo.style.display = '';
+    ovNote.innerHTML = 'こうたいで 石を おいて、<b>たて・よこ・ななめ</b>に<br><b>先に 5つ ならべたら かち！</b><br>あいての 3つ・4つは はやめに とめよう。<br>' +
+      (confirmMode ? '📱 タップ → もういちど タップで おく' : '🖱 クリックで おく ／ ⌨️ やじるしキー＋Enter');
+    document.getElementById('btnCpu').textContent = 'ひとりで はじめる';
+    document.getElementById('btn2p').textContent = 'ふたりで はじめる';
+    const resumable = phase === 'play' && !over;
+    btnView.textContent = resumable ? 'ゲームに もどる' : 'ばんめんを 見る';
+    btnView.classList.toggle('show', resumable || phase === 'over');
+    renderStats(); overlay.classList.add('show'); updateButtons();
+  }
+  function hideOverlay() { overlay.classList.remove('show'); updateButtons(); }
+  function undo() {
+    if (!canUndo()) return false;
+    let e;
+    if (mode === 'cpu') { const hc = humanColor(); do { e = history.pop(); take(e.i); stonePop.delete(e.i); } while (e.p !== hc); undoLeft--; }
+    else { e = history.pop(); take(e.i); stonePop.delete(e.i); }
+    turn = e.p; lastMove = history.length ? history[history.length - 1].i : -1;
+    sel = -1; hintIdx = -1; down = null; cpuT = 0; thinking = false; ripples = [];
+    const [x, y] = xyOf(e.i); burst(x, y, 'rgba(157,153,192,', 6, 60);
+    SFX.undo(); refresh();
+    return true;
+  }
+  function hint() {
+    if (!canHint()) return -1;
+    const m = think(3, turn, 220);
+    if (m < 0) return -1;
+    hintLeft[seatOf(turn)]--; hintIdx = m; kb = false;
+    if (confirmMode) sel = m;
+    SFX.hint(); updateButtons();
+    return m;
+  }
+  function scheduleCpu() { thinking = true; cpuT = 0.45 + rand() * 0.3; }
+  function cpuPlay() {
+    thinking = false; cpuT = 0;
+    if (phase !== 'play' || over || mode !== 'cpu' || turn !== cpuColor()) return;
+    const m = think(gameLevel, turn);
+    if (m >= 0) place(m);
+  }
+  function setLevel(lv) { level = lv; document.querySelectorAll('#levels button').forEach(x => x.classList.toggle('on', +x.dataset.l === lv)); renderStats(); saveOpts(); }
+  function toggleSigns() { signsOn = !signsOn; saveOpts(); SFX.toggle(); updateButtons(); }
+  function toggleConfirm() { confirmMode = !confirmMode; sel = -1; saveOpts(); SFX.toggle(); updateButtons(); }
+  function burst(x, y, glow, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 30, life: 0.35 + Math.random() * 0.5, c: glow, s: 2.5 + Math.random() * 3 }); } }
+
+  // ---- input -----------------------------------------------------------------
+  function ptXY(e) { const rc = cv.getBoundingClientRect(); return [(e.clientX - rc.left) * (W / rc.width), (e.clientY - rc.top) * (H / rc.height)]; }
+  function cellAtXY(x, y) {
+    if (x < BGX || x > BGX + BGW || y < BGY || y > BGY + BGW) return -1;
+    const gx = Math.max(0, Math.min(N - 1, Math.round((x - GX) / CELL))), gy = Math.max(0, Math.min(N - 1, Math.round((y - GY) / CELL)));
+    return pid(gx, gy);
+  }
+  function tryPlace(i) {
+    if (!humanTurn() || i < 0) return false;
+    if (P[i] !== 0) { const [x, y] = xyOf(i); texts.push({ x, y: y - 4, text: '✕', t: 0, dur: 0.7, color: '#ff5fa2', size: 22 }); SFX.bad(); return false; }
+    return place(i);
+  }
+  function onDown(e) {
+    e.preventDefault(); audio();
+    if (!humanTurn()) return;
+    const [x, y] = ptXY(e), i = cellAtXY(x, y);
+    down = { i, prev: sel, moved: false, touch: e.pointerType !== 'mouse', x, y };
+    kb = false; hoverIdx = -1;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    if (i >= 0 && P[i] === 0) { if (sel !== i) SFX.move(); sel = i; updateButtons(); }
+  }
+  function onMove(e) {
+    const [x, y] = ptXY(e), i = cellAtXY(x, y);
+    if (!down) { if (e.pointerType === 'mouse') { hoverIdx = i; if (i >= 0) kb = false; } return; }
+    down.x = x; down.y = y;
+    if (i !== down.i) {
+      down.i = i; down.moved = true;
+      if (i >= 0 && P[i] === 0) { sel = i; SFX.move(); updateButtons(); }
+      else if (!confirmMode) { sel = -1; updateButtons(); }
+    }
+  }
+  function onUp(e) {
+    if (!down) return;
+    e.preventDefault();
+    const d = down; down = null;
+    const [x, y] = ptXY(e), i = cellAtXY(x, y);
+    if (!humanTurn()) return;
+    if (i < 0) { if (!confirmMode) { sel = -1; updateButtons(); } return; }
+    if (P[i] !== 0) { if (!d.moved) tryPlace(i); return; }
+    if (confirmMode) {
+      if (i === d.prev && !d.moved) tryPlace(i);
+      else { sel = i; SFX.select(); updateButtons(); }
+    } else tryPlace(i);
+    if (e.pointerType === 'mouse') hoverIdx = i;
+  }
+  function onKey(e) {
+    const k = e.key, onButton = e.target && e.target.tagName === 'BUTTON';
+    if (shown()) { if ((k === 'Enter' || k === ' ') && !onButton) { e.preventDefault(); audio(); startGame(); } return; }
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      e.preventDefault(); if (onButton) e.target.blur();   // the board takes the keyboard back from a clicked button
+      if (phase !== 'play') return;
+      let x = cx(cur), y = cy(cur);
+      if (!kb && sel >= 0) { x = cx(sel); y = cy(sel); }
+      if (k === 'ArrowLeft') x = Math.max(0, x - 1); if (k === 'ArrowRight') x = Math.min(N - 1, x + 1);
+      if (k === 'ArrowUp') y = Math.max(0, y - 1); if (k === 'ArrowDown') y = Math.min(N - 1, y + 1);
+      cur = pid(x, y); kb = true; hoverIdx = -1; sel = P[cur] === 0 ? cur : -1; SFX.move(); updateButtons(); return;
+    }
+    if ((k === 'Enter' || k === ' ') && !onButton) {
+      e.preventDefault(); audio();
+      if (phase === 'over') { showResult(); return; }
+      tryPlace(kb ? cur : sel); return;
+    }
+    if (k === 'z' || k === 'Z' || k === 'Backspace') { e.preventDefault(); undo(); return; }
+    if (k === 'h' || k === 'H') { audio(); hint(); return; }
+  }
+
+  // ---- drawing ------------------------------------------------------------------
+  function rrp(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function makeStoneSprite(col) {
+    const S = 128, c = document.createElement('canvas'); c.width = S; c.height = S; const g = c.getContext('2d');
+    const x = S / 2, y = S / 2, r = 48;
+    g.shadowColor = col === BLACK ? 'rgba(160,107,255,.9)' : 'rgba(83,224,216,.9)'; g.shadowBlur = 14;
+    g.fillStyle = col === BLACK ? '#14121f' : '#f4f2ff'; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0;
+    const grad = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+    if (col === BLACK) { grad.addColorStop(0, '#5d5588'); grad.addColorStop(0.55, '#1f1b33'); grad.addColorStop(1, '#0a0912'); }
+    else { grad.addColorStop(0, '#ffffff'); grad.addColorStop(0.6, '#ebe9fb'); grad.addColorStop(1, '#aeabd4'); }
+    g.fillStyle = grad; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = col === BLACK ? 'rgba(170,125,255,.85)' : 'rgba(83,224,216,.8)'; g.lineWidth = 3.5; g.beginPath(); g.arc(x, y, r - 1.7, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = col === BLACK ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.95)'; g.beginPath(); g.ellipse(x - r * 0.3, y - r * 0.4, r * 0.3, r * 0.15, -0.5, 0, Math.PI * 2); g.fill();
+    return c;
+  }
+  function makeBoardBg() {
+    const pad = 14, S = BGW + pad * 2, c = document.createElement('canvas'); c.width = c.height = S * SC; const g = c.getContext('2d');
+    g.scale(SC, SC); g.translate(pad, pad);
+    g.shadowColor = 'rgba(160,107,255,.75)'; g.shadowBlur = 13; g.fillStyle = '#17153a'; rrp(g, 0, 0, BGW, BGW, 12); g.fill(); g.shadowBlur = 0;
+    const gr = g.createLinearGradient(0, 0, BGW, BGW); gr.addColorStop(0, '#1b2450'); gr.addColorStop(0.5, '#191a42'); gr.addColorStop(1, '#261848');
+    g.fillStyle = gr; rrp(g, 0, 0, BGW, BGW, 12); g.fill();
+    let s = 12345; const rnd = () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; };
+    for (let i = 0; i < 70; i++) { const x = rnd() * BGW, y = rnd() * BGW, a = 0.12 + rnd() * 0.3, r = rnd() < 0.15 ? 1.4 : 0.8; g.fillStyle = 'rgba(210,215,255,' + a + ')'; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+    const o = GX - BGX, span = (N - 1) * CELL;
+    g.strokeStyle = 'rgba(150,162,238,.46)'; g.lineWidth = 1.2; g.beginPath();
+    for (let k = 0; k < N; k++) { g.moveTo(o + k * CELL, o); g.lineTo(o + k * CELL, o + span); g.moveTo(o, o + k * CELL); g.lineTo(o + span, o + k * CELL); }
+    g.stroke();
+    g.strokeStyle = 'rgba(170,180,250,.75)'; g.lineWidth = 2; g.strokeRect(o, o, span, span);
+    g.fillStyle = 'rgba(83,224,216,.85)';
+    for (const [x, y] of [[3, 3], [9, 3], [6, 6], [3, 9], [9, 9]]) { g.beginPath(); g.arc(o + x * CELL, o + y * CELL, 3.4, 0, Math.PI * 2); g.fill(); }
+    g.strokeStyle = '#a06bff'; g.lineWidth = 2.5; rrp(g, 0, 0, BGW, BGW, 12); g.stroke();
+    return { c, pad, S };
+  }
+  const SPR = [null, makeStoneSprite(BLACK), makeStoneSprite(WHITE)];
+  const BG = makeBoardBg();
+  function drawStone(x, y, r, col, alpha) {
+    const k = r / 48;
+    if (alpha !== undefined && alpha < 1) ctx.globalAlpha = alpha;
+    ctx.drawImage(SPR[col], x - 64 * k, y - 64 * k, 128 * k, 128 * k);
+    ctx.globalAlpha = 1;
+  }
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  function star(x, y, r, rot) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) { const a = rot + i * Math.PI / 5 - Math.PI / 2, rr = i % 2 ? r * 0.45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    ctx.closePath();
+  }
+  function drawCard(seat, x) {
+    const y = 6, w = 226, h = 50, col = colorOf(seat);
+    const active = phase === 'play' && !over && turn === col;
+    ctx.fillStyle = '#1b1b38'; rrp(ctx, x, y, w, h, 12); ctx.fill();
+    if (active) { ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.5; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 12 + Math.sin(animT * 5) * 4; ctx.stroke(); ctx.shadowBlur = 0; }
+    else { ctx.strokeStyle = '#2c2c4d'; ctx.lineWidth = 2; ctx.stroke(); }
+    drawStone(x + 26, y + 25, 14, col);
+    ctx.textAlign = 'left'; ctx.font = '16' + FONT; ctx.fillStyle = SEAT_COL[seat];
+    ctx.fillText(seatName(seat) + '（' + COLOR_NAME[col] + '）', x + 46, y + 21);
+    ctx.font = '15' + FONT;
+    if (active) { ctx.fillStyle = '#ffd166'; ctx.fillText(mode === 'cpu' && seat === 2 ? 'かんがえ中' + '.'.repeat(1 + (animT * 3 | 0) % 3) : '▶ ばんだよ', x + 46, y + 41); }
+    else if (over && winner === col) { ctx.fillStyle = '#ffd166'; ctx.fillText('★ かち！', x + 46, y + 41); }
+    else { ctx.fillStyle = 'rgba(157,153,192,.75)'; ctx.fillText((mode === 'cpu' && seat === 2 ? LEVEL_NAME[phase === 'title' ? level : gameLevel] + '・' : '') + (col === BLACK ? 'せんて' : 'ごて'), x + 46, y + 41); }
+    ctx.textAlign = 'right'; ctx.font = '15' + FONT; ctx.fillStyle = '#eeecfa';
+    ctx.fillText(tally[seat] + 'かち', x + w - 10, y + 41);
+    ctx.textAlign = 'left';
+  }
+  function statusInfo() {
+    if (phase === 'title') return ['モードを えらんで はじめよう', '#9d99c0'];
+    if (over) {
+      const ws = winner ? seatOf(winner) : 0;
+      if (!ws) return ['ひきわけ！ いい しょうぶ', '#ffd166'];
+      return [mode === 'cpu' ? (ws === 1 ? 'あなたの かち！ 5つ そろった！' : 'CPUの かち… つぎは とめよう') : 'P' + ws + '（' + COLOR_NAME[winner] + '）の かち！', SEAT_COL[ws]];
+    }
+    if (mode === 'cpu' && turn !== humanColor()) return ['CPUが かんがえ中…', '#9d99c0'];
+    if (signsOn) {
+      if (signs.my5.length) return ['チャンス！ ★に おけば 5つ そろう！', '#ffd166'];
+      if (signs.opp5.length) return ['あぶない！ あいての 4つを とめよう！', '#ff5fa2'];
+      if (signs.opp3.length) return ['ちゅうい！ あいての 3つが のびるよ', '#ffa25f'];
+    }
+    if (hintIdx >= 0) return ['ヒント：ひかっている ところが おすすめ', '#53e0d8'];
+    if (confirmMode && sel >= 0) return ['ここで いい？ もういちど タップで おく', '#ffd166'];
+    const who = mode === 'cpu' ? 'あなた' : 'P' + seatOf(turn);
+    return [who + '（' + COLOR_NAME[turn] + '）の ばん：おきたい ところを ' + (coarse ? 'タップ' : 'えらぼう'), '#eeecfa'];
+  }
+  function drawSign(i, kind, pulse) {
+    const [x, y] = xyOf(i);
+    if (kind === 'my') {
+      ctx.fillStyle = 'rgba(255,209,102,' + (0.55 + 0.45 * pulse) + ')'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10;
+      star(x, y, 11 + pulse * 2, animT * 0.8); ctx.fill(); ctx.shadowBlur = 0;
+    } else {
+      const strong = kind === 'opp5', c = strong ? '255,95,162' : '255,162,95';
+      ctx.fillStyle = 'rgba(' + c + ',' + (strong ? 0.22 + 0.2 * pulse : 0.12 + 0.1 * pulse) + ')'; ctx.beginPath(); ctx.arc(x, y, strong ? 14 : 11, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(' + c + ',' + (0.6 + 0.4 * pulse) + ')'; ctx.lineWidth = strong ? 2.5 : 1.8; ctx.stroke();
+      ctx.fillStyle = 'rgba(' + c + ',1)'; ctx.font = (strong ? 20 : 16) + FONT; ctx.textAlign = 'center'; ctx.fillText('!', x, y + (strong ? 7 : 6));
+    }
+  }
+  function drawBoard(zoomed) {
+    ctx.drawImage(BG.c, BGX - BG.pad, BGY - BG.pad, BG.S, BG.S);
+    const ht = humanTurn(), pulse = 0.5 + 0.5 * Math.sin(animT * 6);
+    const aim = ht && sel >= 0 && P[sel] === 0 ? sel : -1;
+    if (aim >= 0) {                    // guide lines through the aimed point
+      const [x, y] = xyOf(aim);
+      ctx.strokeStyle = 'rgba(255,209,102,.3)'; ctx.lineWidth = 3; ctx.beginPath();
+      ctx.moveTo(GX, y); ctx.lineTo(GX + (N - 1) * CELL, y); ctx.moveTo(x, GY); ctx.lineTo(x, GY + (N - 1) * CELL); ctx.stroke();
+    }
+    if (ht && signsOn) {
+      for (const i of signs.opp3) drawSign(i, 'opp3', pulse);
+      for (const i of signs.opp5) drawSign(i, 'opp5', pulse);
+      for (const i of signs.my5) drawSign(i, 'my', pulse);
+    }
+    const dim = winFx && winFx.t > 0.3;
+    const inLine = winFx ? new Set(winFx.line) : null;
+    for (const i of CELLS) {
+      const v = P[i]; if (!v) continue;
+      const [x, y] = xyOf(i); const t = stonePop.get(i);
+      let r = R; if (t !== undefined) r = R * (0.25 + 0.75 * easeOutBack(Math.min(1, t / POP_DUR)));
+      drawStone(x, y, r, v, dim && !inLine.has(i) ? 0.45 : 1);
+    }
+    for (const rp of ripples) {
+      const u = rp.t / 0.7; ctx.strokeStyle = STONE_GLOW[rp.c] + (1 - u) * 0.9 + ')'; ctx.lineWidth = 3 * (1 - u) + 0.5;
+      ctx.beginPath(); ctx.arc(rp.x, rp.y, R + 2 + u * 30, 0, Math.PI * 2); ctx.stroke();
+    }
+    if (lastMove >= 0 && P[lastMove] && !winFx) {      // last move: gold ring + pink core
+      const [x, y] = xyOf(lastMove);
+      ctx.strokeStyle = 'rgba(255,209,102,' + (0.65 + 0.35 * Math.sin(animT * 4)) + ')'; ctx.lineWidth = 2.5; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(x, y, R + 2.5, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.fillStyle = '#ff5fa2'; ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+    }
+    if (winFx) {
+      const ln = winFx.line, n = Math.min(ln.length, winFx.next);
+      if (n > 0) {
+        const [x0, y0] = xyOf(ln[0]); const prog = Math.min(1, Math.max(0, (winFx.t - 0.15) / (0.13 * (ln.length - 1))));
+        const [x1, y1] = xyOf(ln[ln.length - 1]);
+        for (let k = 0; k < n; k++) {
+          const [x, y] = xyOf(ln[k]); const beat = 1 + 0.12 * Math.max(0, Math.sin((winFx.t - k * 0.13) * 6));
+          ctx.fillStyle = 'rgba(255,209,102,.3)'; ctx.beginPath(); ctx.arc(x, y, R * beat + 5, 0, Math.PI * 2); ctx.fill();
+          drawStone(x, y, R * beat, P[ln[k]]);
+        }
+        ctx.strokeStyle = 'rgba(255,209,102,.92)'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 14;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + (x1 - x0) * prog, y0 + (y1 - y0) * prog); ctx.stroke(); ctx.lineCap = 'butt';
+        ctx.fillStyle = '#fff3c4';
+        for (let k = 0; k < n; k++) { const [x, y] = xyOf(ln[k]); star(x, y, 8.5, winFx.t * 1.5 + k); ctx.fill(); }
+        ctx.shadowBlur = 0;
+      }
+    }
+    if (ht && hintIdx >= 0 && P[hintIdx] === 0) {
+      const [x, y] = xyOf(hintIdx);
+      ctx.save(); ctx.translate(x, y); ctx.rotate(animT * 1.6); ctx.setLineDash([6, 5]); ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 2.5; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(0, 0, R + 3 + pulse * 2, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    }
+    if (aim >= 0) {
+      const [x, y] = xyOf(aim);
+      drawStone(x, y, R, turn, 0.62);
+      ctx.strokeStyle = 'rgba(255,209,102,' + (0.7 + 0.3 * pulse) + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, R + 3 + pulse * 2.5, 0, Math.PI * 2); ctx.stroke();
+    } else if (ht && !zoomed && hoverIdx >= 0 && P[hoverIdx] === 0 && !down) {
+      const [x, y] = xyOf(hoverIdx); drawStone(x, y, R, turn, 0.4);
+    }
+    if (ht && kb && !zoomed) {
+      const [x, y] = xyOf(cur);
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.5; rrp(ctx, x - CELL / 2 + 1, y - CELL / 2 + 1, CELL - 2, CELL - 2, 7); ctx.stroke();
+    }
+  }
+  function drawLoupe() {
+    const LR = 60, Z = 2;
+    const [tx, ty] = down.i >= 0 ? xyOf(down.i) : [down.x, down.y];
+    let lx = Math.max(LR + 6, Math.min(W - LR - 6, down.x)), ly = down.y - 108;
+    if (ly < LR + 6) { ly = LR + 6; lx = down.x > W / 2 ? down.x - 128 : down.x + 128; lx = Math.max(LR + 6, Math.min(W - LR - 6, lx)); }
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,.7)'; ctx.shadowBlur = 16; ctx.fillStyle = '#131322'; ctx.beginPath(); ctx.arc(lx, ly, LR + 2, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(lx, ly, LR, 0, Math.PI * 2); ctx.clip();
+    ctx.translate(lx, ly); ctx.scale(Z, Z); ctx.translate(-tx, -ty);
+    drawBoard(true);
+    ctx.restore();
+    ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(lx, ly, LR, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
+  }
+  function draw() {
+    ctx.setTransform(SC, 0, 0, SC, 0, 0); ctx.clearRect(0, 0, W, H);
+    drawCard(1, 10); drawCard(2, 244);
+    drawBoard(false);
+    if (down && down.touch && humanTurn() && down.i >= 0) drawLoupe();
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.8)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - s.s / 2, s.y - s.s / 2, s.s, s.s); }
+    ctx.globalAlpha = 1;
+    for (const p of texts) {
+      if (p.t < 0) continue; const u = p.t / p.dur;
+      const k = p.size > 30 ? (p.t < 0.25 ? easeOutBack(p.t / 0.25) : 1) : 1;
+      ctx.globalAlpha = u < 0.75 ? 1 : 1 - (u - 0.75) / 0.25; ctx.fillStyle = p.color; ctx.font = Math.round(p.size * Math.max(0.1, k)) + FONT; ctx.textAlign = 'center';
+      if (p.size > 30) { ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(19,19,34,.9)'; ctx.lineJoin = 'round'; ctx.strokeText(p.text, p.x, p.y); }
+      ctx.shadowColor = p.color; ctx.shadowBlur = 10; ctx.fillText(p.text, p.x, p.y - (p.size > 30 ? 0 : u * 26)); ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+    const [st, sc] = statusInfo();
+    ctx.font = '16' + FONT; ctx.textAlign = 'center'; ctx.fillStyle = sc; ctx.fillText(st, W / 2, 540);
+  }
+  function update(dt) {
+    animT += dt;
+    for (const [i, t] of stonePop) { if (t + dt >= POP_DUR) stonePop.delete(i); else stonePop.set(i, t + dt); }
+    for (const r of ripples) r.t += dt; ripples = ripples.filter(r => r.t < 0.7);
+    for (const p of texts) p.t += dt; texts = texts.filter(p => p.t < p.dur);
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 220 * dt; s.life -= dt; return s.life > 0; });
+    if (cpuT > 0 && phase === 'play' && !over && !shown()) { cpuT -= dt; if (cpuT <= 0) cpuPlay(); }
+    if (winFx) {
+      winFx.t += dt;
+      while (winFx.next < winFx.line.length && winFx.t >= 0.15 + winFx.next * 0.13) {
+        const [x, y] = xyOf(winFx.line[winFx.next]); burst(x, y, 'rgba(255,209,102,', 12, 130); SFX.star(winFx.next); winFx.next++;
+      }
+      if (winFx.t < 2.2 && winFx.next >= winFx.line.length && Math.random() < dt * 9) { const [x, y] = xyOf(winFx.line[Math.floor(Math.random() * winFx.line.length)]); burst(x, y, 'rgba(255,209,102,', 4, 90); }
+    }
+    if (resultT > 0) { resultT -= dt; if (resultT <= 0 && phase === 'over') showResult(); }
+  }
+  let last = 0;
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; if (dt > 0) update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- wiring (kept at the end) -------------------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); if (!muted) { audio(); SFX.toggle(); } });
+  cv.addEventListener('pointerdown', onDown);
+  cv.addEventListener('pointermove', onMove);
+  cv.addEventListener('pointerup', onUp);
+  cv.addEventListener('pointercancel', () => { down = null; });
+  cv.addEventListener('pointerleave', e => { if (!down) hoverIdx = -1; });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', onKey);
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startGame('cpu'); });
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); SFX.toggle(); setLevel(+b.dataset.l); }));
+  btnView.addEventListener('click', () => { audio(); SFX.toggle(); hideOverlay(); });
+  okBtn.addEventListener('click', () => { audio(); if (phase === 'over') showResult(); else if (sel >= 0) tryPlace(sel); });
+  undoBtn.addEventListener('click', () => { audio(); undo(); });
+  hintBtn.addEventListener('click', () => { audio(); hint(); });
+  signBtn.addEventListener('click', () => { audio(); toggleSigns(); });
+  modeBtn.addEventListener('click', () => { audio(); toggleConfirm(); });
+  menuBtn.addEventListener('click', () => { audio(); SFX.toggle(); if (phase === 'over') showResult(); else showMenu(); });
+  document.addEventListener('visibilitychange', () => { last = performance.now(); });
+
+  engReset();
+  drawMute(); setLevel(level); showMenu();
+  last = performance.now(); requestAnimationFrame(loop);
+
+  const xy = i => (i >= 0 ? [cx(i), cy(i)] : null);
+  window.__test = {
+    state: () => ({
+      phase, mode, level, gameLevel, turn, over, winner, stones, overlay: shown(),
+      board: Array.from({ length: N }, (_, y) => Array.from({ length: N }, (_, x) => '.XO'[P[pid(x, y)]]).join('')),
+      last: xy(lastMove), sel: xy(sel), hint: xy(hintIdx), history: history.length,
+      humanColor: mode === 'cpu' ? humanColor() : 0, blackSeat, nextFirst: firsts[mode],
+      tally: Object.assign({}, tally), stats: JSON.parse(JSON.stringify(stats)), points: points(), rank: RANKS[rankOf(points())][1],
+      undoLeft, hintLeft: hintLeft.slice(1), signsOn, confirmMode, thinking, muted,
+      signs: { my5: signs.my5.map(xy), opp5: signs.opp5.map(xy), opp3: signs.opp3.map(xy) },
+      winLine: winFx ? winFx.line.map(xy) : null, status: statusInfo()[0],
+    }),
+    start: (m, lv) => { if (lv) setLevel(lv); startGame(m); },
+    place: (x, y) => place(pid(x, y)),
+    setBoard: (rows, t) => {
+      engReset(); history = []; lastMove = -1; winFx = null; resultT = 0; over = false; winner = 0; phase = 'play'; sel = -1; hintIdx = -1; cpuT = 0; thinking = false;
+      rows.forEach((row, y) => [...row].forEach((ch, x) => { const v = ch === 'X' ? 1 : ch === 'O' ? 2 : 0; if (v) { put(pid(x, y), v); history.push({ i: pid(x, y), p: v }); } }));
+      if (t) turn = t; overlay.classList.remove('show'); refresh();
+    },
+    ai: (lv, p) => xy(think(lv || level, p || turn)),
+    aiInfo: () => lastInfo,
+    threats: p => ({ five: cellsWith(p, 1e7).map(xy), win4: cellsWith(p, 1e6).map(xy) }),
+    cellXY: (x, y) => { const rc = cv.getBoundingClientRect(); return [rc.left + (GX + x * CELL) * rc.width / W, rc.top + (GY + y * CELL) * rc.height / H]; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    skipCpu: () => { if (phase === 'play' && !over && mode === 'cpu' && turn === cpuColor()) cpuPlay(); },
+    setAuto: v => { autoCpu = !!v; if (!v) { cpuT = 0; thinking = false; } },
+    setFirst: s => { firsts[mode] = s; },
+    setConfirm: v => { confirmMode = !!v; sel = -1; updateButtons(); },
+    setThinkMs: ms => { thinkMs = ms; },
+    seed: s => { seed = s >>> 0; },
+    undo, hint, menu: showMenu, result: showResult,
+    duel: (lvB, lvW, sd, ms) => {            // engine-only game with "never forgets to block" checks for level 3
+      const saved = history.slice(), viol = []; seed = sd >>> 0; engReset();
+      let p = 1, moves = 0, win = 0;
+      while (moves < N * N) {
+        const lv = p === 1 ? lvB : lvW, o = 3 - p;
+        const my5 = cellsWith(p, 1e7), opp5 = cellsWith(o, 1e7), oppW = cellsWith(o, 1e6);
+        const mv = think(lv, p, ms);
+        if (mv < 0 || P[mv] !== 0) { viol.push('illegal'); break; }
+        if (lv === 3) {
+          if (my5.length && !my5.includes(mv)) viol.push('missed five @' + moves);
+          if (!my5.length && opp5.length && !opp5.includes(mv)) viol.push('missed four @' + moves);
+        }
+        const four = hasFour(K[p], mv);
+        put(mv, p); moves++;
+        if (lv === 3 && !my5.length && !opp5.length && oppW.length && !four && cellsWith(o, 1e6).length) {
+          take(mv); let possible = false;
+          for (const c of CELLS) { if (P[c] !== 0 || !near[c]) continue; put(c, p); const n = cellsWith(o, 1e6).length; take(c); if (!n) { possible = true; break; } }
+          put(mv, p); if (possible) viol.push('missed three @' + moves);
+        }
+        if (winLine(mv)) { win = p; break; }
+        p = o;
+      }
+      engReset(); for (const h of saved) put(h.i, h.p); refresh();
+      return { winner: win, moves, viol };
+    },
+  };
+})();
+</script>
+</body>
+</html>
