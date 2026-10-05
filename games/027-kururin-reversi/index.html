@@ -166,7 +166,8 @@
   let busyT = 0, shake = 0, animT = 0, thinking = false, cpuTimer = 0, autoCpu = true, endFx = 0, gameSeq = 0;
   let hoverIdx = -1, cursorIdx = 19, kb = false, downIdx = -1;
   let showHints = true, showNums = true;
-  let tally = { 1: 0, 2: 0, d: 0 };
+  const tallies = { '2p': { 1: 0, 2: 0, d: 0 }, cpu: { 1: 0, 2: 0, d: 0 } }, firsts = { '2p': 1, cpu: 1 };
+  let tally = tallies['2p'];   // こんかいの せいせき（モード別に保持）
   let stats = { 1: { w: 0, l: 0, d: 0 }, 2: { w: 0, l: 0, d: 0 }, 3: { w: 0, l: 0, d: 0 } };
   let finalCounts = null;
   try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) stats = Object.assign(stats, s); } catch (e) {}
@@ -352,6 +353,7 @@
   }
   function startGame(m) {
     if (m) mode = m;
+    tally = tallies[mode]; first = firsts[mode];   // モードごとに成績・先手を分ける
     gameSeq++; clearTimeout(cpuTimer); thinking = false;
     board = new Array(SZ).fill(0); board[27] = WHITE; board[28] = BLACK; board[35] = BLACK; board[36] = WHITE;
     turn = BLACK; blackSeat = first; history = []; lastMove = -1; over = false; winner = 0; finalCounts = null;
@@ -405,7 +407,7 @@
     const ws = winner ? seatOf(winner) : 0;
     if (ws) tally[ws]++; else tally.d++;
     if (mode === 'cpu') { const s = stats[level]; if (ws === 1) s.w++; else if (ws === 2) s.l++; else s.d++; try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {} }
-    first = 3 - first;
+    first = 3 - first; firsts[mode] = first;
     banner = { t: -busyT }; endFx = busyT + 1.5;
     if (ws === 1 || (ws === 2 && mode !== 'cpu')) SFX.win(busyT); else if (ws === 2) SFX.lose(busyT); else SFX.draw(busyT);
     updateButtons();
@@ -421,9 +423,10 @@
     const fc = finalCounts || countStones(board);
     note.innerHTML = '⚫ くろ <b>' + fc[1] + '</b> - <b>' + fc[2] + '</b> しろ ⚪' + (fc.e ? '<br><span style="color:var(--sub)">（あいたマス ' + fc.e + ' は かった人の石として かぞえたよ）</span>' : '') +
       '<br>こんかいの せいせき： <i class="c1">' + seatName(1) + ' ' + tally[1] + '</i> - <i class="c2">' + seatName(2) + ' ' + tally[2] + '</i>（ひきわけ ' + tally.d + '）' +
-      '<br>つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + (first === 1 ? 'P1' : (mode === 'cpu' ? 'CPU' : 'P2')) + '</i> が くろ（先手）';
+      '<br>つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + seatName(first) + '</i> が くろ（先手）';
     document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど（ふたりで）' : 'ふたりで たいせん';
     document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど（CPU）' : 'ひとりで（CPU）';
+    banner = null; endFx = 0;   // 終局バナーはオーバーレイと二重にならないよう消す
     renderStats(); overlay.classList.add('show');
   }
   function renderStats() {
@@ -458,7 +461,9 @@
   function goMenu() {
     gameSeq++; clearTimeout(cpuTimer); thinking = false; phase = 'title';
     document.getElementById('ovBig').innerHTML = 'くるりん<br>リバーシ'; document.getElementById('ovBig').className = 'big';
-    document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>こんかいの せいせき： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">P2/CPU ' + tally[2] + '</i>（ひきわけ ' + tally.d + '）<br>⚫ くろ が先手（つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + (first === 1 ? 'P1' : 'P2/CPU') + '</i>）';
+    const t2 = tallies['2p'], tc = tallies.cpu;
+    document.getElementById('ovNote').innerHTML = 'モードをえらんでね。<br>ふたり： <i class="c1">P1 ' + t2[1] + '</i> - <i class="c2">P2 ' + t2[2] + '</i>（ひきわけ ' + t2.d + '）' +
+      '<br>CPU： <i class="c1">あなた ' + tc[1] + '</i> - <i class="c2">CPU ' + tc[2] + '</i>（ひきわけ ' + tc.d + '）<br>⚫ くろ が先手。先手は 1きょくごとに こうたいするよ';
     document.getElementById('btn2p').textContent = 'ふたりで たいせん'; document.getElementById('btnCpu').textContent = 'ひとりで（CPU）';
     renderStats(); overlay.classList.add('show'); updateButtons();
   }
@@ -703,7 +708,7 @@
     start: (m, lv) => { if (lv) setLevel(lv); startGame(m); },
     skipCpu: () => { clearTimeout(cpuTimer); busyT = 0; if (phase === 'play' && !over && mode === 'cpu' && turn === cpuColor()) cpuPlay(); },
     setAuto: v => { autoCpu = !!v; if (!v) { clearTimeout(cpuTimer); thinking = false; } },
-    setFirst: s => { first = s; },
+    setFirst: s => { first = s; firsts[mode] = s; },
     step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
     toggleHints, toggleNums, menu: goMenu,
   };
