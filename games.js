@@ -33,7 +33,7 @@ const GAMES = [
   "description": "ながれてくる くろいタイルを 下からじゅんにタップ。たたくたびにメロディが1音ずつ鳴って、曲になるよ。白をふむとライフがへる。オリジナル6曲×3つのむずかしさ、1しゅうごとに速くなり、ならびは毎回かわる。★の記録と、メドレーがどんどん速くなるエンドレスつき。",
   "controls": "4つのレーンを指でタップ（両手OK）。PCは左から D・F・J・K キー、またはクリック。P か Esc でポーズ。",
   "path": "games/057-dark-tile-tap/index.html",
-  "cover": "games/057-dark-tile-tap/cover.svg"
+  "cover": "assets/covers/057.webp"
 },
 {
   "id": "056",
@@ -48,7 +48,7 @@ const GAMES = [
   "description": "タイルをあきマスへすべらせて、1からじゅんばんにならべるスライドパズル。3×3・4×4・5×5の全9ステージで、もんだいは毎回かわる（かならずとけるならびだけ）。すうじモードと絵がらモード、1もん3回までのヒント、つぎのもくひょう表示、ステージごとの手数・タイムのベストと★、絵のコレクションつき。",
   "controls": "タイルをタップ（あきマスと同じれつは まとめてすべる）・スワイプ / 矢印キー（WASD）でタイルをうごかす、H＝ヒント（1もん3回まで）、M＝みほん、R＝やりなおし、N＝まぜなおす",
   "path": "games/056-slide-number/index.html",
-  "cover": "games/056-slide-number/cover.svg"
+  "cover": "assets/covers/056.webp"
 },
 {
   "id": "055",
@@ -63,7 +63,7 @@ const GAMES = [
   "description": "どうぶつを さわって かぞえ、おなじ かずを えらぶ ちいくゲーム。うごきまわる・かくれんぼ・かけっこ・たしざん など 12の ひろばで、1から 20までの かずに ちょうせん。5もん中 3もん いっかいで あたると ごほうびシール、ぜんぶ あたると きらきらシール。れんぞく せいかいを きそう「ちょうせん」つき。",
   "controls": "タッチ／クリック：どうぶつを さわると かぞえた しるしが つく。したの かずの ボタンで こたえる。キーボード：↑↓で どうぶつを えらんで スペースで さわる、←→で かずを えらんで Enter、または すうじキー。Rで もういちど みる。",
   "path": "games/055-count-animals/index.html",
-  "cover": "games/055-count-animals/cover.svg"
+  "cover": "assets/covers/055.webp"
 },
 {
   "id": "054",
@@ -78,7 +78,7 @@ const GAMES = [
   "description": "お手本を見て、おなじドット絵をかくゲーム。そっくり度で★がもらえる「お手本チャレンジ」20種、まいかい絵がかわる「モンスターラッシュ」、16×16・32×32の「じゆうモード」（5まいほぞん）であそべる。バケツ・スポイト・かがみペン・もどす つき。",
   "controls": "タッチ：色とどうぐをえらび、マスをタップ／なぞってぬる。PC：クリックでぬる・右クリックでけす／矢印キー＋スペースでぬる、数字キーで色、Zでもどす、Enterで「できた！」",
   "path": "games/054-dot-paint/index.html",
-  "cover": "games/054-dot-paint/cover.svg"
+  "cover": "assets/covers/054.webp"
 },
 {
   "id": "053",
@@ -93,7 +93,7 @@ const GAMES = [
   "description": "7のとなりから じゅんにカードを出して、手札を先になくした人のかち。パスは3回まで。出せるのに わざとパスして「とめる」かけひきが楽しい七ならべ。性格のちがうCPU3人と3ラウンド勝負。3レベル・トンネルルール・ヒント・成績と しょうごうの記録つき。",
   "controls": "カードをタップでえらび、もういちどタップか「だす」。出せない・とめたい時は「パス」。キーボードは ←→でえらぶ、Enterで出す、Pでパス、Hでヒント。",
   "path": "games/053-sevens-line/index.html",
-  "cover": "games/053-sevens-line/cover.svg"
+  "cover": "assets/covers/053.webp"
 },
 {
   "id": "052",
@@ -108,7 +108,7 @@ const GAMES = [
   "description": "けいさんに こたえると キャラがダッシュ、まちがえると つまずく 60びょうレース。ライバルより 遠くまで 走ろう。たし・ひき・かけ・わり・ミックス×3レベルの15コース。れんぞく正解のブーストやターボ、★とベスト記録、かつと強くなるライバル、まちがいリストの れんしゅうつき。",
   "controls": "画面のテンキーをタップして「OK」 / キーボードは すうじキーで うって Enter、Backspaceで けす",
   "path": "games/052-calc-dash/index.html",
-  "cover": "games/052-calc-dash/cover.svg"
+  "cover": "assets/covers/052.webp"
 },
 {
   "id": "051",
@@ -123,7 +123,7 @@ const GAMES = [
   "description": "13×13のばんに石をこうたいでおき、たて・よこ・ななめに先に5つならべたら勝ち。CPUは3段階（つよいは先読みつき）、ふたり対戦もOK。虫めがねと2回タップでおきまちがえにくく、きけんサイン・ヒント・1手もどす、強さ別の成績としょうごうつき。",
   "controls": "タップでえらぶ→もういちどタップ（または「ここにおく」）でおく。ゆびをすべらせると虫めがね / マウスはクリック / やじるしキー＋Enter、Z＝もどす、H＝ヒント",
   "path": "games/051-five-row/index.html",
-  "cover": "games/051-five-row/cover.svg"
+  "cover": "assets/covers/051.webp"
 },
 {
   "id": "050",
@@ -138,7 +138,7 @@ const GAMES = [
   "description": "あなから出たもぐらをすばやくポン！ ひよことくまさんは、たたいちゃダメ。よく見てつづけて当てるとコンボで点が5ばいまでふえるよ。金のもぐら、2かいたたくヘルメットもぐら、ちらっと出るフェイントも登場。30びょうとエンドレスの2モードで、ベストと★をきろく。",
   "controls": "タップ／クリックで あなを たたく ・ キーボードは Q W E / A S D / Z X C（テンキー1〜9）が 9つのあなに対応、Pで ひとやすみ",
   "path": "games/050-mole-pop/index.html",
-  "cover": "games/050-mole-pop/cover.svg"
+  "cover": "assets/covers/050.webp"
 },
 {
   "id": "049",
@@ -153,7 +153,7 @@ const GAMES = [
   "description": "じぶんが1歩うごくと、てきも1歩うごくターン制のダンジョンたんけん。地図は毎回かわり、けん・くすり・4しゅるいのまきものをつかって、ちか10かいのドラゴンとたからばこをめざす。やさしい・ふつう・むずかしいの3モードで、いちばん深くもぐった階とスコアをきろく。",
   "controls": "タッチ：やじるしボタン／スワイプ／ばめんタップで1歩、「まつ」でその場で1ターン、どうぐボタンでつかう。キーボード：矢印キー・WASDでうごく、スペースでまつ、1〜4でどうぐ、Mでおと",
   "path": "games/049-bite-dungeon/index.html",
-  "cover": "games/049-bite-dungeon/cover.svg"
+  "cover": "assets/covers/049.webp"
 },
 {
   "id": "048",
@@ -168,7 +168,7 @@ const GAMES = [
   "description": "夜のまちの やねを 走る ランナーを、ジャンプ・2だんジャンプ・スライドで しょうがいぶつから まもる アクション。だんだん はやくなり、エリアごとに 新しい しかけが 出るよ。あつめた コインで 6しゅるいの きせかえ、3つの ミッション、ベストきょりの きろくつき。",
   "controls": "タッチ：がめんタップ・▲ボタンで ジャンプ（空中で もう1回で 2だんジャンプ）、▼ボタンで スライド / キーボード：スペース・↑で ジャンプ、↓・Sで スライド、Pで ポーズ / マウス：クリックで ジャンプ、右クリックで スライド",
   "path": "games/048-night-runner/index.html",
-  "cover": "games/048-night-runner/cover.svg"
+  "cover": "assets/covers/048.webp"
 },
 {
   "id": "046",
@@ -181,7 +181,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "箱を押して、すべてゴールへ運ぼう。押す順番を考える全15面。何回でも1手もどせて、さいたん手数に近いと★3。",
   "controls": "十字ボタン・スワイプ・矢印キーで移動。行きたい床をタップするとそこまで歩きます。Zでもどす、Rでさいしょから。",
-  "path": "games/046-hakohako-warehouse/index.html"
+  "path": "games/046-hakohako-warehouse/index.html",
+  "cover": "assets/covers/046.webp"
 },
 {
   "id": "045",
@@ -194,7 +195,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "数字をヒントにマスを塗って、かくれたドット絵を見つけよう。はじめてでも安心の「れんしゅう」つき。5×5・8×8・10×10の全33問。",
   "controls": "タップやなぞってマスを塗る。「× メモ」は塗らないマスのしるし（PCは右クリックでも×）。ぜんぶそろうと自動で絵が完成。",
-  "path": "games/045-dot-secret/index.html"
+  "path": "games/045-dot-secret/index.html",
+  "cover": "assets/covers/045.webp"
 },
 {
   "id": "044",
@@ -207,7 +209,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "クロンダイクの1枚めくり。場札は赤黒こうごに大きい順、組札は同じマークでAからKへ。カードをタップすると置ける場所へ自動で動き、ヒント・もどす・詰みのお知らせつき。",
   "controls": "カードをタップで置ける場所へ自動移動（ドラッグでも動かせる）。山札をタップでめくる。もどす・ヒントつき。",
-  "path": "games/044-hitoiki-solitaire/index.html"
+  "path": "games/044-hitoiki-solitaire/index.html",
+  "cover": "assets/covers/044.webp"
 },
 {
   "id": "042",
@@ -220,7 +223,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "ボールをうしろに引っぱって打つミニゴルフ。ななめのかべ・すな・坂・池・かざぐるまがある全9ホールで、ホールインワンをねらおう。",
   "controls": "ボールをうしろに引っぱって はなすと打つ（長く引くほど強い）。PCは矢印キーで向きと強さ、スペースで打つこともできます。",
-  "path": "games/042-korokoro-golf/index.html"
+  "path": "games/042-korokoro-golf/index.html",
+  "cover": "assets/covers/042.webp"
 },
 {
   "id": "041",
@@ -233,7 +237,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "森の郵便屋になって道を選ぼう。拾ったものや親切が物語を変える。絵つきの27場面と8つの結末、結末ノートつき。",
   "controls": "選択肢をタップ。持ちものを使う道もあるよ。見つけた結末は「結末ノート」に記録。",
-  "path": "games/041-forest-post/index.html"
+  "path": "games/041-forest-post/index.html",
+  "cover": "assets/covers/041.webp"
 },
 {
   "id": "040",
@@ -246,7 +251,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "竿を投げて、浮きがしずんだら合わせよう。動く印を緑のゾーンで止めて釣り上げる。川・海・夜の海で20種類の図鑑とサイズ記録を集めよう。",
   "controls": "「投げる」→浮きがしずんだら「合わせる」→白い印が緑の中で「釣り上げる」。画面タップやスペースキーでもOK。",
-  "path": "games/040-nonbiri-fishing/index.html"
+  "path": "games/040-nonbiri-fishing/index.html",
+  "cover": "assets/covers/040.webp"
 },
 {
   "id": "038",
@@ -259,7 +265,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "虫たちが道をとおって、おやつをねらってくるよ。道のまわりにクマ・ウサギ・ゾウ・ペンギンの守り役をおいて、ぜんぶのウェーブでおやつを守りきればクリア！ 3つのステージ、ボスも登場。",
   "controls": "＋のマスをタップ→下のボタンで守り役をえらぶ。おいた守り役をタップで強化。「ウェーブスタート」で開始。",
-  "path": "games/038-oyatsu-defense/index.html"
+  "path": "games/038-oyatsu-defense/index.html",
+  "cover": "assets/covers/038.webp"
 },
 {
   "id": "037",
@@ -272,7 +279,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "木を切って板・いす・おもちゃに加工して売ろう。機械を増やすと自動で作ってくれて、小さな小屋がだんだん大きな工房に育つよ。累計20000コインで工房マスター！",
   "controls": "「切る」「作る」「売る」をタップ。設備タブで機械や倉庫を強化しよう。",
-  "path": "games/037-kotsukotsu-factory/index.html"
+  "path": "games/037-kotsukotsu-factory/index.html",
+  "cover": "assets/covers/037.webp"
 },
 {
   "id": "036",
@@ -285,7 +293,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "10日間でカフェを町いちばんのお店にしよう。お客さんの注文を順番にお出しして、毎日の目標で★を集めるよ。設備を買うとメニューが増えるよ。",
   "controls": "注文と同じメニューを左から順にタップ。営業のあとで設備を買えるよ。",
-  "path": "games/036-mamemame-cafe/index.html"
+  "path": "games/036-mamemame-cafe/index.html",
+  "cover": "assets/covers/036.webp"
 },
 {
   "id": "035",
@@ -298,7 +307,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "ごはん・ボール遊び・あわあわおていれでペットを育てよう。たまごから7つの姿に変わり、育て方で3種類のおとなになるよ。ずかんを集めよう。",
   "controls": "お世話ボタンをタップ。ミニゲームはタッチで遊ぶよ。つかれたら「ねる」で休もう。",
-  "path": "games/035-marumaru-pet/index.html"
+  "path": "games/035-marumaru-pet/index.html",
+  "cover": "assets/covers/035.webp"
 },
 {
   "id": "034",
@@ -311,7 +321,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "4つの部屋を調べて、道具と暗号を見つけて脱出しよう。暗号は毎回かわるよ。ヒントは少しずつ出てくるので、ヒントなしの★3をめざそう。",
   "controls": "気になる所をタップで拡大。道具は自動で使われる。暗号はボタンで入力。",
-  "path": "games/034-small-room/index.html"
+  "path": "games/034-small-room/index.html",
+  "cover": "assets/covers/034.webp"
 },
 {
   "id": "032",
@@ -324,7 +335,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "流れてくる音符が白い線に来たら左右をタップ。テンポのちがう4曲と3つのむずかしさで、ランクSをめざそう。",
   "controls": "画面の左右半分か下のボタンをタップ。PCは左F・右J。",
-  "path": "games/032-tokotoko-rhythm/index.html"
+  "path": "games/032-tokotoko-rhythm/index.html",
+  "cover": "assets/covers/032.webp"
 },
 {
   "id": "031",
@@ -337,7 +349,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "数字をえらんで、もくひょうの数ぴったりにしよう。10から25まで大きくなるステップ12問と、60秒タイムアタックで遊べるよ。",
   "controls": "数字をタップでえらぶ・外す。ぴったりで自動正解。PCは数字キー1〜9でも選べる。",
-  "path": "games/031-pittari-ten/index.html"
+  "path": "games/031-pittari-ten/index.html",
+  "cover": "assets/covers/031.webp"
 },
 {
   "id": "030",
@@ -350,7 +363,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "60秒で いくつ言葉を配達できるかな？ 3つのレベル・150こ以上のお題。ノーミスで届けると+1秒！",
   "controls": "ローマ字で入力（shi/si・tsu/tu・nn・xtu など、どの打ちかたでもOK）。PCキーボード推奨。スマホは英字キーボードか、かな入力でも遊べます。",
-  "path": "games/030-kotoba-delivery/index.html"
+  "path": "games/030-kotoba-delivery/index.html",
+  "cover": "assets/covers/030.webp"
 },
 {
   "id": "029",
@@ -363,7 +377,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "6ジャンル・130問以上の3択クイズ。はやく答えるとボーナス、れんぞく正解でコンボ！ 最後にまちがえた問題をふくしゅうできるよ。",
   "controls": "答えをタップ（PCは1〜3キーでも可）→「つぎへ」。",
-  "path": "games/029-hirameki-quiz/index.html"
+  "path": "games/029-hirameki-quiz/index.html",
+  "cover": "assets/covers/029.webp"
 },
 {
   "id": "028",
@@ -376,7 +391,8 @@ const GAMES = [
   "date": "2026-09-13",
   "description": "ひみつの言葉（3もじ/4もじ）を6回以内に当てよう。緑は場所まで正解、黄は場所ちがい。2回まちがえるとヒントが出るよ。",
   "controls": "画面のひらがなキーボードをタップ（゛゜・小でだく音や小さい文字）。PCはローマ字でも打てます。",
-  "path": "games/028-kotoba-tantei/index.html"
+  "path": "games/028-kotoba-tantei/index.html",
+  "cover": "assets/covers/028.webp"
 },
 
   {
@@ -622,6 +638,7 @@ const GAMES = [
       "光るパックをはじき合うエアホッケー。CPUと3つのつよさで対戦できるほか、1台をふたりで取り合う対戦も。先に5点とったほうの勝ち！",
     controls: "ひとりで：画面をドラッグ（どこを触ってもOK）、PCはマウスかWASD/矢印キー。ふたりで：うえの人はうえ半分・したの人はした半分をドラッグ、キーボードは した=WASD／うえ=矢印キー。",
     path: "games/011-yofukashi-hockey/index.html",
+    cover: "assets/covers/011.webp",
   },
   {
     id: "010",
@@ -636,6 +653,7 @@ const GAMES = [
       "草むらで戦ってレベルを上げ、洞窟の「よるのおう」に挑む小さなRPG。ひっさつ技・そうび・かくしボスの塔もあって、クリア後もぼうけんが続くよ。",
     controls: "矢印キー/WASDかDパッドでいどう、Z・Enter・スペースかAボタンで はなす・しらべる・すすめる。せんとうはボタンをタップ（キーなら←→でえらんでZ）。",
     path: "games/010-yofukashi-quest/index.html",
+    cover: "assets/covers/010.webp",
   },
   {
     id: "009",
@@ -650,6 +668,7 @@ const GAMES = [
       "夜の街にせまるUFO軍団をうち落とすシューティング。パワーアップカプセルや4ウェーブごとのボスUFOが登場。「やさしい」モードなら小さい子もあんしん。",
     controls: "PC：←→（A/D）でうごく、スペースでうつ、Pでいちじていし。スマホ：画面を指でなぞるといどう＆じどうれんしゃ（下のボタンでもOK）",
     path: "games/009-yofukashi-invader/index.html",
+    cover: "assets/covers/009.webp",
   },
   {
     id: "008",
@@ -664,6 +683,7 @@ const GAMES = [
       "ネオンのブロックをそろえて消す落ちものパズル。ホールドやれんさボーナスつきで、エンドレス・全15ステージ・40ラインの3つのモードで遊べる。",
     controls: "PC：←→でいどう、↑/Z/Xでかいてん、↓でちょっとおとす、スペースでいっきにおとす、C/Shiftでホールド、Pでいちじていし。スマホ：下のボタン、またはばんめんをタップでかいてん・ヨコにスライドでいどう・下にはらうといっきにおとす・上にはらうとホールド",
     path: "games/008-neon-fall/index.html",
+    cover: "assets/covers/008.webp",
   },
   {
     id: "007",

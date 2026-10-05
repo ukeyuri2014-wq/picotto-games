@@ -1944,11 +1944,12 @@
     statCount.textContent = String(sorted.length).padStart(2, "0");
 
     function artOf(g) {
-      if (ART[g.id]) return ART[g.id];
-      // 048以降のキービジュアルは games/<フォルダ>/cover.svg（トップを重くしないため画像として後読み）
-      if (typeof g.cover === "string" && /^games\/[\w-]+\/cover\.svg$/.test(g.cover)) {
+      // キービジュアルは assets/covers/<ID>.webp（または games/<フォルダ>/cover.svg）。トップを重くしないため画像として後読み。
+      // games.js に cover があればそれを優先し、無いゲームだけ下の ART（昔の絵）を使う。
+      if (typeof g.cover === "string" && /^(games\/[\w-]+\/cover\.(webp|svg|jpg|png)|assets\/covers\/[\w-]+\.webp)$/.test(g.cover)) {
         return '<img class="cover" src="' + g.cover + '" alt="" loading="lazy" decoding="async" width="400" height="225">';
       }
+      if (ART[g.id]) return ART[g.id];
       return '<div class="fallback" style="--ac:' + (g.color || "#ff2e88") + '">' + g.emoji + "</div>";
     }
 
