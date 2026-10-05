@@ -18,23 +18,19 @@
     background:var(--bg); color:var(--ink);
     font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
     min-height:100vh; display:flex; flex-direction:column; align-items:center;
-    padding:14px 10px 30px;
+    padding:10px 10px 30px;
   }
   .backbar{width:min(480px,100%);margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
   .backbar a{color:var(--sub);text-decoration:none}
-  .backbar a:hover,.backbar a:focus-visible{color:var(--cyan);outline:none}
+  .backbar a:focus-visible{color:var(--cyan);outline:none}
   .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit}
-  .backbar button:hover{color:var(--cyan);border-color:var(--cyan)}
-  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 10px}
-  h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.55);font-weight:400}
-  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
-  #wrap{position:relative;width:min(480px,100%)}
+  @media(hover:hover){.backbar a:hover{color:var(--cyan)} .backbar button:hover{color:var(--cyan);border-color:var(--cyan)} .dpad .sm:hover:not(:disabled){border-color:var(--cyan)}}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:12px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%,calc((100vh - 238px) * 0.923))}
   canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none}
-  .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
-  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
-  .btn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
-  .btn:disabled{opacity:.4;cursor:default}
-  .dpad{display:grid;grid-template-columns:repeat(3,72px);grid-template-rows:repeat(2,56px);gap:6px;margin-top:10px;justify-content:center;width:min(480px,100%);user-select:none;-webkit-user-select:none}
+  .dpad{display:grid;grid-template-columns:repeat(3,84px);grid-template-rows:repeat(2,54px);gap:6px;margin-top:8px;justify-content:center;width:min(480px,100%);user-select:none;-webkit-user-select:none}
   .dpad button{
     font-family:inherit;font-size:22px;border-radius:12px;border:1px solid var(--edge);background:var(--panel);
     color:var(--cyan);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
@@ -42,8 +38,9 @@
   }
   .dpad button:active{background:#22335a;border-color:var(--cyan);box-shadow:0 0 12px rgba(83,224,216,.4) inset}
   .dpad .u{grid-column:2;grid-row:1} .dpad .l{grid-column:1;grid-row:2} .dpad .d{grid-column:2;grid-row:2} .dpad .r{grid-column:3;grid-row:2}
-  .dpad .hint{grid-column:1;grid-row:1;display:flex;align-items:flex-end;justify-content:center;font-size:10px;color:var(--sub);padding-bottom:4px;letter-spacing:1px}
-  .dpad .hint2{grid-column:3;grid-row:1;display:flex;align-items:flex-end;justify-content:center;font-size:10px;color:var(--sub);padding-bottom:4px;letter-spacing:1px}
+  .dpad .sm{font-size:13px;color:var(--ink);text-shadow:none;letter-spacing:1px}
+  .dpad .sm:disabled{opacity:.4;cursor:default}
+  .dpad .p{grid-column:1;grid-row:1} .dpad .m{grid-column:3;grid-row:1}
   #overlay{
     position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
     align-items:center;justify-content:center;background:rgba(19,19,34,.92);
@@ -60,6 +57,8 @@
   .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
   .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:6px;padding:9px 16px;cursor:pointer;letter-spacing:1px}
   .modes button.alt{background:var(--pink);color:#2b0014}
+  .modes button.gold{background:var(--gold);color:#2a1d00}
+  .modes button.wide{flex-basis:100%;font-size:16px;padding:10px 16px}
   #overlay .rule{font-size:12px;color:var(--sub)}
   .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
   .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal} .help .gold{color:var(--gold);font-style:normal}
@@ -71,19 +70,20 @@
     #overlay .note br.sp{display:none}
     .modes{gap:6px}
     .modes button{font-size:14px;padding:7px 12px}
-    #overlay .rule{font-size:11px;line-height:1.4}
-    .dpad{grid-template-columns:repeat(3,68px);grid-template-rows:repeat(2,52px)}
+    #overlay .rule{font-size:12px;line-height:1.4}
+    .modes button.wide{font-size:15px;padding:8px 14px}
+    .dpad{grid-template-columns:repeat(3,80px);grid-template-rows:repeat(2,52px)}
   }
   @media (max-width:360px){
     #overlay .big{font-size:21px}
-    #overlay .note{font-size:11px;line-height:1.5}
+    #overlay .note{font-size:12px;line-height:1.5}
     #overlay .rule.exp{display:none}
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="光るヘビを操作してエサを食べ、どんどん長くなる定番アーケード。食べるほど少しずつ速くなり、たまに出る点滅ボーナス★は時間内に取ると50点。壁で終わる「かべあり」と反対側から出てくる「ワープ」の2モード、ベスト記録は自動保存。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="光るヘビを操作してエサを食べ、どんどん長くなるアーケード。全8ステージのステージモードと、かべあり・ワープのハイスコアモード。スローやすりぬけの とくべつなエサも出るよ。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/019-gungun-snake/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ぐんぐんスネーク","description":"光るヘビを操作してエサを食べ、どんどん長くなる定番アーケード。食べるほど少しずつ速くなり、たまに出る点滅ボーナス★は時間内に取ると50点。壁で終わる「かべあり」と反対側から出てくる「ワープ」の2モード、ベスト記録は自動保存。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/019-gungun-snake/index.html","inLanguage":"ja","genre":"ARCADE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ぐんぐんスネーク","description":"光るヘビを操作してエサを食べ、どんどん長くなるアーケード。全8ステージのステージモードと、かべあり・ワープのハイスコアモード。スローやすりぬけの とくべつなエサも出るよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/019-gungun-snake/index.html","inLanguage":"ja","genre":"ARCADE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="019"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -100,38 +100,31 @@
   <canvas id="cv" width="480" height="520"></canvas>
   <div id="overlay" class="show">
     <div class="big" id="ovBig">ぐんぐん<br>スネーク</div>
-    <div class="note" id="ovNote">
-      光るヘビを うごかして <b>エサを たべよう！</b><br>
-      たべるほど ながく・はやく なるよ。<br>
-      <i class="c2">かべ</i>や <i class="c1">じぶんの からだ</i>に ぶつかったら おわり。<br>
-      点滅する <i class="gold">★ボーナス</i>は 時間内に たべると <i class="gold">50点</i>！<br><br class="sp">
-      📱 スワイプ か 画面下の 十字ボタン ／ ⌨️ 矢印キー・WASD、Pでポーズ
-    </div>
+    <div class="note" id="ovNote">光るヘビを うごかして <b>エサを たべよう！</b> ぶつかったら おわり。<br>点滅する <i class="gold">★</i>は <i class="gold">50点</i>、<i class="c1">🐢スロー</i>で ゆっくり、<i class="c2">👻すりぬけ</i>で からだを すりぬけ！<br>📱 スワイプ か 十字ボタン ／ ⌨️ 矢印キー・WASD、Pでポーズ</div>
     <div class="modes">
-      <button id="btnWalls">かべあり で あそぶ</button>
-      <button id="btnWarp" class="alt">ワープ で あそぶ</button>
+      <button id="btnStage" class="gold wide">ステージ で あそぶ（全8ステージ）</button>
+      <button id="btnWalls">かべあり</button>
+      <button id="btnWarp" class="alt">ワープ</button>
     </div>
-    <div class="rule exp">かべあり＝かべに ぶつかると おわり ／ ワープ＝かべを ぬけて はんたいがわから 出てくる</div>
+    <div class="rule exp">ステージ＝エサを8こ たべると クリア ／ かべあり・ワープ＝ハイスコアに ちょうせん</div>
     <div class="rule" id="ovStats"></div>
   </div>
 </div>
-<div class="row">
-  <button class="btn" id="pauseBtn" disabled>⏸ ポーズ（P）</button>
-  <button class="btn" id="menuBtn">モードをえらぶ</button>
-</div>
 <div class="dpad" id="dpad" aria-label="ほうこうボタン">
-  <div class="hint">スワイプも</div>
+  <button class="sm p" id="pauseBtn" disabled>⏸ ポーズ</button>
   <button class="u" data-d="up" aria-label="うえ">▲</button>
-  <div class="hint2">つかえるよ</div>
+  <button class="sm m" id="menuBtn">メニュー</button>
   <button class="l" data-d="left" aria-label="ひだり">◀</button>
   <button class="d" data-d="down" aria-label="した">▼</button>
   <button class="r" data-d="right" aria-label="みぎ">▶</button>
 </div>
 
 <div class="help">
+  <b>ステージ</b>：エサを8こ たべると クリア。ステージごとに ブロックの形が かわり、だんだん はやくなる。全8ステージ。<br>
+  <b>とくべつなエサ</b>：<i class="c1">🐢スロー</i>＝しばらく ゆっくりになる ／ <i class="c2">👻すりぬけ</i>＝しばらく じぶんの からだを すりぬけられる（かべ・ブロックは だめ）。<br>
   <b>コツ</b>：まがるのは はやめに。長くなったら 大きく まわって からだを よけよう。<i class="gold">★ボーナス</i>は 点滅が はやくなったら もうすぐ きえる！<br>
   <i class="c1">かべあり</i>：かべに ぶつかると おわり ／ <i class="c2">ワープ</i>：かべを ぬけて はんたいがわから 出てくる（じぶんの からだには 注意）。<br>
-  反対むきには まがれない。すばやく 2回 おしても じゅんばんに まがるよ。べつのタブを ひらくと 自動で ポーズ。
+  反対むきには まがれない。すばやく 2回 おしても じゅんばんに まがるよ。画面のスワイプでも まがれる。べつのタブを ひらくと 自動で ポーズ。
 </div>
 
 <script>
@@ -145,7 +138,23 @@
   const KEY = 'picotto_neon-snake_';
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
   const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
-  const MODE_NAME = { walls: 'かべあり', warp: 'ワープ' };
+  const MODE_NAME = { walls: 'かべあり', warp: 'ワープ', stage: 'ステージ' };
+  const STAGE_GOAL = 8, STAGE_COUNT = 8, CLEAR_PT = 100, POWER_SEC = 6;
+  // ステージのブロック配置（スタート位置の 10行目は あけておく）
+  function stageLayout(n) {
+    const c = [], add = (x, y) => c.push([x, y]), hl = (y, a, b) => { for (let x = a; x <= b; x++) add(x, y); }, vl = (x, a, b) => { for (let y = a; y <= b; y++) add(x, y); };
+    switch (n) {
+      case 1: for (const [bx, by] of [[3, 3], [15, 3], [3, 15], [15, 15]]) { add(bx, by); add(bx + 1, by); add(bx, by + 1); add(bx + 1, by + 1); } break;
+      case 2: hl(5, 5, 14); hl(15, 5, 14); break;
+      case 3: for (const x of [5, 14]) { vl(x, 2, 7); vl(x, 13, 17); } break;
+      case 4: for (let i = 4; i <= 15; i++) { if (i >= 8 && i <= 11) continue; add(i, 4); add(i, 15); add(4, i); add(15, i); } break;
+      case 5: for (let i = 2; i <= 17; i++) { if (i >= 7 && i <= 12) continue; add(i, i); add(i, 19 - i); } break;
+      case 6: hl(4, 0, 11); hl(15, 8, 19); vl(15, 0, 6); vl(4, 13, 19); break;
+      case 7: hl(2, 2, 7); vl(2, 3, 7); hl(2, 12, 17); vl(17, 3, 7); hl(17, 2, 7); vl(2, 12, 16); hl(17, 12, 17); vl(17, 12, 16); add(10, 5); add(9, 14); break;
+      case 8: for (const x of [2, 6, 10, 14, 18]) for (const y of [2, 6, 14, 18]) add(x, y); hl(8, 4, 6); hl(12, 13, 15); break;
+    }
+    return c;
+  }
 
   // ---- sound ---------------------------------------------------------------
   let muted = false;
@@ -179,6 +188,8 @@
     resume() { tone('triangle', 440, 660, 0.12, 0.045); },
     best() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.06, 0.6 + i * 0.1)); },
     fizzle() { tone('sine', 700, 200, 0.18, 0.03); },
+    power() { tone('triangle', 500, 1000, 0.14, 0.05); tone('triangle', 750, 1500, 0.14, 0.04, 0.09); },
+    clear() { [523, 659, 784, 1046, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.13, 0.06, i * 0.08)); },
   };
   const muteBtn = document.getElementById('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
@@ -187,16 +198,18 @@
 
   // ---- state ---------------------------------------------------------------
   let snake = [], moveDir = 'right', queue = [], food = null, bonus = null, prevTail = null;
+  let obstacles = new Set(), stageNo = 1, stageEaten = 0, power = null, slowT = 0, ghostT = 0, clearT = 0, stageMax = 0;
   let score = 0, eaten = 0, sinceBonus = 0, interval = BASE_INT, timer = 0;
   let phase = 'title';                 // title | play | over
   let paused = false, mode = 'walls', autoRun = true;
-  let best = { walls: 0, warp: 0 }, newBest = false, overT = 0, resultShown = false, deathKind = '';
+  let best = { walls: 0, warp: 0, stage: 0 }, newBest = false, overT = 0, resultShown = false, deathKind = '';
   let particles = [], pops = [], flash = 0, flashCol = '255,255,255', shake = 0, anim = 0;
   let headPulse = 0, blinkT = 2, tongueT = 3, wallHit = 0, warpFx = 0;
-  for (const m of ['walls', 'warp']) { try { const v = parseInt(localStorage.getItem(KEY + 'best_' + m) || '0', 10); if (v > 0) best[m] = v; } catch (e) {} }
+  try { stageMax = parseInt(localStorage.getItem(KEY + 'stage_max') || '0', 10) || 0; } catch (e) {}
+  for (const m of ['walls', 'warp', 'stage']) { try { const v = parseInt(localStorage.getItem(KEY + 'best_' + m) || '0', 10); if (v > 0) best[m] = v; } catch (e) {} }
 
   const overlay = document.getElementById('overlay'), ovBig = document.getElementById('ovBig'), ovNote = document.getElementById('ovNote'), ovStats = document.getElementById('ovStats');
-  const btnWalls = document.getElementById('btnWalls'), btnWarp = document.getElementById('btnWarp');
+  const btnWalls = document.getElementById('btnWalls'), btnWarp = document.getElementById('btnWarp'), btnStage = document.getElementById('btnStage');
   const pauseBtn = document.getElementById('pauseBtn'), menuBtn = document.getElementById('menuBtn');
 
   const px = x => BX + (x + 0.5) * CELL, py = y => BY + (y + 0.5) * CELL;
@@ -205,13 +218,34 @@
   // ---- board helpers ----------------------------------------------------------
   function randFree() {
     const used = new Set(); for (const c of snake) used.add(c.x + ',' + c.y);
-    if (food) used.add(food.x + ',' + food.y); if (bonus) used.add(bonus.x + ',' + bonus.y);
+    if (food) used.add(food.x + ',' + food.y); if (bonus) used.add(bonus.x + ',' + bonus.y); if (power) used.add(power.x + ',' + power.y);
+    for (const k of obstacles) used.add(k);
+    const h = snake[0];
     const cells = [];
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (!used.has(x + ',' + y)) cells.push({ x, y });
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (!used.has(x + ',' + y) && !(h && Math.abs(h.x - x) + Math.abs(h.y - y) < 2)) cells.push({ x, y });
     if (!cells.length) return null;
     return cells[Math.floor(Math.random() * cells.length)];
   }
   function spawnFood() { food = randFree(); }
+  function spawnPower() {
+    const c = randFree(); if (!c) return;
+    const ttl = Math.max(30, Math.round(8 / interval));
+    power = { x: c.x, y: c.y, kind: Math.random() < 0.5 ? 'slow' : 'ghost', ttl, max: ttl };
+    pops.push({ x: px(c.x), y: py(c.y) - 14, text: power.kind === 'slow' ? 'スロー!' : 'すりぬけ!', col: power.kind === 'slow' ? '120,190,255' : '205,176,255', life: 0.9, max: 0.9, size: 14 });
+    SFX.bonusIn();
+  }
+  function effInt() { return interval * (slowT > 0 ? 1.6 : 1); }
+  function stageBase() { return mode === 'stage' ? Math.max(MIN_INT + 0.03, BASE_INT - (stageNo - 1) * 0.008) : BASE_INT; }
+  function resetSnake() {
+    const sx = Math.floor(COLS / 2), sy = Math.floor(ROWS / 2);
+    snake = []; for (let i = 0; i < START_LEN; i++) snake.push({ x: sx - i, y: sy });
+    moveDir = 'right'; queue = []; prevTail = null; food = null; bonus = null; power = null; slowT = 0; ghostT = 0; timer = 0;
+  }
+  function setupStage() {
+    obstacles = new Set();
+    if (mode === 'stage') for (const [x, y] of stageLayout(((stageNo - 1) % STAGE_COUNT) + 1)) obstacles.add(x + ',' + y);
+    resetSnake(); stageEaten = 0; sinceBonus = 0; interval = stageBase(); spawnFood();
+  }
   function spawnBonus() {
     const c = randFree(); if (!c) return;
     const ttl = Math.max(24, Math.round(BONUS_SEC / interval));
@@ -235,17 +269,14 @@
   // ---- game flow --------------------------------------------------------------
   function syncPauseBtn() {
     pauseBtn.disabled = phase !== 'play';
-    pauseBtn.textContent = (phase === 'play' && paused) ? '▶ つづける（P）' : '⏸ ポーズ（P）';
+    pauseBtn.textContent = (phase === 'play' && paused) ? '▶ つづける' : '⏸ ポーズ';
   }
   function startGame(m) {
     if (m && MODE_NAME[m]) mode = m;
-    const sx = Math.floor(COLS / 2), sy = Math.floor(ROWS / 2);
-    snake = []; for (let i = 0; i < START_LEN; i++) snake.push({ x: sx - i, y: sy });
-    moveDir = 'right'; queue = []; prevTail = null; food = null; bonus = null;
-    score = 0; eaten = 0; sinceBonus = 0; interval = BASE_INT; timer = 0;
+    score = 0; eaten = 0; sinceBonus = 0; stageNo = 1;
     particles = []; pops = []; flash = 0; shake = 0; headPulse = 0; wallHit = 0; warpFx = 0;
     phase = 'play'; paused = false; overT = 0; resultShown = false; newBest = false; deathKind = '';
-    spawnFood();
+    setupStage();
     overlay.classList.remove('show'); syncPauseBtn(); SFX.start();
   }
   function setDir(d) {
@@ -265,18 +296,32 @@
       if (mode === 'warp') { nx = (nx + COLS) % COLS; ny = (ny + ROWS) % ROWS; warped = true; }
       else { die('wall'); return true; }
     }
-    for (let i = 0; i < snake.length - 1; i++) if (snake[i].x === nx && snake[i].y === ny) { die('self'); return true; }
+    if (obstacles.has(nx + ',' + ny)) { die('block'); return true; }
+    if (ghostT <= 0) for (let i = 0; i < snake.length - 1; i++) if (snake[i].x === nx && snake[i].y === ny) { die('self'); return true; }
     const ateFood = !!(food && food.x === nx && food.y === ny);
     const ateBonus = !!(bonus && bonus.x === nx && bonus.y === ny);
+    const atePower = !!(power && power.x === nx && power.y === ny);
     snake.unshift({ x: nx, y: ny });
     prevTail = (ateFood || ateBonus) ? null : snake.pop();
     if (warped) { warpFx = 1; SFX.warp(); }
     if (ateFood) {
-      eaten++; sinceBonus++; score += FOOD_PT;
-      interval = Math.max(MIN_INT, BASE_INT - eaten * STEP_INT);
+      eaten++; sinceBonus++; score += FOOD_PT; stageEaten++;
+      interval = mode === 'stage' ? Math.max(MIN_INT, stageBase() - stageEaten * STEP_INT) : Math.max(MIN_INT, BASE_INT - eaten * STEP_INT);
       eatFx(nx, ny, '255,95,162', '+' + FOOD_PT, false); SFX.eat();
-      food = null; spawnFood();
+      food = null;
+      if (mode === 'stage' && stageEaten >= STAGE_GOAL) { stageClear(); return true; }
+      spawnFood();
       if (!bonus && sinceBonus >= 4 && (sinceBonus >= 8 || Math.random() < 0.35)) spawnBonus();
+      else if (!power && eaten >= 3 && Math.random() < 0.2) spawnPower();
+    }
+    if (atePower) {
+      const k = power.kind; power = null; score += 20;
+      if (k === 'slow') { slowT = POWER_SEC; eatFx(nx, ny, '120,190,255', 'スロー +20', true); }
+      else { ghostT = POWER_SEC; eatFx(nx, ny, '205,176,255', 'すりぬけ +20', true); }
+      SFX.power();
+    } else if (power) {
+      power.ttl--;
+      if (power.ttl <= 0) { burst(px(power.x), py(power.y), '157,153,192', 8, 0.5); power = null; SFX.fizzle(); }
     }
     if (ateBonus) {
       score += BONUS_PT; sinceBonus = 0; bonus = null;
@@ -288,7 +333,17 @@
     if (!food) win();
     return true;
   }
+  function stageClear() {
+    const bonusPt = CLEAR_PT * stageNo; score += bonusPt;
+    if (stageNo > stageMax) { stageMax = stageNo; try { localStorage.setItem(KEY + 'stage_max', String(stageMax)); } catch (e) {} }
+    for (let i = 0; i < 5; i++) burst(BX + Math.random() * BW, BY + Math.random() * BH, '255,209,102', 12, 1);
+    flash = 0.3; flashCol = '255,209,102'; SFX.clear(); queue = []; prevTail = null;
+    pops.push({ x: W / 2, y: BY + BH / 2 + 40, text: 'クリアボーナス +' + bonusPt, col: '255,209,102', life: 1.5, max: 1.5, size: 18 });
+    if (stageNo >= STAGE_COUNT) { phase = 'over'; deathKind = 'allclear'; overT = 0; resultShown = false; timer = 0; finishScore(); syncPauseBtn(); return; }
+    phase = 'clear'; clearT = 0; syncPauseBtn();
+  }
   function finishScore() {
+    if (mode === 'stage' && stageNo - (deathKind === 'allclear' ? 0 : 1) > stageMax) { stageMax = stageNo - (deathKind === 'allclear' ? 0 : 1); try { localStorage.setItem(KEY + 'stage_max', String(stageMax)); } catch (e) {} }
     newBest = score > best[mode];
     if (newBest) { best[mode] = score; try { localStorage.setItem(KEY + 'best_' + mode, String(score)); } catch (e) {} SFX.best(); }
   }
@@ -304,22 +359,24 @@
     for (let i = 0; i < 6; i++) burst(BX + Math.random() * BW, BY + Math.random() * BH, '255,209,102', 12, 1);
     flash = 0.3; flashCol = '255,209,102'; finishScore(); SFX.bonus(); syncPauseBtn();
   }
-  function renderStats() { ovStats.textContent = 'ベスト：かべあり ' + best.walls + ' ／ ワープ ' + best.warp; }
+  function renderStats() { ovStats.textContent = 'ベスト：ステージ ' + best.stage + '（' + (stageMax >= STAGE_COUNT ? 'ぜんぶクリア👑' : stageMax > 0 ? 'ステージ' + stageMax + 'まで クリア' : 'まだ クリアなし') + '）／ かべあり ' + best.walls + ' ／ ワープ ' + best.warp; }
   function showResult() {
-    const perfect = deathKind === 'perfect';
-    ovBig.textContent = perfect ? 'PERFECT!' : 'GAME OVER'; ovBig.className = 'big ' + (perfect ? 'gold' : 'over');
-    const reason = perfect ? 'ばんめんを ぜんぶ うめた！すごい！' : deathKind === 'wall' ? 'かべに ぶつかった！' : 'じぶんの からだに ぶつかった！';
-    ovNote.innerHTML = '<span class="dim">' + reason + '</span><br>スコア <b>' + score + '</b>　ながさ <b>' + snake.length + '</b>（' + MODE_NAME[mode] + '）<br>' +
+    const perfect = deathKind === 'perfect' || deathKind === 'allclear';
+    ovBig.textContent = deathKind === 'allclear' ? 'ALL CLEAR!' : perfect ? 'PERFECT!' : 'GAME OVER'; ovBig.className = 'big ' + (perfect ? 'gold' : 'over');
+    const reason = deathKind === 'allclear' ? '全' + STAGE_COUNT + 'ステージ クリア！すごい！' : perfect ? 'ばんめんを ぜんぶ うめた！すごい！' : deathKind === 'wall' ? 'かべに ぶつかった！' : deathKind === 'block' ? 'ブロックに ぶつかった！' : 'じぶんの からだに ぶつかった！';
+    const where = mode === 'stage' ? '<br>ステージ <b>' + stageNo + '</b> ' + (deathKind === 'allclear' ? 'まで ぜんぶ クリア' : 'まで すすんだ（エサ ' + stageEaten + '/' + STAGE_GOAL + '）') : '';
+    ovNote.innerHTML = '<span class="dim">' + reason + '</span>' + where + '<br>スコア <b>' + score + '</b>　ながさ <b>' + snake.length + '</b>（' + MODE_NAME[mode] + '）<br>' +
       (newBest ? '<i class="gold">🎉 あたらしい きろく！</i>' : 'ベスト（' + MODE_NAME[mode] + '）: <b>' + best[mode] + '</b>');
-    btnWalls.textContent = mode === 'walls' ? 'もういちど（かべあり）' : 'かべあり で あそぶ';
-    btnWarp.textContent = mode === 'warp' ? 'もういちど（ワープ）' : 'ワープ で あそぶ';
+    btnWalls.textContent = mode === 'walls' ? 'もういちど（かべあり）' : 'かべあり';
+    btnWarp.textContent = mode === 'warp' ? 'もういちど（ワープ）' : 'ワープ';
+    btnStage.textContent = mode === 'stage' ? 'もういちど（ステージ1から）' : 'ステージ で あそぶ（全8ステージ）';
     renderStats(); overlay.classList.add('show');
   }
   function goTitle() {
     phase = 'title'; paused = false; queue = [];
     ovBig.innerHTML = 'ぐんぐん<br>スネーク'; ovBig.className = 'big';
-    ovNote.innerHTML = '光るヘビを うごかして <b>エサを たべよう！</b><br>たべるほど ながく・はやく なるよ。<br><i class="c2">かべ</i>や <i class="c1">じぶんの からだ</i>に ぶつかったら おわり。<br>点滅する <i class="gold">★ボーナス</i>は 時間内に たべると <i class="gold">50点</i>！<br><br class="sp">📱 スワイプ か 画面下の 十字ボタン ／ ⌨️ 矢印キー・WASD、Pでポーズ';
-    btnWalls.textContent = 'かべあり で あそぶ'; btnWarp.textContent = 'ワープ で あそぶ';
+    ovNote.innerHTML = '光るヘビを うごかして <b>エサを たべよう！</b> ぶつかったら おわり。<br>点滅する <i class="gold">★</i>は <i class="gold">50点</i>、<i class="c1">🐢スロー</i>で ゆっくり、<i class="c2">👻すりぬけ</i>で からだを すりぬけ！<br>📱 スワイプ か 十字ボタン ／ ⌨️ 矢印キー・WASD、Pでポーズ';
+    btnWalls.textContent = 'かべあり'; btnWarp.textContent = 'ワープ'; btnStage.textContent = 'ステージ で あそぶ（全8ステージ）';
     renderStats(); syncPauseBtn(); overlay.classList.add('show');
   }
   function togglePause(force) {
@@ -334,10 +391,12 @@
   function update(dt, force) {
     anim += dt;
     if (phase === 'play' && !paused && (autoRun || force)) {
+      slowT = Math.max(0, slowT - dt); ghostT = Math.max(0, ghostT - dt);
       timer += dt; let guard = 0;
-      while (timer >= interval && phase === 'play' && guard++ < 4) { timer -= interval; tick(); }
+      while (timer >= effInt() && phase === 'play' && guard++ < 4) { timer -= effInt(); tick(); }
       if (phase !== 'play') timer = 0;
     }
+    if (phase === 'clear') { clearT += dt; if (clearT > 1.7) { stageNo++; setupStage(); phase = 'play'; syncPauseBtn(); SFX.start(); } }
     if (phase === 'over') { overT += dt; if (overT > 1.1 && !resultShown) { resultShown = true; showResult(); } }
     headPulse = Math.max(0, headPulse - dt * 4); flash = Math.max(0, flash - dt * 2.4);
     shake = Math.max(0, shake - dt * 30); wallHit = Math.max(0, wallHit - dt * 1.4); warpFx = Math.max(0, warpFx - dt * 2.2);
@@ -364,7 +423,7 @@
   function link(ax, ay, bx, by, w, col) { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(px(ax), py(ay)); ctx.lineTo(px(bx), py(by)); ctx.stroke(); }
   function drawSnake() {
     const n = snake.length; if (!n) return;
-    const t = (phase === 'play') ? Math.min(1, timer / interval) : 1;
+    const t = (phase === 'play') ? Math.min(1, timer / effInt()) : 1;
     const den = Math.max(8, Math.min(n - 1, 36));
     const links = [];
     const head = snake[0];
@@ -385,8 +444,9 @@
       if (isWrap(prevTail, c)) { links.push({ ax: prevTail.x + dx * t, ay: prevTail.y + dy * t, bx: prevTail.x + dx, by: prevTail.y + dy, u }); links.push({ ax: c.x - dx, ay: c.y - dy, bx: c.x, by: c.y, u }); }
       else links.push({ ax: prevTail.x + dx * t, ay: prevTail.y + dy * t, bx: c.x, by: c.y, u });
     }
-    const dying = phase === 'over' && deathKind !== 'perfect' && overT < 1.0;
-    const baseAlpha = dying ? (Math.floor(overT * 12) % 2 ? 0.3 : 1) : 1;
+    const dying = phase === 'over' && deathKind !== 'perfect' && deathKind !== 'allclear' && overT < 1.0;
+    const ghosty = ghostT > 0 && (ghostT > 1.5 || Math.floor(ghostT * 8) % 2 === 0);
+    const baseAlpha = dying ? (Math.floor(overT * 12) % 2 ? 0.3 : 1) : ghosty ? 0.5 : 1;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.globalAlpha = 0.2 * baseAlpha;
     for (const L of links) link(L.ax, L.ay, L.bx, L.by, CELL * 1.2, 'rgb(' + segRGB(Math.min(1, L.u)) + ')');
@@ -408,7 +468,7 @@
     ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(HX - fdy * 3 - fdx * 2, HY + fdx * 3 - fdy * 2, r * 0.32, 0, Math.PI * 2); ctx.fill();
     const pdx = -fdy, pdy = fdx;
     const look = queue.length ? DIRS[queue[0]] : [fdx, fdy];
-    const dead = phase === 'over' && deathKind !== 'perfect';
+    const dead = phase === 'over' && deathKind !== 'perfect' && deathKind !== 'allclear';
     for (const s of [1, -1]) {
       const ex = HX + pdx * s * CELL * 0.25 + fdx * CELL * 0.13, ey = HY + pdy * s * CELL * 0.25 + fdy * CELL * 0.13;
       if (dead) {
@@ -450,6 +510,33 @@
     ctx.strokeStyle = 'rgba(255,209,102,.28)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, CELL * 0.66, 0, Math.PI * 2); ctx.stroke();
     ctx.strokeStyle = fast ? '#ff5fa2' : '#ffd166'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, CELL * 0.66, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac); ctx.stroke();
   }
+  function drawObstacles() {
+    if (!obstacles.size) return;
+    ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 8;
+    for (const k of obstacles) {
+      const [x, y] = k.split(',').map(Number);
+      ctx.fillStyle = 'rgba(160,107,255,.35)'; ctx.fillRect(BX + x * CELL + 2, BY + y * CELL + 2, CELL - 4, CELL - 4);
+      ctx.strokeStyle = '#b48cff'; ctx.lineWidth = 1.5; ctx.strokeRect(BX + x * CELL + 2.5, BY + y * CELL + 2.5, CELL - 5, CELL - 5);
+    }
+    ctx.shadowBlur = 0;
+  }
+  function drawPower() {
+    if (!power) return;
+    const x = px(power.x), y = py(power.y), frac = Math.max(0, power.ttl / power.max), b = 0.5 + 0.5 * Math.sin(anim * (frac < 0.3 ? 22 : 7));
+    const col = power.kind === 'slow' ? '#78beff' : '#cdb0ff';
+    ctx.globalAlpha = 0.55 + 0.45 * b; ctx.shadowColor = col; ctx.shadowBlur = 14; ctx.fillStyle = col;
+    if (power.kind === 'slow') {
+      ctx.beginPath(); ctx.arc(x, y, CELL * 0.42, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#0e1a33'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 6); ctx.moveTo(x, y); ctx.lineTo(x + 4, y + 2); ctx.stroke();
+    } else {
+      const r = CELL * 0.42; ctx.beginPath(); ctx.arc(x, y - 1, r, Math.PI, 0); ctx.lineTo(x + r, y + r - 1);
+      for (let i = 0; i < 3; i++) { ctx.lineTo(x + r - (i * 2 + 1) * r / 3, y + r - 5); ctx.lineTo(x + r - (i * 2 + 2) * r / 3, y + r - 1); }
+      ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.fillStyle = '#1a1030'; ctx.beginPath(); ctx.arc(x - 3, y - 2, 1.8, 0, Math.PI * 2); ctx.arc(x + 3, y - 2, 1.8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, CELL * 0.66, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac); ctx.stroke();
+  }
   function drawBoard() {
     ctx.fillStyle = '#0a0a18'; ctx.fillRect(BX, BY, BW, BH);
     ctx.strokeStyle = 'rgba(83,224,216,.075)'; ctx.lineWidth = 1; ctx.beginPath();
@@ -478,21 +565,20 @@
     const shownBest = Math.max(best[mode], phase === 'play' ? score : 0);
     ctx.fillStyle = '#ffd166'; ctx.textAlign = 'right'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 8; ctx.fillText(String(shownBest), BX + BW, 45); ctx.shadowBlur = 0;
     // mode pill
-    const label = MODE_NAME[mode]; ctx.font = '13px DotGothic16, monospace'; const tw = ctx.measureText(label).width + 24; const cx0 = W / 2;
-    ctx.fillStyle = mode === 'walls' ? 'rgba(83,224,216,.12)' : 'rgba(160,107,255,.16)'; ctx.strokeStyle = mode === 'walls' ? 'rgba(83,224,216,.55)' : 'rgba(160,107,255,.7)'; ctx.lineWidth = 1;
+    const label = mode === 'stage' && phase !== 'title' ? 'ステージ' + stageNo + ' ・ のこり' + Math.max(0, STAGE_GOAL - stageEaten) : MODE_NAME[mode]; ctx.font = '13px DotGothic16, monospace'; const tw = ctx.measureText(label).width + 24; const cx0 = W / 2;
+    ctx.fillStyle = mode === 'walls' ? 'rgba(83,224,216,.12)' : mode === 'stage' ? 'rgba(255,209,102,.12)' : 'rgba(160,107,255,.16)'; ctx.strokeStyle = mode === 'walls' ? 'rgba(83,224,216,.55)' : mode === 'stage' ? 'rgba(255,209,102,.6)' : 'rgba(160,107,255,.7)'; ctx.lineWidth = 1;
     rrect(cx0 - tw / 2, 5, tw, 20, 10); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = mode === 'walls' ? '#53e0d8' : '#cdb0ff'; ctx.textAlign = 'center'; ctx.fillText(label, cx0, 19);
+    ctx.fillStyle = mode === 'walls' ? '#53e0d8' : mode === 'stage' ? '#ffd166' : '#cdb0ff'; ctx.textAlign = 'center'; ctx.fillText(label, cx0, 19);
     // speed bars
     const lvl = Math.max(0, Math.min(1, (BASE_INT - interval) / (BASE_INT - MIN_INT)));
     const bars = 6, bw = 11, gap = 3, tot = bars * bw + (bars - 1) * gap, sx = cx0 - tot / 2 + 14;
     const filled = 1 + Math.round(lvl * (bars - 1));
-    ctx.font = '10px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0'; ctx.textAlign = 'right'; ctx.fillText('はやさ', sx - 5, 46);
+    ctx.font = '12px DotGothic16, monospace'; ctx.fillStyle = slowT > 0 ? '#78beff' : '#9d99c0'; ctx.textAlign = 'right'; ctx.fillText(slowT > 0 ? 'スロー' : 'はやさ', sx - 5, 47);
     for (let i = 0; i < bars; i++) {
       const on = i < filled; ctx.fillStyle = on ? (i >= bars - 2 ? '#ff5fa2' : '#53e0d8') : '#252545';
       if (on) { ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 6; }
       ctx.fillRect(sx + i * (bw + gap), 38, bw, 8); ctx.shadowBlur = 0;
     }
-    // length (small, under score)
     ctx.textAlign = 'left';
   }
   function draw() {
@@ -502,7 +588,7 @@
     drawHUD();
     drawBoard();
     ctx.save(); ctx.beginPath(); ctx.rect(BX, BY, BW, BH); ctx.clip();
-    drawFood(); drawBonus(); drawSnake();
+    drawObstacles(); drawFood(); drawBonus(); drawPower(); drawSnake();
     for (const p of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.6)); ctx.fillStyle = 'rgb(' + p.c + ')'; ctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); }
     ctx.globalAlpha = 1;
     if (flash > 0) { ctx.fillStyle = 'rgba(' + flashCol + ',' + flash.toFixed(3) + ')'; ctx.fillRect(BX, BY, BW, BH); }
@@ -512,6 +598,17 @@
     ctx.textAlign = 'center';
     for (const p of pops) { const a = Math.max(0, Math.min(1, p.life / p.max * 1.4)); ctx.globalAlpha = a; ctx.font = p.size + 'px DotGothic16, monospace'; ctx.fillStyle = 'rgb(' + p.c + ')'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10; ctx.fillText(p.text, p.x, p.y); ctx.shadowBlur = 0; }
     ctx.globalAlpha = 1;
+    if ((slowT > 0 || ghostT > 0) && phase === 'play') {
+      const items = []; if (slowT > 0) items.push(['🐢 スロー', slowT, '#78beff']); if (ghostT > 0) items.push(['👻 すりぬけ', ghostT, '#cdb0ff']);
+      ctx.font = '14px DotGothic16, monospace'; ctx.textAlign = 'left';
+      items.forEach(([t, v, c], i) => { const yy = BY + BH - 10 - i * 20; ctx.fillStyle = 'rgba(10,10,24,.6)'; ctx.fillRect(BX + 4, yy - 15, 150, 19); ctx.fillStyle = c; ctx.fillText(t + ' ' + Math.ceil(v) + 'びょう', BX + 10, yy); });
+      ctx.textAlign = 'center';
+    }
+    if (phase === 'clear') {
+      ctx.fillStyle = 'rgba(10,10,24,.55)'; ctx.fillRect(BX, BY + BH / 2 - 50, BW, 84);
+      ctx.font = '34px DotGothic16, monospace'; ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 18; ctx.fillText('STAGE ' + stageNo + ' CLEAR!', W / 2, BY + BH / 2 - 8); ctx.shadowBlur = 0;
+      ctx.font = '15px DotGothic16, monospace'; ctx.fillStyle = '#eeecfa'; ctx.fillText('つぎは ステージ' + (stageNo + 1) + '（すこし はやくなるよ）', W / 2, BY + BH / 2 + 22);
+    }
     if (phase === 'play' && paused) {
       ctx.fillStyle = 'rgba(10,10,24,.72)'; ctx.fillRect(BX, BY, BW, BH);
       ctx.font = '34px DotGothic16, monospace'; ctx.fillStyle = '#53e0d8'; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 18; ctx.fillText('PAUSE', W / 2, BY + BH / 2 - 6); ctx.shadowBlur = 0;
@@ -519,9 +616,9 @@
       ctx.fillStyle = '#9d99c0'; ctx.fillText('スコア ' + score + '　ながさ ' + snake.length, W / 2, BY + BH / 2 + 46);
     }
     if (phase === 'over' && !resultShown && overT > 0.25) {
-      const k = Math.min(1, (overT - 0.25) / 0.3); const perfect = deathKind === 'perfect';
+      const k = Math.min(1, (overT - 0.25) / 0.3); const perfect = deathKind === 'perfect' || deathKind === 'allclear';
       ctx.font = Math.round(22 + 16 * k) + 'px DotGothic16, monospace'; ctx.fillStyle = perfect ? '#ffd166' : '#ff5fa2'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 22; ctx.globalAlpha = k;
-      ctx.fillText(perfect ? 'PERFECT!' : 'GAME OVER', W / 2, BY + BH / 2 + 8); ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+      ctx.fillText(deathKind === 'allclear' ? 'ALL CLEAR!' : perfect ? 'PERFECT!' : 'GAME OVER', W / 2, BY + BH / 2 + 8); ctx.shadowBlur = 0; ctx.globalAlpha = 1;
     }
     ctx.restore();
     ctx.textAlign = 'left';
@@ -568,6 +665,7 @@
   });
   btnWalls.addEventListener('click', () => { audio(); startGame('walls'); });
   btnWarp.addEventListener('click', () => { audio(); startGame('warp'); });
+  btnStage.addEventListener('click', () => { audio(); startGame('stage'); });
   pauseBtn.addEventListener('click', () => { audio(); togglePause(); pauseBtn.blur(); });
   menuBtn.addEventListener('click', () => { audio(); goTitle(); menuBtn.blur(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden && phase === 'play' && !paused) togglePause(true); });
@@ -591,6 +689,7 @@
       food: food && { x: food.x, y: food.y }, bonus: bonus && { x: bonus.x, y: bonus.y, ttl: bonus.ttl },
       score, best: best[mode], bests: Object.assign({}, best), eaten, interval, baseInterval: BASE_INT, minInterval: MIN_INT,
       cols: COLS, rows: ROWS, newBest, deathKind, resultShown,
+      stageNo, stageEaten, stageMax, obstacles: [...obstacles], power: power && { x: power.x, y: power.y, kind: power.kind }, slowT, ghostT, effInt: effInt(),
     }),
     setDir, tick,
     placeFood: (x, y) => { food = { x, y }; if (bonus && bonus.x === x && bonus.y === y) bonus = null; },
@@ -600,6 +699,10 @@
     setAuto: v => { autoRun = !!v; },
     step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016, true); },
     setSnake: (cells, d) => { snake = cells.map(c => ({ x: c.x, y: c.y })); if (d) moveDir = d; queue = []; prevTail = null; },
+    setStage: n => { stageNo = n; setupStage(); },
+    setStageEaten: n => { stageEaten = n; },
+    placePower: (x, y, kind) => { power = { x, y, kind, ttl: 40, max: 40 }; },
+    layout: n => stageLayout(n),
     setEaten: n => { eaten = n; interval = Math.max(MIN_INT, BASE_INT - eaten * STEP_INT); },
     showResultNow: () => { if (phase === 'over' && !resultShown) { resultShown = true; showResult(); } },
   };
