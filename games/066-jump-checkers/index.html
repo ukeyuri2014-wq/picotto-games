@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>とびこえチェッカー｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 10px 26px; overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+  }
+  .backbar{width:min(480px,100%);margin:0 0 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;min-width:48px;min-height:32px;padding:3px 12px;cursor:pointer;font-family:inherit;touch-action:manipulation}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+  h1{font-size:21px;margin:0;letter-spacing:1px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:8px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+  .row{display:flex;gap:6px;margin-top:7px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;min-height:42px;padding:8px 2px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.tgl{font-size:13px;color:var(--sub)}
+  .btn.tgl.on{border-color:rgba(83,224,216,.6);color:var(--cyan);background:rgba(83,224,216,.07)}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.93);
+    border-radius:8px;text-align:center;padding:12px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:26px;letter-spacing:2px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.25}
+  #overlay .big.p1{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.75}
+  #overlay .note i{font-style:normal}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:14px;min-height:44px;background:var(--cyan);color:#062a28;border:none;border-radius:8px;padding:10px 13px;cursor:pointer;letter-spacing:1px;touch-action:manipulation}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .modes button.back{background:var(--gold);color:#3a2700}
+  .levels{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .levels span{font-size:12px;color:var(--sub)}
+  .levels button{font-family:inherit;font-size:13px;min-height:40px;min-width:62px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:6px 12px;cursor:pointer;touch-action:manipulation}
+  .levels button.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08)}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.6}
+  #overlay .rule b{color:var(--gold);font-weight:400}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:12px;line-height:1.7}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+    .levels button:hover{border-color:var(--gold);color:var(--gold)}
+    .modes button:hover{filter:brightness(1.12)}
+  }
+  .backbar a:focus-visible,.btn:focus-visible,.modes button:focus-visible,.levels button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  @media (max-width:420px){ h1{font-size:19px} .btn{font-size:13px;letter-spacing:0} #overlay .big{font-size:23px} }
+  @media (max-height:520px){ #overlay{gap:5px} #overlay .note{line-height:1.45} }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="コマをななめ前にすすめ、あいてをとびこえて取るボードゲーム。つづけてとぶ「れんぞくジャンプ」や、おくまで行くとなれる王さまが決め手。CPUは3段階（つよいは先読みつき）、ふたり対戦もOK。うごかせるコマが光り、ヒント・1手もどす、強さ別の成績と★の記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/066-jump-checkers/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"とびこえチェッカー","description":"コマをななめ前にすすめ、あいてをとびこえて取るボードゲーム。つづけてとぶ「れんぞくジャンプ」や、おくまで行くとなれる王さまが決め手。CPUは3段階（つよいは先読みつき）、ふたり対戦もOK。うごかせるコマが光り、ヒント・1手もどす、強さ別の成績と★の記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/066-jump-checkers/index.html","inLanguage":"ja","genre":"BOARD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="066"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>とびこえチェッカー</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / CPU・ふたり</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="556"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">とびこえチェッカー</div>
+    <div class="note" id="ovNote">
+      コマは <b>ななめ前</b>に 1マスずつ すすむよ。<br>
+      あいてを <b>とびこえると とれる</b>！（つづけて とべる）<br>
+      おくまで行くと <b>王さま👑</b>。うしろにも うごける！<br>
+      あいてを ぜんぶ とるか、うごけなくしたら かち。
+    </div>
+    <div class="modes">
+      <button id="btnBack" class="back" style="display:none">つづきから</button>
+      <button id="btnCpu">ひとりで はじめる</button>
+      <button id="btn2p" class="alt">ふたりで はじめる</button>
+    </div>
+    <div class="levels" id="levels">
+      <span>CPUの つよさ</span>
+      <button data-l="1" class="on">よわい</button><button data-l="2">ふつう</button><button data-l="3">つよい</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="undoBtn">1手もどす</button>
+  <button class="btn" id="hintBtn">ヒント ×3</button>
+  <button class="btn" id="menuBtn">メニュー</button>
+</div>
+<div class="row">
+  <button class="btn tgl on" id="glowBtn">うごかせるコマを光らせる：ON</button>
+</div>
+
+<div class="help">
+  <p><b>ルール</b>：コマは くらいマスの上を <b>ななめ前に 1マス</b>ずつ すすむ。となりに あいてのコマがあって、その むこうが あいていたら <b>とびこえて とれる</b>。とんだ先で また とべるなら、つづけて とぶよ（れんぞくジャンプ）。</p>
+  <p><b>とれるときは かならず とる</b>のが きまり。光っているコマが とれるコマだよ。いちばん おくの列まで すすむと <b>王さま👑</b>になって、ななめうしろにも うごける。</p>
+  <p>あいてのコマを ぜんぶ とるか、あいてが うごけなくなったら かち。だれも とらない手が 50手 つづくと ひきわけ。<br><b>コツ</b>：はしっこのコマは とられない。いちばん うしろの列を あけすぎると、あいてが 王さまに なりやすいよ。</p>
+  <p>📱 コマをタップ → 光ったマスをタップ ／ 🖱️ クリック ／ ⌨️ 矢印キー＋Enter、Z＝もどす、H＝ヒント</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const PX = Math.min(2, Math.max(1, Math.round(window.devicePixelRatio || 1)));   // こまかい画面でも くっきり
+  cv.width = W * PX; cv.height = H * PX;
+  const N = 8, SZ = 64, CELL = 54, BX = 24, BY = 78, BW = N * CELL;   // board 432 x 432
+  const KEY = 'ludot_jump-checkers_';
+  const MUTE_KEY = KEY + 'mute', STAT_KEY = KEY + 'stats', GLOW_KEY = KEY + 'glow', LEVEL_KEY = KEY + 'level', GAMES_KEY = KEY + 'games';
+  const SEAT_COL = { 1: '#53e0d8', 2: '#ff5fa2' };
+  const SEAT_GLOW = { 1: 'rgba(83,224,216,', 2: 'rgba(255,95,162,' };
+  const GOLD = 'rgba(255,209,102,';
+  const LEVEL_NAME = ['', 'よわい', 'ふつう', 'つよい'];
+  const DRAW_LIMIT = 50, HINT_MAX = 3, PIECE_R = 21;
+  const FONT = 'DotGothic16, monospace';
+
+  // ---- random (seedable for tests) -------------------------------------------
+  let seedV = 0;
+  function rnd() {
+    if (!seedV) return Math.random();
+    seedV = (seedV + 0x6D2B79F5) | 0; let t = seedV;
+    t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  // ---- sound -------------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    select() { tone('square', 760, 980, 0.05, 0.035); },
+    step(p) { tone('triangle', p === 1 ? 340 : 280, 170, 0.1, 0.09); tone('square', 1100, 800, 0.03, 0.02, 0.08); },
+    jump(n) { tone('triangle', 300 + n * 90, 720 + n * 120, 0.16, 0.08); tone('square', 900 + n * 150, 300, 0.1, 0.05, 0.14); tone('sawtooth', 160, 60, 0.12, 0.05, 0.16); },
+    king() { [784, 988, 1175, 1568].forEach((f, i) => tone('triangle', f, f, 0.16, 0.07, 0.12 + i * 0.07)); },
+    bad() { tone('square', 200, 120, 0.09, 0.04); },
+    undo() { tone('triangle', 520, 240, 0.16, 0.05); },
+    toggle() { tone('square', 700, 950, 0.05, 0.03); },
+    hint() { tone('triangle', 880, 1320, 0.12, 0.05); tone('triangle', 1320, 1760, 0.12, 0.04, 0.1); },
+    win(d) { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, d + i * 0.1)); },
+    lose(d) { tone('sawtooth', 300, 80, 0.5, 0.07, d); },
+    draw(d) { tone('triangle', 440, 440, 0.15, 0.06, d); tone('triangle', 440, 440, 0.15, 0.06, d + 0.2); },
+    hover() { tone('square', 900, 900, 0.03, 0.02); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- rules (pure functions on a 64-cell array) ---------------------------------
+  // 0 empty, 1 = seat1 man (bottom, moves up), 2 = seat2 man (top, moves down), 3 = seat1 king, 4 = seat2 king
+  const UP = [[-1, -1], [-1, 1]], DOWN = [[1, -1], [1, 1]], ALL = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+  const owner = v => (v ? (v & 1 ? 1 : 2) : 0);
+  const dirsFor = v => (v === 1 ? UP : v === 2 ? DOWN : ALL);
+  function addJumps(b, i, out) {
+    const v = b[i], p = owner(v), r = i >> 3, c = i & 7, ds = dirsFor(v);
+    for (let k = 0; k < ds.length; k++) {
+      const r2 = r + 2 * ds[k][0], c2 = c + 2 * ds[k][1];
+      if (r2 < 0 || r2 > 7 || c2 < 0 || c2 > 7) continue;
+      const m = (r + ds[k][0]) * 8 + c + ds[k][1], t = r2 * 8 + c2;
+      if (b[t] === 0 && b[m] !== 0 && owner(b[m]) !== p) out.push({ from: i, to: t, cap: m });
+    }
+  }
+  function hasJump(b, i) {
+    const v = b[i], p = owner(v), r = i >> 3, c = i & 7, ds = dirsFor(v);
+    for (let k = 0; k < ds.length; k++) {
+      const r2 = r + 2 * ds[k][0], c2 = c + 2 * ds[k][1];
+      if (r2 < 0 || r2 > 7 || c2 < 0 || c2 > 7) continue;
+      const m = (r + ds[k][0]) * 8 + c + ds[k][1];
+      if (b[r2 * 8 + c2] === 0 && b[m] !== 0 && owner(b[m]) !== p) return true;
+    }
+    return false;
+  }
+  function addSteps(b, i, out) {
+    const v = b[i], r = i >> 3, c = i & 7, ds = dirsFor(v);
+    for (let k = 0; k < ds.length; k++) {
+      const r1 = r + ds[k][0], c1 = c + ds[k][1];
+      if (r1 < 0 || r1 > 7 || c1 < 0 || c1 > 7) continue;
+      if (b[r1 * 8 + c1] === 0) out.push({ from: i, to: r1 * 8 + c1, cap: -1 });
+    }
+  }
+  // One "hop" = one step or one single jump. A turn is one step, or a chain of jumps with the same piece.
+  function genHops(b, p, chain) {
+    const out = [];
+    if (chain >= 0) { addJumps(b, chain, out); return out; }
+    for (let i = 0; i < SZ; i++) if (b[i] && owner(b[i]) === p) addJumps(b, i, out);
+    if (out.length) return out;          // とれるときは かならず とる
+    for (let i = 0; i < SZ; i++) if (b[i] && owner(b[i]) === p) addSteps(b, i, out);
+    return out;
+  }
+  function applyHop(b, h) {
+    const v = b[h.from]; b[h.from] = 0;
+    let capV = 0; if (h.cap >= 0) { capV = b[h.cap]; b[h.cap] = 0; }
+    const r = h.to >> 3, promo = (v === 1 && r === 0) || (v === 2 && r === 7);
+    b[h.to] = promo ? v + 2 : v;
+    return { v, capV, promo, cont: h.cap >= 0 && !promo && hasJump(b, h.to) };
+  }
+  function unapplyHop(b, h, info) { b[h.from] = info.v; b[h.to] = 0; if (h.cap >= 0) b[h.cap] = info.capV; }
+  function countPieces(b) { const c = { 1: 0, 2: 0, k1: 0, k2: 0 }; for (let i = 0; i < SZ; i++) { const v = b[i]; if (!v) continue; c[owner(v)]++; if (v > 2) c['k' + owner(v)]++; } return c; }
+  function initialBoard() {
+    const b = new Array(SZ).fill(0);
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) & 1) { if (r < 3) b[r * 8 + c] = 2; else if (r > 4) b[r * 8 + c] = 1; }
+    return b;
+  }
+
+  // ---- AI (negamax alpha-beta over hops, iterative deepening, capture extension) ---
+  const CENTER = new Int8Array(SZ);
+  for (let i = 0; i < SZ; i++) CENTER[i] = Math.round((3.5 - Math.max(Math.abs((i >> 3) - 3.5), Math.abs((i & 7) - 3.5))) * 4);
+  const INF = 1e9, WIN = 100000, ABORT = { abort: true };
+  let deadline = 0, nodes = 0, lastInfo = null, thinkMs = 420;
+  function evaluate(b, p) {
+    let s = 0, n1 = 0, n2 = 0;
+    for (let i = 0; i < SZ; i++) {
+      const v = b[i]; if (!v) continue;
+      const r = i >> 3, c = i & 7; let w;
+      if (v === 1) w = 100 + (7 - r) * 5 + (r === 7 ? 12 : 0) + (c === 0 || c === 7 ? 3 : 0);
+      else if (v === 2) w = 100 + r * 5 + (r === 0 ? 12 : 0) + (c === 0 || c === 7 ? 3 : 0);
+      else w = 185 + CENTER[i];
+      if (v & 1) { s += w; n1++; } else { s -= w; n2++; }
+    }
+    s += (n1 - n2) * (24 - n1 - n2) * 2;   // かっているときは へらしあいが とく
+    return p === 1 ? s : -s;
+  }
+  function negamax(b, p, chain, depth, alpha, beta, ply) {
+    if ((++nodes & 1023) === 0 && performance.now() > deadline) throw ABORT;
+    const hops = genHops(b, p, chain);
+    if (!hops.length) return -WIN + ply;
+    if ((depth <= 0 && hops[0].cap < 0) || ply > 48) return evaluate(b, p);
+    let best = -INF;
+    for (let k = 0; k < hops.length; k++) {
+      const h = hops[k], info = applyHop(b, h);
+      let v;
+      try {
+        if (info.cont) v = negamax(b, p, h.to, depth, alpha, beta, ply + 1);
+        else v = -negamax(b, 3 - p, -1, depth - 1, -beta, -alpha, ply + 1);
+      } finally { unapplyHop(b, h, info); }
+      if (v > best) { best = v; if (v > alpha) { alpha = v; if (alpha >= beta) break; } }
+    }
+    return best;
+  }
+  function search(b0, p, chain, hops, maxDepth, ms, noise) {
+    const t0 = performance.now(); deadline = t0 + ms; nodes = 0;
+    let order = hops.slice();
+    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const x = order[i]; order[i] = order[j]; order[j] = x; }
+    let best = order[0], depthDone = 0, bestV = 0;
+    const b = b0.slice();
+    for (let d = 1; d <= maxDepth; d++) {
+      const scored = []; let alpha = -INF, aborted = false;
+      try {
+        for (const h of order) {
+          const info = applyHop(b, h); let v;
+          try {
+            if (info.cont) v = negamax(b, p, h.to, d, noise ? -INF : alpha, INF, 1);
+            else v = -negamax(b, 3 - p, -1, d - 1, -INF, noise ? INF : -alpha, 1);
+          } finally { unapplyHop(b, h, info); }
+          scored.push({ h, v, n: v + (noise ? (rnd() - 0.5) * noise : 0) });
+          if (v > alpha) alpha = v;
+        }
+      } catch (e) { if (e !== ABORT) throw e; aborted = true; }
+      if (aborted) break;
+      scored.sort((x, y) => y.n - x.n);
+      order = scored.map(s => s.h); best = order[0]; bestV = scored[0].v; depthDone = d;
+      if (Math.abs(bestV) > WIN - 100) break;
+      if (d >= 3 && performance.now() - t0 > ms * 0.35) break;
+    }
+    lastInfo = { depth: depthDone, nodes, score: Math.round(bestV) };
+    return best;
+  }
+  function aiHop(b, p, chain, lv, ms) {
+    const hops = genHops(b, p, chain);
+    if (!hops.length) return null;
+    if (hops.length === 1) return hops[0];
+    if (lv === 1) { if (rnd() < 0.55) return hops[Math.floor(rnd() * hops.length)]; return search(b, p, chain, hops, 2, 60, 50); }
+    if (lv === 2) return search(b, p, chain, hops, 4, 200, 16);
+    return search(b, p, chain, hops, 14, ms || thinkMs, 0);
+  }
+  // pure simulation used by tests (no drawing)
+  function simGame(lvA, lvB, seed, maxTurns, ms) {
+    const keep = seedV; seedV = seed || 1;
+    const b = initialBoard(); let p = 1, chain = -1, turns = 0, quiet = 0, winner = -1, bad = '';
+    while (winner < 0 && turns < (maxTurns || 200)) {
+      const hops = genHops(b, p, chain);
+      if (!hops.length) { winner = 3 - p; break; }
+      const lv = p === 1 ? lvA : lvB;
+      const h = lv === 0 ? hops[Math.floor(rnd() * hops.length)] : aiHop(b, p, chain, lv, ms || 30);
+      if (!hops.some(x => x.from === h.from && x.to === h.to && x.cap === h.cap)) { bad = 'illegal'; break; }
+      const before = countPieces(b), info = applyHop(b, h), after = countPieces(b);
+      if (after[1] + after[2] !== before[1] + before[2] - (h.cap >= 0 ? 1 : 0)) bad = 'count';
+      if (after[p] !== before[p]) bad = 'own-lost';
+      for (let i = 0; i < SZ; i++) { if (b[i] && !(((i >> 3) + (i & 7)) & 1)) bad = 'light-square'; if (b[i] === 1 && (i >> 3) === 0) bad = 'man-on-king-row'; if (b[i] === 2 && (i >> 3) === 7) bad = 'man-on-king-row'; }
+      if (bad) break;
+      if (h.cap >= 0 || info.v < 3) quiet = 0;
+      if (info.cont) { chain = h.to; continue; }
+      if (h.cap < 0 && info.v > 2) quiet++;
+      chain = -1; p = 3 - p; turns++;
+      if (quiet >= DRAW_LIMIT) { winner = 0; break; }
+    }
+    seedV = keep;
+    const c = countPieces(b);
+    return { winner, turns, n1: c[1], n2: c[2], bad };
+  }
+
+  // ---- state -----------------------------------------------------------------------
+  let board = initialBoard();
+  let turn = 1, chain = -1, sel = -1, mode = 'cpu', level = 1, gameLevel = 1, phase = 'title', paused = false, winner = -1;
+  let hopsNow = [], mustJump = false, movable = new Set();
+  let history = [], lastFrom = -1, lastTo = -1, turns = 0, quiet = 0, myMoves = 0, chainN = 0, endReason = '';
+  let caps = { 1: 0, 2: 0 }, hintLeft = { 1: HINT_MAX, 2: HINT_MAX }, hint = null;
+  let anims = [], ghosts = [], pops = [], particles = [], banner = null;
+  let busyT = 0, animT = 0, cpuT = 0, resultT = 0, autoCpu = true, msgT = 0, msgText = '';
+  let hoverIdx = -1, cursorIdx = 42, kb = false, downIdx = -1;
+  let showGlow = true, gamesPlayed = 0;
+  const tallies = { '2p': { 1: 0, 2: 0, d: 0 }, cpu: { 1: 0, 2: 0, d: 0 } }, firsts = { '2p': 1, cpu: 1 };
+  let tally = tallies.cpu, first = 1;
+  const blankStat = () => ({ w: 0, l: 0, d: 0, cur: 0, max: 0, best: 0 });
+  let stats = { 1: blankStat(), 2: blankStat(), 3: blankStat() };
+  try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) for (const k of [1, 2, 3]) if (s[k]) stats[k] = Object.assign(blankStat(), s[k]); } catch (e) {}
+  try { if (localStorage.getItem(GLOW_KEY) === '0') showGlow = false; const l = +localStorage.getItem(LEVEL_KEY); if (l >= 1 && l <= 3) level = l; gamesPlayed = +localStorage.getItem(GAMES_KEY) || 0; } catch (e) {}
+  const overlay = document.getElementById('overlay');
+  const undoBtn = document.getElementById('undoBtn'), hintBtn = document.getElementById('hintBtn'), glowBtn = document.getElementById('glowBtn'), backBtn = document.getElementById('btnBack');
+
+  const seatName = seat => (mode === 'cpu' ? (seat === 1 ? 'あなた' : 'CPU') : 'P' + seat);
+  const cellXY = idx => [BX + (idx & 7) * CELL + CELL / 2, BY + (idx >> 3) * CELL + CELL / 2];
+  const isCpuTurn = () => mode === 'cpu' && turn === 2;
+  const thinking = () => phase === 'play' && isCpuTurn() && cpuT > 0;
+  function saveStats() { try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {} }
+
+  // ---- game flow ---------------------------------------------------------------------
+  function refresh() {
+    hopsNow = phase === 'play' ? genHops(board, turn, chain) : [];
+    mustJump = hopsNow.length > 0 && hopsNow[0].cap >= 0;
+    movable = new Set(hopsNow.map(h => h.from));
+  }
+  function canUndo() {
+    if (phase !== 'play' || paused || !history.length) return false;
+    if (mode === 'cpu') return history.some(e => e.turn === 1 && e.chain < 0);
+    return true;
+  }
+  function updateButtons() {
+    undoBtn.disabled = !canUndo();
+    const seat = mode === 'cpu' ? 1 : turn;
+    hintBtn.textContent = 'ヒント ×' + hintLeft[seat];
+    hintBtn.disabled = !(phase === 'play' && !paused && hintLeft[seat] > 0 && !isCpuTurn());
+    glowBtn.textContent = 'うごかせるコマを光らせる：' + (showGlow ? 'ON' : 'OFF'); glowBtn.classList.toggle('on', showGlow);
+  }
+  function startGame(m) {
+    if (m) mode = m;
+    tally = tallies[mode]; first = firsts[mode]; gameLevel = level;
+    board = initialBoard(); turn = first; chain = -1; sel = -1; winner = -1; endReason = '';
+    history = []; lastFrom = lastTo = -1; turns = 0; quiet = 0; myMoves = 0; chainN = 0;
+    caps = { 1: 0, 2: 0 }; hintLeft = { 1: HINT_MAX, 2: HINT_MAX }; hint = null;
+    anims = []; ghosts = []; pops = []; particles = []; banner = null; busyT = 0; cpuT = 0; resultT = 0; msgT = 0; kb = false; cursorIdx = 42;
+    phase = 'play'; paused = false; overlay.classList.remove('show'); backBtn.style.display = 'none';
+    refresh(); updateButtons();
+    if (isCpuTurn() && autoCpu) cpuT = 0.7;
+  }
+  function burst(x, y, glow, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c: glow, s: 3 + Math.random() * 3 }); } }
+  function findHop(from, to) { for (const h of hopsNow) if (h.from === from && h.to === to) return h; return null; }
+  function doHop(h) {
+    if (phase !== 'play') return false;
+    const p = turn;
+    history.push({ board: board.slice(), turn, chain, quiet, turns, myMoves, chainN, caps: { 1: caps[1], 2: caps[2] }, lastFrom, lastTo });
+    const info = applyHop(board, h);
+    const [fx, fy] = cellXY(h.from), [tx, ty] = cellXY(h.to);
+    const dur = h.cap >= 0 ? 0.3 : 0.2;
+    anims = anims.filter(a => a.to !== h.from && a.to !== h.to);
+    anims.push({ to: h.to, fx, fy, t: 0, dur, jump: h.cap >= 0, showV: info.v });
+    lastFrom = h.from; lastTo = h.to; hint = null; msgT = 0;
+    if (h.cap >= 0) {
+      caps[p]++; chainN++; quiet = 0;
+      const [cx, cy] = cellXY(h.cap);
+      ghosts.push({ x: cx, y: cy, v: info.capV, t: -dur * 0.45 });
+      burst(cx, cy, SEAT_GLOW[3 - p], 14, 150);
+      pops.push({ x: cx, y: cy - 6, text: chainN >= 2 ? chainN + 'れんぞく！' : 'とった！', t: -dur * 0.5, color: chainN >= 2 ? '#ffd166' : SEAT_COL[p], size: chainN >= 2 ? 22 : 18 });
+      SFX.jump(chainN);
+    } else { if (info.v < 3) quiet = 0; SFX.step(p); }
+    if (info.promo) {
+      pops.push({ x: tx, y: ty - 26, text: '王さま！', t: -dur, color: '#ffd166', size: 22 });
+      burst(tx, ty, GOLD, 22, 170); SFX.king();
+    }
+    busyT = dur + 0.06;
+    if (info.cont) {                       // つづけて とぶ（同じ人の番のまま）
+      chain = h.to; sel = h.to; refresh(); updateButtons();
+      if (isCpuTurn() && autoCpu) cpuT = busyT + 0.3;
+      return true;
+    }
+    if (h.cap < 0 && info.v > 2) quiet++;
+    if (mode === 'cpu' ? p === 1 : true) myMoves += (p === 1 ? 1 : 0);
+    chain = -1; sel = -1; chainN = 0; turn = 3 - p; turns++;
+    refresh();
+    if (!hopsNow.length) { const c = countPieces(board); finish(p, c[turn] ? 'block' : 'all'); return true; }
+    if (quiet >= DRAW_LIMIT) { finish(0, 'quiet'); return true; }
+    updateButtons();
+    if (isCpuTurn() && autoCpu) cpuT = busyT + 0.4 + Math.random() * 0.25;
+    return true;
+  }
+  function finish(w, reason) {
+    phase = 'over'; winner = w; endReason = reason; cpuT = 0; hopsNow = []; movable = new Set(); sel = -1; chain = -1; hint = null;
+    if (w) tally[w]++; else tally.d++;
+    if (mode === 'cpu') {
+      const s = stats[gameLevel];
+      if (w === 1) { s.w++; s.cur++; if (s.cur > s.max) s.max = s.cur; if (!s.best || myMoves < s.best) s.best = myMoves; }
+      else if (w === 2) { s.l++; s.cur = 0; } else s.d++;
+      saveStats();
+    }
+    gamesPlayed++; try { localStorage.setItem(GAMES_KEY, String(gamesPlayed)); } catch (e) {}
+    first = 3 - first; firsts[mode] = first;
+    banner = { t: -busyT }; resultT = busyT + 1.9;
+    if (w === 1 || (w === 2 && mode !== 'cpu')) SFX.win(busyT); else if (w === 2) SFX.lose(busyT); else SFX.draw(busyT);
+    updateButtons();
+  }
+  function winText() {
+    if (!winner) return 'ひきわけ';
+    if (mode === 'cpu') return winner === 1 ? 'あなたの かち！' : 'CPU の かち…';
+    return 'P' + winner + ' の かち！';
+  }
+  function reasonText() {
+    if (endReason === 'all') return 'コマを ぜんぶ とった！';
+    if (endReason === 'block') return seatName(3 - winner) + ' は もう うごけない！';
+    return 'だれも とらない手が ' + DRAW_LIMIT + '手 つづいたよ';
+  }
+  function starsText() { let s = ''; for (const k of [1, 2, 3]) s += stats[k].w > 0 ? '★' : '☆'; return s; }
+  function renderStats() {
+    const s = stats[level];
+    document.getElementById('ovStats').innerHTML = 'CPU ' + LEVEL_NAME[level] + '： ' + s.w + 'かち ' + s.l + 'まけ ' + s.d + 'ひきわけ' +
+      '<br>れんしょう ' + s.cur + '（さいこう ' + s.max + '）' + (s.best ? '・さいたん ' + s.best + '手' : '') + '・クリア <b>' + starsText() + '</b>';
+  }
+  function showResult() {
+    const big = document.getElementById('ovBig'), note = document.getElementById('ovNote');
+    big.textContent = winText(); big.className = 'big' + (winner === 1 ? ' p1' : winner === 2 ? ' p2' : '');
+    const c = countPieces(board);
+    let html = reasonText() + '<br><i class="c1">' + seatName(1) + ' のこり ' + c[1] + '</i> ・ <i class="c2">' + seatName(2) + ' のこり ' + c[2] + '</i>';
+    if (mode === 'cpu') {
+      const s = stats[gameLevel];
+      if (winner === 1) html += '<br>' + myMoves + '手で かち！' + (s.best === myMoves ? ' <b>さいたん きろく！</b>' : '（さいたん ' + s.best + '手）') +
+        (gameLevel < 3 ? '<br>つぎは「' + LEVEL_NAME[gameLevel + 1] + '」に ちょうせん しよう' : '<br>いちばん つよい CPUに かった！ すごい！');
+      else if (winner === 2) html += '<br>とられそうなコマを 先に にがすのが コツ';
+    } else html += '<br>こんかい： <i class="c1">P1 ' + tally[1] + '</i> - <i class="c2">P2 ' + tally[2] + '</i>（ひきわけ ' + tally.d + '）';
+    html += '<br>つぎは <i class="' + (first === 1 ? 'c1' : 'c2') + '">' + seatName(first) + '</i> が 先手';
+    note.innerHTML = html;
+    document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど' : 'ひとりで あそぶ';
+    document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど' : 'ふたりで あそぶ';
+    backBtn.style.display = 'none';
+    banner = null; setLevelButtons(); renderStats(); overlay.classList.add('show');
+  }
+  function goMenu() {
+    if (overlay.classList.contains('show')) return;
+    const inGame = phase === 'play';
+    paused = inGame;
+    document.getElementById('ovBig').textContent = inGame ? 'ひとやすみ' : 'とびこえチェッカー'; document.getElementById('ovBig').className = 'big';
+    document.getElementById('ovNote').innerHTML = inGame
+      ? '「つづきから」で いまのゲームに もどれるよ。<br>下のボタンを おすと あたらしいゲームに なる。'
+      : 'モードを えらんでね。';
+    document.getElementById('btnCpu').textContent = 'ひとりで はじめる'; document.getElementById('btn2p').textContent = 'ふたりで はじめる';
+    backBtn.style.display = inGame ? '' : 'none';
+    setLevelButtons(); renderStats(); overlay.classList.add('show'); updateButtons();
+  }
+  function resume() { if (!paused) return; paused = false; overlay.classList.remove('show'); backBtn.style.display = 'none'; last = performance.now(); updateButtons(); }
+  function undo(force) {
+    if (!canUndo()) return false;
+    if (!force && busyT > 0) return false;
+    let e;
+    if (mode === 'cpu') { do { e = history.pop(); } while (!(e.turn === 1 && e.chain < 0)); }
+    else { do { e = history.pop(); } while (e.chain >= 0); }
+    board = e.board.slice(); turn = e.turn; chain = e.chain; quiet = e.quiet; turns = e.turns; myMoves = e.myMoves; chainN = e.chainN; caps = e.caps; lastFrom = e.lastFrom; lastTo = e.lastTo;
+    sel = -1; anims = []; ghosts = []; pops = []; busyT = 0; cpuT = 0; hint = null; msgT = 0;
+    refresh(); updateButtons(); SFX.undo();
+    return true;
+  }
+  function cpuPlay() {
+    if (phase !== 'play' || paused || !isCpuTurn()) return;
+    const h = aiHop(board, turn, chain, gameLevel);
+    if (h) doHop(h);
+  }
+  function useHint() {
+    const seat = mode === 'cpu' ? 1 : turn;
+    if (phase !== 'play' || paused || isCpuTurn() || hintLeft[seat] <= 0 || !hopsNow.length) return false;
+    const h = aiHop(board, turn, chain, 3, 250);
+    if (!h) return false;
+    hintLeft[seat]--; hint = { from: h.from, to: h.to, t: 0 }; sel = h.from; SFX.hint(); updateButtons();
+    return true;
+  }
+  function setLevelButtons() { document.querySelectorAll('#levels button').forEach(x => x.classList.toggle('on', +x.dataset.l === level)); }
+  function setLevel(lv) { level = lv; try { localStorage.setItem(LEVEL_KEY, String(lv)); } catch (e) {} setLevelButtons(); renderStats(); }
+  function toggleGlow() { showGlow = !showGlow; try { localStorage.setItem(GLOW_KEY, showGlow ? '1' : '0'); } catch (e) {} updateButtons(); SFX.toggle(); }
+  function say(text) { msgText = text; msgT = 2.2; }
+
+  // ---- input ---------------------------------------------------------------------------
+  function cellAt(e) {
+    const rc = cv.getBoundingClientRect(); const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    if (x < BX || x >= BX + BW || y < BY || y >= BY + BW) return -1;
+    return ((y - BY) / CELL | 0) * 8 + ((x - BX) / CELL | 0);
+  }
+  function humanTurn() { return phase === 'play' && !paused && busyT <= 0 && !isCpuTurn(); }
+  function tapCell(idx) {
+    if (!humanTurn() || idx < 0) return false;
+    if (sel >= 0) { const h = findHop(sel, idx); if (h) return doHop(h); }
+    const v = board[idx];
+    if (v && owner(v) === turn) {
+      if (movable.has(idx)) { if (sel !== idx) { sel = idx; SFX.select(); } return true; }
+      const [x, y] = cellXY(idx); pops.push({ x, y: y - 6, text: '✕', t: 0, color: '#ff5fa2', size: 20 }); SFX.bad();
+      say(chain >= 0 ? 'いま とんだコマで つづけて とぼう' : mustJump ? 'とれるコマが あるよ！ 光っているコマを うごかそう' : 'そのコマは いま うごけないよ');
+      return false;
+    }
+    if (sel >= 0) {
+      const [x, y] = cellXY(idx); pops.push({ x, y: y - 6, text: '✕', t: 0, color: '#ff5fa2', size: 20 }); SFX.bad();
+      say(mustJump ? 'とべるマス（◎）を えらぼう' : 'ななめ前の ◎ のマスに うごけるよ');
+      if (chain < 0) sel = -1;
+      return false;
+    }
+    if (v && owner(v) !== turn) { SFX.bad(); say('それは あいてのコマだよ'); }
+    return false;
+  }
+  function statusText() {
+    if (phase === 'title') return 'モードを えらんで スタート！';
+    if (phase === 'over') return winText();
+    if (msgT > 0) return msgText;
+    if (isCpuTurn()) return 'CPUが かんがえ中…';
+    const who = mode === '2p' ? 'P' + turn + '：' : '';
+    if (chain >= 0) return who + 'つづけて とべる！ ◎ をタップ';
+    if (sel >= 0) return who + (mustJump ? '◎ のマスへ とびこえよう！' : '◎ のマスをタップして うごかそう');
+    let s = who + (mustJump ? 'とれる！ 光っているコマを タップ' : showGlow ? '光っているコマを タップしよう' : 'うごかすコマを タップしよう');
+    if (quiet >= DRAW_LIMIT - 20) s += '（あと' + (DRAW_LIMIT - quiet) + '手で ひきわけ）';
+    return s;
+  }
+
+  // ---- drawing ----------------------------------------------------------------------------
+  function makeSprite(v) {
+    const S = 128, c = document.createElement('canvas'); c.width = S; c.height = S; const g = c.getContext('2d');
+    const cx = S / 2, cy = S / 2 - 3, R = 46, p = owner(v), king = v > 2;
+    const col = p === 1 ? ['#c9fffb', '#53e0d8', '#1d8f89', '#0b4744'] : ['#ffd9ea', '#ff5fa2', '#b02a68', '#5a0f33'];
+    g.shadowColor = (p === 1 ? 'rgba(83,224,216,.8)' : 'rgba(255,95,162,.8)'); g.shadowBlur = 12;
+    g.fillStyle = col[3]; g.beginPath(); g.arc(cx, cy + 7, R, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0;
+    const grad = g.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.1, cx, cy, R);
+    grad.addColorStop(0, col[0]); grad.addColorStop(0.5, col[1]); grad.addColorStop(1, col[2]);
+    g.fillStyle = grad; g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = king ? '#ffd166' : 'rgba(255,255,255,.45)'; g.lineWidth = king ? 5 : 2.5; g.beginPath(); g.arc(cx, cy, R - (king ? 2.5 : 1.5), 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = 'rgba(0,0,0,.2)'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, R * 0.68, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = 'rgba(255,255,255,.3)'; g.lineWidth = 1.5; g.beginPath(); g.arc(cx, cy, R * 0.68 - 2.5, 0, Math.PI * 2); g.stroke();
+    if (king) {
+      g.save(); g.translate(cx, cy + 1); g.scale(1.25, 1.25);
+      g.fillStyle = '#ffd166'; g.strokeStyle = '#6b4a00'; g.lineWidth = 2.4; g.lineJoin = 'round';
+      g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 4; g.shadowOffsetY = 2;
+      g.beginPath(); g.moveTo(-16, 10); g.lineTo(-18, -8); g.lineTo(-8, 1); g.lineTo(0, -13); g.lineTo(8, 1); g.lineTo(18, -8); g.lineTo(16, 10); g.closePath(); g.fill();
+      g.shadowBlur = 0; g.shadowOffsetY = 0; g.stroke();
+      g.fillStyle = '#fff3c4'; for (const [x, y] of [[-18, -9], [0, -14], [18, -9]]) { g.beginPath(); g.arc(x, y, 3, 0, Math.PI * 2); g.fill(); }
+      g.fillStyle = '#ff5fa2'; g.beginPath(); g.arc(0, 4, 2.6, 0, Math.PI * 2); g.fill();
+      g.restore();
+    } else {
+      g.fillStyle = 'rgba(255,255,255,.22)'; g.beginPath(); g.arc(cx, cy, R * 0.28, 0, Math.PI * 2); g.fill();
+    }
+    g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.ellipse(cx - R * 0.36, cy - R * 0.5, R * 0.26, R * 0.12, -0.6, 0, Math.PI * 2); g.fill();
+    return c;
+  }
+  const SPR = { 1: makeSprite(1), 2: makeSprite(2), 3: makeSprite(3), 4: makeSprite(4) };
+  function drawPiece(x, y, r, v, sc = 1, alpha = 1) {
+    const k = r / 46 * sc;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y);
+    ctx.drawImage(SPR[v], -64 * k, -64 * k, 128 * k, 128 * k);
+    ctx.restore();
+  }
+  function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  const easeInOut = t => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  function drawCard(seat, x) {
+    const y = 8, w = 208, h = 58, c = countPieces(board);
+    const active = phase === 'play' && turn === seat;
+    ctx.fillStyle = '#1b1b38'; rr(x, y, w, h, 12); ctx.fill();
+    if (active) { ctx.strokeStyle = SEAT_COL[seat]; ctx.lineWidth = 2.5; ctx.shadowColor = SEAT_COL[seat]; ctx.shadowBlur = 12 + Math.sin(animT * 5) * 4; ctx.stroke(); ctx.shadowBlur = 0; }
+    else { ctx.strokeStyle = '#2c2c4d'; ctx.lineWidth = 2; ctx.stroke(); }
+    drawPiece(x + 28, y + 30, 16, c['k' + seat] ? seat + 2 : seat);
+    ctx.textAlign = 'left'; ctx.font = '16px ' + FONT; ctx.fillStyle = SEAT_COL[seat];
+    ctx.fillText(seatName(seat) + (mode === 'cpu' && seat === 2 ? '（' + LEVEL_NAME[phase === 'title' ? level : gameLevel] + '）' : ''), x + 52, y + 23);
+    ctx.font = '15px ' + FONT; ctx.fillStyle = '#eeecfa';
+    ctx.fillText('のこり ' + c[seat], x + 52, y + 46);
+    ctx.fillStyle = '#9d99c0'; ctx.fillText('とった ' + caps[seat], x + 126, y + 46);
+    ctx.textAlign = 'right'; ctx.font = '15px ' + FONT;
+    if (active) { ctx.fillStyle = '#ffd166'; ctx.fillText(mode === 'cpu' && seat === 2 ? '…' : '▶ばん', x + w - 10, y + 23); }
+    else if (phase === 'over' && winner === seat) { ctx.fillStyle = '#ffd166'; ctx.fillText('WIN!', x + w - 10, y + 23); }
+    ctx.textAlign = 'left';
+  }
+  function ring(x, y, r, col, lw, blur) { ctx.strokeStyle = col; ctx.lineWidth = lw; if (blur) { ctx.shadowColor = col; ctx.shadowBlur = blur; } ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0; }
+  function draw() {
+    ctx.setTransform(PX, 0, 0, PX, 0, 0); ctx.clearRect(0, 0, W, H);
+    drawCard(1, 24); drawCard(2, 248);
+    // board frame
+    ctx.fillStyle = '#1b1b38'; ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 14;
+    rr(BX - 7, BY - 7, BW + 14, BW + 14, 10); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const dark = (r + c) & 1;
+      ctx.fillStyle = dark ? ((r + c) % 4 === 1 ? '#191936' : '#1b1b3a') : '#34345e';
+      ctx.fillRect(BX + c * CELL, BY + r * CELL, CELL, CELL);
+      if (!dark) { ctx.fillStyle = 'rgba(255,255,255,.035)'; ctx.fillRect(BX + c * CELL, BY + r * CELL, CELL, 3); }
+    }
+    const ht = humanTurn(), playing = phase === 'play' && !paused;
+    // last move trail
+    if (lastTo >= 0 && phase !== 'title') {
+      for (const i of [lastFrom, lastTo]) { ctx.fillStyle = 'rgba(160,107,255,.2)'; ctx.fillRect(BX + (i & 7) * CELL + 2, BY + (i >> 3) * CELL + 2, CELL - 4, CELL - 4); }
+    }
+    // cursor / hover
+    if (ht && kb) {
+      const x = BX + (cursorIdx & 7) * CELL, y = BY + (cursorIdx >> 3) * CELL;
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10; rr(x + 3, y + 3, CELL - 6, CELL - 6, 8); ctx.stroke(); ctx.shadowBlur = 0;
+    } else if (ht && hoverIdx >= 0 && ((hoverIdx >> 3) + (hoverIdx & 7)) & 1) {
+      ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fillRect(BX + (hoverIdx & 7) * CELL, BY + (hoverIdx >> 3) * CELL, CELL, CELL);
+    }
+    const pulse = 0.5 + Math.sin(animT * 5) * 0.5;
+    // movable glow (under pieces)
+    if (playing && busyT <= 0 && !isCpuTurn() && (showGlow || mustJump) && sel < 0) {
+      for (const i of movable) {
+        const [x, y] = cellXY(i);
+        ctx.fillStyle = (mustJump ? 'rgba(255,95,162,' : GOLD) + (0.16 + 0.16 * pulse) + ')'; ctx.beginPath(); ctx.arc(x, y, PIECE_R + 5 + pulse * 2, 0, Math.PI * 2); ctx.fill();
+        ring(x, y, PIECE_R + 4 + pulse * 2, mustJump ? '#ff9cc6' : '#ffd166', 2.5, 10);
+      }
+    }
+    if (playing && sel >= 0 && board[sel] && !isCpuTurn()) { const [x, y] = cellXY(sel); ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.fillRect(BX + (sel & 7) * CELL + 1, BY + (sel >> 3) * CELL + 1, CELL - 2, CELL - 2); ring(x, y, PIECE_R + 5, '#ffffff', 3, 12); }
+    // pieces
+    const am = new Map(); for (const a of anims) am.set(a.to, a);
+    for (let i = 0; i < SZ; i++) { const v = board[i]; if (!v || am.has(i)) continue; const [x, y] = cellXY(i); drawPiece(x, y, PIECE_R, v); }
+    for (const g of ghosts) { const u = Math.max(0, g.t) / 0.32; if (u < 1) drawPiece(g.x, g.y, PIECE_R, g.v, 1 + u * 0.5, 1 - u); }
+    for (const a of anims) {
+      const v = board[a.to]; if (!v) continue;
+      const u = Math.min(1, a.t / a.dur), e = easeInOut(u), [tx, ty] = cellXY(a.to);
+      const lift = Math.sin(Math.PI * u) * (a.jump ? 0.34 : 0.1);
+      if (a.jump) { ctx.fillStyle = 'rgba(0,0,0,' + (0.28 * Math.sin(Math.PI * u)) + ')'; ctx.beginPath(); ctx.ellipse(a.fx + (tx - a.fx) * e, a.fy + (ty - a.fy) * e + 10, PIECE_R, PIECE_R * 0.6, 0, 0, Math.PI * 2); ctx.fill(); }
+      drawPiece(a.fx + (tx - a.fx) * e, a.fy + (ty - a.fy) * e - lift * 26, PIECE_R, u < 1 ? a.showV : v, 1 + lift);
+    }
+    // destinations of the selected piece
+    if (playing && sel >= 0 && busyT <= 0 && !isCpuTurn()) {
+      for (const h of hopsNow) {
+        if (h.from !== sel) continue;
+        const [x, y] = cellXY(h.to);
+        ctx.fillStyle = GOLD + (0.14 + 0.12 * pulse) + ')'; ctx.beginPath(); ctx.arc(x, y, 17, 0, Math.PI * 2); ctx.fill();
+        ring(x, y, 13 + pulse * 3, '#ffd166', 3, 10);
+        ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+        if (h.cap >= 0) {
+          const [cx, cy] = cellXY(h.cap); ring(cx, cy, PIECE_R + 3 + pulse * 2, '#ffd166', 2.5, 8);
+          ctx.strokeStyle = '#fff3c4'; ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(cx - 7, cy - 7); ctx.lineTo(cx + 7, cy + 7); ctx.moveTo(cx + 7, cy - 7); ctx.lineTo(cx - 7, cy + 7); ctx.stroke(); ctx.lineCap = 'butt';
+        }
+      }
+    }
+    // hint arrow
+    if (hint && playing) {
+      const [x1, y1] = cellXY(hint.from), [x2, y2] = cellXY(hint.to), a = Math.atan2(y2 - y1, x2 - x1);
+      ctx.strokeStyle = '#ffd166'; ctx.fillStyle = '#ffd166'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 12; ctx.globalAlpha = 0.65 + 0.35 * pulse;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * 12, y2 - Math.sin(a) * 12); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - Math.cos(a - 0.5) * 18, y2 - Math.sin(a - 0.5) * 18); ctx.lineTo(x2 - Math.cos(a + 0.5) * 18, y2 - Math.sin(a + 0.5) * 18); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+    }
+    // first-time finger guide
+    if (ht && gamesPlayed < 1 && myMoves < 2 && mode === 'cpu' && !kb) {
+      let target = -1;
+      if (sel >= 0) { for (const h of hopsNow) if (h.from === sel) { target = h.to; break; } }
+      else if (hopsNow.length) target = hopsNow[Math.floor(hopsNow.length / 2)].from;
+      if (target >= 0) {
+        const [x, y] = cellXY(target), by = y - 34 - Math.abs(Math.sin(animT * 4)) * 8;
+        ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.moveTo(x - 10, by - 12); ctx.lineTo(x + 10, by - 12); ctx.lineTo(x, by + 4); ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0;
+      }
+    }
+    // particles & pops
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.6)); ctx.fillStyle = s.c + '1)'; ctx.fillRect(s.x - s.s / 2, s.y - s.s / 2, s.s, s.s); }
+    ctx.globalAlpha = 1;
+    for (const p of pops) {
+      if (p.t < 0) continue; const u = p.t / 0.9, k = u < 0.15 ? easeOutBack(u / 0.15) : 1;
+      ctx.globalAlpha = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3; ctx.fillStyle = p.color; ctx.font = Math.round(p.size * k) + 'px ' + FONT; ctx.textAlign = 'center';
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(14,14,28,.85)'; const px = Math.max(BX + 50, Math.min(BX + BW - 50, p.x));
+      ctx.strokeText(p.text, px, p.y - u * 30); ctx.fillText(p.text, px, p.y - u * 30);
+    }
+    ctx.globalAlpha = 1;
+    // status line
+    const st = statusText(); let fs = 17; ctx.textAlign = 'center';
+    ctx.font = fs + 'px ' + FONT; while (ctx.measureText(st).width > W - 30 && fs > 13) { fs--; ctx.font = fs + 'px ' + FONT; }
+    ctx.fillStyle = msgT > 0 ? '#ff9cc6' : phase === 'play' && mode === '2p' ? SEAT_COL[turn] : phase === 'play' && mustJump && !isCpuTurn() ? '#ffd166' : '#c9c6e6';
+    ctx.fillText(st, W / 2, 541);
+    // game-over banner
+    if (banner && banner.t >= 0 && phase === 'over') {
+      const t = banner.t, k = t < 0.3 ? easeOutBack(t / 0.3) : 1, col = winner ? SEAT_COL[winner] : '#ffd166';
+      ctx.save(); ctx.translate(BX + BW / 2, BY + BW / 2); ctx.scale(Math.max(0.01, k), Math.max(0.01, k)); ctx.globalAlpha = Math.min(1, k);
+      ctx.fillStyle = 'rgba(19,19,34,.94)'; ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.shadowColor = col; ctx.shadowBlur = 24; rr(-180, -58, 360, 116, 18); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.textAlign = 'center'; ctx.fillStyle = col; ctx.font = '34px ' + FONT; ctx.fillText(winText(), 0, -4);
+      ctx.fillStyle = '#eeecfa'; ctx.font = '17px ' + FONT; ctx.fillText(reasonText(), 0, 32);
+      ctx.restore();
+    }
+  }
+  function update(dt) {
+    animT += dt;
+    if (paused) return;
+    if (busyT > 0) busyT = Math.max(0, busyT - dt);
+    if (msgT > 0) msgT = Math.max(0, msgT - dt);
+    for (const a of anims) a.t += dt; anims = anims.filter(a => a.t < a.dur);
+    for (const g of ghosts) g.t += dt; ghosts = ghosts.filter(g => g.t < 0.32);
+    for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 0.9);
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 260 * dt; s.life -= dt; return s.life > 0; });
+    if (hint) { hint.t += dt; if (hint.t > 6) hint = null; }
+    if (banner) banner.t += dt;
+    if (phase === 'play' && cpuT > 0) { cpuT -= dt; if (cpuT <= 0) { cpuT = 0; cpuPlay(); } }
+    if (phase === 'over' && resultT > 0) {
+      resultT -= dt;
+      if (banner && banner.t > 0 && winner && particles.length < 160 && Math.random() < 0.45) {
+        const mine = []; for (let i = 0; i < SZ; i++) if (board[i] && owner(board[i]) === winner) mine.push(i);
+        if (mine.length) { const [x, y] = cellXY(mine[Math.floor(Math.random() * mine.length)]); burst(x, y, Math.random() < 0.5 ? GOLD : SEAT_GLOW[winner], 6, 130); }
+      }
+      if (resultT <= 0) { resultT = 0; showResult(); }
+    }
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; if (!document.hidden) { update(dt); draw(); } requestAnimationFrame(loop); }
+
+  // ---- test hooks ---------------------------------------------------------------------------
+  const CH = ['.', 'a', 'b', 'A', 'B'];
+  const rc = i => [i >> 3, i & 7];
+  window.__test = {
+    state: () => ({
+      phase, mode, level, gameLevel, turn, paused, winner, endReason, over: phase === 'over',
+      board: Array.from({ length: 8 }, (_, r) => board.slice(r * 8, r * 8 + 8).map(v => CH[v]).join('')),
+      counts: countPieces(board), caps: { 1: caps[1], 2: caps[2] },
+      chain: chain >= 0 ? rc(chain) : null, sel: sel >= 0 ? rc(sel) : null, mustJump,
+      legal: hopsNow.map(h => [h.from >> 3, h.from & 7, h.to >> 3, h.to & 7, h.cap >= 0 ? 1 : 0]),
+      turns, quiet, myMoves, history: history.length, first, busy: busyT, thinking: thinking(),
+      hint: hint ? [hint.from >> 3, hint.from & 7, hint.to >> 3, hint.to & 7] : null, hintLeft: { 1: hintLeft[1], 2: hintLeft[2] },
+      tally: Object.assign({}, tally), stats: JSON.parse(JSON.stringify(stats)), muted, showGlow, gamesPlayed,
+      overlay: overlay.classList.contains('show'), status: statusText(), stars: starsText(),
+    }),
+    start: (m, lv) => { if (lv) setLevel(lv); startGame(m); },
+    setBoard: (rows, t) => {
+      board = new Array(SZ).fill(0);
+      rows.forEach((row, r) => row.split('').forEach((ch, c) => { board[r * 8 + c] = Math.max(0, CH.indexOf(ch)); }));
+      if (t) turn = t; phase = 'play'; paused = false; winner = -1; chain = -1; sel = -1; history = []; lastFrom = lastTo = -1; quiet = 0; chainN = 0; turns = 0; myMoves = 0; caps = { 1: 0, 2: 0 }; endReason = '';
+      anims = []; ghosts = []; pops = []; banner = null; busyT = 0; cpuT = 0; resultT = 0; hint = null; msgT = 0; overlay.classList.remove('show');
+      refresh(); updateButtons();
+    },
+    hop: (fr, fc, tr, tc) => { busyT = 0; const h = findHop(fr * 8 + fc, tr * 8 + tc); return h ? doHop(h) : false; },
+    tap: (r, c) => { busyT = 0; return tapCell(r * 8 + c); },
+    cellXY: (r, c) => { const b = cv.getBoundingClientRect(), [x, y] = cellXY(r * 8 + c); return [b.left + x * b.width / W, b.top + y * b.height / H]; },
+    ai: (lv, ms) => { const h = aiHop(board, turn, chain, lv || gameLevel, ms); return h ? [h.from >> 3, h.from & 7, h.to >> 3, h.to & 7] : null; },
+    aiInfo: () => lastInfo,
+    skipCpu: () => { busyT = 0; cpuT = 0; let n = 0; while (phase === 'play' && isCpuTurn() && n++ < 20) { cpuPlay(); busyT = 0; } cpuT = 0; },
+    setAuto: v => { autoCpu = !!v; if (!v) cpuT = 0; },
+    setFirst: s => { first = s; firsts[mode] = s; },
+    setQuiet: n => { quiet = n; },
+    setThinkMs: ms => { thinkMs = ms; },
+    seed: n => { seedV = n | 0; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); draw(); },
+    sim: (a, b, seed, maxTurns, ms) => simGame(a, b, seed, maxTurns, ms),
+    undo: () => undo(true), hintNow: useHint, menu: goMenu, resume,
+  };
+
+  // ---- wiring (kept at the very end) -----------------------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); if (!muted) { audio(); SFX.toggle(); } });
+  cv.addEventListener('pointermove', e => { if (e.pointerType === 'touch') return; const i = cellAt(e); if (i !== hoverIdx) { hoverIdx = i; kb = false; } });
+  cv.addEventListener('pointerleave', () => { hoverIdx = -1; });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); downIdx = cellAt(e); hoverIdx = e.pointerType === 'touch' ? -1 : downIdx; kb = false; });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); const i = cellAt(e); if (i >= 0 && i === downIdx) tapCell(i); downIdx = -1; });
+  cv.addEventListener('pointercancel', () => { downIdx = -1; });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if (overlay.classList.contains('show')) {
+      if ((k === 'Enter' || k === ' ') && !(e.target && e.target.tagName === 'BUTTON')) { e.preventDefault(); audio(); if (paused) resume(); else startGame(); }
+      return;
+    }
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      e.preventDefault(); kb = true; let r = cursorIdx >> 3, c = cursorIdx & 7;
+      if (k === 'ArrowLeft') c = Math.max(0, c - 1); if (k === 'ArrowRight') c = Math.min(7, c + 1);
+      if (k === 'ArrowUp') r = Math.max(0, r - 1); if (k === 'ArrowDown') r = Math.min(7, r + 1);
+      cursorIdx = r * 8 + c; SFX.hover(); return;
+    }
+    if (e.target && e.target.tagName === 'BUTTON' && (k === 'Enter' || k === ' ')) return;
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); kb = true; tapCell(cursorIdx); return; }
+    if (k === 'z' || k === 'Z' || k === 'Backspace') { e.preventDefault(); undo(false); return; }
+    if (k === 'h' || k === 'H') { useHint(); return; }
+    if (k === 'Escape') { goMenu(); }
+  });
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startGame('cpu'); });
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
+  backBtn.addEventListener('click', () => { audio(); resume(); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); setLevel(+b.dataset.l); SFX.toggle(); }));
+  undoBtn.addEventListener('click', () => { audio(); undo(false); });
+  hintBtn.addEventListener('click', () => { audio(); useHint(); });
+  document.getElementById('menuBtn').addEventListener('click', () => { audio(); goMenu(); });
+  glowBtn.addEventListener('click', () => { audio(); toggleGlow(); });
+  // マウス／タップでおしたボタンにフォーカスがのこると、Enterキーがボタンに食われるので外す
+  document.querySelectorAll('.row .btn, .modes button').forEach(b => b.addEventListener('click', e => { if (e.detail > 0) b.blur(); }));
+  document.addEventListener('visibilitychange', () => { last = performance.now(); });
+
+  drawMute(); setLevelButtons(); renderStats(); updateButtons(); draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
