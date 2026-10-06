@@ -1,0 +1,119 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c064bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0b18"/>
+      <stop offset="1" stop-color="#131322"/>
+    </linearGradient>
+    <radialGradient id="c064light" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff3b0" stop-opacity="0.95"/>
+      <stop offset="0.35" stop-color="#ffd166" stop-opacity="0.55"/>
+      <stop offset="0.75" stop-color="#a06bff" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#a06bff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c064mask" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="c064m" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="225">
+      <rect width="400" height="225" fill="#000000"/>
+      <circle cx="170" cy="122" r="108" fill="url(#c064mask)"/>
+    </mask>
+    <radialGradient id="c064body" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#fff8dc"/>
+      <stop offset="1" stop-color="#ffc94a"/>
+    </radialGradient>
+    <linearGradient id="c064ghost" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#cfc8ff"/>
+    </linearGradient>
+    <linearGradient id="c064door" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#53e0d8"/>
+    </linearGradient>
+    <filter id="c064glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="c064soft" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <g id="c064walls" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 22H380V203H20Z"/>
+      <path d="M20 67H65M110 22V67H155M200 22V67M245 67H335V112M65 112H110V157M155 67V112H200M245 112V157H290M335 157H380M65 157V203M155 157H200V203M290 112V67M110 157H155M245 22V67M290 157V203M335 157V203M20 112H65M200 112H245"/>
+    </g>
+  </defs>
+
+  <rect width="400" height="225" fill="url(#c064bg)"/>
+
+  <!-- remembered (dim) maze -->
+  <use href="#c064walls" stroke="#2f2852" stroke-width="5"/>
+
+  <!-- lit part of the maze -->
+  <g mask="url(#c064m)">
+    <rect x="20" y="22" width="360" height="181" fill="#23234a"/>
+    <g fill="#a06bff" opacity="0.12">
+      <rect x="27" y="29" width="31" height="31" rx="5"/><rect x="72" y="29" width="31" height="31" rx="5"/><rect x="117" y="29" width="31" height="31" rx="5"/><rect x="162" y="29" width="31" height="31" rx="5"/><rect x="207" y="29" width="31" height="31" rx="5"/><rect x="252" y="29" width="31" height="31" rx="5"/>
+      <rect x="27" y="74" width="31" height="31" rx="5"/><rect x="72" y="74" width="31" height="31" rx="5"/><rect x="117" y="74" width="31" height="31" rx="5"/><rect x="162" y="74" width="31" height="31" rx="5"/><rect x="207" y="74" width="31" height="31" rx="5"/><rect x="252" y="74" width="31" height="31" rx="5"/>
+      <rect x="27" y="119" width="31" height="31" rx="5"/><rect x="72" y="119" width="31" height="31" rx="5"/><rect x="117" y="119" width="31" height="31" rx="5"/><rect x="162" y="119" width="31" height="31" rx="5"/><rect x="207" y="119" width="31" height="31" rx="5"/><rect x="252" y="119" width="31" height="31" rx="5"/>
+      <rect x="27" y="164" width="31" height="31" rx="5"/><rect x="72" y="164" width="31" height="31" rx="5"/><rect x="117" y="164" width="31" height="31" rx="5"/><rect x="162" y="164" width="31" height="31" rx="5"/><rect x="207" y="164" width="31" height="31" rx="5"/><rect x="252" y="164" width="31" height="31" rx="5"/>
+    </g>
+    <use href="#c064walls" stroke="#a06bff" stroke-width="6" filter="url(#c064glow)"/>
+    <use href="#c064walls" stroke="#e2d3ff" stroke-width="1.6"/>
+  </g>
+
+  <!-- lantern light -->
+  <circle cx="170" cy="122" r="112" fill="url(#c064light)" opacity="0.5"/>
+
+  <!-- key -->
+  <g transform="translate(88 86) rotate(-28)" filter="url(#c064glow)" fill="none" stroke="#ffd166" stroke-width="5" stroke-linecap="round">
+    <circle cx="-9" cy="0" r="8"/>
+    <path d="M0 0H22M14 0V8M21 0V9"/>
+  </g>
+  <g fill="#ffffff">
+    <path d="M62 66l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" opacity="0.9"/>
+    <path d="M118 104l1.4 4 4 1.4-4 1.4-1.4 4-1.4-4-4-1.4 4-1.4z" opacity="0.7"/>
+  </g>
+
+  <!-- explorer with lantern -->
+  <ellipse cx="170" cy="150" rx="19" ry="5" fill="#000000" opacity="0.4"/>
+  <circle cx="170" cy="126" r="23" fill="url(#c064body)" stroke="#8a5a00" stroke-width="2"/>
+  <path d="M148 118a23 23 0 0 1 44 0z" fill="#53e0d8"/>
+  <rect x="143" y="113" width="54" height="6" rx="3" fill="#53e0d8"/>
+  <circle cx="165" cy="130" r="3.6" fill="#3a2600"/>
+  <circle cx="181" cy="130" r="3.6" fill="#3a2600"/>
+  <path d="M168 139q5 4 10 0" fill="none" stroke="#3a2600" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="200" cy="139" r="13" fill="#ffd166" opacity="0.6" filter="url(#c064soft)"/>
+  <path d="M200 126v5" stroke="#8a5a00" stroke-width="2" stroke-linecap="round"/>
+  <rect x="193" y="131" width="14" height="17" rx="4" fill="#fff3b0" stroke="#8a5a00" stroke-width="2"/>
+  <path d="M200 135c3 3 3 6 0 9c-3-3-3-6 0-9z" fill="#ff9f43"/>
+
+  <!-- ghost drifting in from the dark -->
+  <circle cx="302" cy="92" r="40" fill="#ff5fa2" opacity="0.22" filter="url(#c064soft)"/>
+  <g transform="translate(302 90)">
+    <path d="M-26 -6a26 26 0 0 1 52 0c2 22-12 22 0 36c-24 4-52-6-52-36z" fill="url(#c064ghost)" stroke="#ff5fa2" stroke-width="2.5" filter="url(#c064glow)"/>
+    <ellipse cx="-9" cy="-9" rx="4.6" ry="6.4" fill="#2a2350"/>
+    <ellipse cx="9" cy="-9" rx="4.6" ry="6.4" fill="#2a2350"/>
+    <circle cx="-9" cy="-9" r="2" fill="#ff5fa2"/>
+    <circle cx="9" cy="-9" r="2" fill="#ff5fa2"/>
+    <ellipse cx="0" cy="6" rx="4.2" ry="6" fill="#ff7fb5"/>
+    <path d="M-27 2q-10 2-12-6" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+    <path d="M26 2q10 0 11-9" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+  </g>
+
+  <!-- eyes shining in the dark -->
+  <g filter="url(#c064glow)" fill="#53e0d8">
+    <circle cx="352" cy="180" r="3.4"/><circle cx="364" cy="180" r="3.4"/>
+  </g>
+  <g filter="url(#c064glow)" fill="#ff5fa2" opacity="0.8">
+    <circle cx="40" cy="182" r="2.8"/><circle cx="50" cy="182" r="2.8"/>
+  </g>
+
+  <!-- exit door, far away -->
+  <circle cx="357" cy="45" r="22" fill="#53e0d8" opacity="0.25" filter="url(#c064soft)"/>
+  <path d="M345 62V40a12 12 0 0 1 24 0V62z" fill="url(#c064door)" stroke="#ffd166" stroke-width="2.5" filter="url(#c064glow)"/>
+  <circle cx="364" cy="50" r="1.8" fill="#8a5a00"/>
+
+  <!-- vignette -->
+  <rect width="400" height="225" fill="none" stroke="#2c2c4d" stroke-width="2"/>
+</svg>
