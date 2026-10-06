@@ -1,0 +1,141 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c059sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#131322"/>
+      <stop offset="0.55" stop-color="#2a1f4d"/>
+      <stop offset="1" stop-color="#4a2a5c"/>
+    </linearGradient>
+    <radialGradient id="c059moon" cx="0.4" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#fff6d0"/>
+      <stop offset="1" stop-color="#ffd166"/>
+    </radialGradient>
+    <radialGradient id="c059halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd166" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c059soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a3d4e"/>
+      <stop offset="1" stop-color="#2c1d30"/>
+    </linearGradient>
+    <linearGradient id="c059wet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f6c9c"/>
+      <stop offset="1" stop-color="#27304f"/>
+    </linearGradient>
+    <linearGradient id="c059can" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ff0e8"/>
+      <stop offset="1" stop-color="#2a9d96"/>
+    </linearGradient>
+    <radialGradient id="c059pump" cx="0.4" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#ffb35a"/>
+      <stop offset="1" stop-color="#e2641f"/>
+    </radialGradient>
+    <radialGradient id="c059tom" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ff8fb0"/>
+      <stop offset="1" stop-color="#e02a5f"/>
+    </radialGradient>
+    <linearGradient id="c059car" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffa64d"/>
+      <stop offset="1" stop-color="#f06a1c"/>
+    </linearGradient>
+    <radialGradient id="c059coin" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#fff2b8"/>
+      <stop offset="1" stop-color="#f0a92a"/>
+    </radialGradient>
+    <filter id="c059glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="225" fill="url(#c059sky)"/>
+  <g fill="#eeecfa">
+    <rect x="28" y="22" width="2" height="2" opacity="0.9"/><rect x="74" y="48" width="2" height="2" opacity="0.6"/>
+    <rect x="120" y="18" width="3" height="3" opacity="0.8"/><rect x="170" y="40" width="2" height="2" opacity="0.5"/>
+    <rect x="214" y="16" width="2" height="2" opacity="0.9"/><rect x="250" y="56" width="2" height="2" opacity="0.6"/>
+    <rect x="372" y="30" width="3" height="3" opacity="0.8"/><rect x="46" y="78" width="2" height="2" opacity="0.5"/>
+    <rect x="384" y="84" width="2" height="2" opacity="0.6"/><rect x="146" y="70" width="2" height="2" opacity="0.4"/>
+  </g>
+  <circle cx="318" cy="48" r="52" fill="url(#c059halo)"/>
+  <circle cx="318" cy="48" r="24" fill="url(#c059moon)"/>
+  <circle cx="310" cy="42" r="4" fill="#f0c860" opacity="0.6"/><circle cx="326" cy="56" r="3" fill="#f0c860" opacity="0.5"/>
+
+  <!-- とおくの おか -->
+  <path d="M0 122 Q70 92 150 114 T300 106 T400 118 V225 H0Z" fill="#241a40"/>
+  <path d="M0 136 Q100 116 200 132 T400 128 V225 H0Z" fill="#1b1533"/>
+
+  <!-- 畑の マス -->
+  <g stroke="#131322" stroke-width="3">
+    <path d="M22 150 L104 150 L92 222 L-8 222Z" fill="url(#c059soil)"/>
+    <path d="M110 150 L196 150 L196 222 L98 222Z" fill="url(#c059wet)"/>
+    <path d="M202 150 L288 150 L300 222 L202 222Z" fill="url(#c059soil)"/>
+    <path d="M294 150 L376 150 L406 222 L306 222Z" fill="url(#c059soil)"/>
+  </g>
+  <g stroke="#131322" stroke-opacity="0.35" stroke-width="2" fill="none">
+    <path d="M16 172 H100"/><path d="M6 196 H96"/><path d="M106 172 H196"/><path d="M102 196 H196"/>
+    <path d="M202 172 H292"/><path d="M202 196 H296"/><path d="M298 172 H386"/><path d="M302 196 H396"/>
+  </g>
+  <path d="M110 150 L196 150 L196 222 L98 222Z" fill="none" stroke="#53e0d8" stroke-width="2" opacity="0.7" filter="url(#c059glow)"/>
+
+  <!-- にんじん -->
+  <g transform="translate(52 150)">
+    <path d="M-3 -6 Q-16 -30 -8 -40 Q-2 -26 0 -8Z" fill="#8be36b"/>
+    <path d="M0 -8 Q0 -34 4 -46 Q10 -30 3 -6Z" fill="#6fd255"/>
+    <path d="M3 -6 Q16 -28 14 -38 Q4 -26 0 -8Z" fill="#8be36b"/>
+    <path d="M-12 -6 Q0 -14 12 -6 Q8 26 0 44 Q-8 26 -12 -6Z" fill="url(#c059car)" stroke="#131322" stroke-width="2"/>
+    <path d="M-6 6 H2 M-2 18 H6 M-4 28 H2" stroke="#c9500f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- めばえ（水を やった マス） -->
+  <g transform="translate(150 180)">
+    <path d="M0 14 V-6" stroke="#8be36b" stroke-width="4" stroke-linecap="round"/>
+    <path d="M0 -4 Q-18 -8 -20 -24 Q-2 -22 0 -4Z" fill="#8be36b" stroke="#131322" stroke-width="2"/>
+    <path d="M0 -6 Q16 -8 22 -26 Q2 -26 0 -6Z" fill="#a8f08c" stroke="#131322" stroke-width="2"/>
+    <ellipse cx="0" cy="16" rx="18" ry="5" fill="#131322" opacity="0.35"/>
+  </g>
+
+  <!-- トマト -->
+  <g transform="translate(246 172)">
+    <ellipse cx="0" cy="26" rx="24" ry="6" fill="#131322" opacity="0.35"/>
+    <circle cx="0" cy="0" r="25" fill="url(#c059tom)" stroke="#131322" stroke-width="2"/>
+    <path d="M0 -22 L-12 -16 L-5 -24 L-10 -32 L0 -27 L10 -32 L5 -24 L12 -16Z" fill="#6fd255" stroke="#131322" stroke-width="2" stroke-linejoin="round"/>
+    <ellipse cx="-9" cy="-7" rx="5" ry="8" fill="#fff" opacity="0.35" transform="rotate(-25 -9 -7)"/>
+  </g>
+
+  <!-- かぼちゃ -->
+  <g transform="translate(342 176)" filter="url(#c059glow)">
+    <ellipse cx="0" cy="28" rx="34" ry="7" fill="#131322" opacity="0.35"/>
+    <ellipse cx="-18" cy="2" rx="16" ry="25" fill="url(#c059pump)" stroke="#131322" stroke-width="2"/>
+    <ellipse cx="18" cy="2" rx="16" ry="25" fill="url(#c059pump)" stroke="#131322" stroke-width="2"/>
+    <ellipse cx="0" cy="2" rx="17" ry="28" fill="url(#c059pump)" stroke="#131322" stroke-width="2"/>
+    <path d="M-3 -26 Q-2 -38 6 -40 L9 -34 Q4 -32 4 -26Z" fill="#6fd255" stroke="#131322" stroke-width="2"/>
+    <ellipse cx="-6" cy="-8" rx="4" ry="9" fill="#fff" opacity="0.3"/>
+  </g>
+
+  <!-- じょうろ と 水 -->
+  <g transform="translate(150 74) rotate(18)">
+    <path d="M-30 -14 H22 L26 30 H-34Z" fill="url(#c059can)" stroke="#131322" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M-32 -6 Q-56 -4 -52 22 Q-48 34 -34 26" fill="none" stroke="#2a9d96" stroke-width="7" stroke-linecap="round"/>
+    <path d="M24 6 L58 -16 L64 -6 L26 20Z" fill="url(#c059can)" stroke="#131322" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="62" cy="-11" rx="6" ry="10" fill="#7ff0e8" stroke="#131322" stroke-width="3" transform="rotate(-30 62 -11)"/>
+    <path d="M-22 -6 H14" stroke="#fff" stroke-width="3" opacity="0.45" stroke-linecap="round"/>
+  </g>
+  <g fill="#53e0d8" filter="url(#c059glow)">
+    <path d="M196 96 q-4 8 0 11 q4 -3 0 -11Z"/><path d="M188 114 q-4 8 0 11 q4 -3 0 -11Z"/>
+    <path d="M176 104 q-4 8 0 11 q4 -3 0 -11Z"/><path d="M168 126 q-4 8 0 11 q4 -3 0 -11Z"/>
+    <path d="M182 136 q-4 8 0 11 q4 -3 0 -11Z"/><path d="M156 142 q-4 8 0 11 q4 -3 0 -11Z"/>
+  </g>
+
+  <!-- コイン と きらめき -->
+  <g filter="url(#c059glow)">
+    <circle cx="262" cy="112" r="11" fill="url(#c059coin)" stroke="#a86a08" stroke-width="2"/>
+    <rect x="259" y="106" width="6" height="12" rx="2" fill="#a86a08" opacity="0.55"/>
+    <circle cx="288" cy="92" r="8" fill="url(#c059coin)" stroke="#a86a08" stroke-width="2"/>
+    <rect x="286" y="88" width="4" height="8" rx="1.5" fill="#a86a08" opacity="0.55"/>
+    <circle cx="238" cy="88" r="6" fill="url(#c059coin)" stroke="#a86a08" stroke-width="2"/>
+  </g>
+  <g fill="#ffd166" filter="url(#c059glow)">
+    <path d="M52 92 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3Z"/>
+    <path d="M374 128 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2Z"/>
+    <path d="M222 134 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2Z" fill="#ff5fa2"/>
+  </g>
+</svg>
