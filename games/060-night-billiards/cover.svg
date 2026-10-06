@@ -1,0 +1,96 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c060bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1838"/><stop offset="1" stop-color="#0b0b18"/>
+    </linearGradient>
+    <radialGradient id="c060felt" cx="0.5" cy="0.45" r="0.75">
+      <stop offset="0" stop-color="#16808a"/><stop offset="0.6" stop-color="#0d4f60"/><stop offset="1" stop-color="#082c3e"/>
+    </radialGradient>
+    <linearGradient id="c060rail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#40347a"/><stop offset="1" stop-color="#1e1a40"/>
+    </linearGradient>
+    <radialGradient id="c060hole" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000"/><stop offset="0.8" stop-color="#05050c"/><stop offset="1" stop-color="#1a1a30"/>
+    </radialGradient>
+    <radialGradient id="c060shine" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.75"/><stop offset="0.35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000018" stop-opacity="0.5"/>
+    </radialGradient>
+    <linearGradient id="c060cue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2c1f66"/><stop offset="0.45" stop-color="#5b3fa8"/><stop offset="0.46" stop-color="#c98a4b"/><stop offset="1" stop-color="#f3e2b8"/>
+    </linearGradient>
+    <radialGradient id="c060lamp" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.35"/><stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="c060glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="c060soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <clipPath id="c060nine"><circle cx="302" cy="74" r="19"/></clipPath>
+  </defs>
+  <rect width="400" height="225" fill="url(#c060bg)"/>
+  <g fill="#eeecfa">
+    <circle cx="14" cy="12" r="1"/><circle cx="388" cy="9" r="1.2"/><circle cx="8" cy="210" r="1"/><circle cx="392" cy="214" r="1"/>
+  </g>
+  <!-- table -->
+  <rect x="18" y="16" width="364" height="193" rx="20" fill="#53e0d8" opacity="0.55" filter="url(#c060glow)"/>
+  <rect x="18" y="16" width="364" height="193" rx="20" fill="url(#c060rail)" stroke="#53e0d8" stroke-width="2"/>
+  <rect x="24" y="22" width="352" height="181" rx="15" fill="none" stroke="#a06bff" stroke-opacity="0.6"/>
+  <rect x="36" y="34" width="328" height="157" rx="7" fill="#0c5a5a"/>
+  <rect x="42" y="40" width="316" height="145" fill="url(#c060felt)"/>
+  <ellipse cx="200" cy="112" rx="170" ry="80" fill="url(#c060lamp)"/>
+  <rect x="43.5" y="41.5" width="313" height="142" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="3"/>
+  <!-- diamonds -->
+  <g fill="#ffd166" opacity="0.85">
+    <path d="M121 25l3 3-3 3-3-3z"/><path d="M279 25l3 3-3 3-3-3z"/><path d="M121 194l3 3-3 3-3-3z"/><path d="M279 194l3 3-3 3-3-3z"/>
+    <path d="M27 109l3 3-3 3-3-3z"/><path d="M373 109l3 3-3 3-3-3z"/>
+  </g>
+  <!-- pockets -->
+  <g>
+    <circle cx="40" cy="38" r="15" fill="url(#c060hole)" stroke="#ffd166" stroke-width="2"/>
+    <circle cx="360" cy="38" r="15" fill="url(#c060hole)" stroke="#ffd166" stroke-width="2"/>
+    <circle cx="40" cy="187" r="15" fill="url(#c060hole)" stroke="#ffd166" stroke-width="2"/>
+    <circle cx="360" cy="187" r="15" fill="url(#c060hole)" stroke="#ffd166" stroke-width="2"/>
+    <circle cx="200" cy="33" r="13" fill="url(#c060hole)" stroke="#ffd166" stroke-width="2"/>
+    <circle cx="200" cy="192" r="13" fill="url(#c060hole)" stroke="#ffd166" stroke-width="2"/>
+  </g>
+  <!-- guide line -->
+  <path d="M146 139L236 100" stroke="#eeecfa" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="232" cy="102" r="17" fill="none" stroke="#eeecfa" stroke-width="1.5" opacity="0.7"/>
+  <path d="M276 84L338 50" stroke="#ffd166" stroke-width="7" stroke-linecap="round" opacity="0.5" filter="url(#c060soft)"/>
+  <path d="M276 84L338 50" stroke="#ffd166" stroke-width="3" stroke-linecap="round"/>
+  <!-- cue stick -->
+  <path d="M-10 211L110 156" stroke="#000" stroke-opacity="0.4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M-14 205L108 151" stroke="url(#c060cue)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M103 153.2L108 151" stroke="#53e0d8" stroke-width="8" stroke-linecap="round"/>
+  <!-- shadows -->
+  <g fill="#000" opacity="0.35">
+    <ellipse cx="136" cy="149" rx="19" ry="17"/><ellipse cx="270" cy="91" rx="19" ry="17"/><ellipse cx="307" cy="80" rx="19" ry="17"/>
+    <ellipse cx="237" cy="149" rx="16" ry="14"/><ellipse cx="304" cy="140" rx="16" ry="14"/><ellipse cx="106" cy="78" rx="16" ry="14"/>
+  </g>
+  <!-- cue ball -->
+  <circle cx="131" cy="143" r="24" fill="#eeecfa" opacity="0.5" filter="url(#c060glow)"/>
+  <circle cx="131" cy="143" r="19" fill="#f6f6ff"/><circle cx="131" cy="143" r="19" fill="url(#c060shine)"/>
+  <!-- ball 1 (target, glowing) -->
+  <circle cx="265" cy="85" r="26" fill="#ffd166" opacity="0.6" filter="url(#c060glow)"/>
+  <circle cx="265" cy="85" r="24" fill="none" stroke="#ffd166" stroke-width="2.5"/>
+  <circle cx="265" cy="85" r="19" fill="#ffd166"/><circle cx="265" cy="85" r="19" fill="url(#c060shine)"/>
+  <circle cx="265" cy="85" r="10" fill="#fff"/>
+  <path d="M262.5 80.5L266 78.5V92" fill="none" stroke="#16162c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- ball 9 (stripe) -->
+  <circle cx="302" cy="74" r="19" fill="#f6f6ff"/>
+  <rect x="283" y="63" width="38" height="22" fill="#ffd166" clip-path="url(#c060nine)"/>
+  <circle cx="302" cy="74" r="19" fill="url(#c060shine)"/>
+  <circle cx="302" cy="74" r="10" fill="#fff"/>
+  <path d="M305.5 73a3.6 3.6 0 1 0-0.2 1.6V77a3.6 4 0 0 1-6.2 2.6" fill="none" stroke="#16162c" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- other balls -->
+  <circle cx="233" cy="144" r="16" fill="#ff5fa2"/><circle cx="233" cy="144" r="16" fill="url(#c060shine)"/><circle cx="233" cy="144" r="8" fill="#fff"/>
+  <circle cx="300" cy="135" r="16" fill="#4d9bff"/><circle cx="300" cy="135" r="16" fill="url(#c060shine)"/><circle cx="300" cy="135" r="8" fill="#fff"/>
+  <circle cx="102" cy="73" r="16" fill="#a06bff"/><circle cx="102" cy="73" r="16" fill="url(#c060shine)"/><circle cx="102" cy="73" r="8" fill="#fff"/>
+  <!-- ball dropping into the corner pocket -->
+  <circle cx="352" cy="45" r="10" fill="#3ddc84" opacity="0.9"/><circle cx="352" cy="45" r="10" fill="url(#c060shine)" opacity="0.9"/>
+  <circle cx="358" cy="40" r="22" fill="none" stroke="#3ddc84" stroke-width="2.5" opacity="0.7"/>
+  <!-- sparks -->
+  <g fill="#ffd166">
+    <rect x="330" y="20" width="4" height="4"/><rect x="376" y="60" width="3" height="3"/><rect x="340" y="68" width="3" height="3"/><rect x="378" y="24" width="4" height="4"/>
+  </g>
+  <g fill="#53e0d8"><rect x="322" y="36" width="3" height="3"/><rect x="368" y="74" width="4" height="4"/></g>
+  <g fill="#ff5fa2"><rect x="346" y="14" width="3" height="3"/><rect x="386" y="44" width="3" height="3"/></g>
+</svg>
