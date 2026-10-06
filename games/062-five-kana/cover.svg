@@ -1,0 +1,118 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c062bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0b1e"/>
+      <stop offset="0.6" stop-color="#1d1a44"/>
+      <stop offset="1" stop-color="#3a1f66"/>
+    </linearGradient>
+    <radialGradient id="c062glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c062ok" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8ff7ee"/>
+      <stop offset="1" stop-color="#27a9a2"/>
+    </linearGradient>
+    <linearGradient id="c062near" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe9a6"/>
+      <stop offset="1" stop-color="#eda92c"/>
+    </linearGradient>
+    <linearGradient id="c062no" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#474768"/>
+      <stop offset="1" stop-color="#2b2b47"/>
+    </linearGradient>
+    <linearGradient id="c062shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="c062blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="c062soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>
+  </defs>
+
+  <rect width="400" height="225" fill="url(#c062bg)"/>
+  <!-- ほし -->
+  <g fill="#eeecfa">
+    <circle cx="22" cy="18" r="1.2" opacity="0.8"/><circle cx="70" cy="9" r="0.9" opacity="0.6"/><circle cx="128" cy="15" r="1.1" opacity="0.7"/>
+    <circle cx="205" cy="8" r="0.9" opacity="0.6"/><circle cx="268" cy="14" r="1.3" opacity="0.8"/><circle cx="330" cy="7" r="0.9" opacity="0.6"/>
+    <circle cx="384" cy="20" r="1.2" opacity="0.7"/><circle cx="12" cy="98" r="1" opacity="0.5"/><circle cx="390" cy="104" r="1.1" opacity="0.6"/>
+    <circle cx="8" cy="170" r="1" opacity="0.5"/><circle cx="393" cy="182" r="1" opacity="0.5"/>
+  </g>
+  <ellipse cx="200" cy="146" rx="210" ry="62" fill="url(#c062glow)"/>
+
+  <!-- 1だんめ：し い く い ん（きいろ まる・きいろ まる・みずいろ・はい・はい） -->
+  <g transform="translate(29 22)">
+    <g filter="url(#c062soft)" opacity="0.5" fill="#ffd166"><circle cx="31" cy="33" r="31"/><circle cx="101" cy="33" r="31"/></g>
+    <rect x="140" y="2" width="62" height="62" rx="11" fill="#53e0d8" filter="url(#c062soft)" opacity="0.5"/>
+    <circle cx="31" cy="31" r="31" fill="url(#c062near)" stroke="#fff3c9" stroke-width="2"/>
+    <circle cx="101" cy="31" r="31" fill="url(#c062near)" stroke="#fff3c9" stroke-width="2"/>
+    <rect x="140" y="0" width="62" height="62" rx="11" fill="url(#c062ok)" stroke="#b6fff8" stroke-width="2"/>
+    <rect x="210" y="0" width="62" height="62" rx="11" fill="url(#c062no)" stroke="#55557a" stroke-width="2"/>
+    <rect x="280" y="0" width="62" height="62" rx="11" fill="url(#c062no)" stroke="#55557a" stroke-width="2"/>
+    <rect x="143" y="3" width="56" height="30" rx="9" fill="url(#c062shine)"/>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.5">
+      <!-- し -->
+      <path d="M23 13 L23 39 Q23 51 34 49 Q43 47 46 37" stroke="#3a2700"/>
+      <!-- い -->
+      <g transform="translate(70 0)" stroke="#3a2700"><path d="M19 17 Q17 38 25 45 L28 40"/><path d="M41 20 Q47 29 46 40"/></g>
+      <!-- く -->
+      <g transform="translate(140 0)" stroke="#06302d"><path d="M40 13 L22 31 L40 49"/></g>
+      <!-- い -->
+      <g transform="translate(210 0)" stroke="#a9a6c8"><path d="M19 17 Q17 38 25 45 L28 40"/><path d="M41 20 Q47 29 46 40"/></g>
+      <!-- ん -->
+      <g transform="translate(280 0)" stroke="#a9a6c8"><path d="M33 12 L17 48 Q23 33 29 35 Q33 37 33 44 Q34 50 40 49 Q46 47 48 38"/></g>
+    </g>
+  </g>
+
+  <!-- 2だんめ：う つ く し い（ぜんぶ みずいろ＝せいかい） -->
+  <g transform="translate(29 98)">
+    <rect x="-6" y="-6" width="354" height="74" rx="16" fill="#53e0d8" opacity="0.35" filter="url(#c062blur)"/>
+    <g fill="url(#c062ok)" stroke="#b6fff8" stroke-width="2">
+      <rect x="0" y="0" width="62" height="62" rx="11"/><rect x="70" y="-7" width="62" height="62" rx="11"/><rect x="140" y="0" width="62" height="62" rx="11"/>
+      <rect x="210" y="-7" width="62" height="62" rx="11"/><rect x="280" y="0" width="62" height="62" rx="11"/>
+    </g>
+    <g fill="url(#c062shine)">
+      <rect x="3" y="3" width="56" height="30" rx="9"/><rect x="73" y="-4" width="56" height="30" rx="9"/><rect x="143" y="3" width="56" height="30" rx="9"/>
+      <rect x="213" y="-4" width="56" height="30" rx="9"/><rect x="283" y="3" width="56" height="30" rx="9"/>
+    </g>
+    <g fill="none" stroke="#06302d" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.5">
+      <!-- う -->
+      <path d="M24 13 Q32 14 39 17"/><path d="M19 30 Q43 20 44 34 Q44 46 30 52"/>
+      <!-- つ -->
+      <g transform="translate(70 -7)"><path d="M13 27 Q49 14 49 31 Q49 46 27 50"/></g>
+      <!-- く -->
+      <g transform="translate(140 0)"><path d="M40 13 L22 31 L40 49"/></g>
+      <!-- し -->
+      <g transform="translate(210 -7)"><path d="M23 13 L23 39 Q23 51 34 49 Q43 47 46 37"/></g>
+      <!-- い -->
+      <g transform="translate(280 0)"><path d="M19 17 Q17 38 25 45 L28 40"/><path d="M41 20 Q47 29 46 40"/></g>
+    </g>
+  </g>
+
+  <!-- きらきら -->
+  <g fill="#ffd166">
+    <path d="M22 92 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/>
+    <path d="M379 84 l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/>
+    <path d="M200 78 l1.8 4.8 4.8 1.8 -4.8 1.8 -1.8 4.8 -1.8 -4.8 -4.8 -1.8 4.8 -1.8z" fill="#ffffff"/>
+  </g>
+  <g fill="#ff5fa2"><rect x="52" y="176" width="7" height="4" rx="1" transform="rotate(-24 55 178)"/><rect x="338" y="172" width="7" height="4" rx="1" transform="rotate(30 341 174)"/></g>
+  <g fill="#a06bff"><rect x="364" y="150" width="7" height="4" rx="1" transform="rotate(-40 367 152)"/><rect x="30" y="148" width="7" height="4" rx="1" transform="rotate(18 33 150)"/></g>
+
+  <!-- もじばん（下）-->
+  <g transform="translate(47 182)">
+    <g fill="#1c1c33" stroke="#3a3a63" stroke-width="1.5">
+      <rect x="0" y="0" width="27" height="24" rx="5"/><rect x="31" y="0" width="27" height="24" rx="5"/><rect x="93" y="0" width="27" height="24" rx="5"/>
+      <rect x="155" y="0" width="27" height="24" rx="5"/><rect x="186" y="0" width="27" height="24" rx="5"/><rect x="248" y="0" width="27" height="24" rx="5"/>
+      <rect x="279" y="0" width="27" height="24" rx="5"/>
+    </g>
+    <rect x="62" y="0" width="27" height="24" rx="5" fill="#2fb8b0" stroke="#9bfff6" stroke-width="1.5"/>
+    <rect x="124" y="0" width="27" height="24" rx="12" fill="#f0b63c" stroke="#fff0bd" stroke-width="1.5"/>
+    <rect x="217" y="0" width="27" height="24" rx="5" fill="#151526" stroke="#232340" stroke-width="1.5"/>
+    <g fill="none" stroke-linecap="round" stroke-width="2.2" stroke="#9d99c0">
+      <path d="M9 8 h9 M13 6 v12"/><path d="M40 7 q-1 8 3 10 M49 8 q2 4 1 8"/><path d="M103 8 q8 -2 8 4 q0 5 -6 6"/>
+      <path d="M164 8 h9 M166 13 q8 -2 7 4"/><path d="M196 7 v9 q1 3 6 0"/><path d="M259 6 l-5 6 l5 6"/><path d="M288 9 h9 M288 15 h9"/>
+    </g>
+    <path d="M73 6 l-5 6 l5 6" fill="none" stroke="#06302d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M133 7 q-1 8 3 10 M142 8 q2 4 1 8" fill="none" stroke="#3a2700" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M226 9 h9 M226 15 h9" fill="none" stroke="#5d5a80" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+</svg>

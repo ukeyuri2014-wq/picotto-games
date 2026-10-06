@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ことばあて5｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --no:#34344f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:6px 4px 24px; overflow-x:hidden;
+    -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
+  }
+  button{font-family:inherit;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .backbar{width:min(480px,100%);padding:0 4px;margin:0 0 2px;font-size:13px;display:flex;justify-content:space-between;align-items:center;min-height:30px}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 4px 6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:4px 14px;min-width:46px;min-height:30px;cursor:pointer}
+  header{width:min(480px,100%);padding:0 4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+  h1{font-size:21px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400;line-height:1.2}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;width:min(480px,100%);-webkit-user-select:none;user-select:none}
+  #hud{display:flex;align-items:center;gap:6px;padding:0 4px;min-height:34px}
+  #hudMode{font-size:13px;color:var(--gold);white-space:nowrap}
+  #hudInfo{font-size:12px;color:var(--sub);white-space:nowrap;flex:1;overflow:hidden;text-overflow:ellipsis}
+  #hudInfo b{color:var(--ink);font-weight:400}
+  .hbtn{font-size:12px;min-width:58px;min-height:32px;padding:4px 8px;border-radius:999px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}
+  .hbtn.ready{border-color:rgba(255,209,102,.7);color:var(--gold);box-shadow:0 0 10px rgba(255,209,102,.25)}
+  .hbtn.off{color:var(--sub);opacity:.75}
+
+  #board{
+    --t:clamp(34px,calc((100vh - 432px) / 6),50px);
+    --t:clamp(34px,calc((100dvh - 432px) / 6),50px);
+    display:grid;gap:5px;justify-content:center;padding:4px 0 2px;
+  }
+  .brow{display:grid;grid-template-columns:repeat(5,var(--t));gap:5px}
+  .brow.shake{animation:shake .32s}
+  .tile{
+    width:var(--t);height:var(--t);display:flex;align-items:center;justify-content:center;
+    font-size:calc(var(--t) * .56);line-height:1;color:var(--ink);
+    background:#17172b;border:2px solid var(--edge);border-radius:8px;
+    transition:border-color .12s;
+  }
+  .tile.fill{border-color:#6a66a0;animation:pop .14s}
+  .tile.cursor{border-color:var(--violet);box-shadow:0 0 10px rgba(160,107,255,.45) inset}
+  .tile.flip{animation:flip .3s ease-in-out}
+  .tile.ok{background:linear-gradient(160deg,#6ff0e6,#2fb8b0);border-color:#9bfff6;color:#06302d;box-shadow:0 0 14px rgba(83,224,216,.55)}
+  .tile.near{background:linear-gradient(160deg,#ffe08a,#f0b63c);border-color:#fff0bd;color:#3a2700;border-radius:50%;box-shadow:0 0 12px rgba(255,209,102,.4)}
+  .tile.no{background:var(--no);border-color:#3f3f5e;color:#a9a6c8}
+  .tile.hop{animation:hop .5s ease-out}
+  @keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes flip{0%{transform:scaleY(1)}50%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+  @keyframes hop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-14px) scale(1.1)}70%{transform:translateY(0) scale(.96)}100%{transform:none}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+  #msg{height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--sub);text-align:center;white-space:nowrap;overflow:hidden}
+  #msg.toast{color:var(--gold)}
+  #msg b{color:var(--cyan);font-weight:400}
+
+  #kbd{display:grid;gap:3px;padding:0 0 2px}
+  .krow{display:grid;gap:2px}
+  .krow.c10{grid-template-columns:repeat(10,1fr)}
+  .krow.c8{grid-template-columns:repeat(8,1fr)}
+  .krow.act{grid-template-columns:1.1fr 1.1fr 1fr 1.5fr;gap:4px;margin-top:2px}
+  .key{
+    height:38px;min-width:0;padding:0;font-size:19px;line-height:1;color:var(--ink);
+    background:var(--panel);border:1px solid #3a3a63;border-radius:7px;cursor:pointer;
+  }
+  .key:active{transform:scale(.92);background:#2a2a4c}
+  .key.ok{background:#2fb8b0;border-color:#9bfff6;color:#06302d}
+  .key.near{background:#f0b63c;border-color:#fff0bd;color:#3a2700;border-radius:18px}
+  .key.no{background:#151526;border-color:#232340;color:#5d5a80}
+  .key.fn{font-size:14px;height:42px;color:var(--sub);letter-spacing:1px}
+  .key.fn.go{background:var(--violet);border-color:#c7a8ff;color:#fff;font-size:15px}
+  .key.fn.go.ready{background:var(--pink);border-color:#ffb0d2;box-shadow:0 0 14px rgba(255,95,162,.5)}
+  .kgap{height:38px}
+
+  #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;touch-action:none;z-index:6}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.95);
+    border-radius:8px;text-align:center;padding:10px 8px;z-index:5;overflow:hidden;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:28px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6);line-height:1.2}
+  #overlay .big.lose{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.5)}
+  #overlay .big small{display:block;font-size:13px;letter-spacing:1px;color:var(--sub);text-shadow:none;margin-top:2px}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.7}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .sub{font-size:12px;color:var(--sub);line-height:1.7}
+  #overlay .sub b{color:var(--ink);font-weight:400}
+  .legend{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;text-align:left;font-size:13px;line-height:1.3}
+  .mini{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;border-radius:7px;border:2px solid var(--edge)}
+  .mini.ok{background:linear-gradient(160deg,#6ff0e6,#2fb8b0);border-color:#9bfff6;color:#06302d}
+  .mini.near{background:linear-gradient(160deg,#ffe08a,#f0b63c);border-color:#fff0bd;color:#3a2700;border-radius:50%}
+  .mini.no{background:var(--no);border-color:#3f3f5e;color:#a9a6c8}
+  .ans{display:flex;gap:5px;justify-content:center}
+  .ans .mini{width:42px;height:42px;font-size:24px}
+  .stars{font-size:30px;letter-spacing:6px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.6);line-height:1}
+  .stars i{font-style:normal;color:#45456a;text-shadow:none}
+  .obtns{display:flex;flex-direction:column;gap:8px;width:min(300px,92%)}
+  .obtns button{font-size:16px;min-height:46px;border:none;border-radius:10px;padding:8px 10px;cursor:pointer;letter-spacing:1px;background:var(--cyan);color:#062a28}
+  .obtns button.alt{background:var(--pink);color:#2b0014}
+  .obtns button.ghost{background:none;border:1px solid var(--edge);color:var(--ink);font-size:14px;min-height:42px}
+  .obtns button small{display:block;font-size:11px;letter-spacing:0;opacity:.8;margin-top:1px}
+  .dist{display:grid;gap:2px;width:min(240px,80%);font-size:11px;color:var(--sub)}
+  .dist div{display:grid;grid-template-columns:30px 1fr 22px;align-items:center;gap:4px;height:13px;line-height:13px}
+  .dist span.bar{display:block;height:9px;border-radius:3px;background:#3d3d66;min-width:3px}
+  .dist div.me span.bar{background:var(--cyan)}
+  .dist div.me{color:var(--ink)}
+  .help{width:min(480px,100%);padding:0 6px;color:var(--sub);font-size:13px;margin-top:12px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover,.hbtn:hover{color:var(--gold);border-color:var(--gold)}
+    .key:hover{border-color:var(--violet)}
+    .obtns button:hover{filter:brightness(1.1)}
+  }
+  @media (min-width:440px){
+    .key{height:40px;font-size:20px}
+    .kgap{height:40px}
+    .krow{gap:3px}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="ひみつの 5もじの ことばを 6回までに 当てよう。みずいろは もじも ばしょも 合ってる、きいろは ばしょちがい。日づけで きまる「きょうの1問」と、当てるほど むずかしくなる フリーモード。約390語、ヒント、れんぞく記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/062-five-kana/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ことばあて5","description":"ひみつの 5もじの ことばを 6回までに 当てよう。みずいろは もじも ばしょも 合ってる、きいろは ばしょちがい。日づけで きまる「きょうの1問」と、当てるほど むずかしくなる フリーモード。約390語、ヒント、れんぞく記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/062-five-kana/index.html","inLanguage":"ja","genre":"WORD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="062"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ことばあて5</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / 1人用</div>
+</header>
+
+<div id="wrap">
+  <div id="hud">
+    <span id="hudMode">ことばあて</span>
+    <span id="hudInfo"></span>
+    <button class="hbtn" id="hintBtn">💡ヒント</button>
+    <button class="hbtn" id="menuBtn">メニュー</button>
+  </div>
+  <div id="board"></div>
+  <div id="msg"></div>
+  <div id="kbd"></div>
+  <canvas id="fx"></canvas>
+  <div id="overlay" class="show"></div>
+</div>
+
+<div class="help">
+  <p><b>あそびかた</b>：ひみつの「5もじの ことば」を あてる ゲーム。ひらがなを 5つ ならべて「けってい」を おすと、1もじずつ 色で 手がかりが 出るよ。<b>みずいろの しかく</b>＝もじも ばしょも 合ってる。<b>きいろの まる</b>＝もじは 使うけれど ばしょが ちがう。<b>はいいろ</b>＝その もじは 使わない。</p>
+  <p><b>コツ</b>：さいしょは いろいろな もじを ためして、使う もじを さがそう。「が」と「か」、「や」と「ゃ」は べつの もじ。こまったら「💡ヒント」（2回 こたえた あとで なかま、4回 こたえた あとで さいしょの もじ）。ヒントを 使うと もらえる ★が 1つ へるよ。</p>
+  <p><b>モード</b>：「きょうの1問」は 日づけで きまる 1日1問。まいにち 当てると れんぞく記録が のびる。「フリーモード」は 何問でも。れんぞくで 当てるほど レベルが 上がって、にごった もじ・小さい もじの ことばが 出てくる。10問目からは チャンスが 5回に。</p>
+  <p>⌨️ キーボード：ローマ字で 入力（例 k・a →「か」、s・h・a →「しゃ」、ん は n・n、ー は「-」）／ Enter＝けってい ／ BackSpace＝けす ／ スペース＝゛゜小</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const KEY = 'ludot_five-kana_';
+  const $ = id => document.getElementById(id);
+
+  // ---- じしょ（5もじの ことば）-------------------------------------------------
+  const DICT = {
+    'たべもの': 'たまごやき めだまやき おみそしる はんばーぐ おむらいす かきごおり やきざかな さつまいも じゃがいも さくらんぼ なつみかん めろんぱん かれーぱん しょくぱん おせんべい びすけっと きゃらめる ちゃーはん やきうどん おやこどん えびふらい しゅうまい こんにゃく おべんとう あさごはん ばんごはん おちゃづけ ほしぶどう とうがらし わらびもち さくらもち きなこもち ちらしずし いなりずし よーぐると まよねーず けちゃっぷ おしょうゆ ゆでたまご れもねーど きびだんご にくじゃが めんちかつ はむえっぐ ぽたーじゅ みにとまと らっかせい あーもんど ぴーなっつ あおりんご りんごあめ',
+    'いきもの': 'かぶとむし かたつむり だんごむし はりねずみ あらいぐま かんがるー はくちょう ふらみんご はむすたー もるもっと かめれおん きりぎりす おっとせい なまけもの かものはし やまあらし あかとんぼ ちょうちょ にしきごい たらばがに こうのとり ほととぎす ぶんちょう わたりどり しろうさぎ あまがえる ほたるいか すずめばち あぶらぜみ おにやんま げんごろう こがねむし くつわむし',
+    'のりもの': 'じてんしゃ じどうしゃ きかんしゃ ものれーる だんぷかー おーとばい ひこうせん べびーかー しんごうき こうさてん ごむぼーと くるまいす うばぐるま ろせんばす とっきゅう きゃくせん',
+    'ばしょ': 'ゆうえんち としょかん びょういん ようちえん ほいくえん れすとらん えいがかん すべりだい ほけんしつ きょうしつ こうじょう ぼくじょう さんぽみち かえりみち まわりみち ひみつきち むじんとう たからじま ほっきょく なんきょく はなばたけ むぎばたけ みずたまり やおやさん ぱんやさん はなやさん おもちゃや げきじょう ごきんじょ しょくどう しやくしょ じどうかん びよういん とこやさん かじゅえん ゆうほどう おくじょう みなとまち',
+    'どうぐ・みのまわり': 'らんどせる しゃんぷー どらいやー ばすたおる せんたくき れいぞうこ すいはんき とーすたー ふらいぱん ほうちょう おちゃわん じゅうたん うでどけい すなどけい はとどけい かれんだー さんぐらす ねっくれす わんぴーす せんぷうき どらいばー むしめがね はーもにか りこーだー たんばりん ばいおりん おるごーる ぬいぐるみ にんぎょう たけとんぼ かざぐるま らしんばん こんせんと でんきゅう ちょうちん すにーかー はいひーる はんずぼん よだれかけ うえきばち たからばこ ちきゅうぎ ぼーるぺん けいさんき おんどけい すぴーかー へっどほん ぷりんたー たぶれっと きーぼーど なべつかみ まぐかっぷ あわだてき',
+    'あそび・ぎょうじ': 'こままわし ゆきだるま かくれんぼ おにごっこ じゃんけん にらめっこ ぷれぜんと おとしだま くりすます ひなまつり こどものひ なつやすみ ふゆやすみ ひとやすみ ぼんおどり しおひがり もみじがり いちごがり はいきんぐ ぴくにっく ゆきあそび みずあそび すなあそび こいのぼり すいかわり なつまつり ゆきまつり くりひろい ごみひろい おままごと ならいごと しょうがつ ばすけっと たっきゅう じゅうどう さかあがり ぼうりんぐ がっしょう きんめだる ゆうしょう ひゃくてん よみきかせ ものがたり かみしばい きもだめし さかなつり はつもうで おおそうじ しちごさん ふくわらい かるたとり けんけんぱ こおりおに しっぽとり まえまわり のぼりぼう',
+    'しぜん': 'おつきさま おほしさま ながれぼし あまのがわ しもばしら にわかあめ じゃんぐる くろーばー いわしぐも ひつじぐも はつひので つきあかり いなびかり おおあらし むかいかぜ つむじかぜ ひょうざん はなふぶき まつばやし ひがんばな ひやしんす らべんだー さるすべり',
+    'ひと': 'おとうさん おかあさん おじいさん おばあさん あかちゃん ぱいろっと だいくさん こっくさん おひめさま おうじさま ももたろう きんたろう かぐやひめ あかずきん きょうだい ひとりっこ ちからもち こどもたち おんなのこ おとこのこ きゃぷてん かがくしゃ はつめいか たんけんか おんがくか まじしゃん せんちょう しょくにん かめらまん でざいなー えんじにあ',
+    'からだ': 'くすりゆび ふくらはぎ つちふまず しゃっくり わらいごえ のどぼとけ わきのした ちからこぶ むしさされ ひざこぞう あしのうら しんちょう',
+    'あいさつ・ようす': 'ありがとう おめでとう こんにちは こんばんは さようなら おもしろい あたらしい むずかしい うつくしい あたたかい すばらしい はずかしい なつかしい やわらかい あいうえお おそろしい おとなしい いそがしい めずらしい たのもしい しょっぱい おおいそぎ おおさわぎ おおわらい おおあたり おすそわけ おかげさま またあした げんきでね がんばって がんばろう もういちど もうすこし ちゃっかり ちょっぴり いっしょに いつまでも どこまでも ひさしぶり',
+    'くらし': 'にちようび げつようび すいようび もくようび きんようび ひゃくえん おこづかい たからもの わすれもの おとしもの おくりもの おてつだい おかいもの おるすばん あさねぼう しゅくだい べんきょう なかなおり おもいやり しょうらい ねがいごと ひとりごと ながしかく かいじゅう こもりうた かたぐるま しゅうかく くさむしり ひるさがり らいしゅう ゆめのなか はんぶんこ じゅんばん おかたづけ おせんたく おりょうり くつみがき もくひょう ちょうせん れんしゅう',
+  };
+  const SMALL = /[ぁぃぅぇぉゃゅょっ]/, DAKU = /[がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/;
+  const WORDS = [], WORD_AT = {};
+  for (const cat in DICT) for (const w of DICT[cat].split(' ')) {
+    if (w.length !== 5 || WORD_AT[w] !== undefined) continue;
+    WORD_AT[w] = WORDS.length;
+    WORDS.push({ w, cat, tier: SMALL.test(w) ? 3 : DAKU.test(w) ? 2 : 1 });
+  }
+  const N = WORDS.length;
+
+  // ---- もじばん ---------------------------------------------------------------
+  const PAGE1 = ['あかさたなはまやらわ', 'いきしちにひみ　りを', 'うくすつぬふむゆるん', 'えけせてねへめ　れー', 'おこそとのほもよろ　'];
+  const PAGE2 = ['がざだばぱぁゃっ', 'ぎじぢびぴぃ　ー', 'ぐずづぶぷぅゅ　', 'げぜでべぺぇ　　', 'ごぞどぼぽぉょ　'];
+  const CYCLES = ['かが', 'きぎ', 'くぐ', 'けげ', 'こご', 'さざ', 'しじ', 'すず', 'せぜ', 'そぞ', 'ただ', 'ちぢ', 'つっづ', 'てで', 'とど',
+    'はばぱ', 'ひびぴ', 'ふぶぷ', 'へべぺ', 'ほぼぽ', 'あぁ', 'いぃ', 'うぅ', 'えぇ', 'おぉ', 'やゃ', 'ゆゅ', 'よょ'];
+  const NEXT = {};
+  for (const c of CYCLES) for (let i = 0; i < c.length; i++) NEXT[c[i]] = c[(i + 1) % c.length];
+  const KANA = new Set((PAGE1.join('') + PAGE2.join('')).replace(/　/g, '').split(''));
+
+  // ---- ローマ字 ---------------------------------------------------------------
+  const R = {};
+  (() => {
+    const V = 'aiueo';
+    const rows = { '': 'あいうえお', k: 'かきくけこ', s: 'さしすせそ', t: 'たちつてと', n: 'なにぬねの', h: 'はひふへほ', m: 'まみむめも', r: 'らりるれろ', g: 'がぎぐげご', z: 'ざじずぜぞ', d: 'だぢづでど', b: 'ばびぶべぼ', p: 'ぱぴぷぺぽ', x: 'ぁぃぅぇぉ', l: 'ぁぃぅぇぉ' };
+    for (const c in rows) for (let i = 0; i < 5; i++) R[c + V[i]] = rows[c][i];
+    const Y = { ya: 'ゃ', yu: 'ゅ', yo: 'ょ' };
+    for (const c of 'kstnhmrgzdbp') for (const y in Y) R[c + y] = rows[c][1] + Y[y];
+    for (const y in Y) { R['x' + y] = Y[y]; R['l' + y] = Y[y]; }
+    Object.assign(R, { ya: 'や', yu: 'ゆ', yo: 'よ', wa: 'わ', wo: 'を', shi: 'し', chi: 'ち', tsu: 'つ', fu: 'ふ', ji: 'じ',
+      sha: 'しゃ', shu: 'しゅ', sho: 'しょ', cha: 'ちゃ', chu: 'ちゅ', cho: 'ちょ', ja: 'じゃ', ju: 'じゅ', jo: 'じょ',
+      jya: 'じゃ', jyu: 'じゅ', jyo: 'じょ', xtu: 'っ', ltu: 'っ', xtsu: 'っ' });
+  })();
+  const R_PREFIX = new Set();
+  for (const k in R) for (let i = 1; i <= k.length; i++) R_PREFIX.add(k.slice(0, i));
+
+  // ---- おと -------------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted || quiet) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    key(n) { tone('square', 520 + n * 60, 620 + n * 60, 0.05, 0.035); },
+    del() { tone('triangle', 420, 260, 0.07, 0.05); },
+    mark() { tone('square', 760, 980, 0.05, 0.03); },
+    bad() { tone('square', 190, 120, 0.1, 0.045); },
+    flip(st, i) { if (st === 2) { tone('triangle', 784 + i * 40, 1046 + i * 40, 0.16, 0.08); tone('square', 1568, 1568, 0.05, 0.02); } else if (st === 1) tone('triangle', 523, 587, 0.12, 0.07); else tone('sine', 220, 180, 0.1, 0.07); },
+    hint() { [880, 1174].forEach((f, i) => tone('triangle', f, f, 0.14, 0.06, i * 0.09)); },
+    win() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.16, 0.06, i * 0.09)); tone('triangle', 2093, 2093, 0.4, 0.05, 0.56); },
+    lose() { tone('sawtooth', 300, 90, 0.5, 0.06); },
+    start() { tone('triangle', 660, 880, 0.1, 0.06); tone('triangle', 880, 1320, 0.14, 0.06, 0.1); },
+  };
+  let quiet = false;   // テストで いっきに進めるとき
+
+  // ---- きろく -----------------------------------------------------------------
+  let stats = { plays: 0, wins: 0, dist: [0, 0, 0, 0, 0, 0], stars: 0, bestStreak: 0, bestScore: 0, dailyCur: 0, dailyBest: 0, dailyLast: '' };
+  function loadStats() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY + 'stats') || 'null');
+      if (s && typeof s === 'object') {
+        for (const k of ['plays', 'wins', 'stars', 'bestStreak', 'bestScore', 'dailyCur', 'dailyBest']) if (Number.isFinite(s[k])) stats[k] = s[k];
+        if (typeof s.dailyLast === 'string') stats.dailyLast = s.dailyLast;
+        if (Array.isArray(s.dist)) for (let i = 0; i < 6; i++) if (Number.isFinite(s.dist[i])) stats.dist[i] = s.dist[i];
+      }
+    } catch (e) {}
+  }
+  function saveStats() { try { localStorage.setItem(KEY + 'stats', JSON.stringify(stats)); } catch (e) {} }
+  function loadSave(m) { try { const s = JSON.parse(localStorage.getItem(KEY + m) || 'null'); return s && typeof s === 'object' ? s : null; } catch (e) { return null; } }
+  function putSave(m, o) { try { if (o) localStorage.setItem(KEY + m, JSON.stringify(o)); else localStorage.removeItem(KEY + m); } catch (e) {} }
+  const RANKS = [[0, 'ことばの たまご'], [8, 'ことば みならい'], [25, 'ことば たんけんか'], [60, 'ことば はかせ'], [120, 'ことば めいじん'], [250, 'ことば マスター']];
+  function rankOf(st) { let r = RANKS[0], next = null; for (const x of RANKS) { if (st >= x[0]) r = x; else { next = x; break; } } return { name: r[1], next }; }
+
+  // ---- 日づけ（きょうの1問）---------------------------------------------------
+  let fakeDate = null;
+  function today() {
+    if (fakeDate) return fakeDate;
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function dayNum(ds) { const p = ds.split('-').map(Number); return Math.floor(Date.UTC(p[0], p[1] - 1, p[2]) / 86400000); }
+  function prevDay(ds) { const d = new Date((dayNum(ds) - 1) * 86400000); return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0'); }
+  function shortDate(ds) { const p = ds.split('-').map(Number); return p[1] + '月' + p[2] + '日'; }
+  const ORDER = (() => {       // きまった たねで まぜた ならび（N日は 同じ ことばが 出ない）
+    let s = 620051;
+    const rnd = () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const a = WORDS.map((_, i) => i);
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  })();
+  function dailyAnswer(ds) { const n = dayNum(ds); return WORDS[ORDER[((n % N) + N) % N]].w; }
+  function dailyStreakNow() { const t = today(); return (stats.dailyLast === t || stats.dailyLast === prevDay(t)) ? stats.dailyCur : 0; }
+
+  // ---- はんてい ---------------------------------------------------------------
+  // 2＝もじも ばしょも 合ってる / 1＝もじは あるが ばしょちがい / 0＝使わない
+  function evaluate(g, a) {
+    const r = [0, 0, 0, 0, 0], left = {};
+    for (let i = 0; i < 5; i++) { if (g[i] === a[i]) r[i] = 2; else left[a[i]] = (left[a[i]] || 0) + 1; }
+    for (let i = 0; i < 5; i++) { if (r[i] !== 2 && left[g[i]] > 0) { r[i] = 1; left[g[i]]--; } }
+    return r;
+  }
+  function freeRule(streak) {
+    const tierMax = streak < 3 ? 1 : streak < 6 ? 2 : 3;
+    const maxTries = streak >= 9 ? 5 : 6;
+    const level = streak >= 9 ? 4 : tierMax;
+    return { tierMax, maxTries, level };
+  }
+  const LEVEL_NAME = ['', 'やさしい', 'ふつう', 'むずかしい', 'たつじん'];
+  function starsFor(tries, maxT, hintN) { const base = tries <= 3 ? 3 : tries < maxT ? 2 : 1; return Math.max(1, base - hintN); }
+  function scoreFor(tries, maxT, hintN, streakBefore) { return Math.max(10, 100 * (maxT - tries + 1) + Math.min(200, 20 * streakBefore) - 30 * hintN); }
+
+  // ---- じょうたい -------------------------------------------------------------
+  let phase = 'title';            // title / play / reveal / end
+  let mode = 'daily', date = '', answer = '', guesses = [], cur = [], maxTries = 6, hints = 0;
+  let done = false, won = false, last = null;
+  let runStreak = 0, runScore = 0, level = 1, tierMax = 3;
+  let kbPage = 0, romaji = '', nTail = false, keyState = {};
+  let recent = [];
+  let toastSeq = 0, toastOn = false;
+
+  // ---- じかん（アニメの じゅんばん）-------------------------------------------
+  let clock = 0; const tasks = [];
+  function after(ms, fn) { tasks.push({ t: clock + ms, fn }); tasks.sort((a, b) => a.t - b.t); }
+  function advance(ms) { clock += ms; while (tasks.length && tasks[0].t <= clock) tasks.shift().fn(); }
+  function flush() { let guard = 0; while (tasks.length && guard++ < 500) { const k = tasks.shift(); if (k.t > clock) clock = k.t; k.fn(); } }
+
+  // ---- エフェクト -------------------------------------------------------------
+  const wrap = $('wrap'), fx = $('fx'), fctx = fx.getContext('2d');
+  let fxW = 0, fxH = 0, parts = [];
+  function sizeFx() {
+    const r = wrap.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+    fxW = r.width; fxH = r.height; fx.width = Math.round(fxW * d); fx.height = Math.round(fxH * d);
+    fctx.setTransform(d, 0, 0, d, 0, 0);
+  }
+  function centerOf(el) { const a = el.getBoundingClientRect(), b = wrap.getBoundingClientRect(); return { x: a.left - b.left + a.width / 2, y: a.top - b.top + a.height / 2 }; }
+  function burst(x, y, color, n, pow) {
+    if (quiet) return;
+    for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, v = (0.4 + Math.random()) * pow; parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - pow * 0.4, g: 420, life: 0, max: 0.5 + Math.random() * 0.4, c: color, s: 2 + Math.random() * 3, rot: Math.random() * 6 }); }
+  }
+  function confetti() {
+    if (quiet) return;
+    const cols = ['#53e0d8', '#ffd166', '#ff5fa2', '#a06bff', '#eeecfa'];
+    for (let i = 0; i < 90; i++) parts.push({ x: Math.random() * fxW, y: -10 - Math.random() * 120, vx: (Math.random() - 0.5) * 60, vy: 90 + Math.random() * 140, g: 60, life: 0, max: 2 + Math.random() * 1.4, c: cols[i % cols.length], s: 4 + Math.random() * 4, rot: Math.random() * 6, conf: 1 });
+  }
+  function popText(x, y, text, color) { if (!quiet) parts.push({ x, y, vx: 0, vy: -46, g: 0, life: 0, max: 1.3, c: color, text }); }
+  function updateFx(dt) {
+    for (const p of parts) { p.life += dt; p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += dt * 6; }
+    parts = parts.filter(p => p.life < p.max && p.y < fxH + 20);
+  }
+  function drawFx() {
+    fctx.clearRect(0, 0, fxW, fxH);
+    for (const p of parts) {
+      const k = 1 - p.life / p.max;
+      fctx.globalAlpha = Math.min(1, k * 1.6);
+      fctx.fillStyle = p.c;
+      if (p.text) { fctx.font = "20px 'DotGothic16',sans-serif"; fctx.textAlign = 'center'; fctx.shadowColor = p.c; fctx.shadowBlur = 10; fctx.fillText(p.text, p.x, p.y); fctx.shadowBlur = 0; }
+      else if (p.conf) { fctx.save(); fctx.translate(p.x, p.y); fctx.rotate(p.rot); fctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2 * (0.4 + Math.abs(Math.sin(p.rot)))); fctx.restore(); }
+      else fctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s);
+    }
+    fctx.globalAlpha = 1;
+  }
+
+  // ---- 画面 -------------------------------------------------------------------
+  const boardEl = $('board'), kbdEl = $('kbd'), msgEl = $('msg'), overlay = $('overlay');
+  const hudMode = $('hudMode'), hudInfo = $('hudInfo'), hintBtn = $('hintBtn'), menuBtn = $('menuBtn'), muteBtn = $('mute-btn');
+  const ST = ['no', 'near', 'ok'];
+  let tiles = [], rowEls = [], keyEls = {}, goKey = null, pageKey = null;
+
+  function buildBoard() {
+    boardEl.innerHTML = ''; tiles = []; rowEls = [];
+    for (let r = 0; r < maxTries; r++) {
+      const row = document.createElement('div'); row.className = 'brow';
+      const arr = [];
+      for (let c = 0; c < 5; c++) { const t = document.createElement('div'); t.className = 'tile'; row.appendChild(t); arr.push(t); }
+      boardEl.appendChild(row); tiles.push(arr); rowEls.push(row);
+    }
+    for (let r = 0; r < guesses.length; r++) for (let c = 0; c < 5; c++) { tiles[r][c].textContent = guesses[r].w[c]; tiles[r][c].className = 'tile ' + ST[guesses[r].res[c]]; }
+    renderCur(-1);
+  }
+  function renderCur(popIdx) {
+    const r = guesses.length;
+    if (r >= maxTries || done) return;
+    for (let c = 0; c < 5; c++) {
+      const t = tiles[r][c], ch = cur[c] || '';
+      t.textContent = ch;
+      t.className = 'tile' + (ch ? ' fill' : '') + (c === cur.length && phase === 'play' ? ' cursor' : '');
+      if (c === popIdx) { t.style.animation = 'none'; void t.offsetWidth; t.style.animation = ''; }
+    }
+    if (goKey) goKey.classList.toggle('ready', cur.length === 5 && phase === 'play');
+  }
+  function buildKbd() {
+    kbdEl.innerHTML = ''; keyEls = {};
+    const rows = kbPage === 0 ? PAGE1 : PAGE2;
+    for (const line of rows) {
+      const row = document.createElement('div'); row.className = 'krow ' + (kbPage === 0 ? 'c10' : 'c8');
+      for (const ch of line) {
+        if (ch === '　') { const g = document.createElement('div'); g.className = 'kgap'; row.appendChild(g); continue; }
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'key'; b.textContent = ch; b.dataset.ch = ch; b.tabIndex = -1;
+        b.setAttribute('aria-label', ch);
+        row.appendChild(b); keyEls[ch] = b;
+      }
+      kbdEl.appendChild(row);
+    }
+    const act = document.createElement('div'); act.className = 'krow act';
+    const mk = (label, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'key fn' + (cls ? ' ' + cls : ''); b.textContent = label; b.dataset.fn = fn; b.tabIndex = -1; act.appendChild(b); return b; };
+    mk('゛゜小', 'mark');
+    pageKey = mk(kbPage === 0 ? 'が ぱ ゃ' : 'あ か さ', 'page');
+    mk('← けす', 'del');
+    goKey = mk('けってい', 'enter', 'go');
+    kbdEl.appendChild(act);
+    paintKeys();
+    if (goKey) goKey.classList.toggle('ready', cur.length === 5 && phase === 'play');
+  }
+  function computeKeys() { keyState = {}; for (const g of guesses) for (let i = 0; i < 5; i++) { const ch = g.w[i]; if (!(keyState[ch] >= g.res[i])) keyState[ch] = g.res[i]; } }
+  function paintKeys() {
+    for (const ch in keyEls) { const s = keyState[ch]; keyEls[ch].className = 'key' + (s === undefined ? '' : ' ' + ST[s]); }
+    // うらの ページに 手がかりが あるときは きりかえキーを 光らせる
+    if (pageKey) {
+      const other = (kbPage === 0 ? PAGE2 : PAGE1).join('');
+      let hit = false; for (const ch in keyState) if (keyState[ch] > 0 && other.includes(ch)) hit = true;
+      pageKey.style.color = hit ? '#ffd166' : '';
+      pageKey.style.borderColor = hit ? 'rgba(255,209,102,.7)' : '';
+    }
+  }
+  function hintNeed() { return hints === 0 ? 2 : hints === 1 ? 4 : 99; }
+  function renderHud() {
+    if (mode === 'daily') { hudMode.textContent = 'きょうの1問'; hudInfo.innerHTML = shortDate(date || today()) + '・れんぞく <b>' + dailyStreakNow() + '</b>日'; }
+    else { hudMode.textContent = 'フリー Lv' + level; hudInfo.innerHTML = '<b>' + (runStreak + (done ? 0 : 1)) + '</b>問目・' + runScore + '点'; }
+    const ok = phase === 'play' && guesses.length >= hintNeed();
+    hintBtn.className = 'hbtn' + (ok ? ' ready' : ' off');
+    hintBtn.textContent = hints >= 2 ? '💡ずみ' : '💡ヒント';
+  }
+  function baseMsg() {
+    if (toastOn) return;
+    msgEl.className = '';
+    if (phase !== 'play' && phase !== 'reveal') { msgEl.textContent = ''; return; }
+    if (romaji) { msgEl.textContent = '⌨ ローマ字：' + romaji + '…'; return; }
+    const w = WORDS[WORD_AT[answer]];
+    if (hints >= 1 && w) { msgEl.innerHTML = '💡 なかま：<b>' + w.cat + '</b>' + (hints >= 2 ? '　1もじ目：<b>' + answer[0] + '</b>' : ''); return; }
+    const leftN = maxTries - guesses.length;
+    msgEl.textContent = guesses.length === 0 ? '5もじの ことばを 入れて「けってい」！' : 'あと ' + leftN + '回 ためせるよ';
+  }
+  function toast(text, ms) {
+    const id = ++toastSeq; toastOn = true; msgEl.className = 'toast'; msgEl.textContent = text;
+    after(ms || 1500, () => { if (id === toastSeq) { toastOn = false; baseMsg(); } });
+  }
+  function clearToast() { toastSeq++; toastOn = false; }
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- にゅうりょく -----------------------------------------------------------
+  function addChar(ch) {
+    if (phase !== 'play' || !KANA.has(ch)) return false;
+    if (cur.length >= 5) { SFX.bad(); shakeRow(); toast('5もじ 入ったよ。「けってい」を おそう'); return false; }
+    cur.push(ch); SFX.key(cur.length); renderCur(cur.length - 1);
+    if (!toastOn) baseMsg();
+    return true;
+  }
+  function delChar() {
+    if (phase !== 'play') return;
+    if (romaji) { romaji = romaji.slice(0, -1); nTail = false; baseMsg(); return; }
+    if (!cur.length) return;
+    cur.pop(); SFX.del(); renderCur(-1);
+  }
+  function markChar() {
+    if (phase !== 'play') return;
+    const ch = cur[cur.length - 1];
+    if (!ch || !NEXT[ch]) { SFX.bad(); toast(ch ? '「' + ch + '」は かえられないよ' : 'さきに もじを 入れてね', 1200); return; }
+    cur[cur.length - 1] = NEXT[ch]; SFX.mark(); renderCur(cur.length - 1);
+  }
+  function togglePage() { kbPage = 1 - kbPage; SFX.mark(); buildKbd(); }
+  function shakeRow() { const r = rowEls[Math.min(guesses.length, maxTries - 1)]; if (!r) return; r.classList.remove('shake'); void r.offsetWidth; r.classList.add('shake'); }
+  function flushRomaji() { if (romaji === 'n' && !nTail) addChar('ん'); romaji = ''; nTail = false; }
+  function romajiFeed(ch) {
+    if (phase !== 'play') return;
+    if (ch === '-') { flushRomaji(); addChar('ー'); baseMsg(); return; }
+    if (romaji === 'n') {
+      if (ch === 'n') { if (nTail) nTail = false; else { addChar('ん'); nTail = true; } baseMsg(); return; }
+      if (!'aiueoy'.includes(ch)) { if (!nTail) addChar('ん'); romaji = ''; nTail = false; }
+    }
+    romaji += ch;
+    if (R[romaji]) { for (const c of R[romaji]) addChar(c); romaji = ''; nTail = false; }
+    else if (romaji.length >= 2 && romaji[0] === romaji[1] && romaji[0] !== 'n') { addChar('っ'); romaji = romaji.slice(1); }
+    else if (!R_PREFIX.has(romaji)) romaji = R_PREFIX.has(ch) ? ch : '';
+    if (!toastOn) baseMsg();
+  }
+
+  function submit() {
+    if (phase !== 'play') return;
+    flushRomaji();
+    if (cur.length < 5) { SFX.bad(); shakeRow(); toast('5もじ 入れてね（あと ' + (5 - cur.length) + 'もじ）'); return; }
+    const w = cur.join(''), res = evaluate(w, answer), row = guesses.length;
+    if (guesses.some(g => g.w === w)) { SFX.bad(); shakeRow(); toast('それは もう ためしたよ'); return; }
+    guesses.push({ w, res }); cur = [];
+    const win = w === answer, lose = !win && guesses.length >= maxTries;
+    if (win || lose) { done = true; won = win; applyOutcome(); }
+    saveGame();
+    phase = 'reveal'; clearToast(); if (goKey) goKey.classList.remove('ready');
+    for (let i = 0; i < 5; i++) {
+      after(i * 230, () => {
+        const t = tiles[row][i]; t.textContent = w[i]; t.className = 'tile fill flip'; SFX.flip(res[i], i);
+        after(150, () => { t.classList.add(ST[res[i]]); if (res[i] === 2 && !quiet) { const p = centerOf(t); burst(p.x, p.y, '#53e0d8', 9, 130); } });
+      });
+    }
+    after(5 * 230 + 220, () => {
+      computeKeys(); paintKeys();
+      if (win) {
+        SFX.win(); confetti();
+        tiles[row].forEach((t, i) => { t.style.animationDelay = (i * 0.08) + 's'; t.classList.remove('flip'); t.classList.add('hop'); });
+        if (!quiet) { const p = centerOf(tiles[row][2]); popText(p.x, p.y - 30, mode === 'free' ? '+' + last.gain + '点' : 'せいかい！', '#ffd166'); }
+        msgEl.className = 'toast'; msgEl.textContent = ['', 'すごい！ いっぱつ！', 'てんさい！', 'おみごと！', 'やったね！', 'ナイス！', 'ぎりぎり セーフ！'][Math.min(6, guesses.length)];
+        after(1300, () => { phase = 'end'; renderHud(); showResult(); });
+      } else if (lose) {
+        SFX.lose(); msgEl.className = ''; msgEl.textContent = 'ざんねん…';
+        after(800, () => { phase = 'end'; renderHud(); showResult(); });
+      } else {
+        phase = 'play'; renderCur(-1); renderHud(); baseMsg();
+        const need = hintNeed();
+        if (guesses.length === need) toast('💡ヒントが つかえるよ', 1800);
+      }
+    });
+  }
+  function applyOutcome() {
+    const tries = guesses.length;
+    stats.plays++;
+    last = { win: won, tries, stars: 0, gain: 0, hints, streak: 0, score: 0, newBest: false };
+    if (won) { stats.wins++; stats.dist[Math.min(5, tries - 1)]++; last.stars = starsFor(tries, maxTries, hints); stats.stars += last.stars; }
+    if (mode === 'daily') {
+      if (won) { stats.dailyCur = stats.dailyLast === prevDay(date) ? stats.dailyCur + 1 : 1; if (stats.dailyCur > stats.dailyBest) { stats.dailyBest = stats.dailyCur; last.newBest = stats.dailyCur > 1; } }
+      else stats.dailyCur = 0;
+      stats.dailyLast = date; last.streak = stats.dailyCur;
+    } else {
+      if (won) {
+        last.gain = scoreFor(tries, maxTries, hints, runStreak);
+        runStreak++; runScore += last.gain;
+        if (runStreak > stats.bestStreak) { stats.bestStreak = runStreak; last.newBest = runStreak > 1; }
+        if (runScore > stats.bestScore) stats.bestScore = runScore;
+      }
+      last.streak = runStreak; last.score = runScore;
+    }
+    saveStats();
+  }
+  function saveGame() {
+    const o = { date, a: answer, g: guesses.map(x => x.w), h: hints, mt: maxTries, done, win: won, streak: runStreak, score: runScore, last, recent };
+    putSave(mode, o);
+  }
+  function useHint() {
+    if (phase !== 'play') return;
+    if (hints >= 2) { toast('ヒントは ぜんぶ 見たよ', 1200); return; }
+    const need = hintNeed();
+    if (guesses.length < need) { SFX.bad(); toast('ヒントは ' + need + '回 こたえてから（★が 1つ へるよ）', 1900); return; }
+    hints++; SFX.hint(); saveGame(); clearToast(); renderHud(); baseMsg();
+  }
+
+  // ---- はじめる ---------------------------------------------------------------
+  function setup(m) { mode = m; cur = []; romaji = ''; nTail = false; kbPage = 0; clearToast(); tasks.length = 0; parts = []; }
+  function restore(sv) {
+    answer = sv.a; hints = Math.max(0, Math.min(2, sv.h | 0)); maxTries = sv.mt === 5 ? 5 : 6;
+    guesses = (Array.isArray(sv.g) ? sv.g : []).filter(w => typeof w === 'string' && w.length === 5).slice(0, maxTries).map(w => ({ w, res: evaluate(w, sv.a) }));
+    done = !!sv.done; won = !!sv.win; last = sv.last || null;
+  }
+  function enter() {
+    computeKeys(); buildBoard(); buildKbd(); overlay.classList.remove('show');
+    if (done) { phase = 'end'; renderHud(); baseMsg(); showResult(); }
+    else { phase = 'play'; renderCur(-1); renderHud(); baseMsg(); }
+    sizeFx();
+  }
+  function startDaily() {
+    setup('daily'); date = today();
+    const sv = loadSave('daily');
+    if (sv && sv.date === date && sv.a === dailyAnswer(date)) restore(sv);
+    else { answer = dailyAnswer(date); guesses = []; hints = 0; maxTries = 6; done = false; won = false; last = null; saveGame(); }
+    level = 0; tierMax = 3; runStreak = 0; runScore = 0;
+    enter();
+  }
+  function pickFree(tm) {
+    const pool = WORDS.filter(x => x.tier <= tm && !recent.includes(x.w));
+    const from = pool.length ? pool : WORDS.filter(x => x.tier <= tm);
+    return from[Math.floor(Math.random() * from.length)].w;
+  }
+  function startFree(opts) {
+    setup('free'); date = '';
+    const sv = loadSave('free');
+    recent = sv && Array.isArray(sv.recent) ? sv.recent.filter(w => WORD_AT[w] !== undefined).slice(-60) : [];
+    if (!opts && sv && !sv.done && WORD_AT[sv.a] !== undefined) {
+      runStreak = Math.max(0, sv.streak | 0); runScore = Math.max(0, sv.score | 0); restore(sv);
+      const fr = freeRule(runStreak); level = fr.level; tierMax = fr.tierMax;
+    } else {
+      if (opts && Number.isFinite(opts.streak)) { runStreak = opts.streak; runScore = opts.score || 0; }
+      else if (sv && sv.done && sv.win) { runStreak = Math.max(0, sv.streak | 0); runScore = Math.max(0, sv.score | 0); }
+      else { runStreak = 0; runScore = 0; }
+      const fr = freeRule(runStreak); level = fr.level; tierMax = fr.tierMax; maxTries = fr.maxTries;
+      answer = (opts && opts.answer && WORD_AT[opts.answer] !== undefined) ? opts.answer : pickFree(tierMax);
+      recent.push(answer); if (recent.length > 60) recent.shift();
+      guesses = []; hints = 0; done = false; won = false; last = null; saveGame();
+    }
+    enter();
+    if (!done && guesses.length === 0) {
+      if (runStreak === 3) toast('レベル2！ にごった もじも 出るよ', 2200);
+      else if (runStreak === 6) toast('レベル3！ 小さい もじも 出るよ', 2200);
+      else if (runStreak === 9) toast('たつじん！ チャンスは 5回', 2200);
+    }
+  }
+
+  // ---- タイトル・けっか -------------------------------------------------------
+  function bind(id, fn) { const b = $(id); if (b) b.addEventListener('click', () => { audio(); fn(); }); }
+  function showTitle() {
+    if (phase === 'reveal') flush();
+    phase = 'title'; clearToast(); tasks.length = 0;
+    const d = loadSave('daily'), f = loadSave('free'), t = today();
+    const dState = d && d.date === t ? (d.done ? 2 : (d.g && d.g.length ? 1 : 0)) : 0;
+    const fState = f && !f.done && f.g && WORD_AT[f.a] !== undefined ? 1 : (f && f.done && f.win ? 2 : 0);
+    const rk = rankOf(stats.stars);
+    overlay.innerHTML =
+      '<div class="big">ことばあて5<small>5もじの ことばを 6回までに 当てよう</small></div>' +
+      '<div class="legend">' +
+        '<span class="mini ok">あ</span><span>もじも ばしょも <b style="color:#53e0d8">合ってる</b></span>' +
+        '<span class="mini near">い</span><span>もじは 使うけど <b style="color:#ffd166">ばしょちがい</b></span>' +
+        '<span class="mini no">う</span><span>その もじは 使わない</span>' +
+      '</div>' +
+      '<div class="obtns">' +
+        '<button id="btnDaily">' + (dState === 2 ? 'きょうの けっかを 見る' : dState === 1 ? 'きょうの1問の つづきを はじめる' : 'きょうの1問を はじめる') +
+          '<small>' + shortDate(t) + 'の もんだい・れんぞく ' + dailyStreakNow() + '日（ベスト ' + stats.dailyBest + '日）</small></button>' +
+        '<button id="btnFree" class="alt">' + (fState === 1 ? 'フリーモードの つづきで あそぶ' : 'フリーモードで あそぶ') +
+          '<small>' + (fState ? 'いま ' + (f.streak | 0) + '問 れんぞく・' : '') + 'ベスト ' + stats.bestStreak + '問 れんぞく／' + stats.bestScore + '点</small></button>' +
+      '</div>' +
+      '<div class="sub">あつめた ★ <b>' + stats.stars + '</b>　しょうごう：<b>' + rk.name + '</b>' + (rk.next ? '<br>つぎの しょうごうまで ★ あと ' + (rk.next[0] - stats.stars) : '') +
+      '<br>📱 もじを タップ ／ ⌨️ ローマ字で 入力できるよ</div>';
+    overlay.classList.add('show');
+    bind('btnDaily', () => { SFX.start(); startDaily(); });
+    bind('btnFree', () => { SFX.start(); startFree(); });
+    hudMode.textContent = 'ことばあて'; hudInfo.textContent = ''; msgEl.textContent = '';
+  }
+  function showResult() {
+    const L = last || { win: won, tries: guesses.length, stars: 0, gain: 0, streak: 0, score: 0 };
+    const w = WORDS[WORD_AT[answer]];
+    let h = '<div class="big' + (L.win ? '' : ' lose') + '">' + (L.win ? 'せいかい！' : 'ざんねん…') + '<small>' + (L.win ? L.tries + '回目で 当てたよ' : 'こたえは これ') + '</small></div>';
+    h += '<div class="ans">' + answer.split('').map(c => '<span class="mini ok">' + c + '</span>').join('') + '</div>';
+    h += '<div class="sub">なかま：<b>' + (w ? w.cat : '') + '</b></div>';
+    if (L.win) h += '<div class="stars">' + '★'.repeat(L.stars) + '<i>' + '★'.repeat(3 - L.stars) + '</i></div>';
+    if (mode === 'daily') {
+      h += '<div class="note">れんぞく せいかい <b>' + L.streak + '日</b>（ベスト ' + stats.dailyBest + '日）' + (L.newBest ? '<br><b>🎉 ベストこうしん！</b>' : '') + '</div>';
+    } else if (L.win) {
+      h += '<div class="note"><b>+' + L.gain + '点</b>　れんぞく <b>' + L.streak + '問</b>（ベスト ' + stats.bestStreak + '問）<br>スコア ' + L.score + '点（ベスト ' + stats.bestScore + '点）' + (L.newBest ? '<br><b>🎉 れんぞく ベストこうしん！</b>' : '') + '</div>';
+    } else {
+      h += '<div class="note">こんかいは <b>' + L.streak + '問</b> れんぞく・' + L.score + '点<br>ベスト ' + stats.bestStreak + '問 れんぞく／' + stats.bestScore + '点</div>';
+    }
+    const mx = Math.max(1, ...stats.dist);
+    h += '<div class="dist">' + stats.dist.map((n, i) => '<div' + (L.win && L.tries === i + 1 ? ' class="me"' : '') + '><span>' + (i + 1) + '回</span><span class="bar" style="width:' + Math.round(n / mx * 100) + '%"></span><span>' + n + '</span></div>').join('') + '</div>';
+    h += '<div class="obtns">';
+    if (mode === 'daily') h += '<button id="btnNext" class="alt">フリーモードで あそぶ</button><button id="btnTitle" class="ghost">タイトルへ（つぎの1問は あした）</button>';
+    else if (L.win) { const nx = freeRule(runStreak); h += '<button id="btnNext">つぎの もんだいへ<small>' + (runStreak + 1) + '問目・レベル' + nx.level + '（' + LEVEL_NAME[nx.level] + '）</small></button><button id="btnTitle" class="ghost">タイトルへ</button>'; }
+    else h += '<button id="btnNext">もういちど あそぶ</button><button id="btnTitle" class="ghost">タイトルへ</button>';
+    h += '</div>';
+    overlay.innerHTML = h; overlay.classList.add('show');
+    bind('btnNext', () => { SFX.start(); startFree(); });
+    bind('btnTitle', showTitle);
+  }
+
+  // ---- ループ -----------------------------------------------------------------
+  let lastT = 0, hold = false;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (document.hidden) { lastT = now; return; }
+    const dt = Math.min(0.05, (now - lastT) / 1000 || 0); lastT = now;
+    if (!hold) advance(dt * 1000);
+    if (parts.length) { updateFx(dt); drawFx(); } else if (fx.dataset.dirty !== '0') { fctx.clearRect(0, 0, fxW, fxH); fx.dataset.dirty = '0'; }
+    if (parts.length) fx.dataset.dirty = '1';
+  }
+
+  // ---- テスト用 ---------------------------------------------------------------
+  window.__test = {
+    state: () => ({
+      phase, mode, date, answer, guesses: guesses.map(g => ({ w: g.w, res: g.res.slice() })), cur: cur.join(''), romaji,
+      maxTries, hints, done, won, streak: runStreak, score: runScore, level, tierMax, page: kbPage,
+      stats: JSON.parse(JSON.stringify(stats)), dailyStreak: dailyStreakNow(), last: last ? Object.assign({}, last) : null,
+      keys: Object.assign({}, keyState), words: N, overlay: overlay.classList.contains('show'), pending: tasks.length,
+    }),
+    words: () => WORDS.map(x => ({ w: x.w, cat: x.cat, tier: x.tier })),
+    kana: () => [...KANA],
+    evaluate: (g, a) => evaluate(g, a),
+    freeRule: s => freeRule(s),
+    starsFor: (a, b, c) => starsFor(a, b, c),
+    scoreFor: (a, b, c, d) => scoreFor(a, b, c, d),
+    setDate: ds => { fakeDate = ds || null; return today(); },
+    dailyAnswer: ds => dailyAnswer(ds),
+    start: (m, opts) => { quiet = true; if (m === 'daily') startDaily(); else startFree(opts || {}); quiet = false; return answer; },
+    resume: m => { if (m === 'daily') startDaily(); else startFree(); return answer; },
+    title: () => showTitle(),
+    type: s => { for (const ch of s) addChar(ch); return cur.join(''); },
+    romaji: s => { for (const ch of s) romajiFeed(ch); return cur.join(''); },
+    key: k => { if (k === 'enter') submit(); else if (k === 'del') delChar(); else if (k === 'mark') markChar(); else if (k === 'page') togglePage(); else if (k === 'hint') useHint(); },
+    guess: w => { quiet = true; cur = []; romaji = ''; for (const ch of w) addChar(ch); submit(); flush(); quiet = false; return phase; },
+    step: ms => { let left = ms; while (left > 0) { const d = Math.min(16, left); advance(d); updateFx(d / 1000); left -= d; } return phase; },
+    flush: () => { flush(); return phase; },
+    hold: v => { hold = !!v; },
+    reset: () => { try { for (const k of ['stats', 'daily', 'free', 'mute']) localStorage.removeItem(KEY + k); } catch (e) {} },
+  };
+
+  // ---- はじめの じゅんび と イベント（いちばん さいご）-------------------------
+  loadStats(); drawMute();
+  buildBoard(); buildKbd(); showTitle(); sizeFx();
+
+  kbdEl.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    audio();
+    if (b.dataset.ch) addChar(b.dataset.ch);
+    else if (b.dataset.fn === 'enter') submit();
+    else if (b.dataset.fn === 'del') delChar();
+    else if (b.dataset.fn === 'mark') markChar();
+    else if (b.dataset.fn === 'page') togglePage();
+    if (b.blur) b.blur();
+  });
+  kbdEl.addEventListener('contextmenu', e => e.preventDefault());
+  hintBtn.addEventListener('click', () => { audio(); useHint(); hintBtn.blur(); });
+  menuBtn.addEventListener('click', () => { audio(); if (phase === 'title') return; SFX.mark(); showTitle(); menuBtn.blur(); });
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(KEY + 'mute', muted ? '1' : '0'); } catch (e) {} drawMute(); if (!muted) { audio(); SFX.mark(); } muteBtn.blur(); });
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+    const k = e.key;
+    if (overlay.classList.contains('show')) {
+      if (k === 'Enter') { const b = overlay.querySelector('.obtns button'); if (b && document.activeElement && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); b.click(); } }
+      return;
+    }
+    if (phase !== 'play') return;
+    audio();
+    if (k === 'Enter') { e.preventDefault(); submit(); }
+    else if (k === 'Backspace' || k === 'Delete') { e.preventDefault(); delChar(); }
+    else if (k === ' ' || k === 'Spacebar') { e.preventDefault(); markChar(); }
+    else if (k === '-') romajiFeed('-');
+    else if (k.length === 1 && /[a-zA-Z]/.test(k)) romajiFeed(k.toLowerCase());
+    else if (k.length === 1 && KANA.has(k)) addChar(k);
+  });
+  document.addEventListener('visibilitychange', () => { lastT = performance.now(); });
+  window.addEventListener('resize', sizeFx);
+  requestAnimationFrame(t => { lastT = t; requestAnimationFrame(frame); });
+})();
+</script>
+</body>
+</html>
