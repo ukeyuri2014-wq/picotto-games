@@ -1,0 +1,86 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c077bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c1c3a"/><stop offset="1" stop-color="#0d0d1c"/>
+    </linearGradient>
+    <radialGradient id="c077glowL" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.45"/><stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c077glowR" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff5fa2" stop-opacity="0.45"/><stop offset="1" stop-color="#ff5fa2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c077chick" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe69a"/><stop offset="1" stop-color="#ffb84a"/>
+    </linearGradient>
+    <linearGradient id="c077owl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b88cff"/><stop offset="1" stop-color="#6b3fd0"/>
+    </linearGradient>
+    <linearGradient id="c077gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#53e0d8"/><stop offset="0.5" stop-color="#ffd166"/><stop offset="1" stop-color="#ff5fa2"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#c077bg)"/>
+  <g fill="#eeecfa" opacity="0.55">
+    <rect x="30" y="20" width="3" height="3"/><rect x="92" y="44" width="2" height="2"/><rect x="180" y="16" width="3" height="3"/>
+    <rect x="262" y="34" width="2" height="2"/><rect x="340" y="18" width="3" height="3"/><rect x="372" y="62" width="2" height="2"/>
+    <rect x="18" y="96" width="2" height="2"/><rect x="214" y="58" width="2" height="2"/>
+  </g>
+  <circle cx="96" cy="150" r="88" fill="url(#c077glowL)"/>
+  <circle cx="304" cy="150" r="88" fill="url(#c077glowR)"/>
+
+  <!-- ことばの くさり -->
+  <g fill="none" stroke="url(#c077gold)" stroke-width="7" stroke-linecap="round">
+    <rect x="150" y="100" width="34" height="20" rx="10"/>
+    <rect x="216" y="100" width="34" height="20" rx="10"/>
+  </g>
+  <rect x="176" y="104" width="48" height="12" rx="6" fill="none" stroke="#ffd166" stroke-width="6"/>
+  <g fill="#ffd166">
+    <path d="M200 78 l4 10 10 1 -8 7 3 10 -9 -6 -9 6 3 -10 -8 -7 10 -1z"/>
+    <rect x="160" y="132" width="5" height="5"/><rect x="236" y="136" width="5" height="5"/><rect x="198" y="140" width="4" height="4"/>
+  </g>
+
+  <!-- ふきだし（左） -->
+  <g>
+    <path d="M28 34 h112 a12 12 0 0 1 12 12 v30 a12 12 0 0 1 -12 12 h-58 l-14 16 v-16 h-40 a12 12 0 0 1 -12 -12 v-30 a12 12 0 0 1 12 -12z" fill="#1c1c33" stroke="#53e0d8" stroke-width="3"/>
+    <rect x="34" y="50" width="22" height="22" rx="5" fill="#2c2c4d"/>
+    <rect x="62" y="50" width="22" height="22" rx="5" fill="#2c2c4d"/>
+    <rect x="90" y="50" width="22" height="22" rx="5" fill="#2c2c4d"/>
+    <rect x="118" y="50" width="22" height="22" rx="5" fill="#ffd166"/>
+    <circle cx="45" cy="61" r="5" fill="#53e0d8"/><circle cx="73" cy="61" r="5" fill="#53e0d8"/><circle cx="101" cy="61" r="5" fill="#53e0d8"/>
+    <circle cx="129" cy="61" r="5" fill="#1c1c33"/>
+  </g>
+  <!-- ふきだし（右） -->
+  <g>
+    <path d="M260 34 h112 a12 12 0 0 1 12 12 v30 a12 12 0 0 1 -12 12 h-40 v16 l-14 -16 h-58 a12 12 0 0 1 -12 -12 v-30 a12 12 0 0 1 12 -12z" fill="#1c1c33" stroke="#ff5fa2" stroke-width="3"/>
+    <rect x="260" y="50" width="22" height="22" rx="5" fill="#ffd166"/>
+    <rect x="288" y="50" width="22" height="22" rx="5" fill="#2c2c4d"/>
+    <rect x="316" y="50" width="22" height="22" rx="5" fill="#2c2c4d"/>
+    <rect x="344" y="50" width="22" height="22" rx="5" fill="#2c2c4d"/>
+    <circle cx="271" cy="61" r="5" fill="#1c1c33"/>
+    <circle cx="299" cy="61" r="5" fill="#ff5fa2"/><circle cx="327" cy="61" r="5" fill="#ff5fa2"/><circle cx="355" cy="61" r="5" fill="#ff5fa2"/>
+  </g>
+
+  <!-- ひよこ -->
+  <g>
+    <ellipse cx="92" cy="208" rx="46" ry="7" fill="#000" opacity="0.35"/>
+    <ellipse cx="92" cy="168" rx="42" ry="40" fill="url(#c077chick)"/>
+    <path d="M84 128 q4 -14 10 -2 q8 -10 6 4z" fill="#ffb84a"/>
+    <ellipse cx="62" cy="176" rx="12" ry="18" fill="#ffc861" transform="rotate(18 62 176)"/>
+    <circle cx="80" cy="158" r="6" fill="#2a1c10"/><circle cx="108" cy="158" r="6" fill="#2a1c10"/>
+    <circle cx="82" cy="156" r="2" fill="#fff"/><circle cx="110" cy="156" r="2" fill="#fff"/>
+    <path d="M86 170 l16 0 -8 10z" fill="#ff7a3c"/>
+    <circle cx="70" cy="172" r="5" fill="#ff9aa8" opacity="0.7"/><circle cx="118" cy="172" r="5" fill="#ff9aa8" opacity="0.7"/>
+  </g>
+  <!-- ふくろう -->
+  <g>
+    <ellipse cx="308" cy="208" rx="48" ry="7" fill="#000" opacity="0.35"/>
+    <path d="M266 150 q0 -44 42 -44 q42 0 42 44 v20 q0 36 -42 36 q-42 0 -42 -36z" fill="url(#c077owl)"/>
+    <path d="M270 118 l14 12 -18 6z M346 118 l-14 12 18 6z" fill="#8e5cf0"/>
+    <ellipse cx="308" cy="182" rx="24" ry="20" fill="#d9c4ff" opacity="0.85"/>
+    <circle cx="290" cy="148" r="15" fill="#fff"/><circle cx="326" cy="148" r="15" fill="#fff"/>
+    <circle cx="292" cy="149" r="7" fill="#2a1c40"/><circle cx="324" cy="149" r="7" fill="#2a1c40"/>
+    <circle cx="294" cy="146" r="2.5" fill="#fff"/><circle cx="326" cy="146" r="2.5" fill="#fff"/>
+    <path d="M301 160 l14 0 -7 11z" fill="#ffd166"/>
+    <path d="M296 180 q4 5 8 0 M312 180 q4 5 8 0 M304 190 q4 5 8 0" fill="none" stroke="#8e5cf0" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

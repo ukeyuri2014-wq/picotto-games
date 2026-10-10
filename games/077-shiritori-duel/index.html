@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>しりとりしょうぶ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 5px 30px; overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+  }
+  .backbar{width:min(480px,100%);padding:0 3px;margin:0 0 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;min-width:48px;min-height:32px;padding:3px 12px;cursor:pointer;font-family:inherit}
+  header{width:min(480px,100%);padding:0 3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+  h1{font-size:21px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;width:min(480px,100%);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  #stage{display:flex;flex-direction:column;gap:6px;position:relative}
+  #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;touch-action:none}
+
+  .cpuRow{display:flex;gap:8px;align-items:center}
+  .ava{flex:0 0 54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a2a55,#1c1c33);border:2px solid var(--pink);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 0 14px rgba(255,95,162,.35)}
+  .ava.think{animation:bob .7s ease-in-out infinite alternate}
+  .ava.sad{filter:grayscale(.7);transform:rotate(-12deg)}
+  .ava.joy{animation:hop .35s ease-in-out infinite alternate}
+  @keyframes bob{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+  @keyframes hop{from{transform:translateY(0) scale(1)}to{transform:translateY(-6px) scale(1.06)}}
+  .bubble{flex:1;min-width:0;position:relative;background:var(--panel);border:2px solid rgba(255,95,162,.55);border-radius:12px;padding:4px 12px 6px;min-height:58px}
+  .bubble::before{content:"";position:absolute;left:-9px;top:22px;border:7px solid transparent;border-right-color:rgba(255,95,162,.55);border-left:0}
+  .who{font-size:11px;color:var(--pink);letter-spacing:1px;display:block}
+  .word{font-size:26px;letter-spacing:2px;line-height:1.25;white-space:nowrap;overflow:hidden}
+  .word.sm{font-size:21px;letter-spacing:1px}
+  .word i{font-style:normal}
+  .word .tail{color:var(--gold);text-shadow:0 0 10px rgba(255,209,102,.8)}
+  .word .nn{color:var(--pink);text-shadow:0 0 10px rgba(255,95,162,.9)}
+  .word .ph{font-size:14px;color:var(--sub);letter-spacing:1px}
+  .word .ph b{color:var(--gold);font-weight:400;font-size:20px}
+  .word .roma{color:var(--sub);font-size:18px}
+  .word .caret{display:inline-block;width:3px;height:24px;background:var(--cyan);vertical-align:-4px;margin-left:2px;animation:blink .9s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .dots i{animation:dot 1s infinite;opacity:.2}
+  .dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+  @keyframes dot{40%{opacity:1}}
+  .pop{animation:popin .28s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes popin{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+
+  .status{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);padding:0 4px}
+  .status b{color:var(--ink);font-weight:400;font-size:15px}
+  .status .best b{color:var(--gold)}
+  .log{height:28px;display:flex;gap:4px;align-items:center;overflow:hidden;white-space:nowrap;padding:0 2px;border-top:1px dashed var(--edge);border-bottom:1px dashed var(--edge)}
+  .log span{font-size:12px;padding:2px 7px;border-radius:999px;flex:0 0 auto}
+  .log .c{color:var(--pink);background:rgba(255,95,162,.1)}
+  .log .p{color:var(--cyan);background:rgba(83,224,216,.1)}
+  .log em{font-style:normal;color:var(--sub);font-size:11px;flex:0 0 auto}
+
+  .inputBox{position:relative;background:#0e0e1c;border:2px solid var(--cyan);border-radius:12px;padding:5px 46px 9px 12px;min-height:50px;box-shadow:0 0 14px rgba(83,224,216,.18) inset}
+  .inputBox.off{border-color:var(--edge);box-shadow:none}
+  .inputBox.shake{animation:shake .3s}
+  .inputBox.good{animation:good .4s}
+  @keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+  @keyframes good{40%{transform:scale(1.03);box-shadow:0 0 22px rgba(83,224,216,.8)}}
+  .inputBox .word{color:var(--cyan);min-height:33px}
+  .inputBox.off .word{color:#7fbdb9}
+  #tnum{position:absolute;right:10px;top:9px;font-size:20px;color:var(--gold)}
+  #tnum.low{color:var(--pink);animation:blink .5s steps(1) infinite}
+  .tbar{position:absolute;left:10px;right:10px;bottom:4px;height:5px;background:var(--edge);border-radius:3px;overflow:hidden}
+  .tbar i{display:block;height:100%;width:100%;background:var(--cyan);border-radius:3px}
+  .tbar i.low{background:var(--pink)}
+  .msg{height:20px;font-size:13px;text-align:center;color:var(--sub);white-space:nowrap;overflow:hidden}
+  .msg.bad{color:var(--pink)} .msg.ok{color:var(--gold)} .msg.hint{color:var(--violet)}
+  .msg b{font-weight:400;color:var(--gold)}
+
+  .kb{display:grid;grid-template-columns:repeat(10,1fr);gap:2px}
+  .key{font-family:inherit;font-size:19px;height:40px;padding:0;border-radius:7px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;touch-action:manipulation}
+  .key.sp{color:var(--violet);background:#191930}
+  .key.mk{font-size:30px;line-height:52px;overflow:hidden}
+  .key:active{background:#2c2c4d;transform:scale(.94)}
+  .key.glow{border-color:var(--gold);color:var(--gold);animation:glow .8s ease-in-out infinite alternate}
+  @keyframes glow{from{box-shadow:0 0 0 rgba(255,209,102,0)}to{box-shadow:0 0 12px rgba(255,209,102,.9)}}
+  .kb.off .key,.acts.off button{opacity:.38}
+  .acts{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:5px}
+  .acts button{font-family:inherit;font-size:15px;height:44px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;touch-action:manipulation;padding:0}
+  .acts button b{font-weight:400;color:var(--gold)}
+  #hintBtn{color:var(--violet)}
+  #okBtn{background:var(--cyan);color:#062a28;border:none;font-size:17px}
+  .acts button:disabled{opacity:.4}
+  .spop{position:absolute;left:50%;font-size:20px;color:var(--gold);text-shadow:0 0 10px rgba(255,209,102,.8);pointer-events:none;white-space:nowrap;animation:spop .9s ease-out forwards;z-index:3}
+  @keyframes spop{from{transform:translate(-50%,0) scale(.7);opacity:0}20%{opacity:1;transform:translate(-50%,-10px) scale(1.15)}to{transform:translate(-50%,-48px) scale(1);opacity:0}}
+
+  #overlay{position:absolute;inset:-2px;display:none;flex-direction:column;gap:9px;align-items:center;justify-content:center;background:rgba(19,19,34,.97);border-radius:8px;text-align:center;padding:10px;z-index:5}
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6);line-height:1.25}
+  #overlay .big.win{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.7)}
+  #overlay .big.lose{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.8}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .n{color:var(--pink)}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.7}
+  #overlay .rule b{color:var(--gold);font-weight:400}
+  .levels{display:flex;gap:6px;justify-content:center}
+  .levels button{font-family:inherit;font-size:13px;background:var(--panel);border:1px solid var(--edge);color:var(--sub);border-radius:12px;padding:6px 8px;min-width:94px;min-height:58px;cursor:pointer;line-height:1.4}
+  .levels button .e{font-size:20px;display:block}
+  .levels button.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08);box-shadow:0 0 10px rgba(255,209,102,.3)}
+  .go{font-family:inherit;font-size:18px;background:var(--cyan);color:#062a28;border:none;border-radius:10px;padding:11px 34px;min-height:46px;cursor:pointer;letter-spacing:2px}
+  .go.alt{background:var(--panel);color:var(--ink);border:1px solid var(--edge);font-size:14px;padding:11px 16px}
+  .btnrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .help{width:min(480px,100%);padding:0 4px;color:var(--sub);font-size:13px;margin-top:12px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .key:hover{border-color:var(--cyan)}
+    .levels button:hover{border-color:var(--gold)}
+    .go:hover{filter:brightness(1.12)}
+    .acts button:hover:not(:disabled){filter:brightness(1.15)}
+  }
+  @media (min-width:520px){ .key{height:42px;font-size:20px} }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="ひよこ・きつね・ふくろうの3だんかいのあいてと、しりとりでしょうぶ。あいてのことばのさいごの字からはじまることばを、ひらがなキーでうとう。「ん」でおわるとまけ、じかんはだんだんみじかくなる。ヒント3回、つづいたかずのベスト、あつめたことばのきろくつき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/077-shiritori-duel/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"しりとりしょうぶ","description":"ひよこ・きつね・ふくろうの3だんかいのあいてと、しりとりでしょうぶ。あいてのことばのさいごの字からはじまることばを、ひらがなキーでうとう。「ん」でおわるとまけ、じかんはだんだんみじかくなる。ヒント3回、つづいたかずのベスト、あつめたことばのきろくつき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/077-shiritori-duel/index.html","inLanguage":"ja","genre":"WORD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="077"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>しりとりしょうぶ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとりで</div>
+</header>
+
+<div id="wrap">
+  <div id="stage">
+    <div class="cpuRow">
+      <div class="ava" id="ava">🐣</div>
+      <div class="bubble"><span class="who" id="cpuName">ひよこ</span><div class="word" id="cpuWord"></div></div>
+    </div>
+    <div class="status">
+      <span>🔗 つづき <b id="stChain">0</b></span>
+      <span>⭐ <b id="stScore">0</b></span>
+      <span class="best">ベスト <b id="stBest">0</b></span>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="inputBox off" id="inputBox">
+      <div class="word" id="inWord"></div>
+      <span id="tnum"></span>
+      <div class="tbar"><i id="tfill"></i></div>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="kb off" id="kb"></div>
+    <div class="acts off" id="acts">
+      <button id="hintBtn">💡 ヒント <b id="hintN">3</b></button>
+      <button id="delBtn">⌫ けす</button>
+      <button id="okBtn">けってい</button>
+    </div>
+  </div>
+  <canvas id="fx" width="480" height="500"></canvas>
+  <div id="overlay" class="show">
+    <div id="ovTitle" style="display:contents">
+      <div class="big">しりとり<br>しょうぶ</div>
+      <div class="note">
+        あいての ことばの <b>さいごの字</b>から<br>はじまる ことばを うって かえそう！<br>
+        <span class="n">「ん」</span>で おわると まけ。おなじ ことばは つかえないよ。<br>
+        📱 もじをタップ ／ ⌨️ ローマ字でも うてる
+      </div>
+      <div class="levels" id="levels">
+        <button data-l="1"><span class="e">🐣</span><span class="t">よわい</span></button>
+        <button data-l="2"><span class="e">🦊</span><span class="t">ふつう</span></button>
+        <button data-l="3"><span class="e">🦉</span><span class="t">つよい</span></button>
+      </div>
+      <button class="go" id="startBtn">はじめる</button>
+      <div class="rule" id="ovStats"></div>
+    </div>
+    <div id="ovEnd" style="display:none">
+      <div class="big" id="endBig">かち！</div>
+      <div class="note" id="endNote"></div>
+      <div class="rule" id="endStats"></div>
+      <div class="btnrow">
+        <button class="go" id="againBtn">もういちど</button>
+        <button class="go alt" id="menuBtn">レベルをえらぶ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="help">
+  <p><b>ルール</b>：あいてが いった ことばの さいごの字から はじまる ことばを かえそう。じしょに ある ことばだけ つかえるよ。<b>「ん」でおわる</b>と まけ、じかんぎれも まけ。いちど でた ことばは もう つかえない。</p>
+  <p><b>こまかい きまり</b>：「ー」で おわるときは その まえの字（ぎたー → た）。ちいさい「ゃゅょ」は おおきい字に（きしゃ → や）。「が」と「か」は ちがう字だよ。</p>
+  <p><b>コツ</b>：「る」「ぷ」「ず」「ぬ」で おわる ことばで かえすと、あいては ことばが すくなくて こまる！ あいてが おもいつかなくなったら きみの かち。ながい ことばと はやい こたえは スコアが たかい。つづくほど じかんが みじかく なるよ。</p>
+  <p>⌨️ ローマ字で もじ ／ Enter＝けってい ／ Backspace＝けす ／ 「-」＝「ー」</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const KEY = 'ludot_shiritori-duel_';
+  const MUTE_KEY = KEY + 'mute', SAVE_KEY = KEY + 'save';
+  const MAXLEN = 10;
+
+  // ---- ことばリスト（ひらがな。2文字以上） ---------------------------------
+  const WORDS = `
+あり あさ あめ あし あひる あさがお あいす あき あな あみ あわ あご あたま あかちゃん あくび あじさい あおぞら あそび あまぐり あられ あんこ あいさつ あせ あした あみもの あざらし あやとり あさひ あめんぼ あげはちょう あんない あくしゅ あかり あいず あさごはん あしあと あじ あぶら あまのがわ あおむし
+いぬ いす いちご いか いえ いし いと いも いるか いのしし いわ いけ いなか いろ いちば いたずら いちょう いのち いど いね いろえんぴつ いんこ いしゃ いもうと いりぐち いちりんしゃ いわし いなずま いびき いくら いた いちにち いちねんせい いのり いろがみ いしころ
+うし うま うさぎ うみ うた うで うめ うちわ うどん うきわ うちゅう うんどうかい うろこ うなぎ うに うらない うわぎ うぐいす うえきばち うんてんしゅ うでどけい うす うそ うずまき うりば うけつけ うちゅうせん うみがめ うえ うしろ うんどう うめぼし うら うわばき
+えき えび えほん えんぴつ えだ えがお えさ えのぐ えんそく えいが えんとつ えりまき えだまめ えいご えら えもの えんがわ えきいん えんちょう えいゆう えのき えぷろん えれべーたー えすかれーたー えくぼ えと えんどうまめ えにっき えいよう えんぎ
+おに おかし おばけ おりがみ おにぎり おと おちゃ おの おおかみ おたまじゃくし おひさま おもちゃ おうさま おひめさま おかね おなか おふろ おんがく おまつり おうち おやつ おしろ おとな おてがみ おこめ おもち おやゆび おうだんほどう おちば おしょうがつ おんせん おかあさん おとうさん おにいさん おねえさん おべんとう おおぞら おか おかず おきもの おくりもの おつきさま おとしもの おどり おはなし おみせ おや おうえん おおそうじ おるがん おれんじ おーぶん おむれつ おむすび
+かさ かめ かに かば かえる かき かみ かお かぜ かぎ かい かた かたつむり かぼちゃ からす かもめ かかし かがみ かばん かびん かるた かれー かめら かいだん かぶとむし かまきり かみなり かわ かんがるー かもしか かいもの かぞく かたな かつお かなづち かんづめ かざぐるま かけっこ かみしばい かいじゅう かきごおり かれんだー かすたねっと かみひこうき かんらんしゃ かいがら からだ かっぱ かぶ かも かご かんごし かなぶん かいしゃ かいすいよく かいぞく かお かげ かけざん かざり かじ かしわもち かず かぞえうた かたち かだん かつら かね かびん かべ かま かみさま かみのけ からあげ かんじ かんばん かーてん かーど かすてら
+きつね きりん きのこ きって きっぷ きんぎょ きゅうり きく きもの きた きば きず きり きいろ きかい きしゃ きたかぜ きつつき きゅうきゅうしゃ きょうしつ きょうりゅう きゅうしょく きょうだい きんにく きゃべつ きゃんぷ きぼう きもち きせつ きじ きびだんご きいちご きんめだる きかんしゃ きりかぶ きぬ きおく  きし きず きそく きっさてん きのう きのみ きゅうけい きょうかしょ きょうそう きりぎりす きんいろ きんようび きゃんでぃー きゃらめる きうい
+くま くり くも くつ くるま くじら くち くさ くし くすり くだもの くつした くび くらげ くじゃく くるみ くれよん くわがた くうき くうこう くつや くさり くぎ くちばし くちびる くもり くろ くに くいず くっきー くりすます くらす くじ くわ くやくしょ くさむら くしゃみ くせ くちぶえ くつひも くびわ くべつ くみ くらやみ くりーむ くろーばー くれーん
+けむし けしごむ けむり けいと けが けん けーき けんだま けいさつ けしき けんばんはーもにか けやき けいさん けっこんしき けもの けんか けんきゅう けんびきょう けいこ けがわ けっか けつえき けむりだま けんこう けしいん けんどう けちゃっぷ
+こま こい こおり こども こあら ことり こめ こな こえ こころ こうえん こうもり こたつ こっぷ このは こばん こぶた こむぎ こや ころっけ こんぶ こんにゃく こうちゃ こおろぎ こいのぼり こくばん こけ こしょう こと こよみ こうじ こうさてん こうばん こくご こうてい こだま こがね こしかけ こもりうた こんちゅう こーひー こーと こいん こすもす こうそく こうつう こえだ こおりみず こがたな こぎつね こざかな こし こたえ こづつみ ことば こねこ こびと こぶし こむぎこ こゆび こんばん こーち こーん こーす
+さる さかな さくら さら さとう さい さめ さか さお さむらい さんま さくらんぼ さつまいも さんぽ さかみち さいふ さかだち さんかく さしみ さっかー さらだ さんどいっち さぼてん さそり さんご さけ さいころ さかなや さくぶん さんすう さつ さむさ さとうきび さんりんしゃ さいしょ さいご ささ さじ さかあがり さがしもの さき さくせん さざなみ さとり さばく さび さらあらい さる さわ さんせい さーかす さいれん さんた さうな
+しか しお しま しろ しっぽ しまうま しんぶん しゃしん しんかんせん しゃぼんだま しいたけ しおり しかく しごと しずく した しち しっぱい しつもん しまりす しめじ しもばしら しゃつ しゃもじ しゃりん しゅくだい しょうがっこう しょうぼうしゃ しょくぶつ しょくぱん しらが しりとり しる しんごう しんぞう しろくま しょうゆ しゃち しらす しばふ しあい しあわせ しーそー しーつ しちゅー しじみ しんせつ しょうぎ しおひがり しがつ しき しげみ しずか しぜん したぎ しなもの しばい しみ しめきり しも しゃかい しゃこ しゃしょう しゃべる しゃわー しゅうじ しゅじんこう しゅっぱつ しゅみ しょうが しょうじ しょうたい しょくじ しらゆき しり しるし しろ しんじゅ しんぱい しーる しゃーべっと しろっぷ
+すいか すずめ すし すな すみ すず すいとう すべりだい すいえい すいぞくかん すもう すきやき すいしゃ すきま すこっぷ すすき すそ すだれ すなば すなはま すにーかー すぷーん すりっぱ すずむし すいようび すいれん すーぷ すかーと すきー すけーと すてーき すとーぶ すぽんじ すいっち すたんぷ すりきず すみれ すもも すあし すいどう すうじ すがた すきっぷ すごろく すじ すずらん すてっき すとろー すなどけい すね すばこ すみっこ すもっぐ すりばち すいーつ すぱげってぃ すてーじ すいみん すぽーつ
+せみ せなか せき せんせい せんたく せっけん せかい せんろ せいと せんぷうき せんす せんべい せり せいざ せつぶん せびろ せろり せんしゅ せんちょう せいかつ せーたー せいくらべ せきゆ せんたくき せと せっく せいかい せいふく せかいちず せきはん せすじ せっと せのび せんえん  せんとう せんぬき せいり
+そら そり そば そうじ そと そうじき そふ そぼ そろばん そで そこ そーす そふぁー そーせーじ そうこ そよかぜ そつぎょう そうげん そらまめ そばや そめもの そふとくりーむ そっくり そうだん そくたつ そだち そつえん そらいろ そりすべり そんけい
+たこ たいこ たぬき たまご たけ たき たな たね たび たから たいよう たいふう たいそう たいやき たけのこ たこやき たたみ たつまき たて たに たまねぎ たんぽぽ たんじょうび たんけん たんぼ たいいく たおる たか たきび たくしー たすき たつのおとしご たわし たんす たいじゅう たべもの たまいれ たいかい たいちょう たると たいおん たいぼく たいりく たうえ たからもの たけうま たこあげ たし たしざん たすけ たたかい たなばた たにし たのしみ たび たま  たより たんご たんにん たいる  たーん たんばりん
+ちず ちょう ちから ちくわ ちきゅう ちかてつ ちりとり ちゅうしゃ ちゃわん ちょうちょ ちょきん ちょこれーと ちーず ちゅーりっぷ ちち ちえ ちかみち ちこく ちじょう ちゃいろ ちょうちん ちょうじょう ちりがみ ちんぱんじー ちーむ ちーたー ちらし ちどり ちか ちがい ちかく ちかしつ ちゃくりく ちゅうい ちゅうがっこう ちゅうしん ちょうし ちょうしょく ちょうせん ちょっき ちりめんじゃこ ちゃいむ ちゃんぴおん ちきん
+つき つくえ つる つめ つの つばめ つみき つな つり つち つえ つばさ つぼ つぼみ つゆ つらら つりばし つくし つつじ つなひき つなみ つめきり つりざお つうがくろ つうち つけもの つばき つみ つきみ つちふまず つうしん つかれ つぎ つきよ つくりかた つけね つた つつ つづき つな つぶ つま つまさき つみれ つむじ つよさ つりかわ つりぼり つるぎ つあー
+てがみ てつ てら てんき てぶくろ てれび てんし てつぼう てんとうむし てーぶる てにす てちょう てじな てぬぐい てのひら てんぐ てんぷら てんじょう てんらんかい てすと てっきょう てあし てつだい ていし てんさい てあて ていえん ていきけん ていでん てき てくび てさげ  てっぺん てつどう てながざる てほん てまえ てりょうり てんいん てんごく てんすう てんと てんぼうだい てーぷ てぃっしゅ
+とり とけい とら とまと となかい とんぼ とびばこ とうふ とうだい とうもろこし とかげ とし としょかん とだな とって となり とびら とびうお とらっく とらんぽりん とんねる とんかつ とさか とげ とち ともだち とうさん とおく ところてん とっきゅう とうめい とんび とけいだい としょしつ とーすと とまりぎ とうがらし とうげ とうばん とおり とかい とき とくい ところ としうえ とちゅう  とびいし とびら とほ とまりがけ とりい とりかご とりにく とろ とんがりぼうし とらんぷ とんかち とらんぺっと とれーにんぐ
+なす なし なつ なみ なわとび なべ なまえ ななつ なっとう なみだ なか なかま ながぐつ なぞなぞ なだれ なつやすみ なのはな なふだ なまず なめくじ なわ なんきょく ないふ なぎさ ながれぼし なつみかん ななふし なら ないしょ なえ ながさ ながそで ながねぎ なかゆび なかよし なきごえ なきむし なぞ なたね なつまつり なないろ なべもの なまけもの なみき ならびかた なると なんばん ないろん
+にじ にく にわ にわとり にんじん にんぎょう にもつ におい にがおえ にっき にほん にゅうがく にら にんじゃ にんにく にし にちようび にぼし にもの にゅうどうぐも にんげん にかい にがて にじゅうとび にっこう にがうり にがつ にきび にくや にしび にじいろ にせもの にっちょく にばん にまいがい にゅうえん にゅーす にんき にんぎょ
+ぬの ぬま ぬりえ ぬいぐるみ ぬか ぬけがら ぬかるみ ぬいもの ぬりぐすり ぬし ぬくもり ぬいめ ぬかづけ ぬけみち ぬりもの ぬれぎぬ
+ねこ ねずみ ねぎ ねつ ねんど ねじ ねくたい ねっこ ねまき ねがい ねぶくろ ねんがじょう ねぼう ねだん ねいろ ねぐら ねっくれす ねんりん ねごと ねあせ ねいき ねおき ねがお ねぐせ ねじまわし ねっしん ねったい ねどこ ねむけ ねらい ねんまつ ねんれい ねっと
+のり のはら のこぎり のど のみもの のりもの のうか のーと のりまき のれん のぼりぼう のやま のうじょう のみ のりば のぞみ のろし のうさぎ のうぎょう のき のこり のぞきあな のっぽ のはな のびる のぼり のぼりざか のみぐすり のら のりかえ のんき のっく
+はな はし はと はち はさみ はた はこ はしご はっぱ はなび はね はは はやし はり はる はれ はがき はくちょう はしら はたけ はだし はちみつ はなみ はなたば はなよめ はぶらし はまべ はみがき はむ はらっぱ はりねずみ はんかち はんこ はんばーぐ はくさい はいしゃ はかせ はかり はくぶつかん はごろも はちまき はつゆき はなし はにわ はまぐり はんたい はーもにか はんがー はいく はいいろ はえ はおり はか はぎ はくしゅ はぐるま はこにわ はしおき はじまり はしりたかとび はしりはばとび はす はず はだ はたおり はたらき はつおん はっけん はっぴょう はつめい はと はなうた はなぞの はなや はば はまち はやおき はやくち はら はりがね はるかぜ はるまき はれぎ はんぶん はーと はいきんぐ はんどる はんもっく
+ひこうき ひつじ ひまわり ひよこ ひかり ひげ ひざ ひじ ひも ひる ひろば ひがし ひきだし ひこうせん ひだり ひつじかい ひとで ひなた ひなまつり ひのき ひばな ひばり ひみつ ひゃく ひやけ ひょう ひらがな ひるね ひるごはん ひれ ひとり ひとつ ひきざん ひしもち ひーろー ひきわけ ひっこし ひあたり ひかげ ひがさ ひきにく ひぐま ひこぼし ひしょ ひたい ひづけ ひっさん ひと ひとさしゆび ひとみ ひなどり ひので ひび ひふ ひま ひめ ひやしちゅうか ひゃっかじてん ひょうし ひらめ ひるやすみ ひろさ ひんと ひーたー
+ふね ふく ふうせん ふくろう ふた ふで ふゆ ふえ ふうとう ふきん ふくろ ふじさん ふすま ふたご ふとん ふなのり ふみきり ふりかけ ふろ ふろしき ふんすい ふらいぱん ふぉーく ふうりん ふきのとう ふしぎ ふでばこ ふるさと ふじ ふくわらい ふゆやすみ ふうけい ふうふ ふかさ ふきだし ふくし ふくしゅう ふし ふた ふたつ ふち ふつう ふなたび ふぶき ふもと ふゆげしょう ふりこ ふりそで ふるほん ふろば ふんいき ふぃるむ ふらい ふるーつ ふらんすぱん
+へや へび へそ へちま へい へいわ へんじ へりこぷたー へるめっと へら へいじつ へた へいきん へんしん へのへのもへじ へいき へいせい へいや へきが へこみ へそくり へっどほん へとへと へやぎ へり へるしー へんか へんそう
+ほし ほん ほね ほたる ほうき ほうせき ほっぺ ほお ほうちょう ほうれんそう ほくろ ほこり ほしぞら ほたて ほっきょく ほとけ ほのお ほら ほらあな ほんだな ほうたい ほけんしつ ほいくえん ほうそう ほっとけーき ほーす ほてる ほしがき ほばしら ほこ ほうび ほうがく ほうげん ほうこう ほうほう ほかけぶね ほくとしちせい ほけん ほこうしゃ ほそみち ほたるいか ほどう ほとり ほほえみ ほや ほりごたつ ほんき ほんとう ほんもの ほんや ほーむ ほいっする
+まど まめ まくら まつり まほう まゆ まり まる まんが まつ まつげ まいご まえ まえば まき まく まぐろ まご まち まつぼっくり まないた まね まふゆ まふらー まめまき まゆげ まるた まわり まんげつ まんなか まんじゅう ますく まっち まいく まんぼう まきがい まきば まほうつかい まよなか まらそん まんと ましゅまろ まつたけ まと まいにち まいあさ まえがみ まがりかど まきじゃく まきもの まくらもと  まさつ ましかく まじょ ます まちあいしつ まちかど まつば まつやに まどぐち まなつ まぶた まほうびん まめでんきゅう まよい まるやね まわりみち まんいん まんてん まーく まかろに まよねーず まいむ まんごー
+みかん みず みみ みち みせ みそ みどり みなと みなみ みの みみず みや みらい みるく みんな みかづき みぎ みこし みずうみ みずぎ みずたまり みそしる みつ みつばち みのむし みやげ みかた みき みさき みずいろ みずでっぽう みつあみ みぞ みほん みもの みあい みかく みがる みぎて みこ みじんこ みずあそび  みずくさ みずたま みずな みせばん みぞれ みだし みちくさ みつば みなみかぜ みね みぶん みまい みみかき みやこ みょうじ みりん みんみんぜみ みーとぼーる みきさー みっくす みるくてぃー
+むし むぎ むら むね むしめがね むぎちゃ むぎわらぼうし むすめ むらさき むかし むかで むこう むしば むすこ むりょう むかしばなし むしかご むしとりあみ むち むげん むささび むかい むき むぎばたけ むくどり むこ むしぼし むすび むね むらびと むれ むーす
+めだか めがね めろん めいろ めだま めん めいし めざましどけい めし めじるし めす めだる めにゅー めばえ めもちょう めんこ めかくし めぐすり めざし めいじん めもり めろでぃー めんどり めあて めい めいあん めいさく めいぶつ めいわく めうし めがみ めぐみ めじろ めだまやき めばな めまい めやす めんきょ めんせつ めーる めーとる めりーごーらんど めろんぱん
+もも もり もち もぐら もみじ もん もくば もじ もけい もちつき もっきん もの ものおき ものがたり ものさし もみのき もめん もや もやし もよう もんだい もうふ もくようび もぐらたたき もなか もずく もくてき もちぬし もーたー もっぷ もうじゅう もえぎいろ もくじ もくせい もくひょう もじばん もちごめ もちもの もと ものしり ものまね もみがら ももいろ もよおし もりあおがえる もんく もんしろちょう もでる もにたー もんぶらん
+やま やぎ やさい やね やかん やきいも やきゅう やくそく やけど やし やじるし やすみ やっきょく やど やなぎ やぶ やまびこ やまみち やり やおや やきそば やきとり やくしょ やご やじろべえ やたい やつで やまいも やまねこ やもり やきにく やまのぼり やかた やく  やかたぶね やきざかな やきめし  やくめ やけい やさしさ やじり やすうり やせい やつ やぬし やぶれ やまおく やまかじ やまごや やまざくら やまば やみ やりかた やわらかさ やんま
+ゆき ゆび ゆめ ゆか ゆうひ ゆうやけ ゆきだるま ゆげ ゆみ ゆり ゆりかご ゆうえんち ゆうがた ゆうびん ゆかた ゆきがっせん ゆず ゆのみ ゆびわ ゆうき ゆうしょう ゆうれい ゆでたまご ゆうだち ゆうびんきょく ゆきぐに ゆみや ゆうしょく ゆうえい ゆうぐ ゆうぐれ ゆうじん ゆうほどう ゆうやけぞら ゆかい ゆきおとこ ゆきおろし ゆきみち ゆくえ ゆしゅつ ゆたんぽ ゆびきり ゆびさき ゆぶね  ゆりね ゆるし ゆにほーむ ゆーもあ
+よる よこ よつば よっと よもぎ ようかん ようちえん ようふく よぞら よだれ よなか よみせ よろい よーぐると よあけ ようい ようじ ようす よこづな よしゅう よてい よぼう よみかた よめ よろこび よつかど よーよー よっつ ようがし ようき ようきゅう ようす ようび ようもう よくしつ よこがお よこみち よさん よしあし よそみ よなべ よのなか よふかし よみもの よやく よゆう よろず よわむし
+らくだ らっぱ らいおん らっこ らじお らーめん らいと らくがき らっきょう らん らいす らいねん らくえん らけっと らっかせい らんどせる らんぷ らむね らいむ らべる らいばる らくご らせん らいう らいげつ らいしゅう らくのう らしんばん らっしゅ らんち らんなー らいち らずべりー
+りんご りす りぼん りく りか りゅう りょうり りょこう りんどう りゅっく りれー りもこん りきし りくじょう りそう りはつてん りゅうぐう りょうし りょうて りんかく りずむ りーだー りょかん りんぐ りふと りこーだー りゆう りょうしん りえき りかい りくち りす りったい りっぱ りゅうせい りゅうひょう りょう りょうあし りょうがえ りょうきん りょうほう りょうめん りょくちゃ りれきしょ りんじん りずむかん りぞっと りはーさる りぼんむすび
+るす るすばん るーる るーぺ るびー るり るつぼ るーと るすでん るい るすばんでんわ るーきー るーむ るーぷ るいじ るりいろ
+れもん れいぞうこ れんこん れっしゃ れたす れんが れきし れいとうこ れんしゅう れんらく れいんこーと れすとらん れんげ れい れつ れこーど れーる れーす れんず れじ れっすん れもねーど れいぎ れいど れいはい れいぼう れきしか れっとう れんきゅう れんぞく れんらくちょう れーずん ればー れんたる
+ろうそく ろば ろぼっと ろうか ろけっと ろーぷ ろく ろっかー ろてんぶろ ろうじん ろじ ろーらー ろせん ろくろ ろくがつ ろっこつ ろうどく ろくおん ろくが ろじうら ろっく ろてん ろめん ろんぶん ろーす ろーるぱん ろぐはうす
+わに わた わし わごむ わかめ わりばし わなげ わらい わたあめ わがし わく わけ わさび わすれもの わたりどり わっか わら わらび わりざん わんぱく わたげ わいしゃつ わくせい わかば わな わるもの わごん わっふる わかもの わかれみち わき わきみず わくわく わざ わしつ わすれなぐさ わたしぶね わたりろうか わふく わらいごえ わらじ わりあい わるぐち わんこ わんぴーす わっくす
+がっこう がらす がむ がちょう がようし がいこく がっき がけ がまん がいとう がくしゅう がびょう がめん がか がくげいかい がっしょう がいこつ がれーじ がーぜ がいしゅつ がくえん がくねん がくふ がっきゅう がっしゅく がまぐち がらがら がんばり がいど
+ぎんこう ぎゅうにゅう ぎたー ぎょうざ ぎんが ぎもん ぎゅうにく ぎょうれつ ぎんなん ぎじゅつ ぎんいろ ぎょせん ぎいん ぎおん ぎざぎざ ぎむ ぎょうじ ぎょうぎ ぎんめだる ぎふと
+ぐんて ぐらす ぐらたん ぐみ ぐろーぶ ぐあい ぐりーんぴーす ぐらうんど ぐるーぷ ぐれーぷふるーつ ぐうすう ぐたいてき ぐっず ぐるめ  ぐりる
+げた げんかん げーむ げんき げき げんこつ げつようび げんこう げいじゅつ げんりょう げきじょう げんごろう げすと げい げいとう げか げざん げしゅく げすい げたばこ げっこう げんいん げんかい げんざい げんじつ げんば
+ごま ごはん ごりら ごみ ごぼう ごむ ごーる ごちそう ごご ごぜん ごほうび ごみばこ ごがつ ごーぐる ごんどら ごうかく ごむとび ごうけい ごうれい ごかい ごきげん ごじゅうおん ごちゃまぜ ごま ごますり ごみすて ごむまり ごろあわせ ごるふ
+ざる ざりがに ざぶとん ざっし ざせき ざくろ ざいりょう ざしき ざっそう ざらめ ざいさん ざつおん ざっか ざつだん ざるそば
+じかん じてんしゃ じしょ じゃがいも じどうしゃ じめん じゃんけん じしゃく じゅーす じゅんばん じょうろ じゆう じしん じまん じむしょ じゃぐち じゃむ じゅうどう じょうぎ じょうず じんじゃ じゅうたん じてん じかんわり じゃんぷ じゅく じぐざぐ じーんず じどうかん じゃんぐる じゅうい じゅうしょ じかい じけん じこ  じしゃ じじつ じっけん じぬし じびき じぶん じめん じもと じゃり じゅうがつ じゅうぶん じゅぎょう じゅもん じゅんび じょうだん じょうひん じょおう じんこう じんせい じゃけっと じぇっとき
+ずかん ずぼん ずつう ずこう ずけい ずるやすみ ずっきーに ずわいがに ずきん ずのう ずめん ずあん ずが ずひょう ずぶぬれ ずれ
+ぜりー ぜんまい ぜいきん ぜんぶ ぜっけん ぜんいん ぜんはん ぜろ ぜんりょく ぜいたく ぜんご ぜんこく ぜんしん ぜんたい ぜんや ぜっこうちょう
+ぞう ぞうきん ぞうり ぞうに ぞうきばやし ぞうげ ぞうさん ぞうすい ぞうか ぞうしょ ぞうせん ぞくへん ぞろめ
+だんご だるま だちょう だいこん だいく だんぼーる だいず だいどころ だいや だいがく だっこ だし だんす だむ だいじ だいすき だいぶつ だんろ だがし だえん だいめい だいとうりょう だっしゅ だいきん だいち だいひょう だいり だえき だきまくら だしもの だつぼう だて だんごむし だんち だんらく だいびんぐ だいえっと
+でんわ でんしゃ でぐち でんち でんき でざーと でこぼこ でんせん でんちゅう でんとう でぱーと でんきゅう でまえ でし でんごん でんぱ でめきん でーた であい でいりぐち でかけ できごと でたらめ でなおし でばん でまど でんげん でんしれんじ でんたく でんぷん でっき でざいん
+どんぐり どうぶつ どあ どろ どらむ どーなつ どうろ どじょう どうぶつえん どうわ どくしょ どて どなべ どようび どれす どろんこ どうぐ どうぞう どひょう どらごん どれみ どうてん どーむ どうが どうじ どうぞ どうとく どうよう どかん どきょう どく どだい どま どらやき どりょく どろぼう どんぶり どりる どれっしんぐ
+ばなな ばす ばら ばった ばけつ ばたー ばしゃ ばいおりん ばね ばんごはん ばんそうこう ばいきん ばしょ ばれーぼーる ばれえ ばっと ばとん ばんごう ばいく ばすてい ばーべきゅー ばけもの ばんざい ばすけっと ばっじ ばにら ばく ばあい ばいてん  ばくはつ ばしゃうま ばつ ばっぐ ばね ばめん ばらいろ ばらばら ばりき ばんぐみ ばんち ばんど ばんめし ばるーん ばらんす ばどみんとん
+びん びわ びょういん びじゅつかん びーだま びすけっと びよういん びょうき びっくり びり びじん びーち びょうぶ びにーる びたみん びーばー びでお びか びじゅつ びしょぬれ びょう びら  びんづめ びんぼう びーず びる びおら
+ぶた ぶどう ぶらんこ ぶらし ぶひん ぶんぼうぐ ぶり ぶんか ぶんしょう ぶたい ぶし ぶろっく ぶーつ ぶどうえん ぶるどーざー ぶなしめじ ぶろっこりー ぶれーき ぶか ぶぶん ぶつぞう ぶたにく  ぶな ぶひんばこ ぶんすう ぶんつう ぶんぽう ぶんるい ぶざー ぶるーべりー ぶらすばんど
+べんとう べると べる べっど べんち べらんだ べに べんきょう べんり べつ べーこん べんごし べにしょうが べいこく べっそう べつばら べにいろ べんきょうづくえ べんじょ べる べすと べーる
+ぼうし ぼーる ぼたん ぼうけん ぼくじょう ぼんおどり ぼーと ぼう ぼうえんきょう ぼく ぼうず ぼんさい ぼうはん ぼたんゆき ぼす ぼーなす ぼんち ぼくとう ぼうさい ぼうふう ぼくし ぼこう ぼしゅう ぼたもち ぼっちゃん ぼろ ぼんやり  ぼとる ぼうりんぐ
+ぱん ぱんだ ぱせり ぱずる ぱいなっぷる ぱじゃま ぱーてぃー ぱんや ぱとかー ぱれーど ぱいろっと ぱんく ぱそこん ぱぱ ぱふぇ ぱいぷ ぱんけーき ぱれっと ぱらしゅーと ぱいんじゅーす ぱす ぱすた ぱすぽーと ぱっく ぱぷりか ぱらそる ぱんこ ぱんつ ぱーま ぱわー
+ぴあの ぴーまん ぴざ ぴくにっく ぴえろ ぴーなっつ ぴんく ぴらみっど ぴんぽん ぴっちゃー ぴんせっと ぴあす ぴくるす ぴっける ぴん ぴんち ぴーす ぴゅーま
+ぷりん ぷーる ぷれぜんと ぷろぺら ぷらねたりうむ ぷろ ぷらす ぷりんと ぷろぐらむ ぷらむ ぷりんたー ぷらいど ぷらん ぷりずむ ぷれー ぷろぐらま ぷーどる ぷらすちっく ぷちとまと
+ぺんぎん ぺんき ぺーじ ぺだる ぺっと ぺりかん ぺん ぺあ ぺんだんと ぺんしょん ぺっとぼとる ぺーす ぺんち ぺこぺこ ぺらぺら ぺんさき ぺんたて ぺんふれんど ぺーぱー 
+ぽすと ぽけっと ぽっと ぽぷら ぽんぷ ぽてと ぽにー ぽすたー ぽっぷこーん ぽーず ぽんず ぽいんと ぽたーじゅ ぽりぶくろ ぽんかん ぽかぽか ぽけっとてぃっしゅ ぽしぇっと ぽたぽた ぽっけ ぽろしゃつ ぽーち ぽにーてーる ぽてとさらだ
+`.split(/\s+/).filter(Boolean);
+  const DICT = [...new Set(WORDS)];
+  const DSET = new Set(DICT);
+  const BY = {};
+  for (const w of DICT) (BY[w[0]] = BY[w[0]] || []).push(w);
+
+  const SMALL = { 'ゃ': 'や', 'ゅ': 'ゆ', 'ょ': 'よ', 'ぁ': 'あ', 'ぃ': 'い', 'ぅ': 'う', 'ぇ': 'え', 'ぉ': 'お', 'っ': 'つ', 'ゎ': 'わ' };
+  const TOSMALL = {}; for (const k in SMALL) TOSMALL[SMALL[k]] = k;
+  const DAKU = {}, UNDAKU = {}, HAN = {}, UNHAN = {};
+  { const d = 'かがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどはばひびふぶへべほぼ';
+    for (let i = 0; i < d.length; i += 2) { DAKU[d[i]] = d[i + 1]; UNDAKU[d[i + 1]] = d[i]; }
+    const h = 'はぱひぴふぷへぺほぽ';
+    for (let i = 0; i < h.length; i += 2) { HAN[h[i]] = h[i + 1]; UNHAN[h[i + 1]] = h[i]; } }
+  const baseOf = c => UNDAKU[c] || UNHAN[c] || c;
+  function tailIndex(w) { let i = w.length - 1; while (i > 0 && w[i] === 'ー') i--; return i; }
+  function tailOf(w) { const c = w[tailIndex(w)]; return SMALL[c] || c; }
+  const endsN = w => tailOf(w) === 'ん';
+
+  // ---- ローマ字 ------------------------------------------------------------
+  const ROMA = {};
+  { const V = 'aiueo';
+    const rows = { '': 'あいうえお', k: 'かきくけこ', s: 'さしすせそ', t: 'たちつてと', n: 'なにぬねの', h: 'はひふへほ', m: 'まみむめも', r: 'らりるれろ', g: 'がぎぐげご', z: 'ざじずぜぞ', d: 'だぢづでど', b: 'ばびぶべぼ', p: 'ぱぴぷぺぽ' };
+    for (const c in rows) for (let i = 0; i < 5; i++) ROMA[c + V[i]] = rows[c][i];
+    Object.assign(ROMA, { ya: 'や', yu: 'ゆ', yo: 'よ', wa: 'わ', wo: 'を', shi: 'し', chi: 'ち', tsu: 'つ', fu: 'ふ', ji: 'じ',
+      fa: 'ふぁ', fi: 'ふぃ', fe: 'ふぇ', fo: 'ふぉ', thi: 'てぃ', dhi: 'でぃ', xa: 'ぁ', xi: 'ぃ', xu: 'ぅ', xe: 'ぇ', xo: 'ぉ', xtu: 'っ', xya: 'ゃ', xyu: 'ゅ', xyo: 'ょ' });
+    const y = { k: 'き', s: 'し', t: 'ち', n: 'に', h: 'ひ', m: 'み', r: 'り', g: 'ぎ', z: 'じ', b: 'び', p: 'ぴ', j: 'じ', sh: 'し', ch: 'ち' };
+    for (const c in y) {
+      const mid = (c === 'sh' || c === 'ch') ? '' : 'y';
+      ROMA[c + mid + 'a'] = y[c] + 'ゃ'; ROMA[c + mid + 'u'] = y[c] + 'ゅ'; ROMA[c + mid + 'o'] = y[c] + 'ょ';
+    }
+    ROMA.ja = 'じゃ'; ROMA.ju = 'じゅ'; ROMA.jo = 'じょ'; ROMA.je = 'じぇ'; ROMA.she = 'しぇ'; ROMA.che = 'ちぇ';
+  }
+  const ROMA_PREFIX = new Set();
+  for (const k in ROMA) for (let i = 1; i < k.length; i++) ROMA_PREFIX.add(k.slice(0, i));
+
+  // ---- あいて --------------------------------------------------------------
+  const FOES = [null,
+    { emo: '🐣', name: 'ひよこ', lv: 'よわい', frac: 0.4, base: 30, min: 14, think: [1.0, 1.9] },
+    { emo: '🦊', name: 'きつね', lv: 'ふつう', frac: 0.7, base: 22, min: 10, think: [0.9, 1.6] },
+    { emo: '🦉', name: 'ふくろう', lv: 'つよい', frac: 1.0, base: 15, min: 8, think: [0.7, 1.3] },
+  ];
+  const OPENERS = ['しりとり', 'すいか', 'ねこ', 'たぬき', 'こま', 'かめ', 'つくえ', 'はな', 'やま', 'うさぎ', 'ことり', 'かさ', 'ほし', 'いす', 'くるま'];
+
+  // ---- らんすう ------------------------------------------------------------
+  let seed = (Date.now() ^ (Math.random() * 1e9)) >>> 0;
+  function rng() { seed = (seed + 0x6D2B79F5) >>> 0; let t = seed; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+  const pick = a => a[Math.floor(rng() * a.length)];
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    key() { tone('square', 760, 900, 0.035, 0.03); },
+    del() { tone('square', 420, 300, 0.05, 0.03); },
+    ok(n) { [523, 659, 784, 1046].slice(0, Math.max(2, Math.min(4, n - 1))).forEach((f, i) => tone('triangle', f, f, 0.11, 0.08, i * 0.06)); },
+    bad() { tone('sawtooth', 190, 120, 0.14, 0.05); },
+    cpu() { tone('square', 330, 440, 0.07, 0.04); tone('square', 440, 392, 0.09, 0.04, 0.08); },
+    tick() { tone('square', 1100, 1100, 0.04, 0.035); },
+    hint() { tone('sine', 880, 1320, 0.16, 0.06); },
+    win() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.15, 0.065, 0.15 + i * 0.09)); },
+    lose() { tone('sawtooth', 320, 90, 0.55, 0.07, 0.1); },
+    start() { tone('triangle', 440, 660, 0.1, 0.06); tone('triangle', 660, 880, 0.12, 0.06, 0.1); },
+  };
+
+  // ---- save ----------------------------------------------------------------
+  let save = { best: [0, 0, 0, 0], win: [0, 0, 0, 0], lose: [0, 0, 0, 0], hi: 0, plays: 0, level: 1, zukan: [] };
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+    if (s && typeof s === 'object') {
+      for (const k of ['best', 'win', 'lose']) if (Array.isArray(s[k])) for (let i = 1; i <= 3; i++) save[k][i] = Math.max(0, +s[k][i] || 0);
+      save.hi = +s.hi || 0; save.plays = +s.plays || 0; save.level = [1, 2, 3].includes(+s.level) ? +s.level : 1;
+      if (Array.isArray(s.zukan)) save.zukan = s.zukan.filter(w => DSET.has(w));
+    }
+  } catch (e) {}
+  const zukan = new Set(save.zukan);
+  function store() { save.zukan = [...zukan]; try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+
+  // ---- state ---------------------------------------------------------------
+  let phase = 'title', level = save.level;
+  let used = [], usedSet = new Set(), need = '', input = '', roma = '';
+  let timeLeft = 0, timeMax = 1, cpuT = 0, endT = 0, msgT = 0, lastTick = 0;
+  let score = 0, pWords = 0, hints = 3, hintWord = '', newWords = 0;
+  let vocab = new Set(), forcedCpu = null, result = null, cpuView = 'idle', lastPlayer = '';
+  let frozen = false, simMode = false, msgText = '', msgCls = '';
+  let particles = [];
+
+  const $ = id => document.getElementById(id);
+  const el = { wrap: $('wrap'), stage: $('stage'), fx: $('fx'), overlay: $('overlay'), ovTitle: $('ovTitle'), ovEnd: $('ovEnd'),
+    ava: $('ava'), cpuName: $('cpuName'), cpuWord: $('cpuWord'), stChain: $('stChain'), stScore: $('stScore'), stBest: $('stBest'),
+    log: $('log'), inputBox: $('inputBox'), inWord: $('inWord'), tnum: $('tnum'), tfill: $('tfill'), msg: $('msg'), kb: $('kb'), acts: $('acts'),
+    hintBtn: $('hintBtn'), hintN: $('hintN'), delBtn: $('delBtn'), okBtn: $('okBtn'), levels: $('levels'), startBtn: $('startBtn'), ovStats: $('ovStats'),
+    endBig: $('endBig'), endNote: $('endNote'), endStats: $('endStats'), againBtn: $('againBtn'), menuBtn: $('menuBtn'), mute: $('mute-btn') };
+  const fctx = el.fx.getContext('2d');
+  const chain = () => Math.max(0, used.length - 1);
+  const limitFor = () => Math.max(FOES[level].min, FOES[level].base - Math.floor(pWords / 3));
+
+  // ---- rules ---------------------------------------------------------------
+  // 返り値: 'empty' | 'first' | 'notfound' | 'used' | 'n' | 'ok'
+  function judge(w) {
+    if (!w || w.length < 2) return 'empty';
+    if (w[0] !== need) return 'first';
+    if (!DSET.has(w)) return 'notfound';
+    if (usedSet.has(w)) return 'used';
+    if (endsN(w)) return 'n';
+    return 'ok';
+  }
+  function candidates(k, onlyVocab) {
+    return (BY[k] || []).filter(w => !usedSet.has(w) && (!onlyVocab || vocab.has(w)));
+  }
+  function anyWord(k) {   // プレイヤーが言える ことば（「ん」でおわらない）
+    const c = candidates(k || need, false).filter(w => !endsN(w));
+    if (!c.length) return null;
+    const short = c.filter(w => w.length <= 4);
+    return pick(short.length ? short : c);
+  }
+  function cpuChoose(lv) {
+    const c = candidates(need, true);
+    if (!c.length) return null;
+    const safe = c.filter(w => !endsN(w));
+    if (lv === 1) return pick(c);                       // うっかり「ん」も言う
+    if (lv === 2) return safe.length ? pick(safe) : pick(c);
+    if (!safe.length) return null;
+    if (rng() < 0.5) return pick(safe);
+    // つよい：あいて（プレイヤー）が 言える ことばが すくない字で おわる ことばを ねらう
+    const scored = safe.map(w => { const t = tailOf(w); return { w, n: (BY[t] || []).filter(x => !usedSet.has(x) && x !== w && !endsN(x)).length }; });
+    scored.sort((a, b) => a.n - b.n);
+    return pick(scored.slice(0, Math.min(4, scored.length))).w;
+  }
+
+  // ---- flow ----------------------------------------------------------------
+  function pushWord(w, who) { used.push({ w, who }); usedSet.add(w); }
+  function startGame(lv, sd) {
+    if (lv) level = lv;
+    if (sd !== undefined && sd !== null) seed = sd >>> 0;
+    save.level = level; if (!simMode) store();
+    const f = FOES[level];
+    used = []; usedSet = new Set(); input = ''; roma = ''; score = 0; pWords = 0; hints = 3; hintWord = ''; newWords = 0;
+    forcedCpu = null; result = null; lastPlayer = ''; particles = []; msgT = 0;
+    vocab = new Set(f.frac >= 1 ? DICT : DICT.filter(() => rng() < f.frac));
+    const op = save.plays === 0 && !simMode ? 'しりとり' : pick(OPENERS);
+    pushWord(op, 'c'); need = tailOf(op); cpuView = 'word';
+    el.overlay.classList.remove('show');
+    beginPlayer();
+    setMsg('', '');
+    if (!simMode) { SFX.start(); sizeFx(); render(); }
+  }
+  function beginPlayer() { phase = 'player'; input = ''; roma = ''; hintWord = ''; timeMax = limitFor(); timeLeft = timeMax; lastTick = Math.ceil(timeLeft); }
+  function beginCpu() { phase = 'cpu'; cpuView = 'think'; const t = FOES[level].think; cpuT = t[0] + rng() * (t[1] - t[0]); }
+  function acceptPlayer(w) {
+    const hinted = w === hintWord;
+    const pts = hinted ? 5 : w.length * 10 + Math.max(0, Math.floor(timeLeft));
+    pushWord(w, 'p'); pWords++; score += pts; lastPlayer = w; need = tailOf(w);
+    if (!simMode && !zukan.has(w)) { zukan.add(w); newWords++; }
+    input = ''; roma = '';
+    if (!simMode) {
+      SFX.ok(w.length); flash('good'); scorePop('+' + pts + (w.length >= 5 && !hinted ? ' ながい！' : ''));
+      burst(0.5, 0.56, w.length >= 5 ? 26 : 14, ['#53e0d8', '#ffd166', '#eeecfa']);
+      setMsg(hinted ? 'ヒントの ことばは 5てん' : (w.length >= 5 ? 'ながい ことば！ ナイス！' : 'いいね！'), 'ok', 1.2);
+    }
+    beginCpu();
+  }
+  function submit() {
+    if (phase !== 'player') return 'wait';
+    if (roma === 'n') { addChar('ん'); } roma = '';
+    const w = input, r = judge(w);
+    if (r === 'ok') { acceptPlayer(w); render(); return r; }
+    if (r === 'n') {
+      pushWord(w, 'p'); pWords++; lastPlayer = w; input = '';
+      finish(false, 'n'); render(); return r;
+    }
+    if (!simMode) { SFX.bad(); flash('shake'); }
+    if (r === 'empty') setMsg('ことばを いれてね（2もじ いじょう）', 'bad', 1.6);
+    else if (r === 'first') setMsg('「' + need + '」から はじまる ことばだよ', 'bad', 1.8);
+    else if (r === 'notfound') setMsg('じしょに ない ことばだよ。べつのを かんがえよう', 'bad', 2);
+    else if (r === 'used') { setMsg('もう つかった ことば！（-3びょう）', 'bad', 1.8); timeLeft = Math.max(0.5, timeLeft - 3); input = ''; }
+    render(); return r;
+  }
+  function cpuPlay() {
+    const w = forcedCpu || cpuChoose(level); forcedCpu = null;
+    if (!w) { cpuView = 'giveup'; finish(true, 'giveup'); render(); return null; }
+    pushWord(w, 'c'); cpuView = 'word';
+    if (!simMode) SFX.cpu();
+    if (endsN(w)) { finish(true, 'cpu_n'); render(); return w; }
+    need = tailOf(w);
+    beginPlayer();
+    if (!simMode) { popWord(); render(); }
+    return w;
+  }
+  function finish(win, reason) {
+    phase = 'ending'; endT = 1.5;
+    const c = chain(); let newBest = false;
+    if (win) score += 200 * level;
+    result = { win, reason, chain: c, score, level, newBest: false, example: reason === 'time' ? anyWord(need) : null, needAt: need };
+    if (simMode) return;
+    save.plays++;
+    if (win) save.win[level]++; else save.lose[level]++;
+    if (c > save.best[level]) { save.best[level] = c; newBest = true; }
+    if (score > save.hi) save.hi = score;
+    result.newBest = newBest;
+    store();
+    if (win) { SFX.win(); confetti(); } else SFX.lose();
+    setMsg(win ? (reason === 'cpu_n' ? 'あいてが「ん」で おわった！' : 'あいてが おもいつかない！') : (reason === 'n' ? 'あっ！「ん」が ついちゃった…' : 'じかんぎれ…'), win ? 'ok' : 'bad', 9);
+  }
+  function showEnd() {
+    phase = 'end';
+    const r = result, f = FOES[r.level];
+    el.ovTitle.style.display = 'none'; el.ovEnd.style.display = 'contents';
+    el.endBig.className = 'big ' + (r.win ? 'win' : 'lose');
+    el.endBig.textContent = r.win ? '🎉 かち！' : 'ざんねん…';
+    let note = '';
+    if (r.reason === 'cpu_n') note = f.emo + ' ' + f.name + 'が <span class="n">「ん」</span>で おわった！';
+    else if (r.reason === 'giveup') note = f.emo + ' ' + f.name + 'は 「' + r.needAt + '」の ことばを<br>おもいつかなかった！ きみの かち！';
+    else if (r.reason === 'n') note = '<span class="n">「ん」</span>で おわる ことばを いっちゃった…';
+    else note = 'じかんぎれ…' + (r.example ? '<br>「' + r.needAt + '」なら <b>' + r.example + '</b> が あったよ' : '<br>「' + r.needAt + '」の ことばは もう のこって なかった！');
+    el.endNote.innerHTML = note;
+    el.endStats.innerHTML = '🔗 つづいた かず <b>' + r.chain + '</b>（ベスト ' + save.best[r.level] + '）' + (r.newBest ? ' <b>しんきろく！</b>' : '') +
+      '<br>⭐ スコア <b>' + r.score + '</b>（さいこう ' + save.hi + '）' +
+      '<br>📖 あたらしい ことば <b>+' + newWords + '</b>（あつめた かず ' + zukan.size + '／' + DICT.length + '）';
+    el.overlay.classList.add('show');
+    render();
+  }
+  function showTitle() {
+    phase = 'title'; cpuView = 'idle';
+    el.ovTitle.style.display = 'contents'; el.ovEnd.style.display = 'none';
+    el.overlay.classList.add('show');
+    drawLevels(); render();
+  }
+  function drawLevels() {
+    [...el.levels.children].forEach(b => {
+      const l = +b.dataset.l; b.classList.toggle('on', l === level);
+      b.querySelector('.t').textContent = FOES[l].lv + (save.win[l] > 0 ? ' ★' : '');
+    });
+    el.ovStats.innerHTML = '🏆 つづいた ベスト　よわい <b>' + save.best[1] + '</b>／ふつう <b>' + save.best[2] + '</b>／つよい <b>' + save.best[3] + '</b>' +
+      '<br>📖 あつめた ことば <b>' + zukan.size + '</b>／' + DICT.length + '　★＝かった しるし';
+  }
+  function setLevel(l) { level = l; save.level = l; store(); drawLevels(); render(); }
+
+  // ---- input ---------------------------------------------------------------
+  function addChar(c) { if (input.length < MAXLEN) { input += c; return true; } return false; }
+  function pressKey(k) {
+    if (phase !== 'player') return;
+    roma = '';
+    const last = input[input.length - 1];
+    let ok = true;
+    if (k === '゛') {
+      const n = DAKU[last] || (UNDAKU[last]) || (UNHAN[last] ? DAKU[UNHAN[last]] : '');
+      if (n) input = input.slice(0, -1) + n; else ok = false;
+    } else if (k === '゜') {
+      const n = HAN[last] || (UNHAN[last]) || (UNDAKU[last] && HAN[UNDAKU[last]] ? HAN[UNDAKU[last]] : '');
+      if (n) input = input.slice(0, -1) + n; else ok = false;
+    } else if (k === '小') {
+      const n = TOSMALL[last] || SMALL[last];
+      if (n) input = input.slice(0, -1) + n; else ok = false;
+    } else if (k === 'ー') { ok = input.length > 0 && addChar('ー'); }
+    else ok = addChar(k);
+    if (ok) SFX.key(); else SFX.bad();
+    render();
+  }
+  function backspace() {
+    if (phase !== 'player') return;
+    if (roma) roma = roma.slice(0, -1); else input = input.slice(0, -1);
+    SFX.del(); render();
+  }
+  function romaKey(ch) {
+    if (phase !== 'player') return;
+    if (ch === '-') { if (roma === 'n') addChar('ん'); roma = ''; if (input.length) addChar('ー'); SFX.key(); render(); return; }
+    roma += ch;
+    let guard = 0;
+    while (roma && guard++ < 12) {
+      if (roma[0] === 'n' && roma.length >= 2) {
+        const c = roma[1];
+        if (c === 'n') { addChar('ん'); roma = roma.slice(2); continue; }
+        if (!'aiueoy'.includes(c)) { addChar('ん'); roma = roma.slice(1); continue; }
+      }
+      if (roma.length >= 2 && roma[0] === roma[1] && !'aiueon'.includes(roma[0])) { addChar('っ'); roma = roma.slice(1); continue; }
+      let hit = false;
+      for (let L = Math.min(3, roma.length); L >= 1; L--) {
+        const k = roma.slice(0, L);
+        if (ROMA[k]) { for (const c of ROMA[k]) addChar(c); roma = roma.slice(L); hit = true; break; }
+      }
+      if (hit) continue;
+      if (roma.length >= 3 || !ROMA_PREFIX.has(roma)) { roma = roma.slice(1); continue; }
+      break;
+    }
+    SFX.key(); render();
+  }
+  function useHint() {
+    if (phase !== 'player' || hints <= 0) return null;
+    const w = anyWord(need);
+    hints--; hintWord = w || '';
+    SFX.hint();
+    setMsg(w ? '💡 たとえば「' + w + '」' : '💡 「' + need + '」の ことばは もう ないかも…', 'hint', 6);
+    render(); return w;
+  }
+
+  // ---- view ----------------------------------------------------------------
+  function wordHTML(w, markTail) {
+    const ti = tailIndex(w); let h = '';
+    for (let i = 0; i < w.length; i++) {
+      const isTail = markTail && (i === ti || (i > ti));
+      const cls = isTail ? (tailOf(w) === 'ん' ? 'nn' : 'tail') : '';
+      h += cls ? '<i class="' + cls + '">' + w[i] + '</i>' : w[i];
+    }
+    return h;
+  }
+  function setMsg(t, cls, dur) { msgText = t; msgCls = cls || ''; msgT = dur || 0; if (!simMode) drawMsg(); }
+  function drawMsg() {
+    let t = msgText, c = msgCls;
+    if (!t && phase === 'player') { t = '「<b>' + need + '</b>」から はじまる ことばは？'; c = ''; }
+    else if (!t && phase === 'cpu') { t = FOES[level].name + 'が かんがえちゅう…'; c = ''; }
+    el.msg.className = 'msg ' + c; el.msg.innerHTML = t || '';
+  }
+  function glowKey() {
+    if (phase !== 'player') return '';
+    const b = baseOf(need);
+    if (input === '' && !roma) return b;
+    if (input === b && need !== b) return DAKU[b] === need ? '゛' : '゜';
+    return '';
+  }
+  function render() {
+    if (simMode) return;
+    const f = FOES[level];
+    el.ava.textContent = f.emo; el.cpuName.textContent = f.name + '（' + f.lv + '）';
+    el.ava.className = 'ava' + (phase === 'cpu' ? ' think' : '') + (result && (phase === 'ending' || phase === 'end') ? (result.win ? ' sad' : ' joy') : '');
+    const lastC = [...used].reverse().find(u => u.who === 'c');
+    if (cpuView === 'think') el.cpuWord.innerHTML = 'うーん<span class="dots"><i>・</i><i>・</i><i>・</i></span>';
+    else if (cpuView === 'giveup') el.cpuWord.innerHTML = '<i class="nn">まいった…！</i>';
+    else if (lastC) el.cpuWord.innerHTML = wordHTML(lastC.w, true);
+    else el.cpuWord.innerHTML = '<span class="ph">よろしくね！</span>';
+    el.cpuWord.classList.toggle('sm', !!lastC && cpuView === 'word' && lastC.w.length > 8);
+    el.stChain.textContent = chain(); el.stScore.textContent = score; el.stBest.textContent = save.best[level];
+    // ログ
+    let lg = '';
+    const from = Math.max(0, used.length - 12);
+    for (let i = from; i < used.length; i++) lg += (i > from ? '<em>›</em>' : '') + '<span class="' + used[i].who + '">' + used[i].w + '</span>';
+    el.log.innerHTML = lg; el.log.scrollLeft = el.log.scrollWidth;
+    // 入力
+    const my = phase === 'player';
+    el.inputBox.classList.toggle('off', !my);
+    if (my) {
+      if (!input && !roma) el.inWord.innerHTML = '<span class="ph">「<b>' + need + '</b>」から はじまる ことば</span><span class="caret"></span>';
+      else el.inWord.innerHTML = input + (roma ? '<span class="roma">' + roma + '</span>' : '') + '<span class="caret"></span>';
+    } else el.inWord.innerHTML = lastPlayer ? wordHTML(lastPlayer, true) : '';
+    el.inWord.classList.toggle('sm', input.length > 8 || (!my && lastPlayer.length > 8));
+    el.kb.classList.toggle('off', !my); el.acts.classList.toggle('off', !my);
+    el.hintN.textContent = hints; el.hintBtn.disabled = !my || hints <= 0;
+    const g = glowKey();
+    for (const b of el.kb.children) b.classList.toggle('glow', b.dataset.k === g);
+    drawTimer(); drawMsg();
+  }
+  function drawTimer() {
+    const my = phase === 'player';
+    const r = my ? Math.max(0, timeLeft / timeMax) : (phase === 'cpu' ? 1 : 0);
+    el.tfill.style.width = (r * 100).toFixed(1) + '%';
+    const low = my && timeLeft <= 5;
+    el.tfill.classList.toggle('low', low); el.tnum.classList.toggle('low', low);
+    el.tnum.textContent = my ? String(Math.ceil(Math.max(0, timeLeft))) : '';
+  }
+  function flash(cls) { el.inputBox.classList.remove('shake', 'good'); void el.inputBox.offsetWidth; el.inputBox.classList.add(cls); }
+  function popWord() { el.cpuWord.classList.remove('pop'); void el.cpuWord.offsetWidth; el.cpuWord.classList.add('pop'); }
+  function scorePop(t) {
+    const s = document.createElement('div'); s.className = 'spop'; s.textContent = t;
+    s.style.top = (el.inputBox.offsetTop - 4) + 'px';
+    el.stage.appendChild(s);
+    s.addEventListener('animationend', () => s.remove());
+    setTimeout(() => { if (s.parentNode) s.remove(); }, 1500);
+  }
+  function sizeFx() {
+    const w = el.wrap.clientWidth, h = el.wrap.clientHeight;
+    if (w && h && (el.fx.width !== w || el.fx.height !== h)) { el.fx.width = w; el.fx.height = h; }
+  }
+  function burst(rx, ry, n, cols) {
+    const x = el.fx.width * rx, y = (el.inputBox.offsetTop + el.inputBox.offsetHeight / 2) || el.fx.height * ry;
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, s = 60 + Math.random() * 190;
+      particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 60, g: 320, life: 0.5 + Math.random() * 0.4, t: 0, c: cols[i % cols.length], z: 3 + Math.random() * 3 });
+    }
+  }
+  function confetti() {
+    const cols = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#eeecfa'];
+    for (let i = 0; i < 70; i++) particles.push({ x: Math.random() * el.fx.width, y: -10 - Math.random() * 80, vx: (Math.random() - 0.5) * 80, vy: 90 + Math.random() * 150, g: 60, life: 2 + Math.random(), t: 0, c: cols[i % cols.length], z: 4 + Math.random() * 4 });
+  }
+
+  // ---- loop ----------------------------------------------------------------
+  function update(dt) {
+    if (msgT > 0) { msgT -= dt; if (msgT <= 0 && phase !== 'ending' && phase !== 'end') { msgText = ''; if (!simMode) drawMsg(); } }
+    if (phase === 'player') {
+      timeLeft -= dt;
+      const c = Math.ceil(timeLeft);
+      if (c < lastTick) { lastTick = c; if (c <= 5 && c > 0 && !simMode) SFX.tick(); }
+      if (timeLeft <= 0) { timeLeft = 0; finish(false, 'time'); render(); }
+    } else if (phase === 'cpu') {
+      cpuT -= dt; if (cpuT <= 0) cpuPlay();
+    } else if (phase === 'ending') {
+      endT -= dt; if (endT <= 0) showEnd();
+    }
+    for (const p of particles) { p.t += dt; p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
+    if (particles.length) particles = particles.filter(p => p.t < p.life);
+  }
+  let fxDirty = false;
+  function draw() {
+    if (phase === 'player' || phase === 'cpu') drawTimer();
+    if (!particles.length && !fxDirty) return;
+    fctx.clearRect(0, 0, el.fx.width, el.fx.height);
+    fxDirty = particles.length > 0;
+    for (const p of particles) {
+      fctx.globalAlpha = Math.max(0, 1 - p.t / p.life);
+      fctx.fillStyle = p.c; fctx.fillRect(Math.round(p.x), Math.round(p.y), p.z, p.z);
+    }
+    fctx.globalAlpha = 1;
+  }
+  let lastTs = 0;
+  function frame(ts) {
+    const dt = Math.min(0.05, Math.max(0, (ts - lastTs) / 1000)); lastTs = ts;
+    if (!frozen && !document.hidden) update(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ---- test hooks ----------------------------------------------------------
+  window.__test = {
+    state: () => ({
+      phase, level, need, input, roma, used: used.map(u => u.w), who: used.map(u => u.who), chain: chain(), score, pWords,
+      timeLeft, timeMax, hints, hintWord, result: result ? Object.assign({}, result) : null, cpuView, lastPlayer,
+      save: JSON.parse(JSON.stringify(Object.assign({}, save, { zukan: [...zukan] }))), zukan: zukan.size, dict: DICT.length,
+      overlay: el.overlay.classList.contains('show'), msg: msgText, muted, glow: glowKey(), vocab: vocab.size,
+    }),
+    start: (lv, sd) => startGame(lv, sd),
+    freeze: v => { frozen = !!v; },
+    step: ms => { const n = Math.ceil(ms / 16); for (let i = 0; i < n; i++) update(0.016); render(); },
+    press: k => pressKey(k),
+    type: s => { for (const c of s) pressKey(c); return input; },
+    roma: s => { for (const c of s) romaKey(c); return input + (roma === 'n' ? 'ん' : ''); },
+    clear: () => { input = ''; roma = ''; render(); },
+    submit: () => submit(),
+    say: w => { input = w; roma = ''; return submit(); },
+    judge: w => judge(w),
+    tail: w => tailOf(w),
+    anyWord: k => anyWord(k),
+    hint: () => useHint(),
+    forceCpu: w => { forcedCpu = w; },
+    cpuNow: () => { if (phase === 'cpu') { cpuT = 0; return cpuPlay(); } return null; },
+    cpuPick: lv => cpuChoose(lv || level),
+    setNeed: k => { need = k; render(); },
+    setVocab: list => { vocab = new Set(list); },
+    setTime: s => { timeLeft = s; },
+    limit: () => limitFor(),
+    menu: () => showTitle(),
+    validate: () => {
+      const bad = DICT.filter(w => !/^[ぁ-んー]+$/.test(w) || w.length < 2 || w.length > MAXLEN || /^[ーんをぁぃぅぇぉゃゅょっ]/.test(w));
+      const tails = {}; for (const w of DICT) { const t = tailOf(w); if (t !== 'ん') tails[t] = 1; }
+      const dead = Object.keys(tails).filter(t => (BY[t] || []).filter(w => !endsN(w)).length < 3);
+      const openersOk = OPENERS.every(w => DSET.has(w) && !endsN(w));
+      return { size: DICT.length, dups: WORDS.length - DICT.length, bad, dead, openersOk, starts: Object.keys(BY).length, nWords: DICT.filter(endsN).length };
+    },
+    // じどうで さいごまで あそぶ（CPUの手が ルールどおりか・かならず おわるかを たしかめる）
+    sim: (lv, sd, smart) => {
+      simMode = true; let illegal = 0, turns = 0, out;
+      try {
+        startGame(lv, sd);
+        while (turns++ < 5000) {
+          let w;
+          if (smart) {   // あいてが こまる字を ねらう
+            const c = candidates(need, false).filter(x => !endsN(x));
+            c.sort((a, b) => candidates(tailOf(a), true).length - candidates(tailOf(b), true).length);
+            w = c[0] || null;
+          } else w = anyWord(need);
+          if (!w) { out = { win: false, reason: 'stuck' }; break; }
+          if (judge(w) !== 'ok') { illegal++; break; }
+          acceptPlayer(w);
+          const k = need, before = new Set(usedSet);
+          const cw = cpuPlay();
+          if (cw && (cw[0] !== k || !DSET.has(cw) || before.has(cw))) illegal++;
+          if (phase === 'ending') { out = { win: result.win, reason: result.reason }; break; }
+        }
+        out = Object.assign({ turns, illegal, chain: chain() }, out || { win: null, reason: 'loop' });
+      } finally { simMode = false; }
+      showTitle();
+      return out;
+    },
+  };
+
+  // ---- init（いちばん さいご） ---------------------------------------------
+  const KB_ROWS = ['あかさたなはまやらわ', 'いきしちにひみ゛りを', 'うくすつぬふむゆるん', 'えけせてねへめ゜れー', 'おこそとのほもよろ小'];
+  for (const row of KB_ROWS) for (const k of row) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'key' + ('゛゜小ー'.includes(k) ? ' sp' : ''); b.dataset.k = k; b.textContent = k; b.tabIndex = -1;
+    if (k === "゛" || k === "゜") b.classList.add("mk");
+    if (k === "小") b.setAttribute('aria-label', 'ちいさい字');
+    el.kb.appendChild(b);
+  }
+  function drawMute() { el.mute.textContent = muted ? '🔇' : '🔊'; }
+  el.kb.addEventListener('pointerdown', e => {
+    const b = e.target.closest('.key'); if (!b) return;
+    e.preventDefault(); audio(); pressKey(b.dataset.k);
+  });
+  el.delBtn.addEventListener('pointerdown', e => { e.preventDefault(); audio(); backspace(); });
+  el.okBtn.addEventListener('click', () => { audio(); submit(); });
+  el.hintBtn.addEventListener('click', () => { audio(); useHint(); });
+  el.levels.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; audio(); setLevel(+b.dataset.l); SFX.key(); });
+  el.startBtn.addEventListener('click', () => { audio(); startGame(level); });
+  el.againBtn.addEventListener('click', () => { audio(); startGame(level); });
+  el.menuBtn.addEventListener('click', () => { audio(); showTitle(); });
+  el.mute.addEventListener('click', () => {
+    muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {}
+    drawMute(); if (!muted) { audio(); SFX.key(); }
+  });
+  window.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+    const k = e.key;
+    if (phase === 'title') {
+      if (k === 'Enter') { e.preventDefault(); audio(); startGame(level); }
+      else if (k === '1' || k === '2' || k === '3') setLevel(+k);
+      else if (k === 'ArrowLeft') setLevel(Math.max(1, level - 1));
+      else if (k === 'ArrowRight') setLevel(Math.min(3, level + 1));
+      return;
+    }
+    if (phase === 'end') { if (k === 'Enter') { e.preventDefault(); audio(); startGame(level); } return; }
+    if (k === 'Enter') { e.preventDefault(); audio(); submit(); }
+    else if (k === 'Backspace') { e.preventDefault(); backspace(); }
+    else if (k === ' ') e.preventDefault();
+    else if (k === '-') { e.preventDefault(); romaKey('-'); }
+    else if (k.length === 1 && /[a-zA-Z]/.test(k)) { audio(); romaKey(k.toLowerCase()); }
+  });
+  window.addEventListener('resize', sizeFx);
+  document.addEventListener('visibilitychange', () => { lastTs = performance.now(); });
+  document.addEventListener('contextmenu', e => { if (e.target.closest('#wrap')) e.preventDefault(); });
+  drawMute(); sizeFx(); showTitle();
+  requestAnimationFrame(ts => { lastTs = ts; requestAnimationFrame(frame); });
+})();
+</script>
+</body>
+</html>
