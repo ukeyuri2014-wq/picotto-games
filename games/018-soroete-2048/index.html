@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>そろえて2048｜無料ブラウザゲーム｜ルドット</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Maru+Gothic:wght@900&display=swap">
 <style>
   :root{
     --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
@@ -29,7 +29,8 @@
   h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.5);font-weight:400}
   .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
   #wrap{position:relative;width:min(480px,100%)}
-  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:6px;touch-action:none;user-select:none;-webkit-user-select:none}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(rgba(13,13,28,.78),rgba(13,13,28,.95) 72%),url(art-bg.webp) center top/cover no-repeat}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:1px solid rgba(255,217,138,.3);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.5);touch-action:none;user-select:none;-webkit-user-select:none}
   .row{display:flex;gap:6px;margin-top:8px;width:min(480px,100%)}
   .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
   .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
@@ -58,6 +59,9 @@
   .help b{color:var(--ink);font-weight:400}
   .help i{font-style:normal;color:var(--gold)}
 </style>
+<!-- LUDOT-TITLE-ART:START --><style>
+html.ludot-art #overlay{background:radial-gradient(125% 78% at 50% 44%,rgba(9,12,28,.9) 0%,rgba(9,12,28,.8) 46%,rgba(9,12,28,.36) 100%),url("../../assets/covers/018.webp") center top/cover no-repeat !important}
+</style><!-- LUDOT-TITLE-ART:END -->
 <!-- LUDOT-SEO-START -->
 <meta name="description" content="4×4のマスでタイルをすべらせ、同じ数字をぶつけて合体させる定番の数字パズル。2048を作ったらクリア、そのあとも続けてハイスコアを狙える。数字が大きいほど光って音も高くなり、2048達成で紙吹雪。ベスト記録と途中の盤面は自動セーブ、1手もどす機能つき。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/018-soroete-2048/index.html">
@@ -105,7 +109,8 @@
 (() => {
   'use strict';
   const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
+  const W = 480, H = 568, DPR = Math.min(2, window.devicePixelRatio || 1);   // 高精細の画面では2倍で描く
+  cv.width = W * DPR; cv.height = H * DPR;
   const N = 4, CELL = 100, GAP = 12, BX = 10, BY = 96;
   const BOARD = N * CELL + (N + 1) * GAP;   // 460
   const KEY = 'picotto_yofukashi-2048_';
@@ -336,12 +341,21 @@
   }
 
   // ---- fx -----------------------------------------------------------------------
+  // [石の色, 数字の色, 光の強さ, 数字のふちの色]
   const STYLES = {
-    2: ['#3b3b66', '#eeecfa', 0], 4: ['#4a4a8c', '#eeecfa', 0], 8: ['#6260d0', '#ffffff', 8], 16: ['#a06bff', '#ffffff', 12],
-    32: ['#d45ed8', '#ffffff', 14], 64: ['#ff5fa2', '#ffffff', 16], 128: ['#ff7d5f', '#2a1200', 18], 256: ['#ff9c3d', '#2a1200', 20],
-    512: ['#ffb830', '#2a1200', 22], 1024: ['#ffd166', '#2a1200', 26], 2048: ['#fff1a8', '#3a2600', 32],
+    2: ['#f1e9d6', '#5a4630', 0, 'rgba(255,255,255,.6)'], 4: ['#f6dc9e', '#5a4018', 0, 'rgba(255,255,255,.55)'],
+    8: ['#ffab4a', '#ffffff', 6, 'rgba(120,52,0,.6)'], 16: ['#ff8440', '#ffffff', 8, 'rgba(120,40,0,.6)'],
+    32: ['#fb5f52', '#ffffff', 10, 'rgba(110,20,20,.6)'], 64: ['#ec3f5f', '#ffffff', 12, 'rgba(100,10,40,.6)'],
+    128: ['#cf5fe6', '#ffffff', 16, 'rgba(70,10,100,.6)'], 256: ['#9a78ff', '#ffffff', 18, 'rgba(40,20,120,.6)'],
+    512: ['#4fb4ff', '#ffffff', 20, 'rgba(0,50,120,.6)'], 1024: ['#3fe3c0', '#06382f', 24, 'rgba(255,255,255,.55)'],
+    2048: ['#ffd84a', '#4a2c00', 32, 'rgba(255,255,255,.7)'],
   };
-  function styleOf(v) { return STYLES[v] || ['#53e0d8', '#03302e', 34]; }
+  function styleOf(v) { return STYLES[v] || ['#ff9bd0', '#4a0a30', 34, 'rgba(255,255,255,.6)']; }
+  // ---- 絵（背景・石のタイル・マス）。読みこめないときは色だけで描く ----
+  const ART = {}, tileCache = new Map();
+  for (const k of ['bg', 'tile', 'slot']) { const im = new Image(); im.onload = () => { ART[k] = im; tileCache.clear(); }; im.src = 'art-' + k + '.webp'; }
+  const NUM_FONT = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Arial Rounded MT Bold",system-ui,sans-serif';
+  if (document.fonts && document.fonts.load) document.fonts.load('900 40px "Zen Maru Gothic"', '2048').then(() => tileCache.clear()).catch(() => {});
   function cellX(c) { return BX + GAP + c * (CELL + GAP); }
   function cellY(r) { return BY + GAP + r * (CELL + GAP); }
   function burst(r, c, v) {
@@ -374,32 +388,52 @@
     confetti = confetti.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 620 * dt; p.vx *= (1 - 1.4 * dt); p.rot += p.vr * dt; p.life -= dt; return p.life > 0 && p.y < H + 20; });
     pops = pops.filter(p => { p.y -= 40 * dt; p.life -= dt; return p.life > 0; });
   }
-  function rr(x, y, w, h, r) {
+  function rrOn(g, x, y, w, h, r) {
     r = Math.min(r, w / 2, h / 2);
-    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r); ctx.lineTo(x + w, y + h - r);
-    ctx.arcTo(x + w, y + h, x + w - r, y + h, r); ctx.lineTo(x + r, y + h); ctx.arcTo(x, y + h, x, y + h - r, r); ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r); ctx.closePath();
+    g.beginPath(); g.moveTo(x + r, y); g.lineTo(x + w - r, y); g.arcTo(x + w, y, x + w, y + r, r); g.lineTo(x + w, y + h - r);
+    g.arcTo(x + w, y + h, x + w - r, y + h, r); g.lineTo(x + r, y + h); g.arcTo(x, y + h, x, y + h - r, r); g.lineTo(x, y + r); g.arcTo(x, y, x + r, y, r); g.closePath();
   }
+  function rr(x, y, w, h, r) { rrOn(ctx, x, y, w, h, r); }
   const ease = p => 1 - Math.pow(1 - p, 3);
   const backOut = p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
   const lerp = (a, b, p) => a + (b - a) * p;
+  // タイル1枚ぶんの絵を作っておく（石の絵に色をかけ、つやと数字をのせる）
+  function tileSprite(v) {
+    let c = tileCache.get(v); if (c) return c;
+    const st = styleOf(v), S = Math.round(CELL * DPR * 1.25), k = S / CELL;
+    c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d');
+    g.save(); rrOn(g, 0, 0, S, S, 14 * k); g.clip();
+    if (ART.tile) {
+      g.drawImage(ART.tile, 0, 0, S, S);
+      g.globalCompositeOperation = 'multiply'; g.fillStyle = st[0]; g.fillRect(0, 0, S, S);
+      g.globalCompositeOperation = 'source-over';
+    } else { g.fillStyle = st[0]; g.fillRect(0, 0, S, S); }
+    const hl = g.createLinearGradient(0, 0, 0, S);
+    hl.addColorStop(0, 'rgba(255,255,255,.3)'); hl.addColorStop(0.45, 'rgba(255,255,255,.03)'); hl.addColorStop(1, 'rgba(0,0,0,.18)');
+    g.fillStyle = hl; g.fillRect(0, 0, S, S);
+    g.restore();
+    g.lineWidth = 2 * k; g.strokeStyle = 'rgba(255,255,255,' + (v >= 2048 ? '.8' : '.36') + ')'; rrOn(g, k, k, S - 2 * k, S - 2 * k, 13 * k); g.stroke();
+    const str = String(v), base = str.length <= 1 ? 56 : str.length === 2 ? 50 : str.length === 3 ? 40 : str.length === 4 ? 31 : 25;
+    g.font = '900 ' + Math.round(base * k) + 'px ' + NUM_FONT; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+    const cx = S / 2, cy = S / 2 + 2 * k;
+    g.lineWidth = 6 * k; g.strokeStyle = st[3]; g.strokeText(str, cx, cy);
+    g.fillStyle = st[1]; g.fillText(str, cx, cy);
+    tileCache.set(v, c); return c;
+  }
   function drawTile(x, y, size, v, scale = 1, alpha = 1) {
-    const st = styleOf(v), s = size * scale, k = s / CELL;
-    const px = x + (size - s) / 2, py = y + (size - s) / 2, rad = 12 * k;
+    const st = styleOf(v), s = size * scale, u = size / CELL;
+    const px = x + (size - s) / 2, py = y + (size - s) / 2, sp = tileSprite(v);
     ctx.save(); ctx.globalAlpha = alpha;
-    if (st[2]) { ctx.shadowColor = st[0]; ctx.shadowBlur = st[2] * (size / CELL) * (1 + (scale - 1) * 2.5); }
-    ctx.fillStyle = st[0]; rr(px, py, s, s, rad); ctx.fill(); ctx.shadowBlur = 0;
-    const g = ctx.createLinearGradient(0, py, 0, py + s);
-    g.addColorStop(0, 'rgba(255,255,255,.2)'); g.addColorStop(0.55, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,.14)');
-    ctx.fillStyle = g; rr(px, py, s, s, rad); ctx.fill();
-    if (st[2] >= 18) { ctx.strokeStyle = 'rgba(255,255,255,' + (v >= 2048 ? '.85' : '.5') + ')'; ctx.lineWidth = 2 * k; rr(px + 1, py + 1, s - 2, s - 2, rad); ctx.stroke(); }
-    const str = String(v), base = str.length <= 2 ? 46 : str.length === 3 ? 38 : str.length === 4 ? 30 : 24;
-    ctx.fillStyle = st[1]; ctx.font = Math.max(8, Math.round(base * k)) + 'px DotGothic16, monospace';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(str, px + s / 2, py + s / 2 + 2 * k);
+    if (st[2]) {   // 大きい数ほど強く光る
+      ctx.shadowColor = st[0]; ctx.shadowBlur = st[2] * u * DPR * (1 + (scale - 1) * 2.5);
+      ctx.drawImage(sp, px, py, s, s);
+    }
+    ctx.shadowColor = 'rgba(4,4,18,.55)'; ctx.shadowBlur = 7 * u * DPR; ctx.shadowOffsetY = 3 * u * DPR;
+    ctx.drawImage(sp, px, py, s, s);
     ctx.restore();
   }
   function panel(x, y, w, h, label, value, color) {
-    ctx.fillStyle = '#1c1c33'; ctx.strokeStyle = '#2c2c4d'; ctx.lineWidth = 2; rr(x, y, w, h, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(13,12,34,.72)'; ctx.strokeStyle = 'rgba(255,217,138,.38)'; ctx.lineWidth = 1.5; rr(x, y, w, h, 14); ctx.fill(); ctx.stroke();
     ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
     ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0'; ctx.fillText(label, x + w / 2, y + 22);
     ctx.font = (String(value).length > 6 ? 22 : 28) + 'px DotGothic16, monospace'; ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 10;
@@ -410,16 +444,23 @@
     panel(318, 10, 150, 68, 'ベスト', best, '#ffd166');
     const mx = maxTile(board);
     if (mx) drawTile(213, 8, 54, mx, 1 + 0.04 * Math.sin(time * 3));
-    else { ctx.fillStyle = '#1c1c33'; rr(213, 8, 54, 54, 8); ctx.fill(); }
+    else { ctx.fillStyle = 'rgba(13,12,34,.72)'; rr(213, 8, 54, 54, 8); ctx.fill(); }
     ctx.font = '11px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
     ctx.fillText(mx >= 2048 ? 'CLEAR!' : 'いちばん大きい', 240, 78);
   }
   function drawBoard() {
-    ctx.fillStyle = '#1b1b38'; ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 16;
-    rr(BX, BY, BOARD, BOARD, 16); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    // 盤：すりガラスの台に、金のふち
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 22 * DPR; ctx.shadowOffsetY = 6 * DPR;
+    ctx.fillStyle = 'rgba(13,12,34,.74)'; rr(BX, BY, BOARD, BOARD, 18); ctx.fill(); ctx.restore();
+    const fg = ctx.createLinearGradient(BX, BY, BX + BOARD, BY + BOARD);
+    fg.addColorStop(0, '#ffe6a6'); fg.addColorStop(0.5, '#b98a3c'); fg.addColorStop(1, '#ffd98a');
+    ctx.save(); ctx.strokeStyle = fg; ctx.lineWidth = 3; ctx.shadowColor = 'rgba(255,209,102,.5)'; ctx.shadowBlur = 12 * DPR;
+    rr(BX + 1.5, BY + 1.5, BOARD - 3, BOARD - 3, 17); ctx.stroke(); ctx.restore();
     for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-      ctx.fillStyle = '#12122a'; rr(cellX(c), cellY(r), CELL, CELL, 12); ctx.fill();
-      ctx.strokeStyle = 'rgba(160,107,255,.14)'; ctx.lineWidth = 1.5; ctx.stroke();
+      rr(cellX(c), cellY(r), CELL, CELL, 14);
+      if (ART.slot) { ctx.save(); ctx.clip(); ctx.drawImage(ART.slot, cellX(c), cellY(r), CELL, CELL); ctx.restore(); }
+      else { ctx.fillStyle = '#12122a'; ctx.fill(); }
+      ctx.strokeStyle = 'rgba(255,217,138,.1)'; ctx.lineWidth = 1; ctx.stroke();
     }
     const a = anim;
     if (a && a.t < SLIDE) {
@@ -464,7 +505,14 @@
     }
   }
   function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.save(); ctx.clearRect(0, 0, W, H);
+    if (ART.bg) {
+      ctx.drawImage(ART.bg, 0, 0, W, H);
+      const veil = ctx.createLinearGradient(0, 0, 0, H);
+      veil.addColorStop(0, 'rgba(10,10,28,.3)'); veil.addColorStop(0.22, 'rgba(10,10,28,.12)'); veil.addColorStop(1, 'rgba(10,10,28,.4)');
+      ctx.fillStyle = veil; ctx.fillRect(0, 0, W, H);
+    }
     if (shake > 0) ctx.translate((Math.random() - 0.5) * shake * 2, (Math.random() - 0.5) * shake * 2);
     drawHud(); drawBoard(); drawFx();
     ctx.restore();
@@ -542,5 +590,6 @@
   };
 })();
 </script>
+<!-- LUDOT-TITLE-ART-JS:START --><script>(function(){var o=document.getElementById('overlay'),h=document.documentElement;if(!o||!window.MutationObserver)return;function shown(){return o.classList.contains('show')&&getComputedStyle(o).display!=='none'}if(!shown())return;h.classList.add('ludot-art');new MutationObserver(function(m,ob){if(!shown()){h.classList.remove('ludot-art');ob.disconnect()}}).observe(o,{attributes:true,attributeFilter:['class','style','hidden']})})();</script><!-- LUDOT-TITLE-ART-JS:END -->
 </body>
 </html>
