@@ -60,7 +60,6 @@
 .ov p{margin:3px 0;line-height:1.6}
 .ov .big{margin:4px 0;font-size:clamp(2.6rem,11vw,4rem)}
 .ov .stars{font-size:2rem;letter-spacing:4px}
-.ov .stars i{font-style:normal;display:inline-block;animation:pop .4s ease-out backwards}
 @keyframes pop{from{transform:scale(0)}70%{transform:scale(1.3)}to{transform:scale(1)}}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .ov .row{justify-content:center}
@@ -76,7 +75,133 @@
 .confetti{position:absolute;top:-20px;font-size:1.3rem;pointer-events:none;animation:fall linear forwards;z-index:6}
 @keyframes fall{to{transform:translateY(560px) rotate(540deg);opacity:.2}}
 @media(max-width:520px){body.playing .lead,body.playing .eyebrow{display:none}body.playing h1{font-size:1.3rem;margin:0 0 6px}body.playing header{padding:10px 14px}body.playing main{padding-top:0}.chip{font-size:.8rem;padding:4px 7px}.sbtn{padding:6px 12px;font-size:1rem}.hide-sp{display:none}.gbar{flex-wrap:nowrap}.gbar .chips{gap:4px}}
-</style><!-- LUDOT-SEO-START -->
+
+/* ===== 036 play art（2026-10-07 遊ぶ画面の作り直し）=====
+   絵は art-*.webp（ChatGPT製）。読みこめたら <html> に art-s / art-i / art-g / art-e が付き、絵に切りかわる。
+   付かないあいだ・読みこめないときは、今までどおり絵文字で遊べる。 */
+.spr{display:inline-block;line-height:1;vertical-align:middle}
+.spr>i{font-style:normal}
+.em{font-style:normal}
+html.art-i .spr.si,html.art-g .spr.sg,html.art-e .spr.se{width:var(--sz,1.5em);height:var(--sz,1.5em);background-repeat:no-repeat;flex:none;vertical-align:-.32em}
+html.art-i .spr.si{background-image:url(art-items.webp);background-size:300% 300%;background-position:calc(var(--c)*50%) calc(var(--r)*50%)}
+html.art-g .spr.sg{background-image:url(art-guests.webp);background-size:400% 400%;background-position:calc(var(--c)*100%/3) calc(var(--r)*100%/3)}
+html.art-e .spr.se{background-image:url(art-equip.webp);background-size:300% 300%;background-position:calc(var(--c)*50%) calc(var(--r)*50%)}
+html.art-i .spr.si>i,html.art-g .spr.sg>i,html.art-e .spr.se>i,html.art-i .em{display:none}
+.spr.off{filter:grayscale(1) brightness(.5);opacity:.6}
+/* 全体の色：紺 → 夜のカフェ（こげ茶・クリーム・灯りの色） */
+body.playing{background:#1a1210}
+body.playing::before{content:"";position:fixed;inset:-30px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 0,#3a2a3f,#1c120c 70%)}
+html.art-s body.playing::before{background:linear-gradient(#171a30c4,#1c120ce6 70%),url(art-shop.webp) center/cover no-repeat;filter:blur(12px)}
+body.playing h1{text-shadow:0 2px 10px #000a}
+.gpanel{--ink:#fff3dc;--muted:#e2c9a6;color:var(--ink);max-width:600px;margin:0 auto;background:linear-gradient(165deg,#523422,#2e1b10 72%);border:1px solid #f5ca8866;box-shadow:0 20px 60px #000a,inset 0 1px 0 #ffffff26,inset 0 0 0 4px #1a0f0850}
+.gpanel :is(h2,button,.sales b,.combo,.sign,.goalbox>b,.eyebrow,.progress,.guest-name){font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",system-ui,sans-serif;font-weight:900}
+.gpanel button{background:linear-gradient(#70482a,#553319);border:1px solid #f5ca8859;color:#fff3dc;box-shadow:0 3px 0 #2a170c}
+.gpanel button.primary{background:linear-gradient(#ffdc96,#f2ad4e);color:#3a2110;border:0;box-shadow:0 3px 0 #a5641d,0 8px 18px #0006}
+@media(hover:hover){.gpanel button:hover:not(:disabled){background:linear-gradient(#82552f,#63401f)}.gpanel button.primary:hover:not(:disabled){background:linear-gradient(#ffe6ae,#f8bb62);filter:none}}
+.gpanel .chip{background:#1c110ab8;border:1px solid #f5ca8840;color:#fff3dc;display:inline-flex;align-items:center;gap:4px}
+.gpanel .chip .spr{--sz:1.35em;vertical-align:middle}
+.gpanel .chip b{color:#ffd98f}
+.gpanel .notice{color:#ffe2a0;text-shadow:0 1px 2px #0008}
+.gpanel .notice .spr{--sz:1.7em}
+.gpanel .meter{background:#170d07;box-shadow:inset 0 0 0 1px #f5ca8833}
+.hud .sales b{color:#ffd98f}
+.hud .timebar{height:12px}
+.combo{color:#ffb35a;text-shadow:0 1px 2px #0008}
+/* お店の景色（ロビーと営業中で同じ絵。カウンターの手前がわを上に重ねて、キャラが「カウンターのむこう」に立つ） */
+.cfront{display:none}
+.counter-area{background:linear-gradient(#4a3020,#33200f)}
+html.art-s .scene{position:relative;height:auto;min-height:0;aspect-ratio:16/9;padding:0;width:100%;max-width:528px;margin-left:auto;margin-right:auto;background:#3a2414 url(art-shop.webp) center/cover no-repeat;border:2px solid #23130a;border-radius:16px;box-shadow:0 0 0 1px #f5ca8859,0 10px 24px #0008;overflow:hidden}
+html.art-s .scene .cfront{display:block;position:absolute;inset:0;background:inherit;clip-path:inset(64.8% 0 0 0);z-index:2;pointer-events:none}
+html.art-s .scene::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:13px;box-shadow:inset 0 0 26px #0009}
+/* ロビー：店長と、買った設備 */
+html.art-s .cafe-view .awning{display:none}
+html.art-s .cafe-view .clerk{left:50%;bottom:30.5%;width:31%;transform:translateX(-50%);z-index:1;font-size:2.6rem;text-align:center;line-height:1}
+html.art-g .cafe-view .clerk .spr{display:block;width:100%;height:auto;aspect-ratio:1}
+html.art-s .cafe-view .sign{top:auto;bottom:6%;z-index:3;background:linear-gradient(#fff6e2,#f1d9a8);color:#4a2c17;border:2px solid #7a4c25;border-radius:9px;padding:2px 14px;font-size:clamp(.82rem,3.4vw,1.05rem);box-shadow:0 2px 0 #2a170c,0 4px 10px #0007}
+html.art-s .cafe-view .deco{z-index:3;animation:none;width:12.5%;bottom:31.5%;font-size:1.5rem;text-align:center;line-height:1;transform-origin:50% 100%}
+html.art-e .cafe-view .deco .spr{display:block;width:100%;height:auto;aspect-ratio:1;filter:drop-shadow(0 2px 2px #0008)}
+html.art-s .cafe-view .d-oven{left:1.5%!important}
+html.art-s .cafe-view .d-juicer{left:13%!important}
+html.art-s .cafe-view .d-fryer{left:24.5%!important}
+html.art-s .cafe-view .d-music{left:63%!important}
+html.art-s .cafe-view .d-parfait{left:74.5%!important}
+html.art-s .cafe-view .d-takeout{left:86%!important}
+html.art-s .cafe-view .d-sofa{left:1%!important;width:21%;bottom:0}
+html.art-s .cafe-view .d-sign{left:83.5%!important;width:15%;bottom:1%}
+html.art-s .cafe-view .d-flower{left:70%!important;width:13%;bottom:1%;animation:sway 4s ease-in-out infinite}
+.goalbox{background:#1c110a73;border:1px dashed #f5ca8850;border-radius:14px;padding:9px 8px 10px;margin-top:10px}
+.goalbox .menurow{display:inline-flex;gap:2px;vertical-align:middle;flex-wrap:wrap;justify-content:center}
+.goalbox .menurow .spr{--sz:1.9em}
+.daydots span{background:#1c110ab8;border:1px solid #f5ca8840;color:#ecd6b4;font-weight:700}
+.daydots span.done{background:linear-gradient(#ffdc96,#f2ad4e);color:#7a4208;border-color:#ffe9b8;font-size:.56rem;letter-spacing:-1px}
+.daydots span.now{outline:2px solid #fff3dc;outline-offset:1px}
+.lobby-actions button{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 6px;white-space:nowrap}
+.lobby-actions button .spr{--sz:1.8em}
+.bang{font-style:normal}
+html.art-i .bang{display:inline-grid;place-items:center;width:1.25em;height:1.25em;border-radius:50%;background:#e2503f;color:#fff;font-size:.9em;box-shadow:0 0 0 2px #fff3dc}
+html.art-i .bang::after{content:"!"}
+/* 営業中：お客さん・ふきだし・待ち時間 */
+.bubble{background:#fff8ea;color:#4a2c17;border:2px solid #b98a55;box-shadow:0 3px 0 #0004;flex-wrap:nowrap;gap:5px;padding:6px}
+.bubble::before{left:-11px;top:17px;border:10px solid transparent;border-right-color:#b98a55;border-left:0}
+.bubble::after{content:"";position:absolute;left:-7px;top:18px;border:9px solid transparent;border-right-color:#fff8ea;border-left:0}
+.bubble .muted{color:#8a6a4a}
+.bubble .it{flex:0 1 calc((100% - 15px)/4);max-width:66px;aspect-ratio:1;display:grid;place-items:center;padding:2px;background:#f6e7c9;border:2px solid transparent;position:relative}
+.bubble .it .spr{--sz:100%}
+html.art-i .bubble .it .spr{width:100%;height:100%}
+.bubble .it.next{outline:0;border-color:#ff8a3c;background:#fff;box-shadow:0 0 0 3px #ffb35a80;animation:nextpulse 1s ease-in-out infinite}
+.bubble .it.ok{opacity:.45;transform:scale(.84)}
+.bubble .it.ok::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#2e8f4e;font-weight:900;font-size:1.5rem;text-shadow:0 0 3px #fff,0 0 3px #fff}
+@keyframes nextpulse{50%{box-shadow:0 0 0 5px #ffb35a40}}
+.gpanel .guest-name{color:#fff3dc}
+html.art-s .counter-area .guest{display:block}
+html.art-s .counter-area .face{position:absolute;left:2.5%;bottom:30.5%;width:31%;z-index:1;text-align:center}
+html.art-g .counter-area .face .spr{display:block;width:100%;height:auto;aspect-ratio:1}
+html.art-s .counter-area .guest.waiting .face{left:10%;width:15%;bottom:29%;z-index:3}
+html.art-s .counter-area .bubble{position:absolute;left:36%;right:2.5%;top:7%;z-index:3;min-height:0}
+html.art-s .counter-area .gfoot{position:absolute;left:3.5%;right:3.5%;bottom:5.5%;z-index:3}
+html.art-s .counter-area .guest-name{margin:0 0 3px;text-shadow:0 1px 3px #000,0 0 6px #000a;font-size:.86rem}
+html.art-s .counter-area .patience{margin:0;height:10px;background:#170d07e0}
+/* メニューのボタン：クリーム色のお皿ふう */
+.gpanel .menu-grid{gap:7px;margin-top:9px}
+.gpanel .menu-grid button{padding:5px 2px 6px;min-height:78px;font-size:.84rem;line-height:1.15;color:#4a2c17;background:linear-gradient(#fff9ea,#f4dfb6);border:2px solid #c9995a;border-radius:14px;box-shadow:0 3px 0 #8f5f31,0 6px 12px #0005}
+.gpanel .menu-grid button b{display:block;font-size:1.7rem;line-height:1.15;margin-bottom:1px}
+.gpanel .menu-grid button b .spr{--sz:clamp(46px,13.5vw,58px);filter:drop-shadow(0 2px 2px #5a3d2850)}
+@media(hover:hover){.gpanel .menu-grid button:hover:not(:disabled){background:linear-gradient(#fffef6,#f9e9c8)}}
+.gpanel .menu-grid button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #8f5f31}
+.gpanel .menu-grid button.flash,.gpanel .menu-grid button.flash:hover:not(:disabled){background:linear-gradient(#e2f8d2,#a9e08f);border-color:#4f9a4a}
+.gpanel .menu-grid button.bad,.gpanel .menu-grid button.bad:hover:not(:disabled){background:linear-gradient(#ffdcd6,#f5a39a);border-color:#c0473f}
+.fxp{display:flex;align-items:center;gap:2px;font-family:"Zen Maru Gothic",system-ui,sans-serif;font-weight:900;color:#ffe08a;text-shadow:0 2px 4px #000c,0 0 2px #000}
+.fxp .spr{--sz:1.25em}
+/* 結果・確認の重ね画面 */
+.ov{background:radial-gradient(ellipse at 50% 30%,#4a2f1ef7,#1d120bf8 70%)}
+.ov .stars>i{font-style:normal;display:inline-block;animation:pop .4s ease-out backwards}
+.ov .stars .spr{--sz:46px;filter:drop-shadow(0 2px 3px #0008)}
+.ov .stars .spr.off{filter:grayscale(1) brightness(.45);opacity:.7}
+html.art-g .ov .big{width:min(40vw,150px);height:min(40vw,150px);margin:4px auto;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff8e6,#f0c684);border:3px solid #fff3dc;box-shadow:0 8px 22px #0009,0 0 30px #f5ca8840;overflow:hidden;display:grid;place-items:end center;font-size:1rem}
+html.art-g .ov .big .spr{width:96%;height:96%}
+.ov .progress .spr{--sz:1.8em}
+/* 設備を買う画面 */
+.shop .item{background:linear-gradient(#fff8e8,#f5e3be);border:1px solid #c9995a;color:#4a2c17;box-shadow:0 2px 0 #2a170c80}
+.shop .item .ic{display:grid;place-items:center;min-width:48px}
+.shop .item .ic .spr{--sz:52px}
+.shop .item p{color:#7a5a3c}
+.shop .item p b{color:#3a2110}
+.shop .item button{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(#ffdc96,#f2ad4e);color:#3a2110;border:0;box-shadow:0 3px 0 #a5641d}
+@media(hover:hover){.shop .item button:hover:not(:disabled){background:linear-gradient(#ffe6ae,#f8bb62)}}
+.shop .item button .spr{--sz:1.3em}
+.shop .item.owned{opacity:.72}
+.shop .item .small{color:#2e7f48;font-weight:800}
+.confetti .spr{--sz:26px}
+@media(min-width:521px){body.playing main{max-width:636px}body.playing .lead,body.playing .eyebrow{display:none}body.playing h1{font-size:1.7rem;margin:0 0 10px}.gpanel .menu-grid{display:flex;flex-wrap:wrap;justify-content:center}.gpanel .menu-grid button{flex:0 0 calc((100% - 42px)/7);min-height:86px}}
+@media(min-width:521px) and (max-height:730px){html.art-s .scene{max-width:440px}}
+@media(prefers-reduced-motion:reduce){.bubble .it.next,.cafe-view .deco{animation:none!important}}
+</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@900&display=swap"><!-- LUDOT-TITLE-ART:START --><style>
+.intro{padding-top:clamp(14px,3vw,22px)}
+.intro .icon{font-size:0;line-height:0;width:100%;margin:0 0 16px;height:clamp(120px,24vh,200px);border-radius:16px;background:#0c1428 url("../../assets/covers/036.webp") center/cover no-repeat;box-shadow:0 14px 40px #0007,inset 0 0 0 1px #ffffff24}
+.intro h2{font-size:clamp(1.45rem,4.6vw,1.9rem);margin:.1em 0 .45em;letter-spacing:.03em}
+.intro>#start{min-width:min(260px,100%);min-height:56px;font-size:1.12rem;border-radius:16px;box-shadow:0 8px 26px color-mix(in srgb,var(--accent) 42%,transparent)}
+</style><!-- LUDOT-TITLE-ART:END -->
+<!-- LUDOT-SEO-START -->
 <meta name="description" content="10日間でカフェを町いちばんのお店にしよう。お客さんの注文を順番にお出しして、毎日の目標で★を集めるよ。設備を買うとメニューが増えるよ。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/036-mamemame-cafe/index.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"まめまめカフェ","description":"10日間でカフェを町いちばんのお店にしよう。お客さんの注文を順番にお出しして、毎日の目標で★を集めるよ。設備を買うとメニューが増えるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/036-mamemame-cafe/index.html","inLanguage":"ja","genre":"MANAGEMENT","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
@@ -139,6 +264,14 @@ const SHOP=[
   {id:'flower',e:'💐',n:'お花のかざり',cost:600,d:'ぜんぶの値段が20%アップ'}
 ];
 const GOALS=[40,55,70,90,110,130,150,170,190,210];
+// ---- 絵（ChatGPT製の art-*.webp）。読みこめたシートだけ <html> に目印を付け、CSS が絵文字から絵に切りかえる。読みこめなければ絵文字のまま遊べる。
+const SPR={i:{n:3,k:['coffee','tea','cookie','cake','juice','donut','parfait','coin','star']},
+  g:{n:4,k:['🐻','🐰','🐱','🐶','🐼','🦊','🐨','🐹','🐸','🐯','🐧','🦁','👑','owner','cheer','bell']},
+  e:{n:3,k:['oven','sofa','juicer','sign','fryer','music','takeout','parfait','flower']}};
+[['s','art-shop.webp'],['i','art-items.webp'],['g','art-guests.webp'],['e','art-equip.webp']].forEach(([k,f])=>{const im=new Image();im.onload=()=>document.documentElement.classList.add('art-'+k);im.src=f});
+function spr(sheet,key,emoji,cls=''){const t=SPR[sheet],n=t.k.indexOf(key);if(n<0)return emoji;return `<span class="spr s${sheet}${cls?' '+cls:''}" style="--c:${n%t.n};--r:${Math.floor(n/t.n)}"><i>${emoji}</i></span>`}
+const itemPic=k=>spr('i',k,ITEMS[k].e),shopPic=s=>spr('e',s.id,s.e),COIN=spr('i','coin','🪙'),STAR=spr('i','star','⭐'),em=t=>`<i class="em">${t}</i>`;
+function sayH(h){const el=$('#notice');if(el)el.innerHTML=h}
 const LAST_DAY=10,DAY_SEC=45,TAKEOUT_CAP_MIN=120;
 const GUESTS=['🐻','🐰','🐱','🐶','🐼','🦊','🐨','🐹','🐸','🐯','🐧','🦁'];
 const GUEST_NAMES={'🐻':'くまさん','🐰':'うさぎさん','🐱':'ねこさん','🐶':'いぬさん','🐼':'パンダさん','🦊':'きつねさん','🐨':'コアラさん','🐹':'ハムスターさん','🐸':'かえるさん','🐯':'とらさん','🐧':'ペンギンさん','🦁':'ライオンさん'};
@@ -173,23 +306,23 @@ function mount(){
   const unlocked=()=>Object.keys(ITEMS).filter(k=>!ITEMS[k].req||has(ITEMS[k].req));
   const priceOf=k=>Math.round(ITEMS[k].p*(has('flower')?1.2:1));
   const totalStars=()=>c.stars.reduce((a,b)=>a+b,0);
-  function chips(){$('#chips').innerHTML=`<span class="chip">📅 <b>${c.day>LAST_DAY?'ボーナス':c.day+'日目'}</b>${c.day<=LAST_DAY?' / '+LAST_DAY:''}</span><span class="chip">🪙 <b id="coinv">${c.coins}</b></span><span class="chip">⭐ <b>${totalStars()}</b> / 30</span>`}
+  function chips(){$('#chips').innerHTML=`<span class="chip">${em('📅 ')}<span><b>${c.day>LAST_DAY?'ボーナス':c.day+'日目'}</b>${c.day<=LAST_DAY?' / '+LAST_DAY:''}</span></span><span class="chip">${COIN} <b id="coinv">${c.coins}</b></span><span class="chip">${STAR} <span><b>${totalStars()}</b> / 30</span></span>`}
   function overlay(html){const o=document.createElement('div');o.className='ov';o.innerHTML=html;gp.appendChild(o);return o}
-  function fx(txt,x,y,host=gp){const e=document.createElement('div');e.className='fxp';e.textContent=txt;e.style.left=x+'px';e.style.top=y+'px';host.appendChild(e);setTimeout(()=>e.remove(),1200)}
-  function confetti(){for(let i=0;i<28;i++){const e=document.createElement('div');e.className='confetti';e.textContent=['🎉','✨','⭐','☕','🍰','💐'][i%6];e.style.left=Math.random()*95+'%';e.style.animationDuration=(1.6+Math.random()*1.6)+'s';e.style.animationDelay=(Math.random()*.6)+'s';gp.appendChild(e);setTimeout(()=>e.remove(),3800)}}
+  function fx(txt,x,y,host=gp){const e=document.createElement('div');e.className='fxp';e.innerHTML=txt;e.style.left=x+'px';e.style.top=y+'px';host.appendChild(e);setTimeout(()=>e.remove(),1200)}
+  function confetti(){for(let i=0;i<28;i++){const e=document.createElement('div');e.className='confetti';e.innerHTML=[spr('i','donut','🎉'),spr('i','coin','✨'),STAR,itemPic('coffee'),itemPic('cake'),spr('e','flower','💐')][i%6];e.style.left=Math.random()*95+'%';e.style.animationDuration=(1.6+Math.random()*1.6)+'s';e.style.animationDelay=(Math.random()*.6)+'s';gp.appendChild(e);setTimeout(()=>e.remove(),3800)}}
   function cafeView(){
-    const decos=SHOP.filter(s=>has(s.id)).map(s=>s.e);
-    return `<div class="cafe-view"><div class="awning"></div><div class="sign">まめまめカフェ</div><div class="clerk">🧑‍🍳</div>${decos.map((e,i)=>`<span class="deco" style="left:${4+i*10.5}%;animation-delay:${i*.3}s">${e}</span>`).join('')}</div>`;
+    const decos=SHOP.filter(s=>has(s.id));
+    return `<div class="cafe-view scene"><div class="awning"></div><div class="clerk">${spr('g','owner','🧑‍🍳')}</div><div class="cfront"></div><div class="sign">まめまめカフェ</div>${decos.map((s,i)=>`<span class="deco d-${s.id}" style="left:${4+i*10.5}%;animation-delay:${i*.3}s">${shopPic(s)}</span>`).join('')}</div>`;
   }
   // ---------- ロビー ----------
   function lobby(){
     chips();say('');
     const goal=goalOf(c.day),best=c.stars[c.day-1]||0;
-    const menuTxt=unlocked().map(k=>ITEMS[k].e).join('');
+    const menuTxt=`<span class="menurow">${unlocked().map(k=>itemPic(k)).join('')}</span>`;
     $('#cafe').innerHTML=`${cafeView()}
       <div class="goalbox"><b>${c.day>LAST_DAY?'ボーナス営業':c.day+'日目'}の目標：${goal}コイン</b><br><span class="muted small">★1=${goal} ／ ★2=${Math.ceil(goal*1.5)} ／ ★3=${goal*2} ・ メニュー ${menuTxt}</span>
       <div class="daydots">${Array.from({length:LAST_DAY},(_,i)=>`<span class="${c.stars[i]?'done':''} ${i+1===c.day?'now':''}" title="${i+1}日目">${c.stars[i]?'★'.repeat(c.stars[i]):i+1}</span>`).join('')}</div></div>
-      <div class="lobby-actions"><button id="open" class="primary">☕ お店をあける</button><button id="shopbtn">🛒 お店を強化${SHOP.some(s=>!has(s.id)&&c.coins>=s.cost)?' ❗':''}</button></div>`;
+      <div class="lobby-actions"><button id="open" class="primary">${itemPic('coffee')} お店をあける</button><button id="shopbtn"><span>${em('🛒 ')}お店を強化</span>${SHOP.some(s=>!has(s.id)&&c.coins>=s.cost)?' <span class="bang">'+em('❗')+'</span>':''}</button></div>`;
     $('#open').onclick=openShop;
     $('#shopbtn').onclick=shop;
     if(best)say(`この日のベスト：${'★'.repeat(best)}。もっと上をめざせる？`);
@@ -197,11 +330,11 @@ function mount(){
   // ---------- 設備ショップ ----------
   function shop(){
     chips();
-    $('#cafe').innerHTML=`<div class="shop-head"><h2>🛒 お店を強化</h2><button id="back" class="primary sbtn">もどる</button></div><div class="shop">${SHOP.map(s=>`<div class="item ${has(s.id)?'owned':''}"><span class="ic">${s.e}</span><p><b>${s.n}</b><br>${s.d}</p>${has(s.id)?'<span class="small">✔ 買った</span>':`<button data-buy="${s.id}" ${c.coins<s.cost?'disabled':''}>🪙${s.cost}</button>`}</div>`).join('')}</div>`;
+    $('#cafe').innerHTML=`<div class="shop-head"><h2>${em('🛒 ')}お店を強化</h2><button id="back" class="primary sbtn">もどる</button></div><div class="shop">${SHOP.map(s=>`<div class="item ${has(s.id)?'owned':''}"><span class="ic">${shopPic(s)}</span><p><b>${s.n}</b><br>${s.d}</p>${has(s.id)?'<span class="small">✔ 買った</span>':`<button data-buy="${s.id}" ${c.coins<s.cost?'disabled':''}>${COIN}${s.cost}</button>`}</div>`).join('')}</div>`;
     $('#back').onclick=lobby;
     $$('[data-buy]').forEach(b=>b.onclick=()=>{
       const s=SHOP.find(x=>x.id===b.dataset.buy);if(!s||has(s.id)||c.coins<s.cost)return;
-      c.coins-=s.cost;c.owned[s.id]=true;persist();SFX.buy();shop();say(`${s.e} ${s.n}を買ったよ！ ${s.d}`);
+      c.coins-=s.cost;c.owned[s.id]=true;persist();SFX.buy();shop();sayH(`${shopPic(s)} ${s.n}を買ったよ！ ${s.d}`);
     });
   }
   // ---------- 営業 ----------
@@ -211,8 +344,8 @@ function mount(){
     T={left:DAY_SEC,earned:0,served:0,lost:0,combo:0,bestCombo:0,guest:null,wait:0,perfect:true,active:true,goal,last:performance.now()};
     say('');
     $('#cafe').innerHTML=`<div class="hud"><div class="sales">売上 <b id="earned">0</b> <span class="muted small">/ 目標 ${goal}</span></div><div class="combo" id="combo"></div><div class="meter timebar"><i id="timebar" style="width:100%"></i></div></div>
-      <div class="counter-area" id="counter"><div class="guest" id="guest"><div class="face" id="face">🚪</div><div class="bubble" id="bubble"><span class="muted small">お客さんを待っているよ…</span></div></div><div class="guest-name"><span id="gname"></span><span id="gtime"></span></div><div class="meter patience" id="pat"><i id="patbar" style="width:0"></i></div></div>
-      <div class="menu-grid" id="menu">${unlocked().map(k=>`<button data-m="${k}"><b>${ITEMS[k].e}</b>${ITEMS[k].n}</button>`).join('')}</div>`;
+      <div class="counter-area scene" id="counter"><div class="guest waiting" id="guest"><div class="face" id="face">${spr('g','bell','🚪')}</div><div class="bubble" id="bubble"><span class="muted small">お客さんを待っているよ…</span></div></div><div class="cfront"></div><div class="gfoot"><div class="guest-name"><span id="gname"></span><span id="gtime"></span></div><div class="meter patience" id="pat"><i id="patbar" style="width:0"></i></div></div></div>
+      <div class="menu-grid" id="menu">${unlocked().map(k=>`<button data-m="${k}"><b>${itemPic(k)}</b>${ITEMS[k].n}</button>`).join('')}</div>`;
     $$('[data-m]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();serve(b.dataset.m,b)}));
     $$('[data-m]').forEach(b=>b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();serve(b.dataset.m,b)}}));
     T.wait=.6;SFX.bell();
@@ -228,11 +361,11 @@ function mount(){
     let pat=Math.max(7,13-c.day*.5)+n*2.2;if(has('sofa'))pat*=1.3;if(vip)pat*=.8;
     T.guest={order,idx:0,face,vip,pat,max:pat,mistakes:0};
     const g=$('#guest');g.className='guest enter';
-    $('#face').textContent=face;
+    $('#face').innerHTML=spr('g',face,face);
     $('#gname').textContent=vip?'👑 VIPのお客さん（お代2倍！）':GUEST_NAMES[face]||'お客さん';
     renderOrder();SFX.bell();
   }
-  function renderOrder(){const g=T.guest;$('#bubble').innerHTML=g.order.map((k,i)=>`<span class="it ${i<g.idx?'ok':''} ${i===g.idx?'next':''}" title="${ITEMS[k].n}">${ITEMS[k].e}</span>`).join('')}
+  function renderOrder(){const g=T.guest;$('#bubble').innerHTML=g.order.map((k,i)=>`<span class="it ${i<g.idx?'ok':''} ${i===g.idx?'next':''}" title="${ITEMS[k].n}">${itemPic(k)}</span>`).join('')}
   function flash(b,cls){b.classList.remove('flash','bad');void b.offsetWidth;b.classList.add(cls);setTimeout(()=>b.classList.remove(cls),220)}
   function serve(k,b){
     if(!T||!T.active)return;
@@ -243,7 +376,7 @@ function mount(){
     }else{
       g.pat=Math.max(0,g.pat-3);g.mistakes++;T.combo=0;SFX.bad();flash(b,'bad');
       const gg=$('#guest');gg.classList.remove('oops');void gg.offsetWidth;gg.classList.add('oops');
-      say(`ちがうメニューだよ。${ITEMS[g.order[g.idx]].e}${ITEMS[g.order[g.idx]].n}をお出ししよう（お客さんの待ち時間 −3秒）`);
+      sayH(`ちがうメニューだよ。${itemPic(g.order[g.idx])}${ITEMS[g.order[g.idx]].n}をお出ししよう（お客さんの待ち時間 −3秒）`);
     }
   }
   function paid(){
@@ -254,7 +387,7 @@ function mount(){
     $('#earned').textContent=T.earned;$('#coinv').textContent=c.coins;
     $('#combo').textContent=T.combo>=2?`🔥 ${T.combo}れんぞく`:'';
     const r=$('#counter').getBoundingClientRect(),p=gp.getBoundingClientRect();
-    fx(`+${total}🪙`,r.left-p.left+r.width*.55,r.top-p.top+20);
+    fx(`+${total}${COIN}`,r.left-p.left+r.width*.55,r.top-p.top+20);
     SFX.coin();
     say(tip?`ありがとう！ ${pay}コイン＋チップ${tip}コイン`:`ありがとう！ ${pay}コイン`);
     $('#guest').className='guest bye';
@@ -271,7 +404,7 @@ function mount(){
     if(T.guest){
       const g=T.guest;g.pat-=dt;const r=clamp(g.pat/g.max,0,1);
       const pb=$('#pat');pb.className='meter patience'+(r<.25?' danger':r<.5?' warn':'');$('#patbar').style.width=(r*100)+'%';
-      $('#gtime').textContent=r<.25?'😣 いそいで！':r<.5?'🙂 まだかな':'😊';
+      const mood=r<.25?2:r<.5?1:0;if(g.mood!==mood){g.mood=mood;$('#gtime').innerHTML=[em('😊'),em('🙂 ')+'まだかな',em('😣 ')+'いそいで！'][mood]}
       if(g.pat<=0){T.lost++;T.combo=0;$('#combo').textContent='';SFX.sad();say('お客さんが帰っちゃった…。つぎはがんばろう！');$('#guest').className='guest bye';T.guest=null;T.wait=1.1}
     }else{
       T.wait-=dt;if(T.wait<=0&&T.left>1.2)newGuest();
@@ -290,11 +423,11 @@ function mount(){
     persist();chips();
     if(pass){SFX.fanfare()}else SFX.sad();
     const next=SHOP.find(s=>!has(s.id));
-    const o=overlay(`<p class="eyebrow">${day>LAST_DAY?'ボーナス営業':day+'日目'} おしまい</p><div class="big">${pass?'🎉':'☕'}</div>
-      <div class="stars">${[0,1,2].map(i=>`<i style="animation-delay:${.2+i*.25}s">${i<st?'⭐':'☆'}</i>`).join('')}</div>
+    const o=overlay(`<p class="eyebrow">${day>LAST_DAY?'ボーナス営業':day+'日目'} おしまい</p><div class="big">${pass?spr('g','cheer','🎉'):spr('g','owner','☕')}</div>
+      <div class="stars">${[0,1,2].map(i=>`<i style="animation-delay:${.2+i*.25}s">${i<st?STAR:spr('i','star','☆','off')}</i>`).join('')}</div>
       <h2>売上 ${T.earned}コイン</h2><p class="muted">目標 ${goal} ・ ${T.served}人に提供 ・ 帰った人 ${T.lost} ・ 最高 ${T.bestCombo}れんぞく</p>
       <p>${pass?(st===3?'かんぺき！ 大人気のカフェだね！':'目標クリア！ つぎの日へ進めるよ。'):'目標まであと '+(goal-T.earned)+'コイン。お店を強化してもう一度！'}</p>
-      ${next&&c.coins>=next.cost?`<p class="progress">🛒 ${next.e}${next.n} が買えるよ！</p>`:''}
+      ${next&&c.coins>=next.cost?`<p class="progress">${em('🛒 ')}${shopPic(next)}${next.n} が買えるよ！</p>`:''}
       <div class="row"><button class="primary" id="go">${pass?'お店の準備へ':'もう一度この日'}</button></div>`);
     o.querySelector('#go').onclick=()=>{o.remove();if(ending)showEnding();else{relaunchLobby()}};
   }
@@ -303,12 +436,12 @@ function mount(){
     const s=totalStars();
     const rank=s>=27?'🏆 伝説のカフェ':s>=20?'🥇 町いちばんのカフェ':s>=14?'🥈 人気のカフェ':'🥉 みんなのカフェ';
     confetti();SFX.fanfare();
-    const o=overlay(`<p class="eyebrow">ENDING</p><div class="big">🏡☕✨</div><h2>10日間の営業、おつかれさま！</h2><p>まめまめカフェは、町のみんなが集まるお店になったよ。</p><p class="progress">${rank}　⭐ ${s} / 30</p><p class="muted small">これまでの売上 ${c.total}コイン ・ ${c.served}人に提供 ・ 最高 ${c.bestCombo}れんぞく</p><p class="small muted">「最初から」で、ぜんぶの日の★3をねらい直せるよ。</p><div class="row"><button class="primary" id="cont">ボーナス営業をつづける</button><button id="again2">最初から</button></div>`);
+    const o=overlay(`<p class="eyebrow">ENDING</p><div class="big">${spr('g','cheer','🏡☕✨')}</div><h2>10日間の営業、おつかれさま！</h2><p>まめまめカフェは、町のみんなが集まるお店になったよ。</p><p class="progress">${rank}　${STAR} ${s} / 30</p><p class="muted small">これまでの売上 ${c.total}コイン ・ ${c.served}人に提供 ・ 最高 ${c.bestCombo}れんぞく</p><p class="small muted">「最初から」で、ぜんぶの日の★3をねらい直せるよ。</p><div class="row"><button class="primary" id="cont">ボーナス営業をつづける</button><button id="again2">最初から</button></div>`);
     o.querySelector('#cont').onclick=()=>{o.remove();mountAgain()};
     o.querySelector('#again2').onclick=()=>{o.remove();askReset()};
   }
   function askReset(){
-    const o=overlay(`<div class="big">🧹</div><h2>最初からやり直す？</h2><p>コイン・設備・★がぜんぶ消えて、1日目からになるよ。</p><div class="row"><button class="primary" id="yes">やり直す</button><button id="no">やめる</button></div>`);
+    const o=overlay(`<div class="big">${spr('g','owner','🧹')}</div><h2>最初からやり直す？</h2><p>コイン・設備・★がぜんぶ消えて、1日目からになるよ。</p><div class="row"><button class="primary" id="yes">やり直す</button><button id="no">やめる</button></div>`);
     o.querySelector('#no').onclick=()=>o.remove();
     o.querySelector('#yes').onclick=()=>{c=freshCafe();persist();o.remove();mountAgain();say('新しいお店をオープン！ 1日目からがんばろう。')};
   }
