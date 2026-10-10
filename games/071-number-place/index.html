@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>すうじのへや｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:480px; --vh:100vh;
+  }
+  @supports (height:100dvh){ :root{--vh:100dvh} }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 10px 30px; overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button{font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .backbar,header,#wrap,.help{width:min(var(--w),100%)}
+  .backbar{margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:4px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;min-width:44px;min-height:30px}
+  header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.6);font-weight:400;line-height:1.2}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid var(--edge);border-radius:10px;background:#0e0e1c;overflow:hidden;padding-bottom:6px}
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 8px;background:var(--panel);border-bottom:1px solid var(--edge);height:42px}
+  .hud .info{font-size:13px;color:var(--gold);white-space:nowrap;min-width:92px;line-height:1.25}
+  .hud .info small{display:block;font-size:11px;color:var(--sub)}
+  .hud .mid{display:flex;flex-direction:column;align-items:center;line-height:1.25;white-space:nowrap}
+  #hudStars{font-size:14px;color:var(--gold);letter-spacing:2px;text-shadow:0 0 8px rgba(255,209,102,.6)}
+  #hudStars i{font-style:normal;color:#44446a;text-shadow:none}
+  #hudMiss{font-size:11px;color:var(--sub)}
+  #hudMiss.hot{color:var(--pink)}
+  .lcd{font-size:18px;letter-spacing:1px;padding:3px 8px;border:1px solid var(--edge);border-radius:8px;background:#0a0a17;min-width:92px;text-align:center;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.8)}
+
+  #boardBox{display:flex;justify-content:center;padding:8px 0 0}
+  #board{
+    --n:9; --cs:40px; --nc:3; --nr:3; --off:286px;
+    width:min(calc(100% - 12px), max(200px, calc(var(--vh) - var(--off))));
+    aspect-ratio:1; display:grid;
+    grid-template-columns:repeat(var(--n),1fr); grid-template-rows:repeat(var(--n),1fr);
+    background:#0a0a17; border:2px solid var(--cyan); border-radius:8px;
+    box-shadow:0 0 16px rgba(83,224,216,.35); overflow:hidden;
+    touch-action:manipulation; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+  }
+  .cell{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;
+    border-right:1px solid rgba(160,107,255,.24);border-bottom:1px solid rgba(160,107,255,.24);
+    font-size:calc(var(--cs) * .62);line-height:1;color:var(--cyan);cursor:pointer;text-shadow:0 0 8px rgba(83,224,216,.55)}
+  .cell.bx{border-right:2px solid rgba(83,224,216,.8)}
+  .cell.by{border-bottom:2px solid rgba(83,224,216,.8)}
+  .cell.lastc{border-right:none}
+  .cell.lastr{border-bottom:none}
+  .cell.given{color:var(--ink);background:rgba(255,255,255,.055);text-shadow:none}
+  .cell.peer{background:rgba(160,107,255,.13)}
+  .cell.given.peer{background:rgba(160,107,255,.2)}
+  .cell.same{background:rgba(255,209,102,.24);color:var(--gold);text-shadow:0 0 8px rgba(255,209,102,.6)}
+  .cell.hinted{color:var(--gold);text-shadow:0 0 8px rgba(255,209,102,.6)}
+  .cell.clash,.cell.given.clash,.cell.same.clash{background:rgba(255,95,162,.3);box-shadow:inset 0 0 0 1px rgba(255,95,162,.7)}
+  .cell.wrong{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.8);background:rgba(255,95,162,.16)}
+  .cell.sel{background:rgba(83,224,216,.3);box-shadow:inset 0 0 0 2px var(--cyan)}
+  .cell.wrong.sel{box-shadow:inset 0 0 0 2px var(--pink)}
+  .cell.guide{animation:guide 1s ease-in-out infinite}
+  .cell.pop{animation:pop .26s ease-out}
+  .cell.bad{animation:bad .34s ease-in-out}
+  .cell.wave{animation:wave .52s ease-out both;z-index:1}
+  @keyframes guide{0%,100%{box-shadow:inset 0 0 0 2px rgba(255,209,102,.25)}50%{box-shadow:inset 0 0 0 3px var(--gold),inset 0 0 14px rgba(255,209,102,.6)}}
+  @keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.22)}100%{transform:scale(1)}}
+  @keyframes bad{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+  @keyframes wave{0%{transform:scale(1)}35%{transform:scale(1.2);background:rgba(255,209,102,.6);color:#fff}100%{transform:scale(1)}}
+  .notes{position:absolute;inset:1px;display:grid;grid-template-columns:repeat(var(--nc),1fr);grid-template-rows:repeat(var(--nr),1fr);
+    font-size:max(11px, calc(var(--cs) * .27));color:var(--sub);line-height:1;text-shadow:none}
+  .notes i{font-style:normal;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+  .notes i.hl{color:var(--gold)}
+
+  #tip{font-size:13px;color:var(--sub);text-align:center;height:24px;line-height:24px;white-space:nowrap;overflow:hidden}
+  #tip.flash{color:var(--gold)}
+  #pad{--pc:5;display:grid;grid-template-columns:repeat(var(--pc),1fr);gap:5px;padding:0 6px}
+  .key{height:44px;font-size:24px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);position:relative;cursor:pointer;padding:0;line-height:1}
+  .key small{position:absolute;right:5px;top:3px;font-size:11px;color:var(--sub)}
+  .key.done{opacity:.32}
+  .key.erase{font-size:14px;color:var(--pink)}
+  .key:active{transform:scale(.94)}
+  #pad.memo .key:not(.erase){color:var(--gold);border-color:rgba(255,209,102,.45);font-size:18px}
+  .tools{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:5px 6px 0}
+  .tool{height:42px;font-size:13px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;padding:0 2px;white-space:nowrap;letter-spacing:.5px}
+  .tool:active{transform:scale(.95)}
+  .tool:disabled{opacity:.4}
+  #memoBtn.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.14);box-shadow:0 0 12px rgba(255,209,102,.35)}
+
+  #fx{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:3}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.95);
+    text-align:center;padding:10px;overflow:auto;z-index:2;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.7);line-height:1.2}
+  #overlay .big.win{color:var(--gold);text-shadow:0 0 18px rgba(255,209,102,.75)}
+  #ovStars{font-size:38px;letter-spacing:8px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.8);line-height:1;display:none}
+  #ovStars i{font-style:normal;color:#3a3a60;text-shadow:none}
+  #ovStars span{display:inline-block;animation:pop .4s ease-out both}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.75}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .rec{color:var(--cyan)}
+  .pick{display:flex;gap:6px;justify-content:center;width:100%}
+  .pick button{flex:1;max-width:124px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:10px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center;min-height:48px;justify-content:center}
+  .pick button b{font-weight:400;font-size:15px;color:var(--ink);letter-spacing:1px}
+  .pick button small{font-size:11px}
+  .pick button em{font-style:normal;font-size:11px;color:var(--gold);white-space:nowrap}
+  .pick button.on{border-color:var(--cyan);background:rgba(83,224,216,.12);box-shadow:0 0 10px rgba(83,224,216,.4)}
+  .pick button.on b{color:var(--cyan)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .modes button{font-size:16px;background:var(--cyan);color:#06221f;border:none;border-radius:8px;padding:0 22px;height:44px;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(83,224,216,.45)}
+  .modes button.alt{background:none;color:var(--ink);border:1px solid var(--edge);font-size:13px;box-shadow:none;padding:0 12px}
+  .modes button.cont{background:var(--gold);color:#2a1c00;box-shadow:0 0 14px rgba(255,209,102,.45);font-size:14px;padding:0 14px}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.5}
+
+  .help{color:var(--sub);font-size:13px;margin-top:12px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal} .help .c3{color:var(--gold);font-style:normal}
+
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .key:hover,.tool:hover:not(:disabled){border-color:var(--gold)}
+    .pick button:hover{border-color:var(--sub)}
+    .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
+    .cell:hover{box-shadow:inset 0 0 0 1px rgba(255,209,102,.6)}
+    .cell.sel:hover{box-shadow:inset 0 0 0 2px var(--cyan)}
+  }
+  @media (max-height:560px){ header{display:none} }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="たて・よこ・ふといわくの へやに、おなじ すうじが かぶらないように うめる ナンプレ。4×4・6×6・9×9の 3サイズと 3つの むずかしさで、こたえが 1つだけの もんだいを まいかい 新しく つくるよ。メモ、ミスひょうじ、ヒント、まいにち かわる「きょうの もんだい」、タイムと★の きろくつき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/071-number-place/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"すうじのへや","description":"たて・よこ・ふといわくの へやに、おなじ すうじが かぶらないように うめる ナンプレ。4×4・6×6・9×9の 3サイズと 3つの むずかしさで、こたえが 1つだけの もんだいを まいかい 新しく つくるよ。メモ、ミスひょうじ、ヒント、まいにち かわる「きょうの もんだい」、タイムと★の きろくつき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/071-number-place/index.html","inLanguage":"ja","genre":"PUZZLE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="071"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>すうじのへや</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとり用・3サイズ</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div class="info"><span id="hudInfo">4×4 やさしい</span><small id="hudLeft">のこり 0マス</small></div>
+    <div class="mid"><span id="hudStars">★★★</span><span id="hudMiss">ミス 0</span></div>
+    <div class="lcd" id="hudTime">⏱ 0:00</div>
+  </div>
+  <div id="boardBox"><div id="board"></div></div>
+  <div id="tip">👆 あいている マスを タップしてね</div>
+  <div id="pad"></div>
+  <div class="tools">
+    <button class="tool" id="memoBtn">✏️ メモ</button>
+    <button class="tool" id="hintBtn">💡 ヒント 3</button>
+    <button class="tool" id="undoBtn">↩ もどす</button>
+    <button class="tool" id="menuBtn">☰ メニュー</button>
+  </div>
+  <canvas id="fx"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">すうじのへや</div>
+    <div id="ovStars"></div>
+    <div class="note" id="ovNote"></div>
+    <div class="pick" id="sizes">
+      <button data-n="4"><b>4×4</b><small>すうじ 1〜4</small></button>
+      <button data-n="6"><b>6×6</b><small>すうじ 1〜6</small></button>
+      <button data-n="9"><b>9×9</b><small>すうじ 1〜9</small></button>
+    </div>
+    <div class="pick" id="diffs">
+      <button data-d="0"><b>やさしい</b><em>🏆 --</em></button>
+      <button data-d="1"><b>ふつう</b><em>🏆 --</em></button>
+      <button data-d="2"><b>むずかしい</b><em>🏆 --</em></button>
+    </div>
+    <div class="modes">
+      <button id="contBtn" class="cont" style="display:none">▶ つづきから</button>
+      <button id="startBtn">はじめる</button>
+      <button id="dailyBtn" class="alt">📅 きょうの もんだい</button>
+      <button id="toTitleBtn" class="alt" style="display:none">サイズを えらぶ</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：<i class="c1">たての れつ</i>・<i class="c1">よこの れつ</i>・<i class="c1">ふとい わくの へや</i> の どれにも、おなじ すうじが <b>1つずつ</b> 入るように、あいている マスを ぜんぶ うめよう。こたえは かならず 1つだけ。もんだいは あそぶたびに 新しく つくられるよ。<br>
+  📱 マスを タップして えらび、下の すうじを タップ。「✏️メモ」を オンにすると、こうほの すうじを 小さく メモできる。ちがう すうじを 入れると <i class="c2">ピンク</i>に なって ミスが 1つ ふえるよ。<br>
+  ⌨️ 矢印キーで マスを いどう、すうじキーで 入力、Backspace で けす、M で メモ、Z で もどす、H で ヒント。<br>
+  <i class="c3">★のつけかた</i>：ミスも ヒントも なしで ★★★、あわせて 3回までなら ★★。「📅きょうの もんだい」は 1日ごとに かわり、つづけて クリアすると れんぞく日数が のびるよ。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const wrap = $('wrap'), board = $('board'), pad = $('pad'), overlay = $('overlay'), tipEl = $('tip');
+  const fx = $('fx'), fctx = fx.getContext('2d');
+  const KEY = 'ludot_number-place_';
+  const SIZES = [4, 6, 9];
+  const DIFF_NAME = ['やさしい', 'ふつう', 'むずかしい'];
+  const TARGET = { 4: [9, 7, 5], 6: [22, 17, 11], 9: [44, 35, 26] };   // さいしょに 見えている すうじの数
+  const MAX_HINTS = 3;
+  const PALETTE = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#7cff7c', '#ffffff'];
+  const RS = Math.min(2, window.devicePixelRatio || 1);
+
+  // ---- storage -------------------------------------------------------------
+  function load(k, def) { try { const v = JSON.parse(localStorage.getItem(KEY + k)); return v == null ? def : v; } catch (e) { return def; } }
+  function store(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
+  function drop(k) { try { localStorage.removeItem(KEY + k); } catch (e) {} }
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = load('mute', 0) === 1;
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + (delay || 0);
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SCALE = [523, 587, 659, 784, 880, 1047, 1175, 1319, 1568];
+  const SFX = {
+    select() { tone('square', 880, 880, 0.03, 0.025); },
+    place(d) { const f = SCALE[(d - 1) % 9]; tone('triangle', f, f, 0.14, 0.09); tone('sine', f * 2, f * 2, 0.1, 0.03, 0.02); },
+    note() { tone('sine', 1200, 1500, 0.05, 0.04); },
+    erase() { tone('triangle', 520, 300, 0.08, 0.05); },
+    bad() { tone('sawtooth', 200, 120, 0.2, 0.07); tone('square', 150, 90, 0.2, 0.04, 0.04); },
+    deny() { tone('square', 210, 150, 0.08, 0.04); },
+    unit(k) { [0, 2, 4].forEach((s, i) => { const f = SCALE[(s + k * 2) % 9]; tone('square', f, f, 0.12, 0.05, i * 0.07); }); },
+    digit() { [1047, 1319, 1568, 2093].forEach((f, i) => tone('triangle', f, f, 0.12, 0.05, 0.12 + i * 0.05)); },
+    hint() { tone('sine', 700, 1400, 0.25, 0.07); tone('triangle', 1400, 2100, 0.2, 0.04, 0.12); },
+    undo() { tone('triangle', 600, 420, 0.07, 0.05); },
+    click() { tone('square', 1000, 1000, 0.03, 0.03); },
+    win() { [523, 659, 784, 1047, 1319, 1568, 2093].forEach((f, i) => tone('square', f, f, 0.2, 0.06, i * 0.09)); },
+    record() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.22, 0.07, 0.8 + i * 0.09)); },
+    pop() { tone('triangle', 520, 180, 0.2, 0.035); },
+  };
+  const muteBtn = $('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- もんだいづくり（こたえが 1つだけに なるように つくる） ---------------
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function shuffle(a, rng) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function popc(m) { let c = 0; while (m) { m &= m - 1; c++; } return c; }
+  function lowDigit(m) { let d = 1; while (!(m & 1)) { m >>= 1; d++; } return d; }
+
+  const GEO = {};
+  function geoOf(N) {
+    if (GEO[N]) return GEO[N];
+    const BR = N === 9 ? 3 : 2, BC = N === 4 ? 2 : 3, NN = N * N, per = N / BC;
+    const units = [], unitsOf = [], peers = [];
+    for (let k = 0; k < 3 * N; k++) units.push([]);
+    for (let i = 0; i < NN; i++) {
+      const r = (i / N) | 0, c = i % N, b = ((r / BR) | 0) * per + ((c / BC) | 0);
+      unitsOf.push([r, N + c, 2 * N + b]); units[r].push(i); units[N + c].push(i); units[2 * N + b].push(i);
+    }
+    for (let i = 0; i < NN; i++) { const s = new Set(); for (const u of unitsOf[i]) for (const j of units[u]) if (j !== i) s.add(j); peers.push([...s]); }
+    return (GEO[N] = { N, NN, BR, BC, units, unitsOf, peers, full: (1 << N) - 1 });
+  }
+  function candMask(g, a, i) { let m = 0; for (const p of g.peers[i]) if (a[p]) m |= 1 << (a[p] - 1); return g.full & ~m; }
+  function genSolution(g, rng) {
+    const a = new Array(g.NN).fill(0);
+    const first = []; for (let d = 1; d <= g.N; d++) first.push(d); shuffle(first, rng);
+    for (let c = 0; c < g.N; c++) a[c] = first[c];
+    (function rec() {
+      let best = -1, bm = 0, bc = 99;
+      for (let i = 0; i < g.NN; i++) { if (a[i]) continue; const m = candMask(g, a, i), c = popc(m); if (!c) return false; if (c < bc) { bc = c; best = i; bm = m; if (c === 1) break; } }
+      if (best < 0) return true;
+      const ds = []; for (let d = 1; d <= g.N; d++) if (bm >> (d - 1) & 1) ds.push(d); shuffle(ds, rng);
+      for (const d of ds) { a[best] = d; if (rec()) return true; }
+      a[best] = 0; return false;
+    })();
+    return a;
+  }
+  // ルールどおりか（れつ・へやに かぶりが ないか）
+  function hasClash(g, a) { for (let i = 0; i < g.NN; i++) if (a[i]) for (const p of g.peers[i]) if (a[p] === a[i]) return true; return false; }
+  // こたえの数を かぞえる（limit で 打ち切り）
+  function countSolutions(g, puzzle, limit) {
+    const a = puzzle.slice(); let count = 0;
+    if (hasClash(g, a)) return 0;
+    (function rec() {
+      let best = -1, bm = 0, bc = 99;
+      for (let i = 0; i < g.NN; i++) { if (a[i]) continue; const m = candMask(g, a, i), c = popc(m); if (!c) return; if (c < bc) { bc = c; best = i; bm = m; if (c === 1) break; } }
+      if (best < 0) { count++; return; }
+      for (let d = 1; d <= g.N; d++) if (bm >> (d - 1) & 1) { a[best] = d; rec(); if (count >= limit) break; }
+      a[best] = 0;
+    })();
+    return count;
+  }
+  // 人が つかう かんがえ方だけで とく。level 1＝「ここしか ない」、level 2＝「れつ・へやの しぼりこみ」「ペア」
+  function logicSolve(g, puzzle, maxLevel) {
+    const a = puzzle.slice(), cand = new Array(g.NN); let left = 0, level = 0, firstSingle = -1;
+    for (let i = 0; i < g.NN; i++) { if (a[i]) cand[i] = 0; else { cand[i] = candMask(g, a, i); left++; } }
+    const put = (i, d) => { a[i] = d; cand[i] = 0; const b = 1 << (d - 1); for (const p of g.peers[i]) cand[p] &= ~b; left--; if (firstSingle < 0) firstSingle = i; };
+    for (let guard = 0; guard < 400 && left > 0; guard++) {
+      let progress = false;
+      for (let i = 0; i < g.NN; i++) { if (a[i]) continue; const m = cand[i]; if (!m) return { solved: false, level, grid: a, first: firstSingle }; if (!(m & (m - 1))) { put(i, lowDigit(m)); progress = true; } }
+      for (const u of g.units) for (let d = 1; d <= g.N; d++) {
+        const b = 1 << (d - 1); let n = 0, at = -1;
+        for (const i of u) if (cand[i] & b) { n++; at = i; }
+        if (n === 1) { put(at, d); progress = true; }
+      }
+      if (progress) { if (level < 1) level = 1; continue; }
+      if (maxLevel < 2) break;
+      let changed = false;
+      for (let ui = 0; ui < g.units.length; ui++) for (let d = 1; d <= g.N; d++) {
+        const b = 1 << (d - 1), S = [];
+        for (const i of g.units[ui]) if (cand[i] & b) S.push(i);
+        if (S.length < 2 || S.length > 3) continue;
+        for (const v of g.unitsOf[S[0]]) {
+          if (v === ui || !S.every(i => g.unitsOf[i].includes(v))) continue;
+          for (const j of g.units[v]) if ((cand[j] & b) && !S.includes(j)) { cand[j] &= ~b; changed = true; }
+        }
+      }
+      for (const u of g.units) for (let x = 0; x < u.length; x++) {
+        const m = cand[u[x]]; if (!m || popc(m) !== 2) continue;
+        for (let y = x + 1; y < u.length; y++) if (cand[u[y]] === m) { for (const j of u) if (j !== u[x] && j !== u[y] && (cand[j] & m)) { cand[j] &= ~m; changed = true; } }
+      }
+      if (!changed) break;
+      level = 2;
+    }
+    return { solved: left === 0, level, grid: a, first: firstSingle };
+  }
+  function dig(g, sol, rng, target, maxLevel) {
+    const p = sol.slice(); let clues = g.NN, goal = target;
+    const order = []; for (let i = 0; i < g.NN; i++) order.push(i); shuffle(order, rng);
+    // lv＝つかってよい かんがえ方。 wantHard＝「しぼりこみが いる」形に なる 1マスを さがして ぬく
+    const pass = (lv, wantHard) => {
+      for (const i of order) {
+        if (clues <= goal) break;
+        if (!p[i]) continue;
+        const j = g.NN - 1 - i, both = !wantHard && j !== i && p[j] && clues - 2 >= goal;
+        const a = p[i], b = p[j];
+        p[i] = 0; if (both) p[j] = 0;
+        let ok = logicSolve(g, p, lv).solved;
+        if (ok && wantHard && logicSolve(g, p, 1).solved) ok = false;
+        if (ok) { clues -= both ? 2 : 1; if (wantHard) return; continue; }
+        if (both) { p[j] = b; if (logicSolve(g, p, lv).solved) { clues--; continue; } }
+        p[i] = a;
+      }
+    };
+    if (maxLevel < 2) pass(1, false);
+    else { goal = target + 5; pass(1, false); goal = target; pass(2, true); pass(2, false); }
+    return { puzzle: p, clues };
+  }
+  function generate(N, diff, seed) {
+    const g = geoOf(N), rng = mulberry32((seed ^ (N * 7919 + diff * 104729)) >>> 0), target = TARGET[N][diff];
+    let best = null;
+    const tries = diff === 2 ? 6 : 3;
+    for (let t = 0; t < tries; t++) {
+      const sol = genSolution(g, rng), r = dig(g, sol, rng, target, diff === 2 ? 2 : 1);
+      const level = logicSolve(g, r.puzzle, 2).level;
+      const cand = { puzzle: r.puzzle, sol, clues: r.clues, level };
+      const score = (diff === 2 ? level * 100 : 0) - r.clues;
+      if (!best || score > best.score) { best = cand; best.score = score; }
+      if (r.clues <= target && (diff < 2 || level === 2 || N === 4)) break;
+    }
+    return best;
+  }
+  function isSolved(g, a) {
+    for (let i = 0; i < g.NN; i++) if (!a[i]) return false;
+    for (const u of g.units) { let m = 0; for (const i of u) m |= 1 << (a[i] - 1); if (m !== g.full) return false; }
+    return true;
+  }
+
+  // ---- state ---------------------------------------------------------------
+  const prefs = load('prefs', {}) || {};
+  let N = SIZES.includes(prefs.n) ? prefs.n : 4, diff = [0, 1, 2].includes(prefs.d) ? prefs.d : 0;
+  let geo = geoOf(N);
+  let gN = N, gDiff = diff;                    // あそんでいる もんだいの サイズ・むずかしさ
+  let phase = 'title';                         // title | play | clear
+  let sol = [], given = [], grid = [], notes = [], hinted = [];
+  let sel = -1, memo = false, mistakes = 0, hints = 0, elapsed = 0, moves = 0;
+  let daily = false, seed = 0, playDate = '';
+  let undoStack = [];
+  let best = load('best', {}) || {};
+  let stats = Object.assign({ clears: 0, streak: 0, lastDaily: '', dailyDate: '', dailyDone: [] }, load('stats', {}) || {});
+  let saved = load('save', null);
+  let lastStars = 0, lastTime = 0, newRecord = false, resultShown = false;
+  let T = 0, lastSecShown = -1, events = [], particles = [], cells = [], keys = [], guideCell = -1;
+  let fxW = 0, fxH = 0, fxDirty = false, testDate = null, tipTimer = 0;
+
+  const fmtTime = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const starStr = n => '★'.repeat(n) + '<i>' + '★'.repeat(3 - n) + '</i>';
+  const pad2 = n => String(n).padStart(2, '0');
+  function dateStr(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function today() { return testDate || dateStr(new Date()); }
+  function dayBefore(s) { const p = s.split('-').map(Number); return dateStr(new Date(p[0], p[1] - 1, p[2] - 1)); }
+  function dailySeed(n, d, date) { return hashStr('room|' + date + '|' + n + '|' + d); }
+  function curStars() { return (mistakes === 0 && hints === 0) ? 3 : (mistakes + hints <= 3 ? 2 : 1); }
+  function leftCount() { let c = 0; for (let i = 0; i < geo.NN; i++) if (grid[i] !== sol[i]) c++; return c; }
+  function dailyDoneToday(n, d) { return stats.dailyDate === today() && stats.dailyDone.includes(n + '-' + d); }
+  function validSave(s) {
+    return !!(s && SIZES.includes(s.n) && [0, 1, 2].includes(s.d) && Array.isArray(s.sol) && s.sol.length === s.n * s.n &&
+      Array.isArray(s.puzzle) && s.puzzle.length === s.n * s.n && Array.isArray(s.grid) && s.grid.length === s.n * s.n &&
+      Array.isArray(s.notes) && s.notes.length === s.n * s.n);
+  }
+  if (!validSave(saved)) saved = null;
+
+  // ---- board DOM -----------------------------------------------------------
+  function buildBoard() {
+    board.innerHTML = ''; cells = [];
+    board.style.setProperty('--n', geo.N);
+    board.style.setProperty('--nc', geo.N === 4 ? 2 : 3);
+    board.style.setProperty('--nr', geo.N === 9 ? 3 : 2);
+    for (let i = 0; i < geo.NN; i++) {
+      const r = (i / geo.N) | 0, c = i % geo.N, el = document.createElement('div');
+      let cls = 'cell';
+      if (c === geo.N - 1) cls += ' lastc'; else if ((c + 1) % geo.BC === 0) cls += ' bx';
+      if (r === geo.N - 1) cls += ' lastr'; else if ((r + 1) % geo.BR === 0) cls += ' by';
+      el.className = cls; el.dataset.i = i; el._k = '';
+      board.appendChild(el); cells.push(el);
+    }
+    pad.innerHTML = ''; keys = [];
+    pad.style.setProperty('--pc', geo.N === 9 ? 5 : geo.N + 1);
+    board.style.setProperty('--off', geo.N === 9 ? '334px' : '286px');
+    for (let d = 1; d <= geo.N; d++) {
+      const b = document.createElement('button');
+      b.className = 'key'; b.dataset.d = d; b.setAttribute('aria-label', 'すうじ ' + d);
+      b.innerHTML = d + '<small></small>'; pad.appendChild(b); keys.push(b);
+    }
+    const e = document.createElement('button');
+    e.className = 'key erase'; e.id = 'eraseBtn'; e.textContent = '⌫ けす'; pad.appendChild(e);
+    layout();
+  }
+  function layout() {
+    const w = board.clientWidth;
+    if (w > 0) board.style.setProperty('--cs', (w / geo.N) + 'px');
+    const cw = wrap.clientWidth, ch = wrap.clientHeight;
+    if (cw > 0 && ch > 0 && (cw !== fxW || ch !== fxH)) { fxW = cw; fxH = ch; fx.width = Math.round(cw * RS); fx.height = Math.round(ch * RS); fxDirty = true; }
+  }
+  function paint() {
+    const playing = phase !== 'title' || grid.length === geo.NN;
+    if (!playing || grid.length !== geo.NN) return;
+    const selD = sel >= 0 ? grid[sel] : 0;
+    const peer = new Uint8Array(geo.NN), clash = new Uint8Array(geo.NN);
+    if (sel >= 0) for (const p of geo.peers[sel]) peer[p] = 1;
+    for (let i = 0; i < geo.NN; i++) if (grid[i] && !given[i] && grid[i] !== sol[i]) for (const p of geo.peers[i]) if (grid[p] === grid[i]) clash[p] = 1;
+    for (let i = 0; i < geo.NN; i++) {
+      const el = cells[i], v = grid[i], cl = el.classList;
+      cl.toggle('given', !!given[i]);
+      cl.toggle('sel', i === sel);
+      cl.toggle('peer', !!peer[i] && i !== sel);
+      cl.toggle('same', !!v && v === selD && i !== sel);
+      cl.toggle('wrong', !!v && !given[i] && v !== sol[i]);
+      cl.toggle('clash', !!clash[i]);
+      cl.toggle('hinted', !!hinted[i] && v === sol[i]);
+      cl.toggle('guide', i === guideCell);
+      const k = v ? 'v' + v : (notes[i] ? 'n' + notes[i] + '/' + selD : '');
+      if (k !== el._k) {
+        el._k = k;
+        if (v) el.textContent = v;
+        else if (notes[i]) { let h = '<div class="notes">'; for (let d = 1; d <= geo.N; d++) h += (notes[i] >> (d - 1) & 1) ? '<i' + (d === selD ? ' class="hl"' : '') + '>' + d + '</i>' : '<i></i>'; el.innerHTML = h + '</div>'; }
+        else el.textContent = '';
+      }
+    }
+    const cnt = new Array(geo.N + 1).fill(0);
+    for (let i = 0; i < geo.NN; i++) if (grid[i] && grid[i] === sol[i]) cnt[grid[i]]++;
+    for (let d = 1; d <= geo.N; d++) { const b = keys[d - 1], rest = geo.N - cnt[d]; b.classList.toggle('done', rest === 0); b.lastChild.textContent = rest > 0 ? rest : '✓'; }
+    pad.classList.toggle('memo', memo);
+    $('memoBtn').classList.toggle('on', memo);
+    $('memoBtn').textContent = memo ? '✏️ メモ中' : '✏️ メモ';
+    $('hintBtn').textContent = '💡 ヒント ' + (MAX_HINTS - hints);
+    $('hintBtn').disabled = hints >= MAX_HINTS;
+    $('undoBtn').disabled = undoStack.length === 0;
+    updateHud(); updateTip();
+  }
+  function updateHud() {
+    $('hudInfo').textContent = (daily ? '📅 ' : '') + gN + '×' + gN + ' ' + DIFF_NAME[gDiff];
+    $('hudLeft').textContent = 'のこり ' + (grid.length ? leftCount() : 0) + 'マス';
+    $('hudStars').innerHTML = starStr(curStars());
+    const hm = $('hudMiss'); hm.textContent = 'ミス ' + mistakes; hm.classList.toggle('hot', mistakes > 0);
+    const s = Math.floor(elapsed); lastSecShown = s; $('hudTime').textContent = '⏱ ' + fmtTime(s);
+  }
+  function updateTip(msg) {
+    if (msg) { tipEl.textContent = msg; tipEl.classList.add('flash'); tipTimer = T + 1600; return; }
+    if (tipTimer > T) return;
+    tipEl.classList.remove('flash');
+    let s = '';
+    if (phase === 'clear') s = '🎉 ぜんぶ うまった！';
+    else if (memo) s = '✏️ メモ中：こうほの すうじを 小さく かけるよ';
+    else if (sel < 0) s = '👆 あいている マスを タップしてね';
+    else if (given[sel]) s = 'ここは さいしょから ある すうじ';
+    else if (grid[sel] && grid[sel] !== sol[sel]) s = 'ピンクは まちがい。ほかの すうじを ためそう';
+    else s = '👇 下の すうじを タップ！';
+    tipEl.textContent = s;
+  }
+  function anim(i, cls, delay) {
+    const el = cells[i]; if (!el) return;
+    el.classList.remove('pop', 'bad', 'wave'); void el.offsetWidth;
+    el.style.animationDelay = delay ? delay + 'ms' : '';
+    el.classList.add(cls);
+  }
+  function cellXY(i) { const r = cells[i].getBoundingClientRect(), w = wrap.getBoundingClientRect(); return { x: r.left - w.left + r.width / 2, y: r.top - w.top + r.height / 2 }; }
+
+  // ---- fx ------------------------------------------------------------------
+  function burst(x, y, cols, n, power) {
+    if (particles.length > 700) return;
+    for (let k = 0; k < n; k++) {
+      const a = Math.random() * Math.PI * 2, sp = (40 + Math.random() * 150) * (power || 1);
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, col: cols[k % cols.length], size: 1.6 + Math.random() * 1.6, g: 240 });
+    }
+  }
+  function floatText(x, y, text, col) { particles.push({ x, y, vx: 0, vy: -38, life: 1.1, col, text, g: 0, size: 0 }); }
+  function drawFx() {
+    if (!particles.length && !fxDirty) return;
+    fctx.setTransform(RS, 0, 0, RS, 0, 0); fctx.clearRect(0, 0, fxW, fxH); fxDirty = particles.length > 0;
+    for (const p of particles) {
+      fctx.globalAlpha = Math.max(0, Math.min(1, p.life / 0.4));
+      if (p.text) {
+        fctx.font = '15px DotGothic16, monospace'; fctx.textAlign = 'center'; fctx.textBaseline = 'middle';
+        const tw = fctx.measureText(p.text).width, tx = Math.max(tw / 2 + 6, Math.min(fxW - tw / 2 - 6, p.x));
+        fctx.fillStyle = 'rgba(10,10,23,.82)'; fctx.fillRect(tx - tw / 2 - 6, p.y - 12, tw + 12, 24);
+        fctx.fillStyle = p.col; fctx.fillText(p.text, tx, p.y + 1);
+      } else { fctx.fillStyle = p.col; fctx.fillRect(p.x - p.size, p.y - p.size, p.size * 2, p.size * 2); }
+    }
+    fctx.globalAlpha = 1;
+  }
+  function schedule(ms, fn) { events.push({ t: T + ms, fn }); }
+
+  // ---- game flow -----------------------------------------------------------
+  function snapshot() {
+    if (phase !== 'play') return;
+    const hi = []; for (let i = 0; i < geo.NN; i++) if (hinted[i]) hi.push(i);
+    saved = { n: gN, d: gDiff, daily, seed, date: playDate, sol: sol.slice(), puzzle: sol.map((v, i) => given[i] ? v : 0), grid: grid.slice(), notes: notes.slice(), hinted: hi, elapsed: Math.round(elapsed * 10) / 10, mistakes, hints, moves };
+    store('save', saved);
+  }
+  function setupGame(n, d, puzzle, solution) {
+    gN = n; gDiff = d; geo = geoOf(n);
+    sol = solution.slice(); given = puzzle.map(v => v ? 1 : 0); grid = puzzle.slice();
+    notes = new Array(geo.NN).fill(0); hinted = new Array(geo.NN).fill(0);
+    sel = -1; memo = false; mistakes = 0; hints = 0; elapsed = 0; moves = 0; undoStack = [];
+    events = []; particles = []; fxDirty = true; resultShown = false; newRecord = false; tipTimer = 0; guideCell = -1;
+    buildBoard();
+  }
+  function newGame(n, d, opts) {
+    opts = opts || {};
+    daily = !!opts.daily; playDate = today();
+    seed = daily ? dailySeed(n, d, playDate) : (opts.seed != null ? opts.seed >>> 0 : (Math.random() * 4294967296) >>> 0);
+    const q = generate(n, d, seed);
+    setupGame(n, d, q.puzzle, q.sol);
+    N = n; diff = d; store('prefs', { n: N, d: diff });
+    phase = 'play'; overlay.classList.remove('show');
+    if (stats.clears === 0) guideCell = easyCell();
+    paint(); snapshot();
+  }
+  function resume() {
+    if (!validSave(saved)) return false;
+    const s = saved;
+    setupGame(s.n, s.d, s.puzzle, s.sol);
+    grid = s.grid.slice(); notes = s.notes.slice();
+    for (const i of (s.hinted || [])) if (i >= 0 && i < geo.NN) hinted[i] = 1;
+    elapsed = +s.elapsed || 0; mistakes = s.mistakes | 0; hints = s.hints | 0; moves = s.moves | 0;
+    daily = !!s.daily; seed = s.seed >>> 0; playDate = s.date || today();
+    phase = 'play'; overlay.classList.remove('show');
+    paint(); return true;
+  }
+  function select(i) {
+    if (phase !== 'play' || i < 0 || i >= geo.NN) return false;
+    sel = i; SFX.select(); paint(); return true;
+  }
+  function pushUndo(i, peersChanged) { undoStack.push({ i, g: grid[i], n: notes[i], pn: peersChanged || null }); if (undoStack.length > 300) undoStack.shift(); }
+  function input(d) {
+    if (phase !== 'play' || d < 1 || d > geo.N) return false;
+    if (sel < 0) { SFX.deny(); updateTip('👆 さきに マスを えらんでね'); return false; }
+    const i = sel;
+    if (given[i]) { SFX.deny(); anim(i, 'bad'); updateTip('ここは さいしょから ある すうじ'); return false; }
+    if (memo) {
+      if (grid[i]) { SFX.deny(); updateTip('メモは あいている マスに かけるよ'); return false; }
+      pushUndo(i); notes[i] ^= 1 << (d - 1); moves++; SFX.note(); paint(); snapshot(); return true;
+    }
+    if (grid[i] === d) return false;
+    const rec = { i, g: grid[i], n: notes[i], pn: [] };
+    grid[i] = d; notes[i] = 0; moves++; guideCell = -1;
+    if (d === sol[i]) {
+      const b = 1 << (d - 1);
+      for (const p of geo.peers[i]) if (notes[p] & b) { rec.pn.push([p, notes[p]]); notes[p] &= ~b; }
+      undoStack.push(rec);
+      SFX.place(d); anim(i, 'pop');
+      const c = cellXY(i); burst(c.x, c.y, ['#53e0d8', '#ffffff'], 6, 0.5);
+      celebrate(i, d);
+      paint();
+      if (isSolved(geo, grid)) clearGame(); else snapshot();
+    } else {
+      undoStack.push(rec);
+      mistakes++; SFX.bad(); anim(i, 'bad');
+      const c = cellXY(i); burst(c.x, c.y, ['#ff5fa2'], 5, 0.4);
+      try { if (navigator.vibrate) navigator.vibrate(30); } catch (e) {}
+      paint(); snapshot();
+    }
+    if (undoStack.length > 300) undoStack.shift();
+    return true;
+  }
+  function celebrate(i, d) {
+    const r0 = (i / geo.N) | 0, c0 = i % geo.N; let done = 0; const waved = new Set();
+    const names = ['よこ', 'たて', 'へや'];
+    let label = '';
+    geo.unitsOf[i].forEach((u, k) => {
+      const cs = geo.units[u];
+      if (!cs.every(j => grid[j] === sol[j])) return;
+      done++; label = label ? 'ダブル' : names[k];
+      for (const j of cs) { if (waved.has(j) || j === i) continue; waved.add(j); const dist = Math.abs(((j / geo.N) | 0) - r0) + Math.abs(j % geo.N - c0); anim(j, 'wave', dist * 45); }
+    });
+    if (done) {
+      SFX.unit(done);
+      const c = cellXY(i); burst(c.x, c.y, ['#ffd166', '#ffffff', '#53e0d8'], 14 * done, 0.9);
+      if (leftCount() > 0) floatText(c.x, c.y - 22, (done >= 3 ? 'トリプル' : done === 2 ? 'ダブル' : label) + ' そろった！', '#ffd166');
+    }
+    let cnt = 0; for (let j = 0; j < geo.NN; j++) if (grid[j] === d && sol[j] === d) cnt++;
+    if (cnt === geo.N && leftCount() > 0) {
+      SFX.digit();
+      const kb = keys[d - 1].getBoundingClientRect(), w = wrap.getBoundingClientRect();
+      burst(kb.left - w.left + kb.width / 2, kb.top - w.top + kb.height / 2, ['#ffd166', '#a06bff'], 12, 0.6);
+    }
+  }
+  function erase() {
+    if (phase !== 'play' || sel < 0) return false;
+    const i = sel;
+    if (given[i]) { SFX.deny(); return false; }
+    if (!grid[i] && !notes[i]) return false;
+    pushUndo(i); grid[i] = 0; notes[i] = 0; moves++; SFX.erase(); paint(); snapshot(); return true;
+  }
+  function undo() {
+    if (phase !== 'play' || !undoStack.length) return false;
+    const u = undoStack.pop();
+    grid[u.i] = u.g; notes[u.i] = u.n;
+    if (u.pn) for (const [p, n] of u.pn) notes[p] = n;
+    sel = u.i; SFX.undo(); paint(); snapshot(); return true;
+  }
+  // つぎに かんがえやすい マス（ここしか ない／これしか 入らない）
+  function easyCell() {
+    const cur = grid.map((v, i) => v === sol[i] ? v : 0);
+    const r = logicSolve(geo, cur, 1);
+    if (r.first >= 0) return r.first;
+    let bestI = -1, bc = 99;
+    for (let i = 0; i < geo.NN; i++) if (!cur[i]) { const c = popc(candMask(geo, cur, i)); if (c < bc) { bc = c; bestI = i; } }
+    return bestI;
+  }
+  function hint() {
+    if (phase !== 'play' || hints >= MAX_HINTS) { if (phase === 'play') { SFX.deny(); updateTip('ヒントは 1もんに 3回までだよ'); } return false; }
+    let i = (sel >= 0 && !given[sel] && grid[sel] !== sol[sel]) ? sel : easyCell();
+    if (i < 0) return false;
+    const rec = { i, g: grid[i], n: notes[i], pn: [] }, d = sol[i], b = 1 << (d - 1);
+    grid[i] = d; notes[i] = 0; hinted[i] = 1; hints++; moves++; guideCell = -1; sel = i;
+    for (const p of geo.peers[i]) if (notes[p] & b) { rec.pn.push([p, notes[p]]); notes[p] &= ~b; }
+    undoStack.push(rec);
+    SFX.hint(); anim(i, 'pop');
+    const c = cellXY(i); burst(c.x, c.y, ['#ffd166', '#ffffff'], 12, 0.7);
+    celebrate(i, d); paint();
+    if (isSolved(geo, grid)) clearGame(); else snapshot();
+    return true;
+  }
+  function setMemo(v) { if (phase !== 'play') return; memo = !!v; SFX.click(); paint(); }
+  function clearGame() {
+    phase = 'clear'; sel = -1; guideCell = -1;
+    lastStars = curStars(); lastTime = Math.round(elapsed * 10) / 10;
+    const k = gN + '-' + gDiff, b = best[k];
+    newRecord = !b || lastTime < b.t;
+    best[k] = { t: b ? Math.min(b.t, lastTime) : lastTime, s: b ? Math.max(b.s | 0, lastStars) : lastStars };
+    stats.clears++;
+    if (daily) {
+      const td = playDate || today();
+      if (stats.dailyDate !== td) { stats.dailyDate = td; stats.dailyDone = []; }
+      if (!stats.dailyDone.includes(k)) stats.dailyDone.push(k);
+      if (stats.lastDaily !== td) { stats.streak = stats.lastDaily === dayBefore(td) ? stats.streak + 1 : 1; stats.lastDaily = td; }
+    }
+    store('best', best); store('stats', stats); saved = null; drop('save');
+    for (let i = 0; i < geo.NN; i++) anim(i, 'wave', (((i / geo.N) | 0) + i % geo.N) * 40);
+    SFX.win(); if (newRecord) SFX.record();
+    for (let n = 0; n < 7; n++) schedule(120 + n * 190, () => {
+      const bx = board.getBoundingClientRect(), w = wrap.getBoundingClientRect();
+      burst(bx.left - w.left + Math.random() * bx.width, bx.top - w.top + Math.random() * bx.height * 0.8, PALETTE, 34, 1.2); SFX.pop();
+    });
+    schedule(1700, showResult);
+    paint();
+  }
+  function renderPick() {
+    document.querySelectorAll('#sizes button').forEach(b => b.classList.toggle('on', +b.dataset.n === N));
+    document.querySelectorAll('#diffs button').forEach(b => {
+      const d = +b.dataset.d, r = best[N + '-' + d];
+      b.classList.toggle('on', d === diff);
+      b.querySelector('em').innerHTML = r ? '🏆 ' + fmtTime(r.t) + ' ' + '★'.repeat(r.s) : '🏆 --';
+    });
+    $('dailyBtn').textContent = '📅 きょうの もんだい' + (dailyDoneToday(N, diff) ? ' ✅' : '');
+    const has = validSave(saved);
+    $('contBtn').style.display = has ? '' : 'none';
+    if (has) $('contBtn').textContent = '▶ つづきから（' + saved.n + '×' + saved.n + ' ' + DIFF_NAME[saved.d] + '）';
+    const st = [];
+    if (stats.clears) st.push('クリア ' + stats.clears + 'かい');
+    if (stats.streak && (stats.lastDaily === today() || stats.lastDaily === dayBefore(today()))) st.push('📅 れんぞく ' + stats.streak + '日');
+    $('ovStats').textContent = st.length ? st.join('　') : 'もんだいは まいかい かわるよ';
+  }
+  function toTitle() {
+    if (phase === 'play') snapshot();
+    phase = 'title'; events = []; resultShown = true;
+    $('ovBig').textContent = 'すうじのへや'; $('ovBig').className = 'big';
+    $('ovStars').style.display = 'none';
+    $('ovNote').innerHTML = 'たて・よこ・<b>ふとい わくの へや</b>に、<br>おなじ すうじが <b>かぶらない</b>ように<br>ぜんぶの マスを うめよう！';
+    $('sizes').style.display = ''; $('diffs').style.display = '';
+    $('startBtn').textContent = 'はじめる'; $('dailyBtn').style.display = ''; $('toTitleBtn').style.display = 'none';
+    renderPick(); overlay.classList.add('show');
+  }
+  function showResult() {
+    resultShown = true;
+    $('ovBig').textContent = lastStars === 3 ? 'かんぺき！' : 'クリア！'; $('ovBig').className = 'big win';
+    const st = $('ovStars'); st.style.display = 'block';
+    st.innerHTML = [0, 1, 2].map(k => k < lastStars ? '<span style="animation-delay:' + (k * 0.18) + 's">★</span>' : '<i>★</i>').join('');
+    const b = best[gN + '-' + gDiff];
+    let h = (daily ? '📅 きょうの もんだい・' : '') + gN + '×' + gN + ' ' + DIFF_NAME[gDiff] + '<br>タイム <b>' + fmtTime(lastTime) + '</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '　ベスト ' + fmtTime(b.t));
+    h += '<br>ミス ' + mistakes + '　ヒント ' + hints;
+    if (lastStars < 3) h += '<br>' + (lastStars === 2 ? 'ミスも ヒントも なしで ★★★ だよ' : 'ミスと ヒントを 3回までに すると ★★');
+    if (daily && stats.streak > 1) h += '<br><span class="rec">📅 れんぞく ' + stats.streak + '日！</span>';
+    $('ovNote').innerHTML = h;
+    $('sizes').style.display = 'none'; $('diffs').style.display = 'none';
+    $('contBtn').style.display = 'none'; $('dailyBtn').style.display = 'none';
+    $('startBtn').textContent = 'つぎの もんだい'; $('toTitleBtn').style.display = '';
+    $('ovStats').textContent = 'クリア ' + stats.clears + 'かい';
+    overlay.classList.add('show');
+  }
+
+  // ---- loop ----------------------------------------------------------------
+  function update(dt) {
+    T += dt * 1000;
+    if (phase === 'play' && !overlay.classList.contains('show')) {
+      elapsed += dt;
+      const s = Math.floor(elapsed);
+      if (s !== lastSecShown) { lastSecShown = s; $('hudTime').textContent = '⏱ ' + fmtTime(s); }
+    }
+    if (events.length) {
+      const due = events.filter(e => e.t <= T); events = events.filter(e => e.t > T);
+      for (const e of due) e.fn();
+    }
+    if (tipTimer && tipTimer <= T) { tipTimer = 0; updateTip(); }
+    if (particles.length) particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.vx *= (1 - 1.5 * dt); p.life -= dt; return p.life > 0; });
+  }
+  let last = performance.now(), hiddenNow = false;
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; if (!hiddenNow) { update(dt); drawFx(); } requestAnimationFrame(loop); }
+
+  // ---- input ---------------------------------------------------------------
+  function onBoardDown(e) {
+    audio();
+    const el = e.target.closest ? e.target.closest('.cell') : null;
+    if (!el || phase !== 'play') return;
+    e.preventDefault();
+    select(+el.dataset.i);
+  }
+  function startFromOverlay(isDaily) {
+    audio(); SFX.click();
+    if (phase === 'clear') newGame(gN, gDiff, { daily: false });
+    else newGame(N, diff, { daily: !!isDaily });
+  }
+  function onKey(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    const k = e.key;
+    if (overlay.classList.contains('show')) {
+      if (k === 'Enter' || k === ' ') { e.preventDefault(); startFromOverlay(false); }
+      else if (k === 'Escape' && phase === 'clear') toTitle();
+      return;
+    }
+    if (phase !== 'play') return;
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      e.preventDefault();
+      if (sel < 0) { select(0); return; }
+      let r = (sel / geo.N) | 0, c = sel % geo.N;
+      if (k === 'ArrowLeft') c = Math.max(0, c - 1); if (k === 'ArrowRight') c = Math.min(geo.N - 1, c + 1);
+      if (k === 'ArrowUp') r = Math.max(0, r - 1); if (k === 'ArrowDown') r = Math.min(geo.N - 1, r + 1);
+      select(r * geo.N + c); return;
+    }
+    if (k >= '1' && k <= '9') { audio(); input(+k); return; }
+    if (k === 'Backspace' || k === 'Delete' || k === '0') { e.preventDefault(); audio(); erase(); }
+    else if (k === 'm' || k === 'M' || k === 'n' || k === 'N') setMemo(!memo);
+    else if (k === 'z' || k === 'Z' || k === 'u' || k === 'U') undo();
+    else if (k === 'h' || k === 'H') hint();
+    else if (k === 'Escape') toTitle();
+  }
+
+  // ---- init（さいごに） -----------------------------------------------------
+  drawMute();
+  // タイトルの うしろに、れんしゅう用の 見本を ならべておく
+  (function demo() { const q = generate(N, diff, 20240); setupGame(N, diff, q.puzzle, q.sol); paint(); })();
+  toTitle();
+  muteBtn.addEventListener('click', () => { muted = !muted; store('mute', muted ? 1 : 0); drawMute(); if (!muted) { audio(); SFX.click(); } muteBtn.blur(); });
+  board.addEventListener('pointerdown', onBoardDown);
+  board.addEventListener('contextmenu', e => e.preventDefault());
+  board.addEventListener('animationend', e => { const el = e.target; if (el.classList && el.classList.contains('cell') && e.animationName !== 'guide') { el.classList.remove('pop', 'bad', 'wave'); el.style.animationDelay = ''; } });
+  pad.addEventListener('click', e => {
+    const b = e.target.closest ? e.target.closest('.key') : null; if (!b) return;
+    audio(); if (b.classList.contains('erase')) erase(); else input(+b.dataset.d); b.blur();
+  });
+  $('memoBtn').addEventListener('click', () => { audio(); setMemo(!memo); $('memoBtn').blur(); });
+  $('hintBtn').addEventListener('click', () => { audio(); hint(); $('hintBtn').blur(); });
+  $('undoBtn').addEventListener('click', () => { audio(); undo(); $('undoBtn').blur(); });
+  $('menuBtn').addEventListener('click', () => { audio(); SFX.click(); toTitle(); $('menuBtn').blur(); });
+  document.querySelectorAll('#sizes button').forEach(b => b.addEventListener('click', () => { audio(); SFX.click(); N = +b.dataset.n; store('prefs', { n: N, d: diff }); renderPick(); b.blur(); }));
+  document.querySelectorAll('#diffs button').forEach(b => b.addEventListener('click', () => { audio(); SFX.click(); diff = +b.dataset.d; store('prefs', { n: N, d: diff }); renderPick(); b.blur(); }));
+  $('startBtn').addEventListener('click', () => { startFromOverlay(false); $('startBtn').blur(); });
+  $('dailyBtn').addEventListener('click', () => { startFromOverlay(true); $('dailyBtn').blur(); });
+  $('contBtn').addEventListener('click', () => { audio(); SFX.click(); resume(); $('contBtn').blur(); });
+  $('toTitleBtn').addEventListener('click', () => { audio(); SFX.click(); toTitle(); });
+  document.addEventListener('keydown', onKey);
+  window.addEventListener('resize', layout);
+  document.addEventListener('visibilitychange', () => { hiddenNow = document.hidden; last = performance.now(); if (hiddenNow) snapshot(); });
+  window.addEventListener('pagehide', () => snapshot());
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout).catch(() => {});
+  requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      phase, n: gN, diff: gDiff, pickN: N, pickDiff: diff, daily, seed, date: playDate,
+      grid: grid.slice(), given: given.slice(), sol: sol.slice(), notes: notes.slice(), hinted: hinted.slice(),
+      sel, memo, mistakes, hints, hintsLeft: MAX_HINTS - hints, elapsed, left: grid.length ? leftCount() : 0, moves,
+      stars: phase === 'clear' ? lastStars : curStars(), newRecord, overlay: overlay.classList.contains('show'),
+      best: JSON.parse(JSON.stringify(best)), stats: JSON.parse(JSON.stringify(stats)), hasSave: validSave(saved), undo: undoStack.length, guide: guideCell,
+    }),
+    start: (n, d, sd, isDaily) => newGame(n, d, { seed: sd, daily: !!isDaily }),
+    gen: (n, d, sd) => { const q = generate(n, d, sd); return { puzzle: q.puzzle, sol: q.sol, clues: q.clues, level: q.level }; },
+    count: (n, puzzle, limit) => countSolutions(geoOf(n), puzzle, limit || 2),
+    logic: (n, puzzle, lv) => { const r = logicSolve(geoOf(n), puzzle, lv); return { solved: r.solved, level: r.level }; },
+    dailySeed: (n, d, date) => dailySeed(n, d, date),
+    select, input, erase, undo, hint,
+    setMemo: v => { memo = !!v; paint(); },
+    setDate: s => { testDate = s || null; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    toTitle, resume,
+    cellPx: i => { const r = cells[i].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height }; },
+  };
+})();
+</script>
+</body>
+</html>
