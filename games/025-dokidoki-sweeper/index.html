@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ドキドキスイーパー｜無料ブラウザゲーム｜ルドット</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Maru+Gothic:wght@700;900&display=swap">
 <style>
   :root{
     --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
     --ink:#eeecfa; --sub:#9d99c0;
     --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
     --w:480px;
+    --maru:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Arial Rounded MT Bold",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -21,6 +22,8 @@
     min-height:100vh; display:flex; flex-direction:column; align-items:center;
     padding:14px 10px 30px; overflow-x:hidden;
   }
+  /* 遊ぶ画面の背景の絵（読みこめないときは今までの単色のまま） */
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(rgba(14,12,32,.42),rgba(14,12,32,.80) 46%,rgba(14,12,32,.93) 82%),url(art-bg.webp) center top/cover no-repeat}
   .backbar,header,#wrap,.row,.help,.scroll-hint{width:min(var(--w),100%)}
   .backbar{margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
   .backbar a{color:var(--sub);text-decoration:none}
@@ -31,26 +34,28 @@
   h1{font-size:24px;margin:0;letter-spacing:2px;color:var(--violet);text-shadow:0 0 12px rgba(160,107,255,.65);font-weight:400}
   .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
 
-  #wrap{position:relative;border:2px solid var(--edge);border-radius:8px;background:#0e0e1c;overflow:hidden}
-  .hud{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--edge)}
-  .lcd{font-size:22px;letter-spacing:1px;padding:3px 8px;border:1px solid var(--edge);border-radius:8px;background:#0a0a17;min-width:98px;text-align:center;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums}
+  #wrap{position:relative;border:2px solid #4a3d8a;border-radius:14px;background:rgba(13,11,32,.80);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 22px rgba(160,107,255,.22)}
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:linear-gradient(180deg,rgba(64,53,122,.94),rgba(34,29,74,.95));border-bottom:2px solid #171233;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -10px 16px rgba(0,0,0,.28)}
+  .lcd{font-family:var(--maru);font-weight:900;font-size:22px;letter-spacing:1px;padding:3px 8px;border:1px solid rgba(160,107,255,.55);border-radius:10px;background:linear-gradient(180deg,#060514,#141033);box-shadow:inset 0 2px 7px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.10);min-width:98px;text-align:center;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums}
   .lcd.pink{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.8)}
   .lcd.pink.neg{color:#ff8c42;text-shadow:0 0 8px rgba(255,140,66,.8)}
   .lcd.cyan{color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.8)}
   .mid{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
-  .face{width:44px;height:44px;border-radius:50%;font-size:24px;line-height:1;background:var(--bg);border:1px solid var(--edge);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;font-family:inherit;box-shadow:0 0 10px rgba(160,107,255,.25);transition:transform .12s}
+  .face{width:46px;height:46px;border-radius:50%;font-size:24px;line-height:1;background:radial-gradient(circle at 36% 28%,#6a5cb4,#2a2358 68%,#191439);border:2px solid #a98bff;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;font-family:inherit;box-shadow:0 0 14px rgba(160,107,255,.55),inset 0 2px 3px rgba(255,255,255,.28),inset 0 -4px 6px rgba(0,0,0,.5);transition:transform .12s}
   .face:hover{border-color:var(--gold);transform:scale(1.06)}
   .face:active{transform:scale(.94)}
-  #hudLevel{font-size:11px;color:var(--sub);white-space:nowrap;letter-spacing:.5px}
+  #hudLevel{font-size:11px;color:#c9c4ee;white-space:nowrap;letter-spacing:.5px;text-shadow:0 1px 2px rgba(0,0,0,.8)}
   #scroller{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
-  canvas{display:block;width:100%;height:auto;background:#0e0e1c;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-  .scroll-hint{display:none;font-size:11px;color:var(--sub);text-align:center;margin-top:4px;letter-spacing:1px}
+  canvas{display:block;width:100%;height:auto;background:transparent;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .scroll-hint{display:none;font-size:11px;color:#c9c4ee;text-shadow:0 1px 2px rgba(0,0,0,.8);text-align:center;margin-top:4px;letter-spacing:1px}
 
   .row{display:flex;gap:6px;margin-top:8px}
-  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px;transition:box-shadow .15s}
+  .btn{flex:1;font-family:var(--maru);font-weight:700;font-size:15px;padding:10px 0;border-radius:12px;border:2px solid #5a4b9e;background:linear-gradient(180deg,#4a3f8c,#2b2460 58%,#211b4c);color:var(--ink);cursor:pointer;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -4px 7px rgba(0,0,0,.38),0 3px 0 #120e2c,0 6px 12px rgba(0,0,0,.4);transition:box-shadow .15s,transform .08s}
+  .btn:active{transform:translateY(2px)}
   .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
-  #modeOpen.on{border-color:var(--cyan);color:var(--cyan);background:rgba(83,224,216,.12);box-shadow:0 0 12px rgba(83,224,216,.35)}
-  #modeFlag.on{border-color:var(--pink);color:var(--pink);background:rgba(255,95,162,.12);box-shadow:0 0 12px rgba(255,95,162,.35)}
+  .btn.mode{font-weight:900;font-size:16px;padding:11px 0}
+  #modeOpen.on{border-color:var(--cyan);color:var(--cyan);background:linear-gradient(180deg,#1f5f6c,#143a4e 58%,#102c40);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -4px 7px rgba(0,0,0,.35),0 3px 0 #091a26,0 0 16px rgba(83,224,216,.55)}
+  #modeFlag.on{border-color:var(--pink);color:var(--pink);background:linear-gradient(180deg,#7a2a5c,#4d1a44 58%,#3b1438);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -4px 7px rgba(0,0,0,.35),0 3px 0 #1f0a1e,0 0 16px rgba(255,95,162,.55)}
 
   #overlay{
     position:absolute;inset:0;display:none;flex-direction:column;gap:10px;
@@ -78,10 +83,13 @@
   .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
   #overlay .rule{font-size:11px;color:var(--sub)}
 
-  .help{color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
   .help b{color:var(--ink);font-weight:400}
   .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)}
 </style>
+<!-- LUDOT-TITLE-ART:START --><style>
+html.ludot-art #overlay{background:radial-gradient(125% 78% at 50% 44%,rgba(9,12,28,.9) 0%,rgba(9,12,28,.8) 46%,rgba(9,12,28,.36) 100%),url("../../assets/covers/025.webp") center top/cover no-repeat !important}
+</style><!-- LUDOT-TITLE-ART:END -->
 <!-- LUDOT-SEO-START -->
 <meta name="description" content="ネオンに光る格子で遊ぶ地雷探しパズル。数字は「まわり8マスにある地雷の数」、最初の1タップは必ず安全。やさしい（9×9）・ふつう（16×16）・むずかしい（16×30）の3レベルで、レベルごとのベストタイムを記録。数字をタップしてまわりを一気に開く「コード」、波紋のように広がる連鎖オープン、クリア時の花火つき。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/025-dokidoki-sweeper/index.html">
@@ -431,9 +439,35 @@
     if (over && !resultShown && T >= resultAt) showResult();
   }
 
+  // ---- art（絵。読みこめないときは、下の「絵なし」の描き方のまま今までどおり遊べる）----
+  const ART = {};
+  for (const k of ['tile', 'open', 'flag', 'mine']) { const im = new Image(); im.onload = () => { ART[k] = im; sprites.clear(); }; im.src = 'art-' + k + '.webp'; }
+  const NUM_FONT = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Arial Rounded MT Bold",system-ui,sans-serif';
+  if (document.fonts && document.fonts.load) document.fonts.load('900 40px "Zen Maru Gothic"', '12345678').then(() => sprites.clear()).catch(() => {});
+  // 石のタイルは白っぽい絵に色をかけて使う。色ちがい4つ × 左右の向き2つ = 8しゅるいを小さく作っておき、使い回す
+  const TILE_TINTS = ['#665ac0', '#5e54b2', '#6f60ca', '#6259b8'];
+  const TILE_N = TILE_TINTS.length * 2;
+  const closedKey = (r, c) => { let h = (Math.imul(r + 1, 374761393) + Math.imul(c + 1, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return 'closed' + ((h >>> 0) % TILE_N); };
+
   // ---- sprites -----------------------------------------------------------------
   const SPR = {
-    closed(c, s) {
+    closed(c, s, v) {
+      if (ART.tile) {
+        v = v || 0; const gap = Math.max(0.75, s * 0.022), r = Math.max(2.5, s * 0.12);
+        c.save(); rrPath(c, gap, gap, s - gap * 2, s - gap * 2, r); c.clip();
+        c.save(); if (v & 1) { c.translate(s, 0); c.scale(-1, 1); } c.drawImage(ART.tile, 0, 0, s, s); c.restore();
+        c.globalCompositeOperation = 'multiply'; c.fillStyle = TILE_TINTS[(v >> 1) % TILE_TINTS.length]; c.fillRect(0, 0, s, s);
+        c.globalCompositeOperation = 'source-over';
+        const sh = c.createLinearGradient(0, 0, 0, s); sh.addColorStop(0, 'rgba(255,255,255,.20)'); sh.addColorStop(0.5, 'rgba(255,255,255,0)'); sh.addColorStop(1, 'rgba(10,6,40,.30)');
+        c.fillStyle = sh; c.fillRect(0, 0, s, s);
+        // ふちの光と影（小さいマスでも「もり上がった石」に見えるように）
+        const e = gap + Math.max(1, s * 0.045), lw = Math.max(1, s * 0.05); c.lineWidth = lw; c.lineCap = 'round'; c.lineJoin = 'round';
+        c.strokeStyle = 'rgba(214,200,255,.55)'; c.beginPath(); c.moveTo(e, s - e - r * 0.6); c.lineTo(e, e + r * 0.5); c.quadraticCurveTo(e, e, e + r * 0.5, e); c.lineTo(s - e - r * 0.6, e); c.stroke();
+        c.strokeStyle = 'rgba(14,8,46,.55)'; c.beginPath(); c.moveTo(s - e, e + r * 0.6); c.lineTo(s - e, s - e - r * 0.5); c.quadraticCurveTo(s - e, s - e, s - e - r * 0.5, s - e); c.lineTo(e + r * 0.6, s - e); c.stroke();
+        c.restore();
+        c.strokeStyle = 'rgba(12,8,36,.6)'; c.lineWidth = Math.max(0.75, s * 0.02); rrPath(c, gap, gap, s - gap * 2, s - gap * 2, r); c.stroke();
+        return;
+      }
       const r = Math.max(3, s * 0.14); const g = c.createLinearGradient(0, 0, 0, s); g.addColorStop(0, '#2f2f5e'); g.addColorStop(1, '#1c1c3b');
       c.fillStyle = g; rrPath(c, 1, 1, s - 2, s - 2, r); c.fill();
       c.strokeStyle = 'rgba(160,107,255,.55)'; c.lineWidth = 1; rrPath(c, 1.5, 1.5, s - 3, s - 3, r); c.stroke();
@@ -441,6 +475,12 @@
       c.strokeStyle = 'rgba(0,0,0,.38)'; c.beginPath(); c.moveTo(s - 3.5, 4); c.lineTo(s - 3.5, s - 3.5); c.lineTo(4, s - 3.5); c.stroke();
     },
     open(c, s) {
+      if (ART.open) {
+        c.drawImage(ART.open, 0, 0, s, s);
+        c.fillStyle = 'rgba(6,5,18,.18)'; c.fillRect(0, 0, s, s);
+        c.strokeStyle = 'rgba(0,0,0,.55)'; c.lineWidth = Math.max(1, s * 0.04); c.beginPath(); c.moveTo(0.5, s); c.lineTo(0.5, 0.5); c.lineTo(s, 0.5); c.stroke();
+        return;
+      }
       c.fillStyle = '#0b0b19'; c.fillRect(0, 0, s, s);
       c.strokeStyle = 'rgba(0,0,0,.65)'; c.lineWidth = 2; c.beginPath(); c.moveTo(1, s); c.lineTo(1, 1); c.lineTo(s, 1); c.stroke();
       c.strokeStyle = 'rgba(160,107,255,.10)'; c.lineWidth = 1; c.strokeRect(0.5, 0.5, s - 1, s - 1);
@@ -448,12 +488,24 @@
     boomcell(c, s) { const g = c.createRadialGradient(s / 2, s / 2, 2, s / 2, s / 2, s * 0.75); g.addColorStop(0, '#ff4d8a'); g.addColorStop(1, '#4a0c26'); c.fillStyle = g; c.fillRect(0, 0, s, s); },
     flash(c, s) { c.fillStyle = '#ffffff'; rrPath(c, 1, 1, s - 2, s - 2, Math.max(3, s * 0.14)); c.fill(); },
     flag(c, s) {
+      if (ART.flag) {
+        c.shadowColor = 'rgba(8,4,24,.75)'; c.shadowBlur = s * 0.07 * RS; c.shadowOffsetY = s * 0.04 * RS;
+        c.drawImage(ART.flag, s * 0.07, s * 0.06, s * 0.88, s * 0.88); c.shadowBlur = 0; c.shadowOffsetY = 0;
+        return;
+      }
       c.shadowColor = '#ff5fa2'; c.shadowBlur = s * 0.22; c.fillStyle = '#ff5fa2';
       c.beginPath(); c.moveTo(s * 0.38, s * 0.17); c.lineTo(s * 0.79, s * 0.36); c.lineTo(s * 0.38, s * 0.55); c.closePath(); c.fill(); c.shadowBlur = 0;
       c.strokeStyle = '#e6e3ff'; c.lineWidth = Math.max(1.5, s * 0.06); c.lineCap = 'round'; c.beginPath(); c.moveTo(s * 0.38, s * 0.17); c.lineTo(s * 0.38, s * 0.8); c.stroke();
       c.fillStyle = '#9d99c0'; c.fillRect(s * 0.24, s * 0.78, s * 0.3, Math.max(2, s * 0.07));
     },
     mine(c, s) {
+      if (ART.mine) {
+        const h = c.createRadialGradient(s / 2, s / 2, s * 0.12, s / 2, s / 2, s * 0.52);
+        h.addColorStop(0, 'rgba(255,120,180,.85)'); h.addColorStop(0.62, 'rgba(255,95,162,.32)'); h.addColorStop(1, 'rgba(255,95,162,0)');
+        c.fillStyle = h; c.fillRect(0, 0, s, s);
+        c.drawImage(ART.mine, s * 0.05, s * 0.05, s * 0.9, s * 0.9);
+        return;
+      }
       const cx = s / 2, cy = s / 2, R = s * 0.25;
       c.shadowColor = '#ff5fa2'; c.shadowBlur = s * 0.35; c.strokeStyle = '#ff9cc6'; c.lineWidth = Math.max(1.5, s * 0.07); c.lineCap = 'round';
       c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.moveTo(cx + Math.cos(a) * R * 0.8, cy + Math.sin(a) * R * 0.8); c.lineTo(cx + Math.cos(a) * s * 0.4, cy + Math.sin(a) * s * 0.4); } c.stroke();
@@ -463,18 +515,38 @@
       c.fillStyle = 'rgba(255,255,255,.75)'; c.beginPath(); c.arc(cx - R * 0.35, cy - R * 0.35, R * 0.22, 0, Math.PI * 2); c.fill();
     },
     cross(c, s) {
-      c.strokeStyle = '#ff3b5c'; c.lineWidth = Math.max(2, s * 0.1); c.lineCap = 'round'; c.shadowColor = '#ff3b5c'; c.shadowBlur = s * 0.25;
-      c.beginPath(); c.moveTo(s * 0.2, s * 0.2); c.lineTo(s * 0.8, s * 0.8); c.moveTo(s * 0.8, s * 0.2); c.lineTo(s * 0.2, s * 0.8); c.stroke();
+      c.lineCap = 'round'; c.beginPath(); c.moveTo(s * 0.2, s * 0.2); c.lineTo(s * 0.8, s * 0.8); c.moveTo(s * 0.8, s * 0.2); c.lineTo(s * 0.2, s * 0.8);
+      c.strokeStyle = 'rgba(20,4,14,.85)'; c.lineWidth = Math.max(3.5, s * 0.17); c.stroke();
+      c.strokeStyle = '#ff3b5c'; c.lineWidth = Math.max(2, s * 0.1); c.shadowColor = '#ff3b5c'; c.shadowBlur = s * 0.25 * RS; c.stroke();
     },
   };
+  for (let i = 0; i < TILE_N; i++) SPR['closed' + i] = (c, s) => SPR.closed(c, s, i);
   for (let n = 1; n <= 8; n++) SPR['n' + n] = (c, s) => {
-    const col = NUM_COLORS[n]; c.font = Math.round(s * 0.68) + 'px DotGothic16, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
-    c.fillStyle = col; c.shadowColor = col; c.shadowBlur = s * 0.3; c.fillText(String(n), s / 2, s / 2 + s * 0.05);
-    c.shadowBlur = s * 0.1; c.fillText(String(n), s / 2, s / 2 + s * 0.05); c.shadowBlur = 0;
+    // 色分けはそのまま。太いまるゴシック＋暗いふちどりで、小さいマスでも読めるようにする
+    const col = NUM_COLORS[n], t = String(n), x = s / 2;
+    c.font = '900 ' + Math.round(s * 0.78) + 'px ' + NUM_FONT; c.textAlign = 'center'; c.textBaseline = 'alphabetic'; c.lineJoin = 'round';
+    const m = c.measureText(t), asc = m.actualBoundingBoxAscent || s * 0.56, desc = m.actualBoundingBoxDescent || 0, y = s / 2 + (asc - desc) / 2;
+    c.fillStyle = col; c.shadowColor = col; c.shadowBlur = s * 0.13 * RS; c.fillText(t, x, y); c.shadowBlur = 0;
+    c.strokeStyle = 'rgba(5,4,18,.92)'; c.lineWidth = Math.max(2, s * 0.13); c.strokeText(t, x, y);
+    c.fillStyle = col; c.fillText(t, x, y);
+    const hi = c.createLinearGradient(0, y - asc, 0, y); hi.addColorStop(0, 'rgba(255,255,255,.5)'); hi.addColorStop(0.55, 'rgba(255,255,255,0)');
+    c.fillStyle = hi; c.fillText(t, x, y);
   };
   function sprite(key) {
     let s = sprites.get(key);
-    if (!s) { s = document.createElement('canvas'); s.width = Math.ceil(cell * RS); s.height = Math.ceil(cell * RS); const c2 = s.getContext('2d'); c2.scale(RS, RS); SPR[key](c2, cell); sprites.set(key, s); }
+    if (!s) { s = document.createElement('canvas'); s.width = Math.ceil(cell * RS); s.height = Math.ceil(cell * RS); const c2 = s.getContext('2d'); c2.imageSmoothingQuality = 'high'; c2.scale(RS, RS); SPR[key](c2, cell); sprites.set(key, s); }
+    return s;
+  }
+  function frameSprite(col) {
+    const key = 'frame' + col; let s = sprites.get(key);
+    if (!s) {
+      s = document.createElement('canvas'); s.width = cv.width; s.height = cv.height; const c = s.getContext('2d'); c.scale(RS, RS);
+      const bw = cols * cell, bh = rows * cell, rim = c.createLinearGradient(0, BY - 7, 0, BY + bh + 7); rim.addColorStop(0, '#3d3378'); rim.addColorStop(1, '#1a1540');
+      c.fillStyle = rim; c.strokeStyle = col; c.lineWidth = 3; c.shadowColor = col; c.shadowBlur = 18 * RS;
+      rrPath(c, BX - 7, BY - 7, bw + 14, bh + 14, 10); c.fill(); c.stroke(); c.shadowBlur = 0;
+      c.clearRect(BX, BY, bw, bh);   // 盤の中は毎コマ下地をぬるので、空けておく
+      sprites.set(key, s);
+    }
     return s;
   }
   function blit(key, x, y) { ctx.drawImage(sprite(key), x, y, cell, cell); }
@@ -485,15 +557,15 @@
     const g = grid[r][c], x = BX + c * cell, y = BY + r * cell;
     if (g.open) {
       const p = g.rt < 0 ? 1 : clamp((T - g.rt) / REVEAL_MS, 0, 1);
-      if (p <= 0) { blit('closed', x, y); return; }
+      if (p <= 0) { blit(closedKey(r, c), x, y); return; }
       if (g.boom) blit('boomcell', x, y); else blit('open', x, y);
       if (g.mine) { const mp = clamp((T - g.mt) / 250, 0, 1); blitScaled('mine', x, y, 0.4 + 0.6 * easeOutBack(mp)); }
       else if (g.n > 0) blit('n' + g.n, x, y);
-      if (p < 1) { blitScaled('closed', x, y, 1 - p); ctx.globalAlpha = (1 - p) * 0.55; blit('flash', x, y); ctx.globalAlpha = 1; }
+      if (p < 1) { blitScaled(closedKey(r, c), x, y, 1 - p); ctx.globalAlpha = (1 - p) * 0.55; blit('flash', x, y); ctx.globalAlpha = 1; }
       return;
     }
     if (pressing && pressing.r === r && pressing.c === c && !g.flag) { blit('open', x, y); return; }
-    blit('closed', x, y);
+    blit(closedKey(r, c), x, y);
     if (over && !won && g.mine && !g.flag) {
       if (g.mt >= 0 && T >= g.mt) { const mp = clamp((T - g.mt) / 250, 0, 1); if (mp < 1) { ctx.globalAlpha = 1 - mp; blit('flash', x, y); ctx.globalAlpha = 1; } blitScaled('mine', x, y, 0.3 + 0.7 * easeOutBack(mp)); }
       return;
@@ -508,7 +580,7 @@
     }
   }
   function outline(cells, col, lw, blur) {
-    ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.shadowColor = col; ctx.shadowBlur = blur;
+    ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.shadowColor = col; ctx.shadowBlur = blur * RS;
     for (const [r, c] of cells) { const x = BX + c * cell, y = BY + r * cell; rrPath(ctx, x + 1.5, y + 1.5, cell - 3, cell - 3, Math.max(3, cell * 0.14)); ctx.stroke(); }
     ctx.shadowBlur = 0;
   }
@@ -517,19 +589,23 @@
     const bw = cols * cell, bh = rows * cell;
     ctx.save(); ctx.translate(shakeX, shakeY);
     const frameCol = over ? (won ? '#ffd166' : '#ff5fa2') : (mode === 'flag' ? '#ff5fa2' : '#a06bff');
-    ctx.fillStyle = '#14142a'; ctx.strokeStyle = frameCol; ctx.lineWidth = 3; ctx.shadowColor = frameCol; ctx.shadowBlur = 16 + 6 * Math.sin(T / 600);
-    rrPath(ctx, BX - 7, BY - 7, bw + 14, bh + 14, 10); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
-    ctx.fillStyle = '#0a0a17'; ctx.fillRect(BX, BY, bw, bh);
+    // わく：石のふち＋光る線（色の意味は今までどおり：ふだん紫／はたモードはピンク／クリア金／しっぱいピンク）
+    // 光のぼかしは重いので、色ごとに1回だけ描いておいて使い回す。明るさのゆらぎは重ね描きで出す
+    const fr = frameSprite(frameCol); ctx.drawImage(fr, 0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.16 + 0.16 * Math.sin(T / 600); ctx.drawImage(fr, 0, 0, W, H); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    // 盤の下地：絵があるときは、タイルのすきまから紫の光がもれて見える
+    if (ART.tile) { const k = 0.5 + 0.5 * Math.sin(T / 800); ctx.fillStyle = 'rgb(' + Math.round(150 + 36 * k) + ',' + Math.round(104 + 40 * k) + ',255)'; } else ctx.fillStyle = '#0a0a17';
+    ctx.fillRect(BX, BY, bw, bh);
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) drawCell(r, c);
     // neon lattice
-    ctx.strokeStyle = 'rgba(160,107,255,.20)'; ctx.lineWidth = 1; ctx.beginPath();
+    ctx.strokeStyle = ART.open ? 'rgba(150,120,255,.26)' : 'rgba(160,107,255,.20)'; ctx.lineWidth = 1; ctx.beginPath();
     for (let c = 0; c <= cols; c++) { const x = BX + c * cell + 0.5; ctx.moveTo(x, BY); ctx.lineTo(x, BY + bh); }
     for (let r = 0; r <= rows; r++) { const y = BY + r * cell + 0.5; ctx.moveTo(BX, y); ctx.lineTo(BX + bw, y); }
     ctx.stroke();
     // ripple rings
     if (rings.length) {
       ctx.save(); ctx.beginPath(); ctx.rect(BX, BY, bw, bh); ctx.clip();
-      for (const k of rings) { const p = clamp((T - k.t) / k.dur, 0, 1); ctx.globalAlpha = (1 - p) * 0.6; ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 3; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 12; ctx.beginPath(); ctx.arc(k.x, k.y, Math.max(1, k.rad * easeOutCubic(p)), 0, Math.PI * 2); ctx.stroke(); }
+      for (const k of rings) { const p = clamp((T - k.t) / k.dur, 0, 1); ctx.globalAlpha = (1 - p) * 0.6; ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 3; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 12 * RS; ctx.beginPath(); ctx.arc(k.x, k.y, Math.max(1, k.rad * easeOutCubic(p)), 0, Math.PI * 2); ctx.stroke(); }
       ctx.globalAlpha = 1; ctx.shadowBlur = 0; ctx.restore();
     }
     if (hint) { const a = 1 - (T - hint.t) / 380; ctx.globalAlpha = Math.max(0, a); outline(hint.cells, hint.col, 2.5, 10); ctx.globalAlpha = 1; }
@@ -556,8 +632,8 @@
       const v = visibleRange(); const cx = clamp(v.cx, 120, W - 120), cy = BY + bh / 2; const s = 1 + 0.05 * Math.sin((T - winAt) / 110);
       ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s);
       ctx.fillStyle = 'rgba(10,10,23,.72)'; rrPath(ctx, -118, -46, 236, newRecord ? 92 : 70, 12); ctx.fill();
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '44px DotGothic16, monospace'; ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 22; ctx.fillText('CLEAR!', 0, -10);
-      if (newRecord) { ctx.font = '18px DotGothic16, monospace'; ctx.fillStyle = '#53e0d8'; ctx.shadowColor = '#53e0d8'; ctx.fillText('NEW RECORD!', 0, 28); }
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '900 44px ' + NUM_FONT; ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 22 * RS; ctx.fillText('CLEAR!', 0, -10);
+      if (newRecord) { ctx.font = '900 18px ' + NUM_FONT; ctx.fillStyle = '#53e0d8'; ctx.shadowColor = '#53e0d8'; ctx.fillText('NEW RECORD!', 0, 28); }
       ctx.shadowBlur = 0; ctx.restore();
     }
   }
@@ -699,5 +775,6 @@
   };
 })();
 </script>
+<!-- LUDOT-TITLE-ART-JS:START --><script>(function(){var o=document.getElementById('overlay'),h=document.documentElement;if(!o||!window.MutationObserver)return;function shown(){return o.classList.contains('show')&&getComputedStyle(o).display!=='none'}if(!shown())return;h.classList.add('ludot-art');new MutationObserver(function(m,ob){if(!shown()){h.classList.remove('ludot-art');ob.disconnect()}}).observe(o,{attributes:true,attributeFilter:['class','style','hidden']})})();</script><!-- LUDOT-TITLE-ART-JS:END -->
 </body>
 </html>
