@@ -892,6 +892,13 @@
     .mag-emoji { min-height: 100%; font-size: 2.6rem; }
   }
 
+  /* MAG-ART-CSS */
+  .mag-art { aspect-ratio: 16 / 9; overflow: hidden; background: linear-gradient(145deg, #ffe9a8, #c8f5ee); }
+  .mag-art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+  .mag-card:hover .mag-art img { transform: scale(1.04); }
+  .mag-copy h3 { word-break: auto-phrase; text-wrap: balance; }
+  @media (max-width: 580px) { .mag-art { aspect-ratio: auto; height: 100%; min-height: 96px; } .mag-copy p { display: none; } .mag-copy h3 { margin-bottom: 0; } }
+
   .new-arrivals { max-width:1120px; margin:0 auto; padding:56px 24px 28px; min-width:0; }
   .new-arrivals[hidden] { display:none; }
   .new-arrivals .label { font-family:var(--mono); font-size:.68rem; letter-spacing:.28em; color:#ef5363; margin-bottom:9px; }
@@ -1008,12 +1015,12 @@
   <section class="ranking" id="ranking" aria-live="polite"></section>
   <section class="new-arrivals" id="new-arrivals" aria-labelledby="new-arrivals-title">
 <!-- STATIC-NEW-START -->
-<div class="label">NEW ARRIVALS</div><h2 id="new-arrivals-title">新着ゲーム</h2><p class="new-arrivals-note">あたらしい順にならんでいます。</p><div class="new-arrivals-grid"><a class="card" data-game-id="067" href="games/067-flash-sum/index.html"><div class="art"><div class="fallback">⚡</div></div><div class="card-body"><div class="chips"><span class="chip">BRAIN</span></div><h3>ピカッとあんざん</h3><time datetime="2026-10-06">2026.10.06</time></div></a>
-<a class="card" data-game-id="066" href="games/066-jump-checkers/index.html"><div class="art"><div class="fallback">👑</div></div><div class="card-body"><div class="chips"><span class="chip">BOARD</span></div><h3>とびこえチェッカー</h3><time datetime="2026-10-06">2026.10.06</time></div></a>
-<a class="card" data-game-id="065" href="games/065-fruit-slash/index.html"><div class="art"><div class="fallback">🍉</div></div><div class="card-body"><div class="chips"><span class="chip">ARCADE</span></div><h3>スパッとフルーツ</h3><time datetime="2026-10-06">2026.10.06</time></div></a>
-<a class="card" data-game-id="064" href="games/064-dark-maze/index.html"><div class="art"><div class="fallback">🔦</div></div><div class="card-body"><div class="chips"><span class="chip">ADVENTURE</span></div><h3>まっくら迷路</h3><time datetime="2026-10-06">2026.10.06</time></div></a>
-<a class="card" data-game-id="063" href="games/063-cloud-hop/index.html"><div class="art"><div class="fallback">🐰</div></div><div class="card-body"><div class="chips"><span class="chip">ACTION</span></div><h3>ぴょんと雲のうえ</h3><time datetime="2026-10-06">2026.10.06</time></div></a>
-<a class="card" data-game-id="062" href="games/062-five-kana/index.html"><div class="art"><div class="fallback">🔤</div></div><div class="card-body"><div class="chips"><span class="chip">WORD</span></div><h3>ことばあて5</h3><time datetime="2026-10-06">2026.10.06</time></div></a></div>
+<div class="label">NEW ARRIVALS</div><h2 id="new-arrivals-title">新着ゲーム</h2><p class="new-arrivals-note">あたらしい順にならんでいます。</p><div class="new-arrivals-grid"><a class="card" data-game-id="077" href="games/077-shiritori-duel/index.html"><div class="art"><div class="fallback">🐣</div></div><div class="card-body"><div class="chips"><span class="chip">WORD</span></div><h3>しりとりしょうぶ</h3><time datetime="2026-10-07">2026.10.07</time></div></a>
+<a class="card" data-game-id="076" href="games/076-tug-tap/index.html"><div class="art"><div class="fallback">🪢</div></div><div class="card-body"><div class="chips"><span class="chip">VERSUS</span></div><h3>つなひきバトル</h3><time datetime="2026-10-07">2026.10.07</time></div></a>
+<a class="card" data-game-id="075" href="games/075-aim-darts/index.html"><div class="art"><div class="fallback">🎯</div></div><div class="card-body"><div class="chips"><span class="chip">SPORTS</span></div><h3>ねらってダーツ</h3><time datetime="2026-10-07">2026.10.07</time></div></a>
+<a class="card" data-game-id="074" href="games/074-fish-tank/index.html"><div class="art"><div class="fallback">🐠</div></div><div class="card-body"><div class="chips"><span class="chip">SIM</span></div><h3>おさかな水そう</h3><time datetime="2026-10-07">2026.10.07</time></div></a>
+<a class="card" data-game-id="073" href="games/073-star-rocks/index.html"><div class="art"><div class="fallback">🚀</div></div><div class="card-body"><div class="chips"><span class="chip">SHOOTING</span></div><h3>ほしくずクラッシュ</h3><time datetime="2026-10-07">2026.10.07</time></div></a>
+<a class="card" data-game-id="072" href="games/072-drum-echo/index.html"><div class="art"><div class="fallback">🥁</div></div><div class="card-body"><div class="chips"><span class="chip">RHYTHM</span></div><h3>まねっこドラム</h3><time datetime="2026-10-07">2026.10.07</time></div></a></div>
 <!-- STATIC-NEW-END -->
   </section>
 
@@ -1024,6 +1031,15 @@
     </div>
     <div class="genre-filter" id="genre-filter" role="group" aria-label="ジャンルでしぼる"></div>
     <div class="grid" id="game-grid"><!-- STATIC-GAMES-START -->
+<a class="card" data-game-id="077" href="games/077-shiritori-duel/index.html"><div class="art"><div class="fallback">🐣</div></div><div class="card-body"><div class="chips"><span class="chip">WORD</span></div><h3>しりとりしょうぶ</h3><p class="desc">ひよこ・きつね・ふくろうの3だんかいのあいてと、しりとりでしょうぶ。あいてのことばのさいごの字からはじまることばを、ひらがなキーでうとう。「ん」でおわるとまけ、じかんはだんだんみじかくなる。ヒント3回、つづいたかずのベスト、あつめたことばのきろくつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="076" href="games/076-tug-tap/index.html"><div class="art"><div class="fallback">🪢</div></div><div class="card-body"><div class="chips"><span class="chip">VERSUS</span></div><h3>つなひきバトル</h3><p class="desc">れんだで つなを ひきあう 3本しょうぶ。ランプが赤の「ストップ！」で おすと すべって ピンチ、むらさきの「チャンス」は力が2ばい。2本目からは フェイントも。1台でふたり対戦、または 3段階のCPUと。れんしょうと さいそくタイムを きろく。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="075" href="games/075-aim-darts/index.html"><div class="art"><div class="fallback">🎯</div></div><div class="card-body"><div class="chips"><span class="chip">SPORTS</span></div><h3>ねらってダーツ</h3><p class="desc">ゆれる ねらいマークを いい所で 止めて なげる ダーツ。301てんから ぴったり0を めざして CPU（よわい・ふつう・つよい）と しょうぶ。光る数字が 3ばいになる カウントアップも。ラウンドが すすむほど ゆれが大きくなり、平均点と ベストが 記録されるよ。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="074" href="games/074-fish-tank/index.html"><div class="art"><div class="fallback">🐠</div></div><div class="card-body"><div class="chips"><span class="chip">SIM</span></div><h3>おさかな水そう</h3><p class="desc">あか・みどり・あおの えさを あげて魚を そだてる水そうゲーム。いちばん多く たべた色で おとなの すがたが かわり、ずかんは ぜんぶで20しゅるい。しんじゅを ひろって たまごや かざりを かい、カニを おいはらおう。おねがい・オートセーブ・クリアタイムの記録つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="073" href="games/073-star-rocks/index.html"><div class="art"><div class="fallback">🚀</div></div><div class="card-body"><div class="chips"><span class="chip">SHOOTING</span></div><h3>ほしくずクラッシュ</h3><p class="desc">ロケットを くるくる回して すすみ、岩をうって こわすシューティング。大きい岩は われて小さくなるよ。ウェーブが すすむと 岩がはやくなり、かたい岩やUFOも出てくる。はずさず当てるコンボ、1UP、パワーアップつき。ベスト記録が のこるよ。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="072" href="games/072-drum-echo/index.html"><div class="art"><div class="fallback">🥁</div></div><div class="card-body"><div class="chips"><span class="chip">RHYTHM</span></div><h3>まねっこドラム</h3><p class="desc">せんせいの おてほんを きいて、おなじタイミングで ドラムを たたく まねっこリズムゲーム。ぜんぶで20フレーズ、はんていは ぴったり・おしい・ミスの3だんかい。すすむほど テンポが はやくなり、ドラムも 3こに ふえるよ。ガイドなしの「みみだけ」モードと ベストきろくつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="071" href="games/071-number-place/index.html"><div class="art"><div class="fallback">🔢</div></div><div class="card-body"><div class="chips"><span class="chip">PUZZLE</span></div><h3>すうじのへや</h3><p class="desc">たて・よこ・ふといわくの へやに、おなじ すうじが かぶらないように うめる ナンプレ。4×4・6×6・9×9の 3サイズと 3つの むずかしさで、こたえが 1つだけの もんだいを まいかい 新しく つくるよ。メモ、ミスひょうじ、ヒント、まいにち かわる「きょうの もんだい」、タイムと★の きろくつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="070" href="games/070-shadow-guess/index.html"><div class="art"><div class="fallback">🔦</div></div><div class="card-body"><div class="chips"><span class="chip">KIDS</span></div><h3>かげあてクイズ</h3><p class="desc">スクリーンにうつった かげの形を見て、なんの絵かを3つのことばからえらぶクイズ。絵は60しゅるい。こまったらヒントで少しずつ色が出るよ。まわるかげ・ズーム・ライトでさがす くらやみ など6ステージ（★3つ評価）と、どこまで続くかのチャレンジ、あてた絵があつまる ずかんつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
+<a class="card" data-game-id="069" href="games/069-step-beats/index.html"><div class="art"><div class="fallback">🎛️</div></div><div class="card-body"><div class="chips"><span class="chip">CREATIVE</span></div><h3>リズムつくろう</h3><p class="desc">16このマスに音をおいて、じぶんだけのリズムとメロディを作ろう。ドラム・ベース・ピコ・ベル・ふわの5つのがっきをかさねて、テンポをかえ、4つのわくにほぞんできる。お手本を耳でまねする「まねっこチャレンジ」全24ステージ（問題はまいかいかわる・★あつめ）つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="060" href="games/060-night-billiards/index.html"><div class="art"><div class="fallback">🎱</div></div><div class="card-body"><div class="chips"><span class="chip">SPORTS</span></div><h3>ナイトビリヤード</h3><p class="desc">白い玉を ひっぱって うち、ばんごうの小さい玉から あなに おとす ビリヤード。玉が ふえて ガイド線が みじかくなる ステージせいの「ひとりで あそぶ」と、3だんかいの「CPUと たいせん」。つづけて おとすと ボーナス、ベストと かちまけの きろくつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="059" href="games/059-tiny-farm/index.html"><div class="art"><div class="fallback">🥕</div></div><div class="card-body"><div class="chips"><span class="chip">SIM</span></div><h3>ちいさな畑</h3><p class="desc">たねをうえて水をやり、みのったやさいを売って畑をひろげよう。春夏秋冬でかわる8しゅるいのやさい、高ねの日、ちゅうもん、あめやカラスを読んで、20日でもくひょうのお金をめざす。畑は5つ、★とベストをきろく。とちゅうでやめても、つづきからあそべるよ。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="067" href="games/067-flash-sum/index.html"><div class="art"><div class="fallback">⚡</div></div><div class="card-body"><div class="chips"><span class="chip">BRAIN</span></div><h3>ピカッとあんざん</h3><p class="desc">ピカッと光って きえる数字を あたまの中で ぜんぶ たす あんざんゲーム。けた数・こ数・はやさが かわる 20レベル。2もん せいかいで レベルアップ、ハートが なくなると おしまい。はやさボーナス、「もういちど見る」、ひきざんレベル、さいこう記録と あんざんランクつき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
@@ -1092,13 +1108,15 @@
 
   <section class="magazine-home" aria-labelledby="magazine-title">
     <div class="mag-head"><div><div class="mag-label">LUDOT MAGAZINE</div><h2 id="magazine-title">遊び方を知ると、<br>もっと面白い。</h2></div><p class="mag-intro">攻略の考え方、親子や友だちと楽しむコツを、ゲームの中身を確かめながら編集部が届けます。</p></div>
+    <!-- STATIC-MAG-START -->
     <div class="mag-grid">
-      <a class="mag-card" href="blog/yofukashi-quest-guide.html"><div class="mag-emoji" style="--m1:#cabdff;--m2:#ffe2a8">⚔️</div><div class="mag-copy"><span class="mag-tag">攻略 · 6分</span><h3>『よふかしクエスト』初心者ガイド</h3><p>育て方、回復とセーブ、洞窟、ボス戦の準備。</p></div></a>
-      <a class="mag-card" href="blog/ricochet-one-guide.html"><div class="mag-emoji" style="--m1:#ffb2bd;--m2:#ffd99c">🎯</div><div class="mag-copy"><span class="mag-tag">攻略 · 5分</span><h3>『リコシェ・ワン』反射の読み方</h3><p>全10面で使える、角度と仕掛けの考え方。</p></div></a>
-      <a class="mag-card" href="blog/yofukashi-hockey-guide.html"><div class="mag-emoji" style="--m1:#9cf1e6;--m2:#ffaaca">🏒</div><div class="mag-copy"><span class="mag-tag">遊び方 · 5分</span><h3>親子で盛り上がるホッケー対戦</h3><p>守りと強打、接戦をつくるローカルルール。</p></div></a>
-      <a class="mag-card" href="blog/browser-game-family-guide.html"><div class="mag-emoji" style="--m1:#b8e8ff;--m2:#fff0a6">👨‍👩‍👧‍👦</div><div class="mag-copy"><span class="mag-tag">コラム · 6分</span><h3>親子で遊ぶゲームの選び方</h3><p>年齢、操作、区切り、広告を見る6つの視点。</p></div></a>
+      <a class="mag-card" href="blog/2048-kotsu.html"><div class="mag-art"><img src="assets/covers/018.webp" alt="" width="800" height="450" loading="lazy" decoding="async"></div><div class="mag-copy"><span class="mag-tag">攻略 · 6分</span><h3>2048は下と左の2方向で進める</h3><p>大きい数は左下の角に固定し、下・左・右・上の順で動かします。2048を作るための考え方と、詰まりかけたときの直し方です。</p></div></a>
+      <a class="mag-card" href="blog/reversi-kachikata.html"><div class="mag-art"><img src="assets/covers/027.webp" alt="" width="800" height="450" loading="lazy" decoding="async"></div><div class="mag-copy"><span class="mag-tag">攻略 · 6分</span><h3>リバーシは序盤に取りすぎない</h3><p>CPU3段階の考え方をゲームの中身から確かめました。角と辺のあつかい、序盤の打ち方、終盤の数え方を数字で説明します。</p></div></a>
+      <a class="mag-card" href="blog/minesweeper-kotsu.html"><div class="mag-art"><img src="assets/covers/025.webp" alt="" width="800" height="450" loading="lazy" decoding="async"></div><div class="mag-copy"><span class="mag-tag">攻略 · 6分</span><h3>マインスイーパーの数字の読み方</h3><p>数字と、まわりの閉じたマスの数、はたの数をくらべるだけで進められます。長押しのはたと、数字タップでまとめて開く操作も説明します。</p></div></a>
+      <a class="mag-card" href="blog/solitaire-kotsu.html"><div class="mag-art"><img src="assets/covers/044.webp" alt="" width="800" height="450" loading="lazy" decoding="async"></div><div class="mag-copy"><span class="mag-tag">攻略 · 6分</span><h3>ソリティアは山札をめくる前が勝負</h3><p>山札は1枚めくりで、めくり直しは何回でも。裏向き21枚をどの列から開くか、キングをどこに置くか、詰まったときの順番をまとめました。</p></div></a>
     </div>
-    <a class="mag-all" href="blog/index.html">攻略ノートをすべて見る →</a>
+    <!-- STATIC-MAG-END -->
+    <a class="mag-all" href="blog/index.html">攻略ノート 12本をすべて見る →</a>
   </section>
 
   <section class="about" id="about">
