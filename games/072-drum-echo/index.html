@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まねっこドラム｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:10px 10px 30px; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+    touch-action:manipulation;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;padding:6px 16px;min-width:48px;min-height:34px;cursor:pointer;font-family:inherit}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--pink);text-shadow:0 0 12px rgba(255,95,162,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(255,95,162,.4);border-radius:999px;color:var(--pink);background:rgba(255,95,162,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:8px;touch-action:none}
+  .row{display:flex;gap:6px;margin-top:6px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;min-height:40px;padding:8px 0;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.93);
+    border-radius:8px;text-align:center;padding:12px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6);line-height:1.25}
+  #overlay .big.win{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .big.lose{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .note{font-size:14px;color:var(--ink);line-height:1.8}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .p{color:var(--pink)} #overlay .note .c{color:var(--cyan)}
+  .modes{display:flex;flex-direction:column;gap:8px;width:min(300px,100%)}
+  .modes button{font-family:inherit;font-size:16px;min-height:46px;background:var(--pink);color:#2b0014;border:none;border-radius:10px;padding:9px 12px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:var(--cyan);color:#062a28}
+  .modes button.sub{background:none;border:1px solid var(--edge);color:var(--ink);font-size:14px;min-height:42px}
+  .modes button small{display:block;font-size:12px;opacity:.85;letter-spacing:0}
+  #overlay .rule{font-size:13px;color:var(--sub);line-height:1.7}
+  #overlay .rule b{color:var(--gold);font-weight:400}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.75}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover{border-color:var(--pink);color:var(--pink)}
+    .modes button:hover{filter:brightness(1.12)}
+  }
+  .backbar a:focus-visible,.btn:focus-visible,.modes button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="せんせいの おてほんを きいて、おなじタイミングで ドラムを たたく まねっこリズムゲーム。ぜんぶで20フレーズ、はんていは ぴったり・おしい・ミスの3だんかい。すすむほど テンポが はやくなり、ドラムも 3こに ふえるよ。ガイドなしの「みみだけ」モードと ベストきろくつき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/072-drum-echo/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"まねっこドラム","description":"せんせいの おてほんを きいて、おなじタイミングで ドラムを たたく まねっこリズムゲーム。ぜんぶで20フレーズ、はんていは ぴったり・おしい・ミスの3だんかい。すすむほど テンポが はやくなり、ドラムも 3こに ふえるよ。ガイドなしの「みみだけ」モードと ベストきろくつき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/072-drum-echo/index.html","inLanguage":"ja","genre":"RHYTHM","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="072"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>まねっこドラム</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / 1人用</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="600"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">まねっこ<br>ドラム</div>
+    <div class="note" id="ovNote">
+      ① せんせいの <b>おてほん</b>を よく きく<br>
+      ② <b>おなじ タイミング</b>で ドラムを たたく<br>
+      ③ 7わり あたれば クリア！ ぜんぶで 20フレーズ
+    </div>
+    <div class="modes" id="ovBtns">
+      <button id="btnEasy">やさしいで はじめる<small>たたく ばしょの ガイドが 見える</small></button>
+      <button id="btnEar" class="alt">みみだけで はじめる<small>ガイドなし。音を おぼえて たたく</small></button>
+    </div>
+    <div class="modes" id="ovEndBtns" style="display:none">
+      <button id="btnAgain">もういちど</button>
+      <button id="btnMenu" class="sub">モードを えらぶ</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="retryBtn">さいしょから</button>
+  <button class="btn" id="titleBtn">タイトルへ</button>
+</div>
+
+<div class="help">
+  <p><b>あそびかた</b>：せんせいが 1回 たたくので、そのあと すぐに おなじリズムを まねしてね。「カッ カッ」という ひょうしの音に のると うまく いくよ。</p>
+  <p><b>はんてい</b>：<b>ぴったり</b>／<b>おしい</b>（はやい・おそい）／<b>ミス</b> の3だんかい。ちがうドラムや、よぶんに たたくのも ミスになる。7わり あたれば クリア、だめなら ♥が 1つ へるよ（♥は 3つ）。ぜんぶ ぴったりなら ★3つで ♥が 1つ もどる。</p>
+  <p><b>むずかしさ</b>：フレーズが すすむと テンポが はやくなり、ドラムが 1こ → 2こ → 3こに ふえ、フレーズ11からは 長さが 2ばいに。リズムは あそぶたびに かわるよ。</p>
+  <p>📱 下の ドラムを タップ ／ ⌨️ <b>F・J・K</b>（または ← ↓ → ／ Z・X・C）で たたく</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const overlay = document.getElementById('overlay');
+  const ovBig = document.getElementById('ovBig'), ovNote = document.getElementById('ovNote'), ovStats = document.getElementById('ovStats');
+  const ovBtns = document.getElementById('ovBtns'), ovEndBtns = document.getElementById('ovEndBtns');
+  const muteBtn = document.getElementById('mute-btn');
+  const KEY = 'ludot_drum-echo_';
+  const FONT = "'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif";
+  const PADS = [
+    { name: 'ドン', key: 'F', col: '#ff5fa2', glow: '255,95,162', x: 84 },
+    { name: 'タン', key: 'J', col: '#53e0d8', glow: '83,224,216', x: 240 },
+    { name: 'シャン', key: 'K', col: '#ffd166', glow: '255,209,102', x: 396 },
+  ];
+  const PAD_Y = 462, PAD_R = 68;
+  const STAGES = 20, MAX_HEARTS = 3;
+  const NOTE_N = [3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12];
+  const TX0 = 78, TWW = 372, TRACK_Y = 206, TRACK_H = 104, ROW_Y = [232, 258, 284];
+  const MODE_NAME = { easy: 'やさしい', ear: 'みみだけ' };
+  const TITLE_NOTE = ovNote.innerHTML;
+
+  // ---------- 保存 ----------
+  function load(k, def) { try { const v = localStorage.getItem(KEY + k); return v === null ? def : JSON.parse(v); } catch (e) { return def; } }
+  function save(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) { /* 保存できなくても遊べる */ } }
+  function cleanBest(b) {
+    const out = {};
+    for (const m of ['easy', 'ear']) {
+      const s = (b && b[m]) || {};
+      out[m] = { score: +s.score || 0, stage: Math.max(0, Math.min(STAGES, +s.stage || 0)), stars: +s.stars || 0, clears: +s.clears || 0 };
+    }
+    return out;
+  }
+  let muted = !!load('mute', false);
+  let best = cleanBest(load('best', null));
+
+  // ---------- 乱数 ----------
+  let rndState = (Date.now() ^ (Math.random() * 0x7fffffff)) >>> 0;
+  function rnd() {
+    rndState = (rndState + 0x6D2B79F5) >>> 0;
+    let t = rndState;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+
+  // ---------- 音 ----------
+  let ac = null, master = null, noiseBuf = null;
+  function audio() {
+    if (ac) { if (ac.state === 'suspended') ac.resume().catch(() => {}); return ac; }
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ac = new AC();
+      master = ac.createGain(); master.gain.value = muted ? 0 : 0.9; master.connect(ac.destination);
+      noiseBuf = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.5), ac.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    } catch (e) { ac = null; }
+    return ac;
+  }
+  function env(g, when, peak, dur) {
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(peak, when + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+  }
+  function tone(type, f0, f1, when, dur, peak) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.setValueAtTime(f0, when);
+    if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, when + dur);
+    env(g, when, peak, dur); o.connect(g); g.connect(master); o.start(when); o.stop(when + dur + 0.03);
+  }
+  function noise(ftype, freq, when, dur, peak) {
+    const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+    s.buffer = noiseBuf; f.type = ftype; f.frequency.value = freq; f.Q.value = 0.8;
+    env(g, when, peak, dur); s.connect(f); f.connect(g); g.connect(master); s.start(when); s.stop(when + dur + 0.03);
+  }
+  function sndDrum(pad, delay, vol) {
+    if (manual || !ac || muted) return;
+    const w = ac.currentTime + Math.max(0, delay || 0), v = vol || 1;
+    if (pad === 0) { tone('sine', 170, 46, w, 0.26, 0.95 * v); noise('lowpass', 700, w, 0.05, 0.25 * v); }
+    else if (pad === 1) { noise('bandpass', 1900, w, 0.15, 0.6 * v); tone('triangle', 250, 150, w, 0.1, 0.45 * v); }
+    else { noise('highpass', 6200, w, 0.32, 0.4 * v); tone('square', 5400, 5000, w, 0.05, 0.03 * v); }
+  }
+  function sndTick(delay, kind) {
+    if (manual || !ac || muted) return;
+    const w = ac.currentTime + Math.max(0, delay || 0);
+    tone('square', kind === 2 ? 1900 : kind === 1 ? 1500 : 1150, kind === 2 ? 1900 : kind === 1 ? 1500 : 1150, w, 0.035, kind ? 0.07 : 0.045);
+  }
+  function sndJingle(freqs, step, type, peak) {
+    if (manual || !ac || muted) return;
+    freqs.forEach((f, i) => tone(type || 'triangle', f, f, ac.currentTime + i * step, 0.22, peak || 0.22));
+  }
+
+  // ---------- 状態 ----------
+  let phase = 'title';          // title / count / model / player / result / end
+  let mode = load('mode', 'easy') === 'ear' ? 'ear' : 'easy';
+  let stage = 1, hearts = MAX_HEARTS, score = 0, combo = 0, maxCombo = 0, starsTotal = 0, clearedCount = 0;
+  let A = null;                 // いまのフレーズ
+  let songT = 0, lastSig = '';
+  let lastResult = null, resT = 0, endInfo = null, newRecord = false;
+  let manual = false, paused = false, lastNow = 0, animT = 0;
+  const padFlash = [0, 0, 0], stick = [0, 0];
+  let pops = [], parts = [], rings = [];
+
+  function stageSpec(s) {
+    return {
+      bars: s <= 10 ? 1 : 2,
+      pads: s <= 3 ? 1 : s <= 8 ? 2 : 3,
+      n: NOTE_N[s - 1],
+      off: s <= 2 ? 0 : s <= 5 ? 1 : s <= 8 ? 2 : s <= 10 ? 3 : Math.min(6, 3 + Math.floor((s - 11) / 3)),
+      bpm: 80 + (s - 1) * 3,
+      force0: s <= 5,
+    };
+  }
+  // フレーズを作る（毎回ちがう）。slot は8分音符のマス。
+  function genPhrase(s) {
+    const sp = stageSpec(s), S = sp.bars * 8;
+    let notes = null;
+    for (let tries = 0; tries < 40; tries++) {
+      const on = [], off = [];
+      for (let k = 0; k < S; k++) (k % 2 ? off : on).push(k);
+      let nOff = Math.min(sp.off, sp.n - 2), nOn = sp.n - nOff;
+      if (nOn > on.length) { nOff += nOn - on.length; nOn = on.length; }
+      shuffle(on); shuffle(off);
+      if (sp.force0) { on.splice(on.indexOf(0), 1); on.unshift(0); }
+      const slots = on.slice(0, nOn).concat(off.slice(0, nOff)).sort((a, b) => a - b);
+      if (sp.bars === 2) {
+        const first = slots.filter(k => k < 8).length;
+        if (first < 3 || slots.length - first < 3) continue;
+      }
+      notes = slots.map(k => {
+        const r = rnd();
+        let pad = 0;
+        if (sp.pads === 2) pad = k % 4 === 0 ? (r < 0.75 ? 0 : 1) : (r < 0.7 ? 1 : 0);
+        else if (sp.pads === 3) pad = k % 4 === 0 ? (r < 0.65 ? 0 : r < 0.85 ? 1 : 2) : k % 2 === 0 ? (r < 0.6 ? 1 : r < 0.8 ? 0 : 2) : (r < 0.55 ? 2 : r < 0.85 ? 1 : 0);
+        return { slot: k, pad };
+      });
+      for (let p = 0; p < sp.pads; p++) {           // 出てくるドラムは ぜんぶ使う
+        if (notes.some(n => n.pad === p)) continue;
+        const cand = notes.filter(n => notes.filter(m => m.pad === n.pad).length > 1);
+        if (cand.length) cand[Math.floor(rnd() * cand.length)].pad = p;
+      }
+      const sig = s + ':' + notes.map(n => n.slot + '' + n.pad).join(',');
+      if (sig !== lastSig) { lastSig = sig; break; }
+    }
+    return { stage: s, bpm: sp.bpm, bars: sp.bars, S, pads: sp.pads, notes };
+  }
+  function buildAttempt(ph) {
+    const beat = 60 / ph.bpm, eighth = beat / 2, len = ph.bars * 4 * beat;
+    const a = {
+      stage: ph.stage, bpm: ph.bpm, bars: ph.bars, S: ph.S, pads: ph.pads, beat, eighth, len,
+      modelStart: 2 * beat, playerStart: 2 * beat + len, playerEnd: 2 * beat + len * 2,
+      okWin: Math.min(0.17, eighth * 0.48), perfWin: Math.min(0.075, eighth * 0.3),
+      notes: ph.notes.map(n => ({ slot: n.slot, pad: n.pad, mt: 2 * beat + n.slot * eighth, t: 2 * beat + len + n.slot * eighth, st: 0, shown: 0, snd: false, vis: false, judgeT: 0 })),
+      hits: [], extras: 0, ticks: [],
+    };
+    const total = 2 + ph.bars * 8;
+    for (let i = 0; i < total; i++) a.ticks.push({ t: i * beat, kind: i < 2 ? 2 : (i - 2) % 4 === 0 ? 1 : 0, snd: false, vis: false });
+    a.endT = a.playerEnd;
+    return a;
+  }
+  function beginAttempt(ph) {
+    A = buildAttempt(ph || genPhrase(stage));
+    songT = 0; phase = 'count'; lastResult = null; pops = []; rings = [];
+  }
+  function startGame(m) {
+    if (m === 'easy' || m === 'ear') mode = m;
+    save('mode', mode);
+    stage = 1; hearts = MAX_HEARTS; score = 0; combo = 0; maxCombo = 0; starsTotal = 0; clearedCount = 0;
+    endInfo = null; newRecord = false; parts = [];
+    overlay.classList.remove('show');
+    beginAttempt();
+    lastNow = performance.now();
+  }
+  function goTitle() {
+    phase = 'title'; A = null; lastResult = null; endInfo = null;
+    ovBig.className = 'big'; ovBig.innerHTML = 'まねっこ<br>ドラム';
+    ovNote.innerHTML = TITLE_NOTE;
+    ovBtns.style.display = ''; ovEndBtns.style.display = 'none';
+    ovStats.innerHTML = statsLine();
+    overlay.classList.add('show');
+  }
+  function statsLine() {
+    const f = m => MODE_NAME[m] + '：' + (best[m].score ? 'ベスト <b>' + best[m].score + '</b>点・フレーズ ' + best[m].stage + '/' + STAGES : 'まだ きろくなし');
+    return f('easy') + '<br>' + f('ear');
+  }
+
+  function nowT() {
+    if (manual) return songT;
+    const sub = Math.min(0.05, Math.max(0, (performance.now() - lastNow) / 1000));
+    let lat = 0;
+    if (ac) lat = Math.min(0.1, (ac.outputLatency || 0) + (ac.baseLatency || 0));
+    return songT + sub - lat;
+  }
+
+  // ---------- 入力と はんてい ----------
+  function hit(pad) {
+    if (pad < 0 || pad > 2) return null;
+    padFlash[pad] = 1;
+    if (phase === 'title' || phase === 'end') return null;
+    audio(); sndDrum(pad, 0, 1);
+    if (!A || (phase !== 'model' && phase !== 'player')) return null;
+    const t = nowT();
+    if (t < A.playerStart - A.okWin || t > A.endT) return null;
+    stick[1] = 1;
+    return judge(pad, t);
+  }
+  function judge(pad, t) {
+    let bestN = null, bd = 1e9, other = null, od = 1e9;
+    for (const n of A.notes) {
+      if (n.st) continue;
+      const d = Math.abs(t - n.t);
+      if (d > A.okWin) continue;
+      if (n.pad === pad) { if (d < bd) { bd = d; bestN = n; } }
+      else if (d < od) { od = d; other = n; }
+    }
+    const px = PADS[pad].x;
+    let j;
+    if (bestN) {
+      const early = t < bestN.t;
+      bestN.judgeT = 1;
+      if (bd <= A.perfWin) {
+        j = 'perfect'; bestN.st = 1; combo++; score += 100 + Math.min(combo, 20) * 5;
+        addPop(px, 'ぴったり！', '#ffd166', 22); burst(px, PAD_Y, PADS[pad].col, 14);
+        rings.push({ x: px, y: PAD_Y, r: PAD_R, life: 1, col: '255,209,102' });
+      } else {
+        j = 'ok'; bestN.st = 2; combo++; score += 50;
+        addPop(px, early ? 'おしい（はやい）' : 'おしい（おそい）', '#53e0d8', 17); burst(px, PAD_Y, PADS[pad].col, 5);
+      }
+      maxCombo = Math.max(maxCombo, combo);
+    } else if (other) {
+      j = 'wrong'; other.st = 3; other.judgeT = 1; combo = 0;
+      addPop(px, 'ちがうドラム', '#b7a6c9', 17);
+    } else {
+      j = 'extra'; A.extras++; combo = 0;
+      addPop(px, 'よぶん', '#b7a6c9', 17);
+    }
+    A.hits.push({ pad, t, j });
+    return j;
+  }
+  function addPop(x, text, col, size) {
+    pops = pops.filter(p => Math.abs(p.x - x) > 10 || p.life < 0.6);
+    pops.push({ x: Math.max(74, Math.min(W - 74, x)), y: 366, text, col, size, life: 1 });
+  }
+  function burst(x, y, col, n) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, v = 90 + Math.random() * 170;
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 60, life: 0.5 + Math.random() * 0.4, col, r: 2 + Math.random() * 3 });
+    }
+    if (parts.length > 260) parts.splice(0, parts.length - 260);
+  }
+
+  function finishAttempt() {
+    let perfect = 0, ok = 0, miss = 0;
+    for (const n of A.notes) { if (!n.st) n.st = 3; if (n.st === 1) perfect++; else if (n.st === 2) ok++; else miss++; }
+    const total = A.notes.length, need = Math.ceil(total * 0.7), extra = A.extras;
+    const clear = perfect + ok - extra >= need;
+    let stars = 0, heal = false;
+    if (clear) stars = (perfect === total && !extra) ? 3 : (miss === 0 && !extra) ? 2 : 1;
+    if (clear) {
+      score += stars * 100; starsTotal += stars; clearedCount = Math.max(clearedCount, stage);
+      if (stars === 3 && hearts < MAX_HEARTS) { hearts++; heal = true; }
+      sndJingle(stars === 3 ? [660, 880, 1100, 1320] : [660, 880, 990], 0.09, 'triangle', 0.2);
+      for (let i = 0; i < (stars === 3 ? 4 : 2); i++) burst(80 + Math.random() * 320, 110 + Math.random() * 50, ['#ffd166', '#ff5fa2', '#53e0d8', '#a06bff'][i % 4], 14);
+    } else {
+      hearts--; combo = 0;
+      sndJingle([330, 262], 0.16, 'sawtooth', 0.09);
+    }
+    lastResult = { stage, perfect, ok, miss, extra, total, need, clear, stars, heal };
+    const b = best[mode];
+    if (clear) {
+      b.stage = Math.max(b.stage, stage);
+      if (stage === STAGES) b.clears++;
+    }
+    if (score > b.score) { b.score = score; b.stars = starsTotal; newRecord = true; }
+    save('best', best);
+    phase = 'result'; resT = clear ? 1.9 : 2.3;
+  }
+  function afterResult() {
+    const r = lastResult;
+    if (r && r.clear) {
+      if (stage >= STAGES) return endGame(true);
+      stage++; beginAttempt();
+    } else {
+      if (hearts <= 0) return endGame(false);
+      beginAttempt();
+    }
+  }
+  function endGame(cleared) {
+    phase = 'end';
+    endInfo = { cleared, score, stage: cleared ? STAGES : stage, clearedCount, stars: starsTotal, maxCombo, newRecord };
+    ovBig.className = 'big ' + (cleared ? 'win' : 'lose');
+    ovBig.innerHTML = cleared ? 'ぜんぶ<br>クリア！' : 'おしまい';
+    const b = best[mode];
+    ovNote.innerHTML =
+      (cleared ? '20フレーズ まねっこ 大せいこう！<br>' : 'フレーズ <b>' + stage + '</b> で ♥が なくなった…<br>') +
+      'スコア <b>' + score + '</b>点 ／ ★ <b>' + starsTotal + '</b>こ<br>' +
+      'クリアした数 <b>' + clearedCount + '</b>/' + STAGES + ' ／ さいだいコンボ <b>' + maxCombo + '</b>' +
+      (newRecord ? '<br><span class="p">★ ベストこうしん！ ★</span>' : '');
+    ovStats.innerHTML = MODE_NAME[mode] + 'モードの ベスト：<b>' + b.score + '</b>点・フレーズ ' + b.stage + '/' + STAGES;
+    ovBtns.style.display = 'none'; ovEndBtns.style.display = '';
+    overlay.classList.add('show');
+    if (cleared) sndJingle([523, 659, 784, 1047, 1319], 0.12, 'triangle', 0.22);
+  }
+
+  // ---------- 進行 ----------
+  function update(dt) {
+    animT += dt;
+    for (let i = 0; i < 3; i++) padFlash[i] = Math.max(0, padFlash[i] - dt * 5);
+    stick[0] = Math.max(0, stick[0] - dt * 6); stick[1] = Math.max(0, stick[1] - dt * 6);
+    for (const p of pops) { p.life -= dt * 1.25; p.y -= dt * 34; }
+    pops = pops.filter(p => p.life > 0);
+    for (const p of parts) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 420 * dt; }
+    parts = parts.filter(p => p.life > 0);
+    for (const r of rings) { r.life -= dt * 3; r.r += dt * 120; }
+    rings = rings.filter(r => r.life > 0);
+    if (A) for (const n of A.notes) { if (n.shown > 0 && n.shown < 1) n.shown = Math.min(1, n.shown + dt * 7); if (n.judgeT > 0) n.judgeT = Math.max(0, n.judgeT - dt * 4); }
+
+    if (phase === 'count' || phase === 'model' || phase === 'player') {
+      songT += dt;
+      for (const k of A.ticks) {
+        if (!k.snd && k.t - songT < 0.06) { k.snd = true; sndTick(k.t - songT, k.kind); }
+        if (!k.vis && songT >= k.t) k.vis = true;
+      }
+      for (const n of A.notes) {
+        if (!n.snd && n.mt - songT < 0.06) { n.snd = true; sndDrum(n.pad, n.mt - songT, 0.9); }
+        if (!n.vis && songT >= n.mt) { n.vis = true; n.shown = 0.01; padFlash[n.pad] = 0.8; stick[0] = 1; }
+        if (!n.st && songT > n.t + A.okWin) { n.st = 3; n.judgeT = 1; combo = 0; }
+      }
+      if (phase === 'count' && songT >= A.modelStart) phase = 'model';
+      if (phase === 'model' && songT >= A.playerStart) phase = 'player';
+      if (phase === 'player' && songT >= A.endT) finishAttempt();
+    } else if (phase === 'result') {
+      resT -= dt;
+      if (resT <= 0) afterResult();
+    }
+  }
+
+  // ---------- えがく ----------
+  function rr(x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  }
+  function txt(s, x, y, size, col, align, glow) {
+    ctx.font = size + 'px ' + FONT; ctx.textAlign = align || 'left'; ctx.textBaseline = 'middle';
+    if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = 12; }
+    ctx.fillStyle = col; ctx.fillText(s, x, y); ctx.shadowBlur = 0;
+  }
+  function drawBg() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#17152e'); g.addColorStop(0.45, '#0f0f20'); g.addColorStop(1, '#0c0c18');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 26; i++) {                      // 小さな星
+      const x = (i * 97 + 31) % W, y = 58 + (i * 53) % 140, tw = 0.35 + 0.3 * Math.sin(animT * 1.6 + i);
+      ctx.fillStyle = 'rgba(238,236,250,' + tw.toFixed(2) + ')'; ctx.fillRect(x, y, 2, 2);
+    }
+    ctx.fillStyle = '#19182f'; ctx.fillRect(0, 176, W, 22);      // ステージの床
+    ctx.fillStyle = 'rgba(160,107,255,.35)'; ctx.fillRect(0, 176, W, 2);
+  }
+  function drawHud() {
+    txt('フレーズ', 14, 20, 15, '#9d99c0');
+    txt(String(stage), 84, 20, 22, '#ffd166');
+    txt('/' + STAGES, 84 + (stage > 9 ? 26 : 14), 22, 15, '#9d99c0');
+    for (let i = 0; i < MAX_HEARTS; i++) txt(i < hearts ? '♥' : '♡', 204 + i * 26, 20, 22, i < hearts ? '#ff5fa2' : '#4a4670', 'center', i < hearts ? 'rgba(255,95,162,.6)' : null);
+    txt('スコア', 336, 20, 15, '#9d99c0');
+    txt(String(score), W - 14, 20, 22, '#eeecfa', 'right');
+    txt(MODE_NAME[mode], 14, 44, 15, mode === 'ear' ? '#53e0d8' : '#ff5fa2');
+    if (A) txt('テンポ ' + A.bpm, 204 + 26, 44, 15, '#9d99c0', 'center');
+    if (combo >= 2) txt(combo + ' コンボ', W - 14, 44, 16, '#ffd166', 'right', 'rgba(255,209,102,.5)');
+    // フレーズの進みぐあい
+    const bw = (W - 28) / STAGES;
+    for (let i = 0; i < STAGES; i++) {
+      ctx.fillStyle = i < stage - 1 ? '#ffd166' : i === stage - 1 ? '#ff5fa2' : '#2c2c4d';
+      ctx.fillRect(14 + i * bw, 57, bw - 2, 3);
+    }
+  }
+  function drawChar(x, y, col, dark, active, swing, teacher) {
+    const bob = active ? Math.sin(animT * 9) * 2.5 : Math.sin(animT * 2.4 + x) * 1.2;
+    if (active) {                                          // スポットライト
+      const g = ctx.createRadialGradient(x, y + 6, 6, x, y + 6, 92);
+      g.addColorStop(0, 'rgba(255,255,255,.17)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y + 6, 92, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(x, y + 48, 44, 7, 0, 0, Math.PI * 2); ctx.fill();
+    const by = y + bob;
+    if (teacher) {                                          // とがった耳
+      ctx.fillStyle = dark;
+      ctx.beginPath(); ctx.moveTo(x - 27, by - 16); ctx.lineTo(x - 22, by - 42); ctx.lineTo(x - 6, by - 28); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(x + 27, by - 16); ctx.lineTo(x + 22, by - 42); ctx.lineTo(x + 6, by - 28); ctx.fill();
+    }
+    const g2 = ctx.createRadialGradient(x - 10, by - 12, 4, x, by, 36);
+    g2.addColorStop(0, col); g2.addColorStop(1, dark);
+    ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(x, by, 32, 0, Math.PI * 2); ctx.fill();
+    if (!teacher) {                                         // はちまき と 星
+      ctx.fillStyle = '#ffd166'; ctx.fillRect(x - 30, by - 20, 60, 6);
+      ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 4 : 9; ctx.lineTo(x + Math.cos(a) * r, by - 24 + Math.sin(a) * r); } ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x - 11, by - 4, teacher ? 9 : 7, 0, Math.PI * 2); ctx.arc(x + 11, by - 4, teacher ? 9 : 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#17152e';
+    ctx.beginPath(); ctx.arc(x - 10, by - 3, 3.6, 0, Math.PI * 2); ctx.arc(x + 12, by - 3, 3.6, 0, Math.PI * 2); ctx.fill();
+    if (teacher) { ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.moveTo(x - 5, by + 5); ctx.lineTo(x + 5, by + 5); ctx.lineTo(x, by + 13); ctx.fill(); }
+    else { ctx.strokeStyle = '#17152e'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, by + 7, 7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke(); }
+    // 小さなドラム
+    const dg = ctx.createLinearGradient(x - 26, 0, x + 26, 0);
+    dg.addColorStop(0, '#3a2f6b'); dg.addColorStop(0.5, '#6b55c2'); dg.addColorStop(1, '#3a2f6b');
+    ctx.fillStyle = dg; rr(x - 26, y + 26, 52, 22, 5); ctx.fill();
+    ctx.fillStyle = '#eeecfa'; ctx.beginPath(); ctx.ellipse(x, y + 27, 26, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y + 27, 26, 6, 0, 0, Math.PI * 2); ctx.stroke();
+    // スティック
+    ctx.strokeStyle = '#f3d9a4'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    for (const sgn of [-1, 1]) {
+      const hx = x + sgn * 34, hy = by + 8;
+      const tx = hx + sgn * 10 + (x + sgn * 12 - hx - sgn * 10) * swing, ty = hy - 28 + (y + 24 - hy + 28) * swing;
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(tx, ty); ctx.stroke();
+    }
+    ctx.lineCap = 'butt';
+  }
+  function drawStage() {
+    const tAct = phase === 'count' || phase === 'model', pAct = phase === 'player';
+    drawChar(112, 128, '#b58cff', '#6a3fd6', tAct, stick[0], true);
+    drawChar(368, 128, '#7ef0e8', '#1f9c96', pAct, stick[1], false);
+    txt('せんせい', 112, 188, 15, tAct ? '#eeecfa' : '#9d99c0', 'center');
+    txt('きみ', 368, 188, 15, pAct ? '#eeecfa' : '#9d99c0', 'center');
+    if (!A) return;
+    let s = '', col = '#eeecfa';
+    if (phase === 'count') { s = 'きいてね'; col = '#a06bff'; }
+    else if (phase === 'model') { if (songT > A.playerStart - A.beat) { s = 'つぎは きみ！'; col = '#ffd166'; } else { s = 'おてほん ♪'; col = '#b58cff'; } }
+    else if (phase === 'player') { s = 'まねして！'; col = '#53e0d8'; }
+    if (s) {
+      const beatPh = (songT / A.beat) % 1, sc = 1 + Math.max(0, 0.12 - beatPh * 0.4);
+      ctx.save(); ctx.translate(240, 92); ctx.scale(sc, sc);
+      txt(s, 0, 0, 24, col, 'center', col); ctx.restore();
+      // ひょうしの あかり
+      const bi = Math.floor(songT / A.beat);
+      const inBar = phase === 'count' ? bi : (bi - 2) % 4, nDot = phase === 'count' ? 2 : 4;
+      for (let i = 0; i < nDot; i++) {
+        ctx.fillStyle = i === inBar ? col : '#2c2c4d';
+        ctx.beginPath(); ctx.arc(240 + (i - (nDot - 1) / 2) * 20, 124, i === inBar ? 6 : 4, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+  function noteX(slot) { return TX0 + slot / A.S * TWW; }
+  function drawTrack() {
+    ctx.fillStyle = '#16162b'; rr(10, TRACK_Y, W - 20, TRACK_H, 10); ctx.fill();
+    ctx.strokeStyle = '#2c2c4d'; ctx.lineWidth = 2; rr(10, TRACK_Y, W - 20, TRACK_H, 10); ctx.stroke();
+    for (let p = 0; p < 3; p++) {
+      const on = !A || p < A.pads;
+      ctx.fillStyle = on ? 'rgba(' + PADS[p].glow + ',.10)' : 'rgba(255,255,255,.02)';
+      rr(62, ROW_Y[p] - 11, W - 80, 22, 6); ctx.fill();
+      txt(PADS[p].name, 36, ROW_Y[p], 15, on ? PADS[p].col : '#4a4670', 'center');
+    }
+    if (!A) return;
+    for (let k = 0; k <= A.S; k += 2) {                 // はくの線
+      const x = noteX(k), barLine = k % 8 === 0;
+      ctx.fillStyle = barLine ? 'rgba(238,236,250,.34)' : 'rgba(238,236,250,.12)';
+      ctx.fillRect(x - (barLine ? 1 : 0.5), TRACK_Y + 10, barLine ? 2 : 1, TRACK_H - 20);
+    }
+    const playerSide = phase === 'player' || phase === 'result';
+    const showGuide = mode === 'easy';
+    for (const n of A.notes) {
+      const x = noteX(n.slot), y = ROW_Y[n.pad], c = PADS[n.pad];
+      if (!playerSide) {
+        if (!n.vis) continue;
+        const sc = 0.6 + 0.4 * Math.min(1, n.shown) + (n.shown < 1 ? 0.5 * (1 - n.shown) : 0);
+        ctx.shadowColor = c.col; ctx.shadowBlur = 10; ctx.fillStyle = c.col;
+        ctx.beginPath(); ctx.arc(x, y, 8.5 * sc, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      } else if (n.st === 0) {
+        if (!showGuide) continue;
+        ctx.strokeStyle = 'rgba(' + c.glow + ',.75)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.stroke();
+      } else {
+        const sc = 1 + n.judgeT * 0.5;
+        if (n.st === 3) {
+          ctx.strokeStyle = '#6f6a94'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.stroke();
+          ctx.strokeStyle = '#b7a6c9'; ctx.lineWidth = 2.5; ctx.beginPath();
+          ctx.moveTo(x - 5, y - 5); ctx.lineTo(x + 5, y + 5); ctx.moveTo(x + 5, y - 5); ctx.lineTo(x - 5, y + 5); ctx.stroke();
+        } else {
+          ctx.shadowColor = n.st === 1 ? '#ffd166' : c.col; ctx.shadowBlur = 12; ctx.fillStyle = c.col;
+          ctx.beginPath(); ctx.arc(x, y, 8.5 * sc, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+          ctx.strokeStyle = n.st === 1 ? '#ffd166' : '#eeecfa'; ctx.lineWidth = n.st === 1 ? 3 : 1.5;
+          ctx.beginPath(); ctx.arc(x, y, 10.5 * sc, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+    }
+    if (playerSide) for (const h of A.hits) {           // じぶんが たたいた ところ
+      const x = TX0 + (h.t - A.playerStart) / A.len * TWW;
+      if (x < 64 || x > W - 20) continue;
+      ctx.fillStyle = h.j === 'perfect' ? '#ffd166' : h.j === 'ok' ? '#eeecfa' : '#8a6f9c';
+      ctx.fillRect(x - 1.5, ROW_Y[h.pad] + 9, 3, 6);
+    }
+    if (phase === 'model' || phase === 'player') {      // うごく線
+      const st = phase === 'model' ? A.modelStart : A.playerStart;
+      const x = TX0 + Math.max(0, Math.min(1, (songT - st) / A.len)) * TWW;
+      const col = phase === 'model' ? '#b58cff' : '#53e0d8';
+      ctx.shadowColor = col; ctx.shadowBlur = 10; ctx.fillStyle = col; ctx.fillRect(x - 1.5, TRACK_Y + 6, 3, TRACK_H - 12); ctx.shadowBlur = 0;
+    }
+    if (phase === 'player' && !showGuide && !A.hits.length && songT < A.playerStart + A.eighth) txt('音を おもいだして！', 262, TRACK_Y - 1, 15, '#53e0d8', 'center');
+  }
+  function drawPads() {
+    for (let p = 0; p < 3; p++) {
+      const c = PADS[p], on = !A || p < A.pads, f = padFlash[p], x = c.x, y = PAD_Y + f * 4;
+      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.ellipse(x, PAD_Y + PAD_R + 6, PAD_R * 0.9, 9, 0, 0, Math.PI * 2); ctx.fill();
+      if (f > 0) { ctx.shadowColor = c.col; ctx.shadowBlur = 30 * f; }
+      const g = ctx.createRadialGradient(x - 20, y - 24, 6, x, y, PAD_R);
+      if (on) { g.addColorStop(0, '#ffffff'); g.addColorStop(0.18, c.col); g.addColorStop(1, 'rgba(' + c.glow + ',.42)'); }
+      else { g.addColorStop(0, '#4a4670'); g.addColorStop(1, '#22213d'); }
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, PAD_R * (1 - f * 0.04), 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.strokeStyle = on ? c.col : '#3a3760'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(x, y, PAD_R - 2, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(19,19,34,.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, PAD_R - 16, 0, Math.PI * 2); ctx.stroke();
+      if (f > 0) { ctx.fillStyle = 'rgba(255,255,255,' + (f * 0.45).toFixed(2) + ')'; ctx.beginPath(); ctx.arc(x, y, PAD_R - 4, 0, Math.PI * 2); ctx.fill(); }
+      txt(c.name, x, y - 2, p === 2 ? 24 : 28, on ? '#17152e' : '#6f6a94', 'center');
+      txt(on ? '[' + c.key + ']' : 'おやすみ', x, PAD_Y + PAD_R + 30, 15, on ? '#9d99c0' : '#5d598a', 'center');
+    }
+    for (const r of rings) { ctx.strokeStyle = 'rgba(' + r.col + ',' + r.life.toFixed(2) + ')'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke(); }
+    for (const p of parts) { ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 2)); ctx.fillStyle = p.col; ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }
+    ctx.globalAlpha = 1;
+    for (const p of pops) {
+      ctx.globalAlpha = Math.min(1, p.life * 2.2);
+      const sc = 1 + Math.max(0, p.life - 0.8) * 2;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.scale(sc, sc); txt(p.text, 0, 0, p.size, p.col, 'center', p.col); ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function drawResult() {
+    const r = lastResult; if (!r || phase !== 'result') return;
+    const t = (r.clear ? 1.9 : 2.3) - resT, a = Math.min(1, t * 6), sc = 0.85 + 0.15 * Math.min(1, t * 6);
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(240, 124); ctx.scale(sc, sc);
+    ctx.fillStyle = 'rgba(19,19,34,.94)'; rr(-214, -62, 428, 124, 14); ctx.fill();
+    ctx.strokeStyle = r.clear ? '#ffd166' : '#53e0d8'; ctx.lineWidth = 2.5; rr(-214, -62, 428, 124, 14); ctx.stroke();
+    if (r.clear) {
+      txt('クリア！', -120, -30, 28, '#ffd166', 'center', 'rgba(255,209,102,.7)');
+      for (let i = 0; i < 3; i++) {
+        const on = i < r.stars, pop = on ? 1 + Math.max(0, 0.5 - Math.abs(t - 0.25 - i * 0.18) * 2.5) : 1;
+        txt(on ? '★' : '☆', 30 + i * 46, -30, 34 * pop, on ? '#ffd166' : '#4a4670', 'center', on ? 'rgba(255,209,102,.8)' : null);
+      }
+    } else {
+      txt('ざんねん…', -100, -30, 26, '#53e0d8', 'center');
+      txt('♥ −1', 70, -30, 24, '#ff5fa2', 'center');
+    }
+    txt('ぴったり ' + r.perfect + '　おしい ' + r.ok + '　ミス ' + (r.miss + r.extra), 0, 8, 17, '#eeecfa', 'center');
+    const msg = r.clear ? (r.heal ? 'かんぺき！ ♥が 1つ もどった' : r.stars === 3 ? 'かんぺき！' : r.stage >= STAGES ? 'さいごまで できた！' : 'つぎの フレーズへ') : (hearts > 0 ? 'あと ' + (r.need - (r.perfect + r.ok - r.extra)) + 'こ で クリアだった。もういちど！' : 'ここまで！');
+    txt(msg, 0, 38, 16, r.clear ? '#ffd166' : '#9d99c0', 'center');
+    ctx.restore();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawBg(); drawHud(); drawStage(); drawTrack(); drawPads(); drawResult();
+    if (paused && phase !== 'title' && phase !== 'end') { ctx.fillStyle = 'rgba(19,19,34,.7)'; ctx.fillRect(0, 0, W, H); txt('ひとやすみ中', 240, 300, 24, '#eeecfa', 'center'); }
+  }
+  function frame(now) {
+    const dt = Math.min(0.05, Math.max(0, (now - lastNow) / 1000));
+    lastNow = now;
+    if (!manual && !paused) update(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- 操作まわり ----------
+  function setMute(m) {
+    muted = !!m; save('mute', muted);
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    if (master && ac) master.gain.setValueAtTime(muted ? 0 : 0.9, ac.currentTime);
+  }
+  function padAt(cx, cy) {
+    if (cy < 372) return -1;
+    return cx < 162 ? 0 : cx < 318 ? 1 : 2;
+  }
+  function onPointer(e) {
+    e.preventDefault();
+    const r = cv.getBoundingClientRect();
+    const p = padAt((e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H);
+    if (p >= 0) hit(p);
+  }
+  const KEYMAP = { f: 0, j: 1, k: 2, z: 0, x: 1, c: 2, arrowleft: 0, arrowdown: 1, arrowup: 1, arrowright: 2 };
+  function onKey(e) {
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (overlay.classList.contains('show')) {
+      if (k === 'enter' || k === ' ') {
+        if (document.activeElement && document.activeElement.tagName === 'BUTTON') return;   // ボタンに まかせる
+        e.preventDefault(); audio(); startGame(mode);
+      }
+      return;
+    }
+    if (k in KEYMAP) { e.preventDefault(); hit(KEYMAP[k]); }
+    else if (k === ' ') e.preventDefault();
+  }
+  function onVisibility() {
+    if (document.hidden) { paused = true; return; }
+    paused = false; lastNow = performance.now();
+    if (A && (phase === 'count' || phase === 'model' || phase === 'player')) {      // とちゅうなら 同じフレーズを はじめから
+      const ph = { stage: A.stage, bpm: A.bpm, bars: A.bars, S: A.S, pads: A.pads, notes: A.notes.map(n => ({ slot: n.slot, pad: n.pad })) };
+      beginAttempt(ph);
+    }
+  }
+
+  window.__test = {
+    state: () => ({
+      phase, mode, stage, hearts, score, combo, maxCombo, starsTotal, clearedCount, songT, muted, manual,
+      overlay: overlay.classList.contains('show'), guide: mode === 'easy',
+      bpm: A ? A.bpm : 0, bars: A ? A.bars : 0, slots: A ? A.S : 0, pads: A ? A.pads : 0,
+      okWin: A ? A.okWin : 0, perfWin: A ? A.perfWin : 0, eighth: A ? A.eighth : 0,
+      modelStart: A ? A.modelStart : 0, playerStart: A ? A.playerStart : 0, playerEnd: A ? A.playerEnd : 0,
+      notes: A ? A.notes.map(n => ({ slot: n.slot, pad: n.pad, t: n.t, mt: n.mt, st: n.st })) : [],
+      hits: A ? A.hits.map(h => ({ pad: h.pad, t: h.t, j: h.j })) : [], extras: A ? A.extras : 0,
+      lastResult: lastResult ? Object.assign({}, lastResult) : null,
+      end: endInfo ? Object.assign({}, endInfo) : null,
+      best: JSON.parse(JSON.stringify(best)),
+    }),
+    start: m => startGame(m),
+    menu: goTitle,
+    setAuto: v => { manual = !v; lastNow = performance.now(); },
+    seed: n => { rndState = n >>> 0; lastSig = ''; },
+    step: ms => { let left = ms / 1000; while (left > 1e-9) { const d = Math.min(0.005, left); update(d); left -= d; } },
+    hit: pad => hit(pad),
+    gen: s => { const ph = genPhrase(s); const a = buildAttempt(ph); return { stage: s, bpm: ph.bpm, bars: ph.bars, slots: ph.S, pads: ph.pads, okWin: a.okWin, perfWin: a.perfWin, eighth: a.eighth, notes: ph.notes }; },
+    setStage: n => { stage = Math.max(1, Math.min(STAGES, n | 0)); beginAttempt(); },
+    setHearts: n => { hearts = n; },
+    setMute,
+  };
+
+  // ---------- 初期化（いちばん最後） ----------
+  setMute(muted);
+  goTitle();
+  document.getElementById('btnEasy').addEventListener('click', () => { audio(); startGame('easy'); });
+  document.getElementById('btnEar').addEventListener('click', () => { audio(); startGame('ear'); });
+  document.getElementById('btnAgain').addEventListener('click', () => { audio(); startGame(mode); });
+  document.getElementById('btnMenu').addEventListener('click', goTitle);
+  document.getElementById('retryBtn').addEventListener('click', e => { e.currentTarget.blur(); audio(); startGame(mode); });
+  document.getElementById('titleBtn').addEventListener('click', e => { e.currentTarget.blur(); goTitle(); });
+  muteBtn.addEventListener('click', () => { audio(); setMute(!muted); muteBtn.blur(); });
+  cv.addEventListener('pointerdown', onPointer);
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', onKey);
+  document.addEventListener('visibilitychange', onVisibility);
+  lastNow = performance.now();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

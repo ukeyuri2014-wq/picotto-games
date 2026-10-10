@@ -1,0 +1,94 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c072bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1840"/><stop offset="0.6" stop-color="#131322"/><stop offset="1" stop-color="#0c0c18"/>
+    </linearGradient>
+    <radialGradient id="c072spotA" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#a06bff" stop-opacity="0.55"/><stop offset="1" stop-color="#a06bff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c072spotB" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.5"/><stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c072pink" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.2" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8a2458"/>
+    </radialGradient>
+    <radialGradient id="c072cyan" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.2" stop-color="#53e0d8"/><stop offset="1" stop-color="#1c6f6a"/>
+    </radialGradient>
+    <radialGradient id="c072gold" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.2" stop-color="#ffd166"/><stop offset="1" stop-color="#8f6a1c"/>
+    </radialGradient>
+    <radialGradient id="c072teach" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#c9a8ff"/><stop offset="1" stop-color="#6a3fd6"/>
+    </radialGradient>
+    <radialGradient id="c072kid" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#a5f7f1"/><stop offset="1" stop-color="#1f9c96"/>
+    </radialGradient>
+    <linearGradient id="c072drum" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3a2f6b"/><stop offset="0.5" stop-color="#7a62d6"/><stop offset="1" stop-color="#3a2f6b"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#c072bg)"/>
+  <g fill="#eeecfa" opacity="0.6">
+    <rect x="28" y="20" width="2" height="2"/><rect x="92" y="38" width="2" height="2"/><rect x="170" y="16" width="2" height="2"/>
+    <rect x="236" y="34" width="2" height="2"/><rect x="310" y="18" width="2" height="2"/><rect x="368" y="44" width="2" height="2"/>
+    <rect x="200" y="56" width="2" height="2"/><rect x="60" y="64" width="2" height="2"/><rect x="340" y="70" width="2" height="2"/>
+  </g>
+  <circle cx="105" cy="95" r="85" fill="url(#c072spotA)"/>
+  <circle cx="295" cy="95" r="85" fill="url(#c072spotB)"/>
+  <rect x="0" y="140" width="400" height="85" fill="#17162c"/>
+  <rect x="0" y="140" width="400" height="2" fill="#a06bff" opacity="0.5"/>
+
+  <!-- おてほんの音が とんでいく -->
+  <g fill="none" stroke-linecap="round" stroke-width="3">
+    <path d="M150 70 q10 14 0 28" stroke="#ff5fa2"/><path d="M162 62 q16 22 0 44" stroke="#ff5fa2" opacity="0.7"/>
+    <path d="M174 54 q22 30 0 60" stroke="#ff5fa2" opacity="0.4"/>
+    <path d="M250 70 q-10 14 0 28" stroke="#53e0d8"/><path d="M238 62 q-16 22 0 44" stroke="#53e0d8" opacity="0.7"/>
+    <path d="M226 54 q-22 30 0 60" stroke="#53e0d8" opacity="0.4"/>
+  </g>
+  <g>
+    <circle cx="200" cy="40" r="7" fill="#ffd166"/><rect x="205" y="14" width="3" height="27" fill="#ffd166"/><path d="M208 14 q14 4 10 16 q-2 -8 -10 -8z" fill="#ffd166"/>
+  </g>
+
+  <!-- せんせい -->
+  <g>
+    <ellipse cx="105" cy="142" rx="44" ry="6" fill="#000" opacity="0.4"/>
+    <path d="M78 74 L83 46 L99 62z M132 74 L127 46 L111 62z" fill="#6a3fd6"/>
+    <circle cx="105" cy="90" r="33" fill="url(#c072teach)"/>
+    <circle cx="94" cy="86" r="9" fill="#fff"/><circle cx="116" cy="86" r="9" fill="#fff"/>
+    <circle cx="95" cy="87" r="3.6" fill="#17152e"/><circle cx="117" cy="87" r="3.6" fill="#17152e"/>
+    <path d="M100 95 L110 95 L105 103z" fill="#ffd166"/>
+    <rect x="79" y="116" width="52" height="24" rx="5" fill="url(#c072drum)"/>
+    <ellipse cx="105" cy="117" rx="26" ry="6" fill="#eeecfa" stroke="#ffd166" stroke-width="2"/>
+    <path d="M72 96 L58 70 M138 96 L128 112" stroke="#f3d9a4" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <!-- きみ -->
+  <g>
+    <ellipse cx="295" cy="142" rx="44" ry="6" fill="#000" opacity="0.4"/>
+    <circle cx="295" cy="90" r="33" fill="url(#c072kid)"/>
+    <rect x="264" y="69" width="62" height="6" fill="#ffd166"/>
+    <path d="M295 56 L298 64 L306 64 L300 69 L302 77 L295 72 L288 77 L290 69 L284 64 L292 64z" fill="#ffd166"/>
+    <circle cx="284" cy="87" r="7" fill="#fff"/><circle cx="306" cy="87" r="7" fill="#fff"/>
+    <circle cx="285" cy="88" r="3.6" fill="#17152e"/><circle cx="307" cy="88" r="3.6" fill="#17152e"/>
+    <path d="M288 99 q7 7 14 0" fill="none" stroke="#17152e" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="269" y="116" width="52" height="24" rx="5" fill="url(#c072drum)"/>
+    <ellipse cx="295" cy="117" rx="26" ry="6" fill="#eeecfa" stroke="#ffd166" stroke-width="2"/>
+    <path d="M262 96 L272 112 M328 96 L342 70" stroke="#f3d9a4" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- 3つのドラム -->
+  <g>
+    <ellipse cx="120" cy="212" rx="36" ry="5" fill="#000" opacity="0.45"/>
+    <ellipse cx="200" cy="214" rx="40" ry="5" fill="#000" opacity="0.45"/>
+    <ellipse cx="280" cy="212" rx="36" ry="5" fill="#000" opacity="0.45"/>
+    <circle cx="120" cy="184" r="27" fill="url(#c072pink)" stroke="#ff5fa2" stroke-width="3"/>
+    <circle cx="200" cy="182" r="31" fill="url(#c072cyan)" stroke="#53e0d8" stroke-width="3"/>
+    <circle cx="280" cy="184" r="27" fill="url(#c072gold)" stroke="#ffd166" stroke-width="3"/>
+    <circle cx="200" cy="182" r="40" fill="none" stroke="#53e0d8" stroke-width="2" opacity="0.5"/>
+    <circle cx="200" cy="182" r="48" fill="none" stroke="#53e0d8" stroke-width="1.5" opacity="0.25"/>
+  </g>
+  <g fill="#ffd166">
+    <rect x="160" y="150" width="4" height="4"/><rect x="238" y="148" width="4" height="4"/><rect x="200" y="140" width="3" height="3"/>
+    <rect x="44" y="170" width="3" height="3"/><rect x="352" y="168" width="3" height="3"/>
+  </g>
+</svg>
