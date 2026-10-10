@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>おさかな水そう｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:480px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 10px 30px; overflow-x:hidden; touch-action:manipulation;
+  }
+  button{font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  .backbar,header,#wrap,.help{width:min(var(--w),100%)}
+  .backbar{margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;min-width:46px;height:32px;cursor:pointer}
+  header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:1px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.6);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid var(--edge);border-radius:10px;background:#0e0e1c;overflow:hidden}
+  .hud{display:flex;gap:4px;padding:5px 5px 0}
+  .hud div{flex:1;text-align:center;font-size:14px;padding:4px 2px;border:1px solid var(--edge);border-radius:8px;background:#0a0a17;white-space:nowrap;font-variant-numeric:tabular-nums}
+  #hPearl{color:var(--gold);text-shadow:0 0 8px rgba(255,209,102,.6)}
+  #hDex{color:var(--cyan)}
+  #hFish{color:var(--pink)}
+  #hTime{color:var(--sub)}
+  .hud div.bump{animation:bump .3s}
+  @keyframes bump{50%{transform:scale(1.14)}}
+  #quest{margin:5px 5px 0;padding:5px 8px;font-size:13px;line-height:1.35;border-radius:8px;background:rgba(160,107,255,.12);border:1px solid rgba(160,107,255,.4);color:var(--ink);min-height:46px;display:flex;align-items:center;gap:6px}
+  #quest b{color:var(--gold);font-weight:400;white-space:nowrap}
+  #quest span{flex:1}
+  #quest.done{animation:qd .6s}
+  @keyframes qd{30%{background:rgba(255,209,102,.4)}}
+  #tankbox{position:relative;margin-top:5px}
+  canvas#cv{display:block;width:100%;height:auto;background:#0b1030;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+  #toast{position:absolute;left:50%;top:8px;transform:translate(-50%,-8px);max-width:94%;padding:5px 12px;border-radius:999px;background:rgba(19,19,34,.9);border:1px solid var(--gold);color:var(--gold);font-size:13px;text-align:center;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;line-height:1.4}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+
+  .foodrow{display:flex;gap:5px;padding:6px 5px 0;align-items:stretch}
+  .food{flex:1;min-height:44px;border-radius:10px;border:2px solid var(--edge);background:var(--panel);color:var(--ink);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;padding:0 2px}
+  .food i{width:16px;height:16px;border-radius:50%;display:inline-block;box-shadow:inset -2px -2px 0 rgba(0,0,0,.25)}
+  .food.on{background:rgba(255,255,255,.1);box-shadow:0 0 10px rgba(255,255,255,.25)}
+  .food[data-c="0"].on{border-color:#ff6b7d}.food[data-c="1"].on{border-color:#6be08f}.food[data-c="2"].on{border-color:#5fb4ff}
+  #stock{flex:1.15;display:flex;flex-direction:column;justify-content:center;gap:3px;font-size:12px;color:var(--sub);padding:0 2px;white-space:nowrap}
+  #stock .bar{height:9px;border-radius:5px;background:#0a0a17;border:1px solid var(--edge);overflow:hidden}
+  #stock .bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--gold),#ff9d5c);transition:width .15s}
+  #stock.low #stockTx{color:var(--pink)}
+  .menurow{display:flex;gap:5px;padding:6px 5px 6px}
+  .menu{flex:1;min-height:44px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);font-size:13px;cursor:pointer;padding:0;white-space:nowrap;position:relative}
+  .menu.new::after{content:'';position:absolute;top:4px;right:5px;width:9px;height:9px;border-radius:50%;background:var(--pink);box-shadow:0 0 8px var(--pink)}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover,.menu:hover,.food:hover{border-color:var(--gold);color:var(--gold)}
+    .act:hover:not(:disabled){filter:brightness(1.15)}
+  }
+
+  #panel{position:absolute;inset:0;display:none;flex-direction:column;background:#10101f;z-index:2;border-radius:8px}
+  #panel.show{display:flex}
+  .phead{display:flex;justify-content:space-between;align-items:center;padding:7px 9px;border-bottom:1px solid var(--edge)}
+  .phead b{font-weight:400;font-size:17px;color:var(--cyan)}
+  .phead span{font-size:13px;color:var(--gold)}
+  #pClose{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);font-size:13px;cursor:pointer}
+  #pBody{flex:1;overflow-y:auto;padding:6px 7px 10px;-webkit-overflow-scrolling:touch}
+  .item{display:flex;align-items:center;gap:7px;padding:6px 6px;border:1px solid var(--edge);border-radius:10px;background:var(--panel);margin-bottom:6px}
+  .item canvas{width:60px;height:46px;flex:none;background:#0b1030;border-radius:8px}
+  .item .ico{width:60px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;font-size:26px;background:#0b1030;border-radius:8px}
+  .item .tx{flex:1;min-width:0;font-size:13px;line-height:1.4}
+  .item .tx small{display:block;font-size:11.5px;color:var(--sub)}
+  .item .tx em{font-style:normal;color:var(--gold)}
+  .item.lock{opacity:.6}
+  .act{flex:none;min-width:76px;min-height:42px;border-radius:9px;border:none;background:var(--cyan);color:#06282a;font-size:13px;cursor:pointer;padding:0 8px;line-height:1.25}
+  .act.gold{background:var(--gold);color:#3a2a00}
+  .act:disabled{background:#33335a;color:#8d8ab0;cursor:default}
+  .act.own{background:none;border:1px solid var(--cyan);color:var(--cyan)}
+  .bar2{height:7px;border-radius:4px;background:#0a0a17;overflow:hidden;margin-top:3px}
+  .bar2 i{display:block;height:100%;background:var(--cyan)}
+  .bar2 i.low{background:var(--pink)}
+  .dexgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+  .dexcell{border:1px solid var(--edge);border-radius:9px;background:var(--panel);padding:3px 2px 3px;text-align:center;font-size:11px;line-height:1.25}
+  .dexcell canvas{width:100%;max-width:60px;height:auto;aspect-ratio:60/46;background:#0b1030;border-radius:7px;display:block;margin:0 auto 2px}
+  .dexcell.got{border-color:rgba(83,224,216,.6)}
+  .dexcell.no{color:var(--sub)}
+  .dexcell i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:2px;vertical-align:-1px}
+  .pnote{font-size:12px;color:var(--sub);line-height:1.5;margin:2px 2px 7px}
+
+  #overlay{position:absolute;inset:0;display:none;flex-direction:column;gap:9px;align-items:center;justify-content:center;background:rgba(13,13,28,.96);text-align:center;padding:12px;overflow:auto;z-index:3}
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.7);line-height:1.25}
+  #overlay .big.win{color:var(--gold);text-shadow:0 0 18px rgba(255,209,102,.75)}
+  #ovFish{width:200px;height:74px}
+  #overlay .note{font-size:13.5px;color:var(--ink);line-height:1.75;text-align:left;max-width:340px}
+  #overlay .note.c{text-align:center}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .star{font-size:26px;color:var(--gold);letter-spacing:4px;text-shadow:0 0 12px rgba(255,209,102,.7)}
+  #overlay .rec{font-size:12px;color:var(--cyan);line-height:1.5}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-size:16px;background:var(--cyan);color:#06282a;border:none;border-radius:8px;min-height:46px;padding:0 22px;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(83,224,216,.45)}
+  .modes button.alt{background:none;color:var(--sub);border:1px solid var(--edge);font-size:13px;box-shadow:none;padding:0 14px}
+
+  .help{color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--cyan);font-style:normal}.help .c2{color:var(--pink);font-style:normal}.help .c3{color:var(--gold);font-style:normal}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="あか・みどり・あおの えさを あげて魚を そだてる水そうゲーム。いちばん多く たべた色で おとなの すがたが かわり、ずかんは ぜんぶで20しゅるい。しんじゅを ひろって たまごや かざりを かい、カニを おいはらおう。おねがい・オートセーブ・クリアタイムの記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/074-fish-tank/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"おさかな水そう","description":"あか・みどり・あおの えさを あげて魚を そだてる水そうゲーム。いちばん多く たべた色で おとなの すがたが かわり、ずかんは ぜんぶで20しゅるい。しんじゅを ひろって たまごや かざりを かい、カニを おいはらおう。おねがい・オートセーブ・クリアタイムの記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/074-fish-tank/index.html","inLanguage":"ja","genre":"SIM","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="074"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>おさかな水そう</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとり用</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div id="hPearl">✨ 0</div>
+    <div id="hDex">📖 0/20</div>
+    <div id="hFish">🐟 0/4</div>
+    <div id="hTime">⏱ 0:00</div>
+  </div>
+  <div id="quest"><span id="qText">えさを あげて 魚を そだてよう</span><b id="qRew"></b></div>
+  <div id="tankbox">
+    <canvas id="cv" width="480" height="390"></canvas>
+    <div id="toast"></div>
+  </div>
+  <div class="foodrow">
+    <button class="food on" data-c="0" aria-label="あかいえさ"><i style="background:#ff6b7d"></i>あか</button>
+    <button class="food" data-c="1" aria-label="みどりのえさ"><i style="background:#6be08f"></i>みどり</button>
+    <button class="food" data-c="2" aria-label="あおいえさ"><i style="background:#5fb4ff"></i>あお</button>
+    <div id="stock"><span id="stockTx">えさ 8/8</span><div class="bar"><i id="stockBar"></i></div></div>
+  </div>
+  <div class="menurow">
+    <button class="menu" id="mEgg">🥚 たまご</button>
+    <button class="menu" id="mFish">🐟 なかま</button>
+    <button class="menu" id="mDex">📖 ずかん</button>
+    <button class="menu" id="mDeco">🪸 かざり</button>
+  </div>
+  <div id="panel">
+    <div class="phead"><b id="pTitle"></b><span id="pInfo"></span><button id="pClose">✕ とじる</button></div>
+    <div id="pBody"></div>
+  </div>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">おさかな水そう</div>
+    <canvas id="ovFish" width="400" height="148"></canvas>
+    <div class="note" id="ovNote"></div>
+    <div class="modes">
+      <button id="startBtn">はじめる</button>
+      <button id="altBtn" class="alt" style="display:none">さいしょから</button>
+    </div>
+    <div class="rec" id="ovRec"></div>
+  </div>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：えさの色（<i class="c2">あか</i>・<i class="c1">みどり</i>・あお）をえらんで、水そうをタップすると えさが おちるよ。こどもの魚は きまった数だけ たべると おとなになり、<b>いちばん多く たべた色</b>で すがたが かわる！ おとなは しんじゅ✨を おとすので、タップで ひろって <i class="c3">たまご</i>や <i class="c3">かざり</i>を かおう。<br>
+  おなかが へったままだと 魚は かえってしまう。しんじゅを ねらう カニは タップで おいはらおう。ずかん 20しゅるいを ぜんぶ あつめたら クリア！ とちゅうで とじても つづきから あそべるよ。<br>
+  📱 タップ／なぞって しんじゅ あつめ。⌨️ 矢印キーで カーソル、スペースで えさ・ひろう、1・2・3で えさの色、Q たまご／W なかま／E ずかん／R かざり、Escで とじる、Mで おと。
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const W = 480, H = 390, TOP = 26, SAND = 352;
+  const LS = 'ludot_fish-tank_';
+  const FAMS = [
+    { name: 'まるっこ', baby: 'まるちび', forms: ['あかまる', 'はっぱまる', 'そらまる'], need: 6, price: 4, unlock: 0, col: '#ffd166', note: 'のんびりやさん。はじめてに ぴったり' },
+    { name: 'しましま', baby: 'しまちび', forms: ['ほのおじま', 'もりじま', 'うみじま'], need: 7, price: 12, unlock: 2, col: '#7fd0ff', note: 'およぐのが はやくて、えさを よこどりするかも' },
+    { name: 'ひらひら', baby: 'ひらちび', forms: ['ゆうやけひらり', 'わかばひらり', 'よぞらひらり'], need: 8, price: 26, unlock: 5, col: '#ff9ad1', note: 'ひれが きれい。おなかが へりやすい' },
+    { name: 'ぷくぷく', baby: 'ぷくちび', forms: ['いちごぷく', 'メロンぷく', 'ソーダぷく'], need: 9, price: 45, unlock: 9, col: '#c7f06b', note: 'くいしんぼう。たくさん たべて 大きくなる' },
+    { name: 'ぴかぴか', baby: 'ぴかちび', forms: ['ルビーぴか', 'エメラルドぴか', 'サファイアぴか'], need: 10, price: 70, unlock: 13, col: '#b79cff', note: 'おなじ色を つづけては たべない こだわりやさん' }
+  ];
+  const FOODS = [
+    { name: 'あか', col: '#ff6b7d', main: '#ff5f6d', dark: '#c8364e', light: '#ffc0a8' },
+    { name: 'みどり', col: '#6be08f', main: '#4fd67c', dark: '#1f9a5a', light: '#d6ff9a' },
+    { name: 'あお', col: '#5fb4ff', main: '#4aa6ff', dark: '#2a62d0', light: '#b4f1ff' }
+  ];
+  const DECOS = [
+    { id: 'pump', name: 'あわぶくポンプ', fx: 'えさを 4つぶ 多く もてる', price: 15, emoji: '🫧' },
+    { id: 'grass', name: 'ゆらゆら水草', fx: 'えさが はやく たまる', price: 25, emoji: '🌿' },
+    { id: 'arch', name: 'いわのアーチ', fx: '魚を 2ひき 多く かえる', price: 40, emoji: '🪨' },
+    { id: 'shell', name: 'おおきな貝がら', fx: 'しんじゅ1つぶが +1 ふえる', price: 60, emoji: '🐚' },
+    { id: 'castle', name: 'すなのおしろ', fx: 'カニが あまり こなくなる', price: 90, emoji: '🏰' },
+    { id: 'lamp', name: 'クラゲランプ', fx: '魚の おなかが へりにくい', price: 120, emoji: '🎐' }
+  ];
+  const TOTAL = 20, RESTORE = 26, EAT_AT = 80, LEAVE_SEC = 10, PEARL_SEC = 10, PELLET_REST = 5, PEARL_REST = 11;
+  const TUT = [
+    { text: 'えさの色を えらんで 水そうを タップ！ こどもの魚に たべさせよう', type: 'eat', goal: 1, reward: 2 },
+    { text: 'あたまの ● が ぜんぶ うまると おとなに。いちばん多い色で すがたが かわるよ', type: 'grow', goal: 1, reward: 3 },
+    { text: 'おとなが おとす しんじゅ✨を タップで ひろおう', type: 'pearl', goal: 3, reward: 3 },
+    { text: '「🥚たまご」で あたらしい なかまを ふやそう', type: 'buy', goal: 1, reward: 4 }
+  ];
+
+  // ---------- らんすう（テストで たねを きめられる） ----------
+  let seedV = (Date.now() ^ (Math.random() * 1e9)) >>> 0;
+  function rnd() { seedV = (seedV + 0x6D2B79F5) >>> 0; let t = seedV; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+  const rr = (a, b) => a + rnd() * (b - a);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  // ---------- ほぞん ----------
+  function load(k, d) { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function store(k, v) { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch (e) { /* ほぞんできなくても あそべる */ } }
+  function drop(k) { try { localStorage.removeItem(LS + k); } catch (e) { /* noop */ } }
+
+  // ---------- おと ----------
+  let ac = null, muted = !!load('mute', false);
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; } } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  let quiet = false; // テストで 時間を すすめる時は 音を ならさない
+  function tone(type, f0, f1, dur, vol, delay) {
+    if (muted || quiet || !userActed) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + (delay || 0);
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  let userActed = false;
+  const sfx = {
+    drop() { tone('sine', 700, 380, 0.09, 0.12); },
+    eat() { tone('triangle', 420, 760, 0.08, 0.14); tone('sine', 900, 1200, 0.05, 0.07, 0.05); },
+    pearl() { tone('sine', 1320, 1760, 0.12, 0.12); tone('sine', 1980, 2640, 0.1, 0.06, 0.05); },
+    grow() { [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, f * 1.01, 0.16, 0.14, i * 0.08)); },
+    found() { [659, 784, 988, 1319, 1568].forEach((f, i) => tone('square', f, f, 0.12, 0.06, i * 0.07)); },
+    buy() { tone('square', 440, 660, 0.08, 0.07); tone('square', 660, 990, 0.1, 0.07, 0.08); },
+    no() { tone('sawtooth', 190, 120, 0.14, 0.07); },
+    crab() { tone('square', 150, 110, 0.12, 0.08); tone('square', 130, 90, 0.12, 0.08, 0.12); },
+    shoo() { tone('sawtooth', 300, 900, 0.14, 0.09); },
+    sad() { tone('sine', 520, 300, 0.3, 0.1); },
+    warn() { tone('sine', 660, 520, 0.12, 0.07); tone('sine', 660, 520, 0.12, 0.07, 0.16); },
+    hatch() { tone('triangle', 500, 1000, 0.12, 0.12); },
+    quest() { [784, 988, 1175].forEach((f, i) => tone('triangle', f, f, 0.14, 0.12, i * 0.09)); },
+    clear() { [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone('triangle', f, f, 0.22, 0.14, i * 0.13)); },
+    ui() { tone('sine', 600, 700, 0.05, 0.07); }
+  };
+
+  // ---------- じょうたい ----------
+  let G = null, mode = 'title', panel = '', rec = load('rec', { best: 0, clears: 0, maxDex: 0 });
+  if (!rec || typeof rec !== 'object') rec = { best: 0, clears: 0, maxDex: 0 };
+  let particles = [], popups = [], bubbles = [], animT = 0, endT = -1;
+  const cur = { x: 240, y: 180, on: false };
+
+  function newGame() {
+    return {
+      v: 1, pearls: 0, dex: new Array(TOTAL).fill(0), decos: {}, fish: [], eggs: [], pellets: [], drops: [], crab: null,
+      nid: 1, time: 0, sel: 0, stock: 8, regen: 0, crabT: 30, saveT: 0, done: false, tut: 0, quest: null, questWait: 0,
+      stats: { fed: 0, grown: 0, pearl: 0, shoo: 0, left: 0, stolen: 0, quests: 0 }
+    };
+  }
+  const has = id => !!G.decos[id];
+  const cap = () => 4 + (has('arch') ? 2 : 0);
+  const stockMax = () => 8 + (has('pump') ? 4 : 0);
+  const regenSec = () => has('grass') ? 0.7 : 1.1;
+  const dexCount = () => G.dex.reduce((a, b) => a + (b ? 1 : 0), 0);
+  const spId = (fam, form) => fam * 4 + form + 1;
+  const spName = (fam, form) => form < 0 ? FAMS[fam].baby : FAMS[fam].forms[form];
+  const fishR = f => f.form < 0 ? 11 + f.fam + 4 * f.seq.length / FAMS[f.fam].need : 17 + f.fam * 1.5;
+  const decay = f => (3.6 + 0.5 * f.fam) * (f.form < 0 ? 1 : 0.6) * (has('lamp') ? 0.7 : 1);
+  const speed = f => 42 + 9 * f.fam;
+  const pearlVal = fam => fam + 1 + (has('shell') ? 1 : 0);
+  const releaseVal = f => f.form < 0 ? 0 : 2 * (f.fam + 1);
+  const occupied = () => G.fish.length + G.eggs.length;
+  function eggPrice(fam) { return (fam === 0 && occupied() === 0 && G.pearls < FAMS[0].price) ? 0 : FAMS[fam].price; }
+  function eggBlock(fam) {
+    if (dexCount() < FAMS[fam].unlock) return 'ずかん ' + FAMS[fam].unlock + 'しゅるいで かえるよ';
+    if (occupied() >= cap()) return '水そうが いっぱい';
+    if (G.pearls < eggPrice(fam)) return 'しんじゅが たりない';
+    return '';
+  }
+  // いちばん多く たべた色。同じ数なら あとに たべた色。
+  function majority(eaten, seq) {
+    const mx = Math.max(eaten[0], eaten[1], eaten[2]);
+    const tied = [0, 1, 2].filter(i => eaten[i] === mx);
+    if (tied.length === 1) return tied[0];
+    for (let i = seq.length - 1; i >= 0; i--) if (tied.indexOf(seq[i]) >= 0) return seq[i];
+    return tied[0];
+  }
+  function mkFish(fam, form, x, y) {
+    return { id: G.nid++, fam, form, x, y, vx: 0, vy: 0, dir: rnd() < 0.5 ? 1 : -1, hunger: form < 0 ? 35 : 70, eaten: [0, 0, 0], seq: [], last: -1,
+      pearlT: rr(5, 9), sadT: 0, wt: 0, tx: x, ty: y, pop: 0, leaving: false, warned: false, ph: rr(0, 6) };
+  }
+  function edible(f, p) {
+    if (f.leaving || f.hunger > EAT_AT) return false;
+    if (f.fam === 4 && f.form < 0 && p.c === f.last) return false;
+    return true;
+  }
+
+  // ---------- できごと ----------
+  let toastQ = [], toastBusy = false;
+  function toast(msg) { toastQ.push(msg); if (toastQ.length > 3) toastQ.splice(0, toastQ.length - 3); if (!toastBusy) nextToast(); }
+  function nextToast() {
+    const el = $('toast'); if (!toastQ.length) { toastBusy = false; el.classList.remove('show'); return; }
+    toastBusy = true; el.textContent = toastQ.shift(); el.classList.add('show');
+    setTimeout(() => { el.classList.remove('show'); setTimeout(nextToast, 180); }, 1700);
+  }
+  function burst(x, y, col, n, sp) {
+    for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, s = (sp || 80) * (0.4 + Math.random() * 0.8); particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0, max: 0.5 + Math.random() * 0.4, col, r: 2 + Math.random() * 2.5 }); }
+    if (particles.length > 260) particles.splice(0, particles.length - 260);
+  }
+  function popup(x, y, text, col) { popups.push({ x: clamp(x, 40, W - 40), y, text, col: col || '#ffd166', t: 0 }); }
+  function addPearls(n, x, y) { if (!n) return; G.pearls += n; if (x !== undefined) popup(x, y, '✨+' + n); bump('hPearl'); }
+
+  function discover(fam, form, x, y) {
+    const id = spId(fam, form);
+    if (G.dex[id]) return false;
+    G.dex[id] = 1;
+    const bonus = (form < 0 ? 2 : 4) * (fam + 1);
+    addPearls(bonus, x, y - 20);
+    toast('🎉 はっけん！「' + spName(fam, form) + '」 ✨+' + bonus);
+    sfx.found(); burst(x, y, '#ffd166', 26, 130); bump('hDex');
+    $('mDex').classList.add('new');
+    const n = dexCount();
+    for (let i = 0; i < FAMS.length; i++) if (FAMS[i].unlock === n && n > 0) { toast('🥚 「' + FAMS[i].name + '」の たまごが かえるように なった！'); $('mEgg').classList.add('new'); }
+    if (n > (rec.maxDex || 0)) { rec.maxDex = n; store('rec', rec); }
+    if (n >= TOTAL && !G.done) endT = 1.4;
+    return true;
+  }
+  function eat(f, c) {
+    f.hunger = Math.min(100, f.hunger + RESTORE); f.sadT = 0; f.warned = false; f.last = c; f.pop = 1;
+    G.stats.fed++; sfx.eat(); burst(f.x + f.dir * fishR(f) * 0.8, f.y, FOODS[c].col, 6, 50);
+    if (f.form < 0) {
+      f.eaten[c]++; f.seq.push(c); ev('eat');
+      if (f.seq.length >= FAMS[f.fam].need) grow(f);
+    }
+  }
+  function grow(f) {
+    f.form = majority(f.eaten, f.seq); f.pearlT = 4; f.pop = 1.6; G.stats.grown++;
+    burst(f.x, f.y, FOODS[f.form].light, 30, 150); burst(f.x, f.y, '#ffffff', 12, 90);
+    sfx.grow();
+    if (!discover(f.fam, f.form, f.x, f.y)) toast('「' + spName(f.fam, f.form) + '」に そだった！');
+    ev('grow', spId(f.fam, f.form));
+  }
+  function dropFood(x, y, c) {
+    if (c === undefined) c = G.sel;
+    if (G.stock < 1) { sfx.no(); popup(x, y, 'えさ じゅんびちゅう…', '#ff8fb8'); return false; }
+    G.stock -= 1;
+    G.pellets.push({ x: clamp(x, 14, W - 14), y: clamp(y, TOP + 6, SAND - 6), c, rest: 0, ph: Math.random() * 6 });
+    sfx.drop(); burst(x, y, FOODS[c].col, 4, 30);
+    return true;
+  }
+  function collectAt(x, y, rad) {
+    let got = 0;
+    for (let i = G.drops.length - 1; i >= 0; i--) {
+      const p = G.drops[i];
+      if (Math.hypot(p.x - x, p.y - y) <= rad) { G.drops.splice(i, 1); got += p.v; G.stats.pearl++; addPearls(p.v, p.x, p.y); burst(p.x, p.y, '#fff6c9', 10, 70); ev('pearl', 1); }
+    }
+    if (got) sfx.pearl();
+    return got;
+  }
+  function shooCrab() {
+    const c = G.crab; if (!c || c.state === 'flee') return false;
+    for (let i = 0; i < c.carry.length; i++) G.drops.push({ x: clamp(c.x + (i - (c.carry.length - 1) / 2) * 18, 16, W - 16), y: SAND - 26, v: c.carry[i], rest: 0, vy: -60 });
+    c.carry = []; c.state = 'flee'; c.dir = c.x < W / 2 ? -1 : 1; G.stats.shoo++;
+    sfx.shoo(); burst(c.x, c.y - 8, '#ff9d5c', 14, 110); popup(c.x, c.y - 30, 'おいはらった！', '#53e0d8'); ev('shoo');
+    return true;
+  }
+  // 水そうを さわった時
+  function act(x, y) {
+    if (mode !== 'play' || panel) return 'none';
+    const c = G.crab;
+    if (c && c.state !== 'flee' && Math.hypot(c.x - x, c.y - 8 - y) < 34) { shooCrab(); return 'crab'; }
+    if (collectAt(x, y, 28)) return 'pearl';
+    if (y < TOP - 6) return 'none';
+    return dropFood(x, y) ? 'food' : 'nofood';
+  }
+  function buyEgg(fam) {
+    if (eggBlock(fam)) { sfx.no(); return false; }
+    G.pearls -= eggPrice(fam);
+    G.eggs.push({ fam, x: rr(70, W - 70), y: TOP + 4, t: 0 });
+    sfx.buy(); ev('buy'); save();
+    return true;
+  }
+  function buyDeco(id) {
+    const d = DECOS.find(q => q.id === id);
+    if (!d || has(id) || G.pearls < d.price) { sfx.no(); return false; }
+    G.pearls -= d.price; G.decos[id] = 1; sfx.buy(); sfx.grow();
+    toast('🪸「' + d.name + '」を かざった！ ' + d.fx); save();
+    return true;
+  }
+  function release(id) {
+    const i = G.fish.findIndex(f => f.id === id); if (i < 0) return false;
+    const f = G.fish[i]; G.fish.splice(i, 1);
+    const v = releaseVal(f);
+    addPearls(v, f.x, f.y); burst(f.x, f.y, '#53e0d8', 18, 120); sfx.buy();
+    toast('🌊「' + spName(f.fam, f.form) + '」を うみへ おくった' + (v ? ' ✨+' + v : ''));
+    if (f.form >= 0) ev('release');
+    save();
+    return true;
+  }
+
+  // ---------- おねがい ----------
+  function unlockedFams() { const n = dexCount(); return FAMS.map((f, i) => i).filter(i => FAMS[i].unlock <= n); }
+  function makeQuest() {
+    if (G.done) return null;
+    if (G.tut < TUT.length) { const t = TUT[G.tut]; return { tut: true, type: t.type, text: t.text, goal: t.goal, prog: 0, reward: t.reward }; }
+    const un = unlockedFams(), top = un.length;
+    const kinds = ['grow', 'grow', 'pearl'];
+    if (dexCount() >= 4) kinds.push('shoo');
+    if (G.fish.some(f => f.form >= 0)) kinds.push('release');
+    const type = kinds[Math.floor(rnd() * kinds.length)];
+    const reward = 4 + 3 * top;
+    if (type === 'grow') {
+      const all = []; un.forEach(fm => [0, 1, 2].forEach(k => all.push([fm, k])));
+      const fresh = all.filter(a => !G.dex[spId(a[0], a[1])]);
+      const pool = (fresh.length && rnd() < 0.8) ? fresh : all;
+      const p = pool[Math.floor(rnd() * pool.length)];
+      return { type, sp: spId(p[0], p[1]), text: FOODS[p[1]].name + '色の「' + FAMS[p[0]].name + '」を そだてて！', goal: 1, prog: 0, reward: reward + 2 * (p[0] + 1) };
+    }
+    if (type === 'pearl') { const g = 5 + 2 * top; return { type, text: 'しんじゅを ' + g + 'つぶ ひろおう', goal: g, prog: 0, reward }; }
+    if (type === 'shoo') { G.crabT = Math.min(G.crabT, 6); return { type, text: 'カニを 2かい おいはらおう', goal: 2, prog: 0, reward: reward + 3 }; }
+    return { type: 'release', text: 'おとなの魚を 1ぴき うみへ おくろう（「なかま」から）', goal: 1, prog: 0, reward };
+  }
+  function ev(type, data) {
+    const q = G.quest; if (!q || q.fin) return;
+    if (q.type !== type) return;
+    if (type === 'grow' && !q.tut && q.sp !== data) return;
+    q.prog += (type === 'pearl' ? (data || 1) : 1);
+    if (q.prog >= q.goal) {
+      q.fin = true; G.questWait = 1.6; G.stats.quests++;
+      if (q.tut) G.tut++;
+      addPearls(q.reward, W / 2, 60); sfx.quest();
+      const el = $('quest'); el.classList.remove('done'); void el.offsetWidth; el.classList.add('done');
+      toast('📜 おねがい たっせい！ ✨+' + q.reward);
+    }
+  }
+
+  // ---------- すすめる ----------
+  function update(dt) {
+    animT += dt;
+    if (!G.done) G.time += dt;
+    // えさの ほじゅう
+    const mx = stockMax();
+    if (G.stock < mx) { G.regen += dt; const rs = regenSec(); while (G.regen >= rs && G.stock < mx) { G.regen -= rs; G.stock++; } } else G.regen = 0;
+    // たまご
+    for (let i = G.eggs.length - 1; i >= 0; i--) {
+      const e = G.eggs[i]; e.t += dt; e.y = Math.min(SAND - 12, e.y + 90 * dt);
+      if (e.t >= 2.6) {
+        G.eggs.splice(i, 1);
+        const f = mkFish(e.fam, -1, e.x, e.y - 6); f.ty = rr(120, 240); f.tx = e.x; f.pop = 1.4; G.fish.push(f);
+        sfx.hatch(); burst(e.x, e.y, '#fff3d6', 16, 100);
+        if (!discover(e.fam, -1, e.x, e.y)) popup(e.x, e.y - 24, 'うまれた！', '#fff3d6');
+      }
+    }
+    // えさ
+    for (let i = G.pellets.length - 1; i >= 0; i--) {
+      const p = G.pellets[i];
+      if (p.y < SAND - 5) { p.y += 30 * dt; p.x += Math.sin(animT * 3 + p.ph) * 6 * dt; }
+      else { p.rest += dt; if (p.rest > PELLET_REST) G.pellets.splice(i, 1); }
+    }
+    // 魚
+    for (let i = G.fish.length - 1; i >= 0; i--) {
+      const f = G.fish[i], r = fishR(f);
+      f.pop = Math.max(0, f.pop - dt * 2.4);
+      if (f.leaving) {
+        f.dir = 1; f.vx += (110 - f.vx) * Math.min(1, 3 * dt); f.vy *= 0.9; f.x += f.vx * dt; f.y += f.vy * dt;
+        if (f.x > W + 50) G.fish.splice(i, 1);
+        continue;
+      }
+      f.hunger = Math.max(0, f.hunger - decay(f) * dt);
+      if (f.hunger < 25 && !f.warned) { f.warned = true; sfx.warn(); }
+      if (f.hunger <= 0) {
+        f.sadT += dt;
+        if (f.sadT >= LEAVE_SEC) { f.leaving = true; G.stats.left++; sfx.sad(); toast('😢「' + spName(f.fam, f.form) + '」が おなかを すかせて かえっちゃった…'); continue; }
+      }
+      // ねらう えさ
+      let tg = null, bd = 1e9;
+      if (f.hunger <= EAT_AT) for (const p of G.pellets) { if (!edible(f, p)) continue; const d = Math.hypot(p.x - f.x, p.y - f.y); if (d < bd) { bd = d; tg = p; } }
+      let tx, ty, sp = speed(f);
+      if (tg) { tx = tg.x - f.dir * r * 0.5; ty = tg.y; sp *= 1.9; }
+      else {
+        f.wt -= dt;
+        if (f.wt <= 0 || Math.hypot(f.tx - f.x, f.ty - f.y) < 12) { f.wt = rr(2, 5); f.tx = rr(40, W - 40); f.ty = rr(TOP + 34, SAND - 40); }
+        tx = f.tx; ty = f.ty; sp *= (f.hunger <= 0 ? 0.3 : 0.55);
+      }
+      const dx = tx - f.x, dy = ty - f.y, d = Math.hypot(dx, dy) || 1;
+      const k = Math.min(1, 4 * dt), slow = tg ? 1 : Math.min(1, d / 30);
+      f.vx += (dx / d * sp * slow - f.vx) * k; f.vy += (dy / d * sp * slow * 0.8 - f.vy) * k;
+      f.x = clamp(f.x + f.vx * dt, 20, W - 20); f.y = clamp(f.y + f.vy * dt, TOP + 18, SAND - 14);
+      if (Math.abs(f.vx) > 5) f.dir = f.vx > 0 ? 1 : -1;
+      // たべる
+      if (tg) {
+        const mxp = f.x + f.dir * r * 0.75;
+        if (Math.hypot(tg.x - mxp, tg.y - f.y) < r * 0.55 + 8 || Math.hypot(tg.x - f.x, tg.y - f.y) < r * 0.7) {
+          const j = G.pellets.indexOf(tg); if (j >= 0) G.pellets.splice(j, 1);
+          eat(f, tg.c);
+        }
+      }
+      // しんじゅ
+      if (f.form >= 0 && f.hunger > 30) {
+        f.pearlT -= dt;
+        if (f.pearlT <= 0) { f.pearlT = PEARL_SEC * rr(0.85, 1.15); G.drops.push({ x: f.x, y: f.y + r * 0.5, v: pearlVal(f.fam), rest: 0, vy: 0 }); }
+      }
+    }
+    // しんじゅ（ゆかに おちて しばらくすると きえる）
+    for (let i = G.drops.length - 1; i >= 0; i--) {
+      const p = G.drops[i];
+      if (p.y < SAND - 7 || p.vy < 0) { p.vy = Math.min(26, p.vy + 160 * dt); p.y = Math.min(SAND - 7, p.y + p.vy * dt); }
+      else { p.rest += dt; if (p.rest > PEARL_REST) G.drops.splice(i, 1); }
+    }
+    // カニ
+    if (!G.crab) {
+      if (dexCount() >= 3 && G.fish.some(f => f.form >= 0)) {
+        G.crabT -= dt;
+        if (G.crabT <= 0) {
+          const left = rnd() < 0.5;
+          G.crab = { x: left ? -30 : W + 30, y: SAND + 14, dir: left ? 1 : -1, state: 'walk', carry: [], t: 0 };
+          G.crabT = Math.max(13, 34 - dexCount()) * (has('castle') ? 1.8 : 1) * rr(0.8, 1.2);
+          sfx.crab();
+        }
+      }
+    } else {
+      const c = G.crab; c.t += dt;
+      if (c.state === 'flee') { c.x += c.dir * 190 * dt; }
+      else {
+        let tg = null, bd = 1e9;
+        if (c.carry.length < 3) for (const p of G.drops) { if (p.y < SAND - 12) continue; const d = Math.abs(p.x - c.x); if (d < bd) { bd = d; tg = p; } }
+        const sp = 36 + dexCount();
+        if (tg) {
+          c.x += Math.sign(tg.x - c.x) * sp * dt;
+          if (Math.abs(tg.x - c.x) < 8) { G.drops.splice(G.drops.indexOf(tg), 1); c.carry.push(tg.v); sfx.crab(); popup(c.x, c.y - 30, 'あっ！', '#ff8fb8'); }
+        } else c.x += c.dir * sp * dt;
+      }
+      if (c.x < -40 || c.x > W + 40) {
+        if (c.carry.length) { const s = c.carry.reduce((a, b) => a + b, 0); G.stats.stolen += s; toast('🦀 カニに しんじゅを ' + s + 'つぶ もっていかれた！'); }
+        G.crab = null;
+      }
+    }
+    // おねがい
+    if (!G.quest) G.quest = makeQuest();
+    else if (G.quest.fin) { G.questWait -= dt; if (G.questWait <= 0) G.quest = makeQuest(); }
+    // えんしゅつ
+    stepFx(dt);
+    // コンプリート
+    if (endT > 0) { endT -= dt; if (endT <= 0) { endT = -1; finish(); } }
+    G.saveT += dt; if (G.saveT >= 5) { G.saveT = 0; save(); }
+  }
+  function stepFx(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) { const p = particles[i]; p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.96; p.vy = p.vy * 0.96 - 20 * dt; if (p.life > p.max) particles.splice(i, 1); }
+    for (let i = popups.length - 1; i >= 0; i--) { const p = popups[i]; p.t += dt; p.y -= 26 * dt; if (p.t > 1.1) popups.splice(i, 1); }
+    if (Math.random() < dt * (G && has('pump') ? 5 : 1.4)) bubbles.push({ x: (G && has('pump') && Math.random() < 0.7) ? 452 + Math.random() * 10 : Math.random() * W, y: SAND, r: 1.5 + Math.random() * 3.5, s: 26 + Math.random() * 30, ph: Math.random() * 6 });
+    for (let i = bubbles.length - 1; i >= 0; i--) { const b = bubbles[i]; b.y -= b.s * dt; if (b.y < TOP) bubbles.splice(i, 1); }
+    if (bubbles.length > 60) bubbles.splice(0, bubbles.length - 60);
+  }
+  function finish() {
+    if (G.done) return;
+    G.done = true; G.quest = null;
+    const t = Math.round(G.time);
+    rec.clears = (rec.clears || 0) + 1;
+    const isBest = !rec.best || t < rec.best;
+    if (isBest) rec.best = t;
+    rec.maxDex = TOTAL; store('rec', rec); save();
+    mode = 'end'; sfx.clear();
+    for (let i = 0; i < 6; i++) burst(60 + Math.random() * 360, 80 + Math.random() * 200, ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff'][i % 4], 26, 160);
+    showEnd(t, isBest);
+  }
+  const stars = t => t <= 600 ? 3 : t <= 960 ? 2 : 1;
+  const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); };
+
+  function save() {
+    if (!G) return;
+    store('save', {
+      v: 1, pearls: G.pearls, dex: G.dex, decos: G.decos, time: G.time, sel: G.sel, stock: G.stock, done: G.done, tut: G.tut, nid: G.nid, stats: G.stats, crabT: G.crabT,
+      quest: G.quest && !G.quest.fin ? G.quest : null,
+      fish: G.fish.filter(f => !f.leaving).map(f => ({ id: f.id, fam: f.fam, form: f.form, x: Math.round(f.x), y: Math.round(f.y), hunger: Math.round(f.hunger), eaten: f.eaten, seq: f.seq, last: f.last })),
+      eggs: G.eggs.map(e => e.fam)
+    });
+  }
+  function restore() {
+    const s = load('save', null);
+    if (!s || s.v !== 1 || !Array.isArray(s.dex) || s.dex.length !== TOTAL || !Array.isArray(s.fish)) return null;
+    const g = newGame();
+    const prev = G; G = g;
+    try {
+      g.pearls = Math.max(0, s.pearls | 0); g.dex = s.dex.map(v => v ? 1 : 0); g.decos = {};
+      DECOS.forEach(d => { if (s.decos && s.decos[d.id]) g.decos[d.id] = 1; });
+      g.time = +s.time || 0; g.sel = clamp(s.sel | 0, 0, 2); g.stock = clamp(s.stock | 0, 0, 12); g.done = !!s.done; g.tut = clamp(s.tut | 0, 0, TUT.length);
+      g.nid = Math.max(1, s.nid | 0); g.crabT = +s.crabT || 30;
+      if (s.stats) for (const k in g.stats) g.stats[k] = s.stats[k] | 0;
+      if (s.quest && typeof s.quest.text === 'string') g.quest = s.quest;
+      for (const q of s.fish.slice(0, 8)) {
+        if (!(q.fam >= 0 && q.fam < 5) || !(q.form >= -1 && q.form <= 2)) continue;
+        const f = mkFish(q.fam | 0, q.form | 0, clamp(+q.x || 240, 20, W - 20), clamp(+q.y || 180, TOP + 18, SAND - 14));
+        f.hunger = Math.max(45, clamp(+q.hunger || 50, 0, 100));
+        if (Array.isArray(q.seq)) { f.seq = q.seq.filter(c => c === 0 || c === 1 || c === 2).slice(0, FAMS[f.fam].need - 1); f.eaten = [0, 0, 0]; f.seq.forEach(c => f.eaten[c]++); f.last = f.seq.length ? f.seq[f.seq.length - 1] : -1; }
+        if (f.form >= 0) { f.seq = []; f.last = q.last | 0; }
+        g.fish.push(f);
+      }
+      (s.eggs || []).slice(0, 8).forEach(fm => { if (fm >= 0 && fm < 5) g.eggs.push({ fam: fm | 0, x: rr(70, W - 70), y: TOP + 4, t: 0 }); });
+    } catch (e) { G = prev; return null; }
+    G = prev;
+    return g;
+  }
+
+  // ---------- え ----------
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  let bgC = null;
+  function makeBg() {
+    bgC = document.createElement('canvas'); bgC.width = W; bgC.height = H;
+    const c = bgC.getContext('2d');
+    const g = c.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#1a2a6e'); g.addColorStop(0.45, '#15184d'); g.addColorStop(1, '#0d0c2b');
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    // とおくの 岩かげ
+    c.fillStyle = 'rgba(160,107,255,.10)';
+    c.beginPath(); c.moveTo(0, SAND); c.quadraticCurveTo(60, 250, 130, SAND); c.quadraticCurveTo(210, 280, 300, SAND); c.quadraticCurveTo(390, 240, 480, SAND); c.fill();
+    // すな
+    const s = c.createLinearGradient(0, SAND - 8, 0, H);
+    s.addColorStop(0, '#6a5a9a'); s.addColorStop(0.25, '#4b4079'); s.addColorStop(1, '#2a2450');
+    c.fillStyle = s; c.beginPath(); c.moveTo(0, SAND);
+    for (let x = 0; x <= W; x += 40) c.quadraticCurveTo(x + 20, SAND - 7 + (x % 80 ? 5 : 0), x + 40, SAND);
+    c.lineTo(W, H); c.lineTo(0, H); c.fill();
+    let sv = 7;
+    const pr = () => { sv = (sv * 16807) % 2147483647; return sv / 2147483647; };
+    for (let i = 0; i < 46; i++) { c.fillStyle = ['rgba(255,209,102,.5)', 'rgba(83,224,216,.4)', 'rgba(238,236,250,.3)', 'rgba(255,95,162,.35)'][i % 4]; c.beginPath(); c.arc(pr() * W, SAND + 6 + pr() * 28, 1 + pr() * 2.2, 0, 6.3); c.fill(); }
+    // 水面
+    const t = c.createLinearGradient(0, 0, 0, TOP + 8);
+    t.addColorStop(0, 'rgba(180,241,255,.45)'); t.addColorStop(1, 'rgba(180,241,255,0)');
+    c.fillStyle = t; c.fillRect(0, 0, W, TOP + 8);
+  }
+  function ell(c, x, y, rx, ry) { c.beginPath(); c.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, 6.2832); }
+  // 魚を (0,0) に 右むきで かく
+  function drawFish(c, fam, form, r, t, o) {
+    o = o || {};
+    const baby = form < 0;
+    const P = baby ? { main: FAMS[fam].col, dark: shade(FAMS[fam].col, -0.28), light: '#fffbe8' } : FOODS[form];
+    const acc = baby ? shade(FAMS[fam].col, -0.15) : FAMS[fam].col;
+    const rx = r * [1, 1.25, 1, 1.02, 1.15][fam] * (form === 2 ? 1.1 : 1), ry = r * [0.8, 0.62, 0.72, 0.95, 0.68][fam];
+    const wag = Math.sin(t * 9) * 0.28;
+    const tl = r * [0.8, 0.9, 1.45, 0.6, 0.9][fam] * (form === 0 ? 1.35 : 1) * (baby ? 0.8 : 1);
+    if (fam === 4) { c.shadowColor = P.light; c.shadowBlur = baby ? 8 : 16; }
+    // しっぽ
+    c.save(); c.translate(-rx * 0.82, 0); c.rotate(wag);
+    c.fillStyle = acc; c.beginPath();
+    if (fam === 2) {
+      c.moveTo(2, -2); c.bezierCurveTo(-tl * 0.5, -tl * 1.1, -tl * 1.1, -tl * 0.9, -tl * (1.05 + wag * 0.3), -tl * 0.25);
+      c.quadraticCurveTo(-tl * 0.7, 0, -tl * (1.05 - wag * 0.3), tl * 0.3); c.bezierCurveTo(-tl * 1.1, tl * 0.95, -tl * 0.5, tl * 1.1, 2, 2);
+    } else {
+      c.moveTo(3, 0); c.quadraticCurveTo(-tl * 0.5, -tl * 0.3, -tl, -tl * 0.85);
+      if (form === 0) { c.quadraticCurveTo(-tl * 0.75, -tl * 0.35, -tl * 1.2, 0); c.quadraticCurveTo(-tl * 0.75, tl * 0.35, -tl, tl * 0.85); }
+      else { c.quadraticCurveTo(-tl * 0.55, 0, -tl, tl * 0.85); }
+      c.quadraticCurveTo(-tl * 0.5, tl * 0.3, 3, 0);
+    }
+    c.fill();
+    c.restore();
+    // せびれ
+    c.fillStyle = form === 1 ? '#b9ff7a' : acc;
+    c.beginPath();
+    if (form === 1) { c.moveTo(-rx * 0.35, -ry * 0.8); c.quadraticCurveTo(-rx * 0.5, -ry * 2.1, rx * 0.3, -ry * 1.7); c.quadraticCurveTo(rx * 0.25, -ry * 1.1, rx * 0.3, -ry * 0.75); }
+    else { c.moveTo(-rx * 0.45, -ry * 0.8); c.quadraticCurveTo(-rx * 0.2, -ry * (fam === 2 ? 1.9 : 1.45), rx * 0.3, -ry * 0.8); }
+    c.fill();
+    if (fam === 2) { c.beginPath(); c.moveTo(-rx * 0.3, ry * 0.75); c.quadraticCurveTo(-rx * 0.5, ry * 1.8, rx * 0.15, ry * 0.8); c.fill(); }
+    // とげ（ぷくぷく）
+    if (fam === 3) { c.fillStyle = P.dark; for (let i = 0; i < 9; i++) { const a = -2.6 + i * 0.65; c.beginPath(); c.moveTo(Math.cos(a) * rx * 0.92 - Math.sin(a) * 3, Math.sin(a) * ry * 0.92 + Math.cos(a) * 3); c.lineTo(Math.cos(a) * (rx + 4.5), Math.sin(a) * (ry + 4.5)); c.lineTo(Math.cos(a) * rx * 0.92 + Math.sin(a) * 3, Math.sin(a) * ry * 0.92 - Math.cos(a) * 3); c.fill(); } }
+    // からだ
+    const g = c.createRadialGradient(rx * 0.2, -ry * 0.45, r * 0.1, 0, 0, rx * 1.1);
+    g.addColorStop(0, P.light); g.addColorStop(0.45, P.main); g.addColorStop(1, P.dark);
+    c.fillStyle = g; ell(c, 0, 0, rx, ry); c.fill();
+    c.shadowBlur = 0;
+    c.save(); ell(c, 0, 0, rx, ry); c.clip();
+    if (fam === 1) { c.fillStyle = 'rgba(20,20,60,.32)'; for (let i = -1; i <= 1; i++) c.fillRect(i * rx * 0.5 - rx * 0.1, -ry, rx * 0.2, ry * 2); }
+    if (fam === 0 && !baby) { c.fillStyle = 'rgba(255,255,255,.28)'; ell(c, -rx * 0.1, ry * 0.75, rx * 0.8, ry * 0.5); c.fill(); }
+    if (fam === 3) { c.fillStyle = 'rgba(255,255,255,.45)'; ell(c, 0, ry * 0.7, rx * 0.85, ry * 0.55); c.fill(); }
+    if (fam === 4) { c.fillStyle = 'rgba(255,255,255,.85)'; for (let i = 0; i < 4; i++) { ell(c, -rx * 0.6 + i * rx * 0.3, ry * 0.25, 1.6, 1.6); c.fill(); } }
+    if (form === 2) { c.fillStyle = 'rgba(255,255,255,.75)'; [[-0.45, -0.3], [-0.1, 0.35], [-0.6, 0.2]].forEach(q => { ell(c, rx * q[0], ry * q[1], 1.9, 1.9); c.fill(); }); }
+    if (form === 0 && fam !== 1) { c.fillStyle = 'rgba(255,220,120,.35)'; ell(c, -rx * 0.55, 0, rx * 0.35, ry * 0.8); c.fill(); }
+    c.restore();
+    // ちょうちん（ぴかぴか）
+    if (fam === 4) {
+      c.strokeStyle = acc; c.lineWidth = 1.6; c.beginPath(); c.moveTo(rx * 0.35, -ry * 0.85); c.quadraticCurveTo(rx * 0.7, -ry * 2.3, rx * 1.15, -ry * 1.5); c.stroke();
+      c.shadowColor = '#fff6a8'; c.shadowBlur = 12; c.fillStyle = '#fff6a8'; ell(c, rx * 1.15, -ry * 1.5, 3 + Math.sin(t * 4) * 0.6, 3 + Math.sin(t * 4) * 0.6); c.fill(); c.shadowBlur = 0;
+    }
+    // むなびれ
+    c.fillStyle = acc; c.save(); c.translate(rx * 0.05, ry * 0.3); c.rotate(0.5 + Math.sin(t * 7) * 0.3);
+    c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(-r * 0.55, r * 0.15, -r * 0.5, r * 0.5); c.quadraticCurveTo(-r * 0.1, r * 0.35, 0, 0); c.fill(); c.restore();
+    // かお
+    const ex = rx * 0.52, ey = -ry * 0.18, er = Math.max(2.6, r * (baby ? 0.26 : 0.21));
+    c.fillStyle = '#fff'; ell(c, ex, ey, er, er); c.fill();
+    c.fillStyle = '#18183a'; ell(c, ex + er * 0.22, ey + (o.sad ? er * 0.2 : 0), er * 0.58, er * 0.58); c.fill();
+    c.fillStyle = '#fff'; ell(c, ex + er * 0.05, ey - er * 0.3, er * 0.22, er * 0.22); c.fill();
+    if (baby || fam === 3) { c.fillStyle = 'rgba(255,95,162,.45)'; ell(c, rx * 0.3, ry * 0.32, er * 0.6, er * 0.4); c.fill(); }
+    c.strokeStyle = '#18183a'; c.lineWidth = 1.3; c.beginPath();
+    if (o.sad) c.arc(rx * 0.86, ry * 0.42, r * 0.14, 3.6, 5.6); else c.arc(rx * 0.8, ry * 0.12, r * 0.16, 0.4, 2.0);
+    c.stroke();
+  }
+  function shade(hex, k) {
+    const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    const f = v => Math.round(clamp(k < 0 ? v * (1 + k) : v + (255 - v) * k, 0, 255));
+    return 'rgb(' + f(r) + ',' + f(g) + ',' + f(b) + ')';
+  }
+  function drawIcon(el, fam, form, known) {
+    const c = el.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, el.width, el.height);
+    c.save(); c.translate(el.width / 2 + (fam === 2 ? 10 : 5), el.height / 2 + 2);
+    const r = (form < 0 ? 15 : 21) * el.width / 120 * (fam === 2 || fam === 1 ? 0.88 : 1);
+    drawFish(c, fam, form, r, 0.4, {});
+    c.restore();
+    if (!known) { c.globalCompositeOperation = 'source-atop'; c.fillStyle = '#34345e'; c.fillRect(0, 0, el.width, el.height); c.globalCompositeOperation = 'source-over'; }
+  }
+  function drawDecosBack(c, t) {
+    if (has('castle')) {
+      const x = 96, y = SAND + 2;
+      const g = c.createLinearGradient(x - 40, 0, x + 40, 0); g.addColorStop(0, '#e6c88a'); g.addColorStop(1, '#a98455');
+      c.fillStyle = g;
+      c.fillRect(x - 34, y - 46, 68, 46); c.fillRect(x - 44, y - 66, 20, 66); c.fillRect(x + 24, y - 66, 20, 66); c.fillRect(x - 10, y - 78, 20, 40);
+      for (let i = 0; i < 3; i++) { c.fillRect(x - 46 + i * 8, y - 72, 5, 7); c.fillRect(x + 23 + i * 8, y - 72, 5, 7); c.fillRect(x - 12 + i * 8.5, y - 84, 5, 7); }
+      for (let i = 0; i < 5; i++) c.fillRect(x - 22 + i * 10, y - 52, 5, 7);
+      c.fillStyle = '#3b2c52'; c.beginPath(); c.moveTo(x - 9, y); c.lineTo(x - 9, y - 16); c.arc(x, y - 16, 9, Math.PI, 0); c.lineTo(x + 9, y); c.fill();
+      c.fillStyle = '#ffd166'; c.fillRect(x - 37, y - 50, 6, 8); c.fillRect(x + 31, y - 50, 6, 8); c.fillRect(x - 3, y - 64, 6, 8);
+      c.strokeStyle = '#ff5fa2'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, y - 84); c.lineTo(x, y - 100); c.stroke();
+      c.fillStyle = '#ff5fa2'; c.beginPath(); c.moveTo(x, y - 100); c.lineTo(x + 12 + Math.sin(t * 3) * 2, y - 96); c.lineTo(x, y - 91); c.fill();
+    }
+    if (has('arch')) {
+      const x = 345, y = SAND + 6;
+      c.lineCap = 'round'; c.strokeStyle = '#3d3a70'; c.lineWidth = 26; c.beginPath(); c.arc(x, y, 48, Math.PI * 1.02, Math.PI * 1.98); c.stroke();
+      c.strokeStyle = '#5b56a0'; c.lineWidth = 12; c.beginPath(); c.arc(x, y, 54, Math.PI * 1.1, Math.PI * 1.6); c.stroke();
+      c.fillStyle = 'rgba(83,224,216,.6)'; [[-40, -34], [20, -58], [50, -20]].forEach(q => { ell(c, x + q[0], y + q[1], 3, 3); c.fill(); });
+      c.lineCap = 'butt';
+    }
+    if (has('lamp')) {
+      const x = 408, y = 84 + Math.sin(t * 1.3) * 6;
+      c.shadowColor = '#ff9ad1'; c.shadowBlur = 22;
+      const g = c.createRadialGradient(x - 4, y - 8, 2, x, y, 22); g.addColorStop(0, '#fff0fa'); g.addColorStop(1, 'rgba(255,120,200,.75)');
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, 20, Math.PI, 0); c.quadraticCurveTo(x, y + 9, x - 20, y); c.fill();
+      c.shadowBlur = 0; c.strokeStyle = 'rgba(255,170,220,.8)'; c.lineWidth = 2;
+      for (let i = -2; i <= 2; i++) { c.beginPath(); c.moveTo(x + i * 7, y + 4); c.quadraticCurveTo(x + i * 7 + Math.sin(t * 2.4 + i) * 6, y + 20, x + i * 7 + Math.sin(t * 2 + i) * 3, y + 34); c.stroke(); }
+    }
+  }
+  function drawDecosFront(c, t) {
+    if (has('grass')) {
+      [[26, 74, '#3ad07f'], [44, 52, '#2aa86a'], [436, 64, '#3ad07f'], [14, 44, '#58e39a']].forEach((q, i) => {
+        c.strokeStyle = q[2]; c.lineWidth = 6; c.lineCap = 'round'; c.beginPath(); c.moveTo(q[0], SAND + 6);
+        const sw = Math.sin(t * 1.4 + i) * 10;
+        c.bezierCurveTo(q[0] - 10 + sw * 0.3, SAND - q[1] * 0.4, q[0] + 12 + sw * 0.6, SAND - q[1] * 0.7, q[0] + sw, SAND - q[1]); c.stroke();
+      });
+      c.lineCap = 'butt';
+    }
+    if (has('shell')) {
+      const x = 232, y = SAND + 16;
+      const g = c.createLinearGradient(0, y - 26, 0, y); g.addColorStop(0, '#ffd9ec'); g.addColorStop(1, '#ff8fc0');
+      c.fillStyle = g; c.beginPath(); c.moveTo(x - 6, y); c.arc(x, y - 4, 24, Math.PI * 0.95, Math.PI * 0.05); c.lineTo(x + 6, y); c.fill();
+      c.strokeStyle = 'rgba(180,60,120,.5)'; c.lineWidth = 1.5; for (let i = -3; i <= 3; i++) { c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.sin(i * 0.42) * 24, y - 4 - Math.cos(i * 0.42) * 23); c.stroke(); }
+      c.shadowColor = '#fff'; c.shadowBlur = 8; c.fillStyle = '#fffbe8'; ell(c, x, y - 3, 4.5, 4.5); c.fill(); c.shadowBlur = 0;
+    }
+    if (has('pump')) {
+      const x = 457, y = SAND + 8;
+      c.fillStyle = '#39c7c0'; c.fillRect(x - 10, y - 16, 20, 18); c.fillStyle = '#1e8b8a'; c.fillRect(x - 12, y - 2, 24, 6); c.fillStyle = '#b4f1ff'; c.fillRect(x - 4, y - 22, 8, 7);
+    }
+  }
+  function drawCrab(c, cr, t) {
+    c.save(); c.translate(cr.x, cr.y + Math.abs(Math.sin(t * 12)) * -2);
+    const fl = cr.state === 'flee';
+    c.strokeStyle = '#c6452e'; c.lineWidth = 3; c.lineCap = 'round';
+    for (let i = 0; i < 3; i++) for (const s of [-1, 1]) { const w = Math.sin(t * (fl ? 30 : 12) + i * 1.3 + s) * 4; c.beginPath(); c.moveTo(s * 12, -4 + i * 2); c.lineTo(s * (22 + i * 2), 4 + w * 0.3); c.stroke(); }
+    for (const s of [-1, 1]) { c.beginPath(); c.moveTo(s * 13, -12); c.lineTo(s * 22, -22 - (fl ? 6 : 0)); c.stroke(); c.fillStyle = '#ff6b4a'; c.beginPath(); c.arc(s * 24, -25 - (fl ? 6 : 0), 6.5, s > 0 ? -0.3 : 0.9, s > 0 ? 5.2 : 6.6); c.lineTo(s * 24, -25 - (fl ? 6 : 0)); c.fill(); }
+    const g = c.createRadialGradient(-4, -14, 2, 0, -8, 20); g.addColorStop(0, '#ff9b78'); g.addColorStop(1, '#e04a35');
+    c.fillStyle = g; ell(c, 0, -8, 17, 11); c.fill();
+    for (const s of [-1, 1]) { c.strokeStyle = '#c6452e'; c.lineWidth = 2; c.beginPath(); c.moveTo(s * 6, -17); c.lineTo(s * 7, -24); c.stroke(); c.fillStyle = '#fff'; ell(c, s * 7, -26, 4, 4); c.fill(); c.fillStyle = '#18183a'; ell(c, s * 7 + cr.dir, -26, 2, 2); c.fill(); }
+    c.strokeStyle = '#7a1f14'; c.lineWidth = 1.5; c.beginPath(); if (fl) c.arc(0, -3, 4, 3.5, 5.9); else c.arc(0, -8, 4, 0.4, 2.7); c.stroke();
+    for (let i = 0; i < cr.carry.length; i++) { c.shadowColor = '#fff'; c.shadowBlur = 8; c.fillStyle = '#fff6c9'; ell(c, -10 + i * 10, -34, 5, 5); c.fill(); c.shadowBlur = 0; }
+    c.lineCap = 'butt'; c.restore();
+  }
+  function draw() {
+    const c = ctx, t = animT;
+    if (!bgC) makeBg();
+    c.drawImage(bgC, 0, 0);
+    // ひかり
+    for (let i = 0; i < 4; i++) {
+      const x = 60 + i * 120 + Math.sin(t * 0.3 + i * 2) * 30, a = 0.05 + 0.03 * Math.sin(t * 0.7 + i);
+      const g = c.createLinearGradient(0, 0, 0, SAND); g.addColorStop(0, 'rgba(180,241,255,' + (a * 2).toFixed(3) + ')'); g.addColorStop(1, 'rgba(180,241,255,0)');
+      c.fillStyle = g; c.beginPath(); c.moveTo(x - 14, 0); c.lineTo(x + 14, 0); c.lineTo(x + 70, SAND); c.lineTo(x - 10, SAND); c.fill();
+    }
+    if (G) {
+      drawDecosBack(c, t);
+      // あわ
+      c.strokeStyle = 'rgba(180,241,255,.55)'; c.lineWidth = 1;
+      for (const b of bubbles) { c.beginPath(); c.arc(b.x + Math.sin(t * 2 + b.ph) * 3, b.y, b.r, 0, 6.3); c.stroke(); }
+      drawDecosFront(c, t);
+      // たまご
+      for (const e of G.eggs) {
+        c.save(); c.translate(e.x, e.y); c.rotate(Math.sin(e.t * 14) * (e.t > 1.4 ? 0.22 : 0.05));
+        const g = c.createRadialGradient(-3, -5, 1, 0, 0, 13); g.addColorStop(0, '#fff'); g.addColorStop(1, FAMS[e.fam].col);
+        c.fillStyle = g; ell(c, 0, 0, 9, 11.5); c.fill();
+        c.fillStyle = 'rgba(255,255,255,.6)'; ell(c, -3, -4, 2, 3); c.fill(); c.restore();
+      }
+      // えさ
+      for (const p of G.pellets) {
+        const a = p.rest > PELLET_REST - 1.5 ? 0.35 + 0.35 * Math.sin(t * 16) : 1;
+        c.globalAlpha = a; c.shadowColor = FOODS[p.c].col; c.shadowBlur = 8; c.fillStyle = FOODS[p.c].col; ell(c, p.x, p.y, 5, 5); c.fill();
+        c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,.7)'; ell(c, p.x - 1.5, p.y - 1.5, 1.6, 1.6); c.fill(); c.globalAlpha = 1;
+      }
+      // しんじゅ
+      for (const p of G.drops) {
+        const a = p.rest > PEARL_REST - 3 ? 0.4 + 0.5 * Math.abs(Math.sin(t * 9)) : 1, rad = 7 + p.v * 0.8;
+        c.globalAlpha = a; c.shadowColor = '#fff6c9'; c.shadowBlur = 14;
+        const g = c.createRadialGradient(p.x - 2, p.y - 3, 1, p.x, p.y, rad); g.addColorStop(0, '#ffffff'); g.addColorStop(0.6, '#fff0c0'); g.addColorStop(1, '#e8b6ff');
+        c.fillStyle = g; ell(c, p.x, p.y, rad, rad); c.fill(); c.shadowBlur = 0;
+        const sp = 0.5 + 0.5 * Math.sin(t * 5 + p.x); c.strokeStyle = 'rgba(255,255,255,' + (0.9 * sp).toFixed(2) + ')'; c.lineWidth = 1.5;
+        c.beginPath(); c.moveTo(p.x - rad - 4, p.y - rad); c.lineTo(p.x - rad + 2, p.y - rad); c.moveTo(p.x - rad - 1, p.y - rad - 3); c.lineTo(p.x - rad - 1, p.y - rad + 3); c.stroke();
+        c.globalAlpha = 1;
+      }
+      // 魚
+      const list = G.fish.slice().sort((a, b) => fishR(a) - fishR(b));
+      for (const f of list) {
+        const r = fishR(f) * (1 + f.pop * 0.22), bob = Math.sin(t * 2 + f.ph) * 2;
+        c.save(); c.translate(f.x, f.y + bob); c.scale(f.dir, 1);
+        const sad = f.hunger < 25;
+        drawFish(c, f.fam, f.form, r, t + f.ph + (Math.abs(f.vx) > 50 ? t : 0), { sad });
+        c.restore();
+        const top = f.y + bob - r * (f.fam === 4 ? 1.7 : 1.15) - 9;
+        if (f.form < 0 && !f.leaving) {
+          const need = FAMS[f.fam].need, sp = 8, x0 = clamp(f.x - (need - 1) * sp / 2, 8, W - 8 - (need - 1) * sp);
+          for (let i = 0; i < need; i++) {
+            const col = i < f.seq.length ? FOODS[f.seq[i]].col : null;
+            c.fillStyle = col || 'rgba(10,10,30,.75)'; ell(c, x0 + i * sp, top, 3.2, 3.2); c.fill();
+            if (!col) { c.strokeStyle = 'rgba(238,236,250,.7)'; c.lineWidth = 1; c.stroke(); }
+          }
+          if (f.fam === 4 && f.last >= 0) {
+            const bx = x0 - 13; c.fillStyle = FOODS[f.last].col; ell(c, bx, top, 4, 4); c.fill();
+            c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.moveTo(bx - 5, top - 5); c.lineTo(bx + 5, top + 5); c.moveTo(bx + 5, top - 5); c.lineTo(bx - 5, top + 5); c.stroke();
+          }
+        }
+        if (sad && !f.leaving) {
+          const dx = f.x + r * 0.9, dy = top - (f.form < 0 ? 12 : 2) + Math.sin(t * 6) * 2;
+          c.fillStyle = f.hunger <= 0 ? '#ff5fa2' : '#7fd0ff'; c.beginPath(); c.moveTo(dx, dy - 8); c.quadraticCurveTo(dx + 7, dy + 2, dx, dy + 5); c.quadraticCurveTo(dx - 7, dy + 2, dx, dy - 8); c.fill();
+          c.font = '15px DotGothic16, sans-serif'; c.textAlign = 'center'; c.fillStyle = f.hunger <= 0 ? '#ff8fb8' : '#b4e4ff';
+          c.fillText('ぐう…', clamp(f.x - r * 0.4, 28, W - 28), dy + 3);
+        }
+      }
+      if (G.crab) drawCrab(c, G.crab, t);
+    }
+    // つぶ
+    for (const p of particles) { c.globalAlpha = Math.max(0, 1 - p.life / p.max); c.fillStyle = p.col; ell(c, p.x, p.y, p.r, p.r); c.fill(); }
+    c.globalAlpha = 1;
+    c.font = '17px DotGothic16, sans-serif'; c.textAlign = 'center';
+    for (const p of popups) { c.globalAlpha = Math.min(1, (1.1 - p.t) * 2.5); c.lineWidth = 4; c.strokeStyle = 'rgba(10,10,30,.85)'; c.strokeText(p.text, p.x, p.y); c.fillStyle = p.col; c.fillText(p.text, p.x, p.y); }
+    c.globalAlpha = 1;
+    if (cur.on && mode === 'play' && !panel) {
+      c.strokeStyle = '#ffd166'; c.lineWidth = 2; c.beginPath(); c.arc(cur.x, cur.y, 13 + Math.sin(t * 6) * 2, 0, 6.3); c.stroke();
+      c.beginPath(); c.moveTo(cur.x - 5, cur.y); c.lineTo(cur.x + 5, cur.y); c.moveTo(cur.x, cur.y - 5); c.lineTo(cur.x, cur.y + 5); c.stroke();
+    }
+  }
+  function drawTitleFish() {
+    const el = $('ovFish'), c = el.getContext('2d'); c.clearRect(0, 0, el.width, el.height);
+    const t = animT;
+    [[0, 0, 70, 74, 26], [2, 1, 200, 70, 28], [4, 2, 325, 78, 26], [3, -1, 136, 118, 15], [1, -1, 268, 30, 14]].forEach((q, i) => {
+      c.save(); c.translate(q[2] + Math.sin(t * 0.9 + i) * 8, q[3] + Math.sin(t * 1.7 + i * 2) * 5); drawFish(c, q[0], q[1], q[4], t + i, {}); c.restore();
+    });
+  }
+
+  // ---------- HUD・パネル ----------
+  const cache = {};
+  function setTx(id, s) { if (cache[id] !== s) { cache[id] = s; $(id).textContent = s; } }
+  function bump(id) { const el = $(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  function hud() {
+    if (!G) return;
+    setTx('hPearl', '✨ ' + G.pearls); setTx('hDex', '📖 ' + dexCount() + '/' + TOTAL); setTx('hFish', '🐟 ' + occupied() + '/' + cap()); setTx('hTime', '⏱ ' + fmt(G.time));
+    const mx = stockMax(), st = Math.min(G.stock, mx);
+    setTx('stockTx', 'えさ ' + st + '/' + mx);
+    const w = Math.round(st / mx * 100) + '%'; if (cache.sb !== w) { cache.sb = w; $('stockBar').style.width = w; }
+    const low = st < 1; if (cache.low !== low) { cache.low = low; $('stock').classList.toggle('low', low); }
+    const q = G.quest;
+    if (G.done) { setTx('qText', '🏆 ずかん コンプリート！ すきなだけ ながめてね'); setTx('qRew', ''); }
+    else if (q) { setTx('qText', (q.tut ? '💡 ' : '📜 ') + q.text + (q.goal > 1 ? '（' + Math.min(q.prog, q.goal) + '/' + q.goal + '）' : '')); setTx('qRew', q.fin ? 'できた！' : '✨+' + q.reward); }
+    if (cache.sel !== G.sel) { cache.sel = G.sel; document.querySelectorAll('.food').forEach(b => b.classList.toggle('on', +b.dataset.c === G.sel)); }
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m])); }
+  function openPanel(name) {
+    if (mode !== 'play') return;
+    panel = name; $('panel').classList.add('show'); renderPanel(); sfx.ui();
+    if (name === 'dex') $('mDex').classList.remove('new');
+    if (name === 'egg') $('mEgg').classList.remove('new');
+  }
+  function closePanel() { if (!panel) return; panel = ''; $('panel').classList.remove('show'); last = 0; }
+  function renderPanel() {
+    const body = $('pBody'); let h = '';
+    $('pInfo').textContent = '✨ ' + G.pearls;
+    if (panel === 'egg') {
+      $('pTitle').textContent = '🥚 たまご';
+      h += '<div class="pnote">こどもが うまれるよ。あげた えさの色で おとなの すがたが かわる！（今 ' + occupied() + '/' + cap() + 'ひき）</div>';
+      FAMS.forEach((f, i) => {
+        const locked = dexCount() < f.unlock, why = eggBlock(i), price = eggPrice(i);
+        h += '<div class="item' + (locked ? ' lock' : '') + '"><canvas width="120" height="92" data-fam="' + i + '" data-form="-1" data-known="' + (locked ? 0 : 1) + '"></canvas>' +
+          '<div class="tx">' + (locked ? '？？？' : esc(f.name)) + '<small>' + (locked ? '🔒 ' + esc(why) : esc(f.note) + '／' + f.need + 'つぶで おとな') + '</small></div>' +
+          '<button class="act gold" data-act="egg" data-v="' + i + '"' + (why ? ' disabled' : '') + '>' + (locked ? '🔒' : (price ? '✨' + price : 'むりょう') + '<br>かう') + '</button></div>';
+      });
+    } else if (panel === 'fish') {
+      $('pTitle').textContent = '🐟 なかま';
+      h += '<div class="pnote">水そうが いっぱいの時は、おとなを うみへ おくると あきが できるよ。</div>';
+      if (!G.fish.length) h += '<div class="pnote">まだ だれも いないよ。「🥚たまご」で なかまを ふやそう。</div>';
+      G.fish.forEach(f => {
+        if (f.leaving) return;
+        const need = FAMS[f.fam].need, v = releaseVal(f);
+        h += '<div class="item"><canvas width="120" height="92" data-fam="' + f.fam + '" data-form="' + f.form + '" data-known="1"></canvas>' +
+          '<div class="tx">' + esc(spName(f.fam, f.form)) + '<small>' + (f.form < 0 ? 'こども ' + f.seq.length + '/' + need + '（あか' + f.eaten[0] + '・みどり' + f.eaten[1] + '・あお' + f.eaten[2] + '）' : 'おとな／しんじゅを おとす') + '</small>' +
+          '<div class="bar2"><i class="' + (f.hunger < 25 ? 'low' : '') + '" style="width:' + Math.round(f.hunger) + '%"></i></div></div>' +
+          '<button class="act" data-act="rel" data-v="' + f.id + '">うみへ' + (v ? '<br>✨+' + v : '<br>おくる') + '</button></div>';
+      });
+    } else if (panel === 'dex') {
+      $('pTitle').textContent = '📖 ずかん ' + dexCount() + '/' + TOTAL;
+      h += '<div class="pnote">？は、下の色の えさを 多く あげると 出会えるよ。</div><div class="dexgrid">';
+      FAMS.forEach((f, i) => {
+        for (let k = -1; k <= 2; k++) {
+          const got = !!G.dex[spId(i, k)];
+          h += '<div class="dexcell ' + (got ? 'got' : 'no') + '"><canvas width="120" height="92" data-fam="' + i + '" data-form="' + k + '" data-known="' + (got ? 1 : 0) + '"></canvas>' +
+            (got ? esc(spName(i, k)) : (k < 0 ? '？ たまご' : '<i style="background:' + FOODS[k].col + '"></i>？？？')) + '</div>';
+        }
+      });
+      h += '</div>';
+    } else if (panel === 'deco') {
+      $('pTitle').textContent = '🪸 かざり';
+      h += '<div class="pnote">かざると 水そうが にぎやかに。それぞれ うれしい ききめが あるよ。</div>';
+      DECOS.forEach(d => {
+        const own = has(d.id);
+        h += '<div class="item"><div class="ico">' + d.emoji + '</div><div class="tx">' + esc(d.name) + '<small>' + esc(d.fx) + '</small></div>' +
+          (own ? '<button class="act own" disabled>かざった</button>' : '<button class="act gold" data-act="deco" data-v="' + d.id + '"' + (G.pearls < d.price ? ' disabled' : '') + '>✨' + d.price + '<br>かう</button>') + '</div>';
+      });
+    }
+    body.innerHTML = h;
+    body.querySelectorAll('canvas').forEach(el => drawIcon(el, +el.dataset.fam, +el.dataset.form, el.dataset.known === '1'));
+  }
+  function showTitle() {
+    mode = 'title'; closePanel();
+    const sv = restore();
+    $('ovBig').textContent = 'おさかな水そう'; $('ovBig').className = 'big'; $('ovFish').style.display = '';
+    $('ovNote').className = 'note';
+    $('ovNote').innerHTML = '① えさの色を えらんで 水そうを タップ<br>② <b>いちばん多く たべた色</b>で すがたが かわる<br>③ しんじゅ✨で たまごを かい <b>ずかん</b>を あつめよう';
+    $('startBtn').textContent = sv ? 'つづきから はじめる' : 'はじめる'; $('startBtn').dataset.m = sv ? 'cont' : 'new';
+    $('altBtn').style.display = sv ? '' : 'none'; $('altBtn').textContent = 'さいしょから'; $('altBtn').dataset.m = 'new';
+    $('ovRec').textContent = recText(sv);
+    $('overlay').classList.add('show');
+  }
+  function recText(sv) {
+    let s = '';
+    if (sv) s += 'ほぞんデータ：ずかん ' + sv.dex.reduce((a, b) => a + b, 0) + '/' + TOTAL + '・' + fmt(sv.time) + '　';
+    if (rec.best) s += '🏆 ベスト ' + fmt(rec.best) + '（' + '★'.repeat(stars(rec.best)) + '）クリア ' + rec.clears + 'かい';
+    else if (rec.maxDex) s += 'これまでの さいこう：ずかん ' + rec.maxDex + '/' + TOTAL;
+    return s;
+  }
+  function showEnd(t, isBest) {
+    closePanel();
+    $('ovBig').textContent = 'ずかん コンプリート！'; $('ovBig').className = 'big win'; $('ovFish').style.display = '';
+    const st = stars(t);
+    $('ovNote').className = 'note c';
+    $('ovNote').innerHTML = '<span class="star">' + '★'.repeat(st) + '☆'.repeat(3 - st) + '</span><br>かかった時間 <b>' + fmt(t) + '</b>' + (isBest ? '　<b>ベストこうしん！</b>' : '') +
+      '<br>そだてた魚 ' + G.stats.grown + 'ひき・カニを おいはらった ' + G.stats.shoo + 'かい<br>' + (st < 3 ? '10分より はやいと ★3つ！' : 'すごい！ 水そうマスター！');
+    $('startBtn').textContent = 'もういちど さいしょから'; $('startBtn').dataset.m = 'new';
+    $('altBtn').style.display = ''; $('altBtn').textContent = 'このまま ながめる'; $('altBtn').dataset.m = 'watch';
+    $('ovRec').textContent = '🏆 ベスト ' + fmt(rec.best) + '・クリア ' + rec.clears + 'かい';
+    $('overlay').classList.add('show');
+  }
+  function start(m) {
+    userActed = true; audio();
+    if (m === 'watch') { mode = 'play'; $('overlay').classList.remove('show'); last = 0; return; }
+    let g = m === 'cont' ? restore() : null;
+    particles = []; popups = []; toastQ = []; endT = -1;
+    if (g) G = g;
+    else { G = newGame(); G.eggs.push({ fam: 0, x: 240, y: TOP + 4, t: 0 }); drop('save'); }
+    for (const k in cache) delete cache[k];
+    $('mDex').classList.remove('new'); $('mEgg').classList.remove('new');
+    mode = 'play'; panel = ''; $('panel').classList.remove('show'); $('overlay').classList.remove('show'); last = 0;
+    sfx.buy(); hud(); save();
+  }
+
+  // ---------- ループ ----------
+  let last = 0, frozen = false;
+  function frame(ts) {
+    requestAnimationFrame(frame);
+    if (document.hidden) { last = 0; return; }
+    const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
+    if (mode === 'play' && !panel && G && !frozen) update(dt);
+    else { animT += dt; if (G) stepFx(dt); else stepFxIdle(dt); }
+    if (mode !== 'play') drawTitleFish();
+    draw(); hud();
+  }
+  function stepFxIdle(dt) {
+    if (Math.random() < dt * 1.4) bubbles.push({ x: Math.random() * W, y: SAND, r: 1.5 + Math.random() * 3.5, s: 26 + Math.random() * 30, ph: Math.random() * 6 });
+    for (let i = bubbles.length - 1; i >= 0; i--) { const b = bubbles[i]; b.y -= b.s * dt; if (b.y < TOP) bubbles.splice(i, 1); }
+  }
+
+  // ---------- にゅうりょく ----------
+  function pos(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height }; }
+  let down = false;
+  function setMute(m) { muted = m; $('mute-btn').textContent = muted ? '🔇' : '🔊'; store('mute', muted); }
+  function setSel(c) { if (!G) return; G.sel = c; sfx.ui(); hud(); }
+  function onKey(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'm' || k === 'M') { setMute(!muted); return; }
+    if (mode !== 'play') return;
+    if (panel) { if (k === 'Escape') { closePanel(); e.preventDefault(); } return; }
+    const mv = { ArrowLeft: [-16, 0], ArrowRight: [16, 0], ArrowUp: [0, -16], ArrowDown: [0, 16] }[k];
+    if (mv) { cur.on = true; cur.x = clamp(cur.x + mv[0], 14, W - 14); cur.y = clamp(cur.y + mv[1], TOP + 6, H - 14); e.preventDefault(); return; }
+    if (k === ' ' || k === 'Enter') { e.preventDefault(); if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); cur.on = true; userActed = true; act(cur.x, cur.y); return; }
+    if (k === '1' || k === '2' || k === '3') { setSel(+k - 1); return; }
+    const pn = { q: 'egg', w: 'fish', e: 'dex', r: 'deco' }[k.toLowerCase()];
+    if (pn) openPanel(pn);
+  }
+  function init() {
+    makeBg();
+    $('mute-btn').textContent = muted ? '🔇' : '🔊';
+    $('mute-btn').addEventListener('click', () => { userActed = true; setMute(!muted); if (!muted) sfx.ui(); });
+    $('startBtn').addEventListener('click', () => start($('startBtn').dataset.m));
+    $('altBtn').addEventListener('click', () => start($('altBtn').dataset.m));
+    document.querySelectorAll('.food').forEach(b => b.addEventListener('click', () => { userActed = true; setSel(+b.dataset.c); b.blur(); }));
+    [['mEgg', 'egg'], ['mFish', 'fish'], ['mDex', 'dex'], ['mDeco', 'deco']].forEach(q => $(q[0]).addEventListener('click', () => { userActed = true; openPanel(q[1]); $(q[0]).blur(); }));
+    $('pClose').addEventListener('click', () => { sfx.ui(); closePanel(); });
+    $('pBody').addEventListener('click', e => {
+      const b = e.target.closest('button[data-act]'); if (!b || b.disabled) return;
+      const a = b.dataset.act, v = b.dataset.v;
+      if (a === 'egg') { if (buyEgg(+v)) { closePanel(); return; } }
+      else if (a === 'deco') buyDeco(v);
+      else if (a === 'rel') release(+v);
+      if (panel) renderPanel();
+    });
+    cv.addEventListener('pointerdown', e => { e.preventDefault(); userActed = true; down = true; cur.on = false; const p = pos(e); act(p.x, p.y); });
+    cv.addEventListener('pointermove', e => { if (!down || mode !== 'play' || panel) return; const p = pos(e); collectAt(p.x, p.y, 24); });
+    window.addEventListener('pointerup', () => { down = false; });
+    window.addEventListener('pointercancel', () => { down = false; });
+    cv.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { last = 0; if (mode === 'play') save(); } });
+    window.addEventListener('pagehide', () => { if (mode === 'play') save(); });
+    showTitle();
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- テスト用 ----------
+  window.__test = {
+    info: () => ({ W, H, TOP, SAND, TOTAL, RESTORE, LEAVE_SEC, FAMS: FAMS.map(f => ({ name: f.name, need: f.need, price: f.price, unlock: f.unlock })), DECOS: DECOS.map(d => ({ id: d.id, price: d.price })) }),
+    state: () => ({
+      mode, panel, paused: mode !== 'play' || !!panel,
+      pearls: G ? G.pearls : 0, dex: G ? G.dex.slice() : [], dexCount: G ? dexCount() : 0, cap: G ? cap() : 4, occupied: G ? occupied() : 0,
+      time: G ? Math.round(G.time * 10) / 10 : 0, done: G ? G.done : false,
+      food: G ? { sel: G.sel, stock: G.stock, max: stockMax() } : null,
+      fish: G ? G.fish.map(f => ({ id: f.id, fam: f.fam, form: f.form, name: spName(f.fam, f.form), x: Math.round(f.x), y: Math.round(f.y), dir: f.dir, r: Math.round(fishR(f)), hunger: Math.round(f.hunger), eaten: f.eaten.slice(), last: f.last, need: FAMS[f.fam].need, leaving: f.leaving })) : [],
+      eggs: G ? G.eggs.map(e => e.fam) : [],
+      pellets: G ? G.pellets.map(p => ({ x: Math.round(p.x), y: Math.round(p.y), c: p.c })) : [],
+      drops: G ? G.drops.map(p => ({ x: Math.round(p.x), y: Math.round(p.y), v: p.v, rest: p.rest > 0 })) : [],
+      crab: G && G.crab ? { x: Math.round(G.crab.x), y: Math.round(G.crab.y), state: G.crab.state, carry: G.crab.carry.length } : null,
+      decos: G ? Object.keys(G.decos) : [], quest: G && G.quest ? { type: G.quest.type, text: G.quest.text, prog: G.quest.prog, goal: G.quest.goal, reward: G.quest.reward, tut: !!G.quest.tut } : null,
+      stats: G ? Object.assign({}, G.stats) : null, rec: Object.assign({}, rec), muted
+    }),
+    seed: n => { seedV = n >>> 0; },
+    freeze: b => { frozen = !!b; },
+    start: m => start(m || 'new'),
+    step: ms => { if (!G || mode !== 'play') return; quiet = true; const n = Math.ceil(ms / 50); for (let i = 0; i < n && mode === 'play'; i++) update(0.05); quiet = false; draw(); hud(); },
+    majority: (e, s) => majority(e, s),
+    act: (x, y) => act(x, y),
+    dropFood: (x, y, c) => dropFood(x, y, c),
+    setFood: c => setSel(c),
+    buyEgg: fam => buyEgg(fam),
+    eggBlock: fam => eggBlock(fam),
+    eggPrice: fam => eggPrice(fam),
+    buyDeco: id => buyDeco(id),
+    release: id => release(id),
+    feed: (id, c) => { const f = G.fish.find(q => q.id === id); if (!f) return false; eat(f, c); return true; },
+    addFish: (fam, form, o) => { const f = mkFish(fam, form, (o && o.x) || 240, (o && o.y) || 180); if (o) { if (o.hunger !== undefined) f.hunger = o.hunger; if (o.seq) { f.seq = o.seq.slice(); f.eaten = [0, 0, 0]; f.seq.forEach(c => f.eaten[c]++); f.last = f.seq.length ? f.seq[f.seq.length - 1] : -1; } if (o.pearlT !== undefined) f.pearlT = o.pearlT; } G.fish.push(f); return f.id; },
+    clear: () => { G.fish = []; G.eggs = []; G.pellets = []; G.drops = []; G.crab = null; },
+    setPearls: n => { G.pearls = n; },
+    setStock: n => { G.stock = n; },
+    setDex: arr => { G.dex = new Array(TOTAL).fill(0); arr.forEach(i => { G.dex[i] = 1; }); },
+    setTime: s => { G.time = s; },
+    skipTut: () => { G.tut = TUT.length; G.quest = null; },
+    spawnPearl: (x, y, v) => { G.drops.push({ x, y, v: v || 1, rest: 0, vy: 0 }); },
+    spawnCrab: fromLeft => { G.crab = { x: fromLeft ? -30 : W + 30, y: SAND + 14, dir: fromLeft ? 1 : -1, state: 'walk', carry: [], t: 0 }; },
+    openPanel: n => openPanel(n), closePanel: () => closePanel(),
+    save: () => save()
+  };
+
+  init();
+})();
+</script>
+</body>
+</html>

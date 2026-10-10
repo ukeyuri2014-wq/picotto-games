@@ -1,0 +1,85 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c074bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d3180"/><stop offset="0.5" stop-color="#15184d"/><stop offset="1" stop-color="#0d0c2b"/>
+    </linearGradient>
+    <linearGradient id="c074sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6a5a9a"/><stop offset="1" stop-color="#2a2450"/>
+    </linearGradient>
+    <linearGradient id="c074ray" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b4f1ff" stop-opacity="0.28"/><stop offset="1" stop-color="#b4f1ff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="c074red" cx="0.6" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffc0a8"/><stop offset="0.5" stop-color="#ff5f6d"/><stop offset="1" stop-color="#c8364e"/>
+    </radialGradient>
+    <radialGradient id="c074blue" cx="0.6" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#b4f1ff"/><stop offset="0.5" stop-color="#4aa6ff"/><stop offset="1" stop-color="#2a62d0"/>
+    </radialGradient>
+    <radialGradient id="c074green" cx="0.6" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#d6ff9a"/><stop offset="0.5" stop-color="#4fd67c"/><stop offset="1" stop-color="#1f9a5a"/>
+    </radialGradient>
+    <radialGradient id="c074gold" cx="0.6" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#fffbe8"/><stop offset="0.6" stop-color="#ffd166"/><stop offset="1" stop-color="#c79a35"/>
+    </radialGradient>
+    <radialGradient id="c074pearl" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#fff0c0"/><stop offset="1" stop-color="#e8b6ff"/>
+    </radialGradient>
+    <filter id="c074glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c074bg)"/>
+  <polygon points="50,0 85,0 150,200 40,200" fill="url(#c074ray)"/>
+  <polygon points="180,0 210,0 300,200 190,200" fill="url(#c074ray)"/>
+  <polygon points="300,0 325,0 400,180 330,200" fill="url(#c074ray)"/>
+  <path d="M0 190 Q50 180 100 190 T200 190 T300 190 T400 190 V225 H0Z" fill="url(#c074sand)"/>
+  <g fill="#ffd166" opacity="0.6"><circle cx="40" cy="205" r="2"/><circle cx="130" cy="212" r="1.6"/><circle cx="260" cy="206" r="2"/><circle cx="350" cy="214" r="1.8"/></g>
+  <g stroke-linecap="round" fill="none" stroke-width="7">
+    <path d="M24 195 C14 160 38 140 26 108" stroke="#3ad07f"/>
+    <path d="M44 195 C52 170 34 155 46 132" stroke="#2aa86a"/>
+    <path d="M372 195 C362 165 386 150 374 120" stroke="#3ad07f"/>
+  </g>
+  <!-- あかい魚（しゅやく） -->
+  <g transform="translate(205 104)">
+    <ellipse cx="0" cy="0" rx="62" ry="50" fill="#ff5f6d" opacity="0.35" filter="url(#c074glow)"/>
+    <path d="M-44 0 Q-66 -12 -84 -38 Q-72 -14 -94 0 Q-72 14 -84 38 Q-66 12 -44 0Z" fill="#ffd166"/>
+    <path d="M-22 -34 Q-6 -62 22 -34Z" fill="#ffd166"/>
+    <ellipse cx="0" cy="0" rx="52" ry="40" fill="url(#c074red)"/>
+    <ellipse cx="-6" cy="28" rx="40" ry="16" fill="#ffffff" opacity="0.25"/>
+    <path d="M2 12 Q-22 20 -20 34 Q-4 28 2 12Z" fill="#ffd166"/>
+    <circle cx="28" cy="-8" r="11" fill="#fff"/><circle cx="31" cy="-8" r="6.5" fill="#18183a"/><circle cx="28" cy="-12" r="2.4" fill="#fff"/>
+    <ellipse cx="16" cy="12" rx="7" ry="4.5" fill="#ff5fa2" opacity="0.5"/>
+    <path d="M38 8 Q44 16 50 8" stroke="#18183a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- あおい魚 -->
+  <g transform="translate(92 62) scale(-1 1)">
+    <path d="M-24 0 Q-36 -6 -46 -20 Q-38 0 -46 20 Q-36 6 -24 0Z" fill="#7fd0ff"/>
+    <ellipse cx="0" cy="0" rx="30" ry="18" fill="url(#c074blue)"/>
+    <g fill="#14143c" opacity="0.3"><rect x="-16" y="-18" width="6" height="36"/><rect x="-2" y="-18" width="6" height="36"/></g>
+    <circle cx="16" cy="-4" r="6" fill="#fff"/><circle cx="17.5" cy="-4" r="3.5" fill="#18183a"/>
+  </g>
+  <!-- みどりの魚 -->
+  <g transform="translate(322 78)">
+    <path d="M-18 0 Q-28 -4 -36 -16 Q-30 0 -36 16 Q-28 4 -18 0Z" fill="#c7f06b"/>
+    <path d="M-8 -18 Q-12 -42 12 -34 Q10 -24 10 -17Z" fill="#b9ff7a"/>
+    <circle cx="0" cy="0" r="22" fill="url(#c074green)"/>
+    <circle cx="10" cy="-5" r="6" fill="#fff"/><circle cx="11.5" cy="-5" r="3.5" fill="#18183a"/>
+    <path d="M14 6 Q18 11 22 6" stroke="#18183a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- こどもの魚 -->
+  <g transform="translate(120 150)">
+    <path d="M-12 0 L-24 -9 L-21 0 L-24 9Z" fill="#d9ab42"/>
+    <ellipse cx="0" cy="0" rx="15" ry="12" fill="url(#c074gold)"/>
+    <circle cx="7" cy="-2" r="4.5" fill="#fff"/><circle cx="8" cy="-2" r="2.6" fill="#18183a"/>
+  </g>
+  <!-- えさ と しんじゅ -->
+  <g>
+    <circle cx="283" cy="96" r="6" fill="#ff6b7d"/><circle cx="281" cy="94" r="2" fill="#fff" opacity="0.7"/>
+    <circle cx="300" cy="126" r="6" fill="#6be08f"/><circle cx="270" cy="60" r="6" fill="#5fb4ff"/>
+    <circle cx="170" cy="186" r="14" fill="#fff6c9" opacity="0.5" filter="url(#c074glow)"/>
+    <circle cx="170" cy="186" r="9" fill="url(#c074pearl)"/>
+    <circle cx="290" cy="190" r="12" fill="#fff6c9" opacity="0.5" filter="url(#c074glow)"/>
+    <circle cx="290" cy="190" r="8" fill="url(#c074pearl)"/>
+  </g>
+  <g fill="none" stroke="#b4f1ff" stroke-opacity="0.6" stroke-width="1.5">
+    <circle cx="60" cy="110" r="5"/><circle cx="68" cy="88" r="3"/><circle cx="350" cy="150" r="6"/><circle cx="358" cy="124" r="3.5"/><circle cx="236" cy="34" r="4"/>
+  </g>
+</svg>
