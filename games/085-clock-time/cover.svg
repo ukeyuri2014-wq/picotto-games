@@ -1,0 +1,75 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c085bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0" stop-color="#2a2a5c"/>
+      <stop offset="0.6" stop-color="#17172f"/>
+      <stop offset="1" stop-color="#0e0e1c"/>
+    </radialGradient>
+    <radialGradient id="c085glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c085face" cx="40%" cy="35%" r="75%">
+      <stop offset="0" stop-color="#fffef8"/>
+      <stop offset="0.75" stop-color="#f3efe6"/>
+      <stop offset="1" stop-color="#d6cfee"/>
+    </radialGradient>
+    <linearGradient id="c085rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a4696"/>
+      <stop offset="1" stop-color="#161a44"/>
+    </linearGradient>
+    <linearGradient id="c085bell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0b8"/>
+      <stop offset="0.5" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#c78a1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#c085bg)"/>
+  <g fill="#ffffff">
+    <circle cx="38" cy="30" r="1.6" opacity="0.8"/><circle cx="92" cy="62" r="1.1" opacity="0.6"/>
+    <circle cx="340" cy="28" r="1.8" opacity="0.8"/><circle cx="372" cy="96" r="1.2" opacity="0.6"/>
+    <circle cx="300" cy="190" r="1.4" opacity="0.6"/><circle cx="60" cy="176" r="1.5" opacity="0.7"/>
+    <circle cx="24" cy="110" r="1" opacity="0.5"/><circle cx="356" cy="160" r="1" opacity="0.5"/>
+  </g>
+  <circle cx="200" cy="120" r="118" fill="url(#c085glow)"/>
+  <!-- feet -->
+  <g stroke="#d9a93a" stroke-width="9" stroke-linecap="round">
+    <line x1="160" y1="186" x2="144" y2="208"/><line x1="240" y1="186" x2="256" y2="208"/>
+  </g>
+  <!-- bells -->
+  <line x1="200" y1="38" x2="200" y2="24" stroke="#d9a93a" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="200" cy="22" r="5" fill="#ffe9a8"/>
+  <g transform="translate(152 52) rotate(-36)"><path d="M-24 0 A24 24 0 0 1 24 0 Z" fill="url(#c085bell)"/><ellipse cx="-9" cy="-13" rx="5" ry="2.4" fill="#ffffff" opacity="0.6" transform="rotate(-35 -9 -13)"/></g>
+  <g transform="translate(248 52) rotate(36)"><path d="M-24 0 A24 24 0 0 1 24 0 Z" fill="url(#c085bell)"/><ellipse cx="-9" cy="-13" rx="5" ry="2.4" fill="#ffffff" opacity="0.6" transform="rotate(-35 -9 -13)"/></g>
+  <!-- clock -->
+  <circle cx="200" cy="120" r="84" fill="url(#c085rim)" stroke="#53e0d8" stroke-width="3"/>
+  <circle cx="200" cy="120" r="71" fill="url(#c085face)" stroke="#2a2850" stroke-opacity="0.35" stroke-width="2"/>
+  <!-- hour sector highlight -->
+  <path d="M200 120 L200 62 A58 58 0 0 1 229 69.8 Z" fill="#ff5fa2" opacity="0.22"/>
+  <g stroke="#2a2850" stroke-width="3.2" stroke-linecap="butt">
+    <line x1="200" y1="52" x2="200" y2="61"/><line x1="268" y1="120" x2="259" y2="120"/>
+    <line x1="200" y1="188" x2="200" y2="179"/><line x1="132" y1="120" x2="141" y2="120"/>
+  </g>
+  <g stroke="#2a2850" stroke-width="2" stroke-linecap="butt">
+    <line x1="234" y1="61.1" x2="230" y2="68"/><line x1="258.9" y1="86" x2="252" y2="90"/>
+    <line x1="258.9" y1="154" x2="252" y2="150"/><line x1="234" y1="178.9" x2="230" y2="172"/>
+    <line x1="166" y1="178.9" x2="170" y2="172"/><line x1="141.1" y1="154" x2="148" y2="150"/>
+    <line x1="141.1" y1="86" x2="148" y2="90"/><line x1="166" y1="61.1" x2="170" y2="68"/>
+  </g>
+  <!-- hands: 12:15-ish feel → hour toward 1, minute at 6 (half past) -->
+  <g stroke-linecap="round">
+    <line x1="200" y1="120" x2="206" y2="84" stroke="#a11c50" stroke-width="10"/>
+    <line x1="200" y1="120" x2="206" y2="84" stroke="#f0457f" stroke-width="7"/>
+    <line x1="200" y1="112" x2="200" y2="178" stroke="#0a6672" stroke-width="7"/>
+    <line x1="200" y1="112" x2="200" y2="178" stroke="#12a5b4" stroke-width="4.5"/>
+  </g>
+  <circle cx="200" cy="120" r="6" fill="#ffd166" stroke="#a8761a" stroke-width="1.5"/>
+  <path d="M158 78 A66 66 0 0 1 182 58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round"/>
+  <!-- sparkles -->
+  <g fill="#ffd166">
+    <path d="M318 62 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/>
+    <path d="M78 96 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" opacity="0.9"/>
+  </g>
+  <g fill="#ff5fa2"><path d="M330 150 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5z"/></g>
+  <g fill="#53e0d8"><path d="M70 44 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5z"/></g>
+</svg>
