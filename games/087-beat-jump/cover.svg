@@ -1,0 +1,43 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="c087sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0b1f"/><stop offset="0.6" stop-color="#1c1746"/><stop offset="1" stop-color="#3a2470"/></linearGradient>
+<linearGradient id="c087floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241b52"/><stop offset="1" stop-color="#0a0a18"/></linearGradient>
+<linearGradient id="c087bar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#53e0d8" stop-opacity="0.5"/><stop offset="1" stop-color="#53e0d8" stop-opacity="0"/></linearGradient>
+<linearGradient id="c087spk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd3e6"/><stop offset="0.5" stop-color="#ff5fa2"/><stop offset="1" stop-color="#a8286a"/></linearGradient>
+<linearGradient id="c087pad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.4" stop-color="#53e0d8"/><stop offset="1" stop-color="#2a8f96"/></linearGradient>
+<radialGradient id="c087moon" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff3cc"/><stop offset="0.38" stop-color="#ffd98a"/><stop offset="0.42" stop-color="#ff5fa2" stop-opacity="0.3"/><stop offset="1" stop-color="#ff5fa2" stop-opacity="0"/></radialGradient>
+<radialGradient id="c087body" cx="0.35" cy="0.3" r="0.75"><stop offset="0" stop-color="#eafffd"/><stop offset="0.4" stop-color="#53e0d8"/><stop offset="1" stop-color="#1f8f95"/></radialGradient>
+<filter id="c087glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="225" fill="url(#c087sky)"/>
+<g fill="#fff"><circle cx="30" cy="22" r="1.2"/><circle cx="82" cy="46" r="0.9"/><circle cx="140" cy="18" r="1.3"/><circle cx="205" cy="38" r="1"/><circle cx="250" cy="14" r="1.2"/><circle cx="372" cy="24" r="1"/><circle cx="58" cy="78" r="0.9"/><circle cx="300" cy="70" r="1.1"/></g>
+<circle cx="330" cy="52" r="62" fill="url(#c087moon)"/>
+<g fill="url(#c087bar)"><rect x="6" y="80" width="18" height="90"/><rect x="31" y="110" width="18" height="60"/><rect x="56" y="60" width="18" height="110"/><rect x="81" y="96" width="18" height="74"/><rect x="106" y="124" width="18" height="46"/><rect x="131" y="74" width="18" height="96"/><rect x="156" y="104" width="18" height="66"/><rect x="181" y="52" width="18" height="118"/><rect x="206" y="92" width="18" height="78"/><rect x="231" y="118" width="18" height="52"/><rect x="256" y="70" width="18" height="100"/><rect x="281" y="100" width="18" height="70"/><rect x="306" y="58" width="18" height="112"/><rect x="331" y="112" width="18" height="58"/><rect x="356" y="84" width="18" height="86"/><rect x="381" y="120" width="18" height="50"/></g>
+<g fill="#141130"><rect x="0" y="118" width="46" height="52"/><rect x="52" y="96" width="38" height="74"/><rect x="96" y="128" width="50" height="42"/><rect x="232" y="104" width="44" height="66"/><rect x="282" y="124" width="52" height="46"/><rect x="340" y="92" width="60" height="78"/></g>
+<g fill="#ffd166" opacity="0.8"><rect x="8" y="126" width="5" height="7"/><rect x="24" y="140" width="5" height="7"/><rect x="60" y="106" width="5" height="7"/><rect x="74" y="122" width="5" height="7"/><rect x="108" y="138" width="5" height="7"/><rect x="242" y="114" width="5" height="7"/><rect x="258" y="134" width="5" height="7"/><rect x="296" y="134" width="5" height="7"/><rect x="350" y="102" width="5" height="7"/><rect x="368" y="120" width="5" height="7"/><rect x="384" y="104" width="5" height="7"/></g>
+<rect y="170" width="400" height="55" fill="url(#c087floor)"/>
+<g stroke="#a06bff" stroke-opacity="0.4" stroke-width="1"><line x1="0" y1="184" x2="400" y2="184"/><line x1="0" y1="204" x2="400" y2="204"/><line x1="60" y1="170" x2="20" y2="225"/><line x1="150" y1="170" x2="130" y2="225"/><line x1="240" y1="170" x2="250" y2="225"/><line x1="330" y1="170" x2="370" y2="225"/></g>
+<rect y="168.5" width="400" height="3" fill="#53e0d8" filter="url(#c087glow)"/>
+<g filter="url(#c087glow)">
+<rect x="56" y="161" width="38" height="9" rx="4.5" fill="url(#c087pad)"/>
+<rect x="252" y="161" width="38" height="9" rx="4.5" fill="url(#c087pad)"/>
+<rect x="336" y="161" width="38" height="9" rx="4.5" fill="#ffd166"/>
+<polygon points="152,169 164,140 176,169" fill="url(#c087spk)"/>
+<polygon points="178,169 190,146 202,169" fill="url(#c087spk)"/>
+</g>
+<path d="M76 160 Q170 4 270 158" fill="none" stroke="#ffd166" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round" opacity="0.9"/>
+<ellipse cx="174" cy="176" rx="20" ry="4" fill="#000" opacity="0.35"/>
+<g opacity="0.25" fill="#53e0d8"><circle cx="128" cy="92" r="17"/><circle cx="146" cy="80" r="20"/></g>
+<g transform="translate(172 72) rotate(-8)" filter="url(#c087glow)">
+<rect x="-17" y="20" width="13" height="9" rx="4" fill="#2a8f96"/><rect x="5" y="18" width="13" height="9" rx="4" fill="#2a8f96"/>
+<circle r="26" fill="url(#c087body)"/>
+<path d="M-26 -8 A27 27 0 0 1 26 -8" fill="none" stroke="#ff5fa2" stroke-width="6" stroke-linecap="round"/>
+<rect x="-33" y="-12" width="11" height="20" rx="5" fill="#ff5fa2"/><rect x="22" y="-12" width="11" height="20" rx="5" fill="#ff5fa2"/>
+<ellipse cx="3" cy="-4" rx="5.5" ry="7" fill="#fff"/><ellipse cx="16" cy="-4" rx="5" ry="6.6" fill="#fff"/>
+<circle cx="5" cy="-3" r="3" fill="#12213a"/><circle cx="17.5" cy="-3" r="2.8" fill="#12213a"/>
+<path d="M5 8 Q10 15 16 8 Z" fill="#12213a"/>
+</g>
+<g fill="#ffd166" filter="url(#c087glow)"><ellipse cx="58" cy="62" rx="8" ry="6" transform="rotate(-20 58 62)"/><rect x="63" y="28" width="3.5" height="33"/><path d="M63 28 q14 2 16 16 q-6 -8 -16 -7z"/></g>
+<g fill="#ff5fa2" filter="url(#c087glow)"><ellipse cx="262" cy="56" rx="7" ry="5.2" transform="rotate(-20 262 56)"/><rect x="266.500" y="26" width="3" height="29"/><ellipse cx="286" cy="50" rx="7" ry="5.2" transform="rotate(-20 286 50)"/><rect x="290.500" y="20" width="3" height="29"/><polygon points="266.500,26 293.500,20 293.500,27 266.500,33"/></g>
+<g fill="#fff"><polygon points="226,96 229,104 237,107 229,110 226,118 223,110 215,107 223,104"/><polygon points="110,40 112,45 117,47 112,49 110,54 108,49 103,47 108,45"/><polygon points="300,120 302,125 307,127 302,129 300,134 298,129 293,127 298,125"/></g>
+</svg>
