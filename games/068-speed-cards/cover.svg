@@ -1,0 +1,104 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c068bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0" stop-color="#2a2a5c"/>
+      <stop offset="1" stop-color="#0e0e1c"/>
+    </radialGradient>
+    <linearGradient id="c068face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d9d5f0"/>
+    </linearGradient>
+    <linearGradient id="c068cyan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2aa8b8"/>
+      <stop offset="1" stop-color="#1b4f86"/>
+    </linearGradient>
+    <linearGradient id="c068pink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8478f"/>
+      <stop offset="1" stop-color="#6a2f9c"/>
+    </linearGradient>
+    <linearGradient id="c068trail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0"/>
+      <stop offset="1" stop-color="#53e0d8" stop-opacity=".8"/>
+    </linearGradient>
+    <linearGradient id="c068trail2" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#ff5fa2" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ff5fa2" stop-opacity=".8"/>
+    </linearGradient>
+    <filter id="c068glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="c068shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity=".55"/>
+    </filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c068bg)"/>
+  <rect x="112" y="40" width="176" height="146" rx="18" fill="none" stroke="#a06bff" stroke-width="2.5" opacity=".7" filter="url(#c068glow)"/>
+  <!-- stars -->
+  <g fill="#ffd166">
+    <circle cx="30" cy="28" r="1.6"/><circle cx="366" cy="40" r="2"/><circle cx="342" cy="196" r="1.5"/><circle cx="60" cy="200" r="2"/><circle cx="200" cy="18" r="1.4"/><circle cx="96" cy="60" r="1.2"/>
+  </g>
+  <!-- speed trails -->
+  <path d="M10 150 L118 132 L118 160 Z" fill="url(#c068trail)"/>
+  <path d="M390 70 L286 84 L286 60 Z" fill="url(#c068trail2)"/>
+  <!-- left deck (cyan back) -->
+  <g filter="url(#c068shadow)" transform="translate(40 150) rotate(-10)">
+    <rect x="-24" y="-34" width="48" height="68" rx="6" fill="url(#c068cyan)"/>
+    <rect x="-19" y="-29" width="38" height="58" rx="4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2"/>
+    <path d="M0 -10 L8 0 L0 10 L-8 0 Z" fill="#fff" fill-opacity=".5"/>
+  </g>
+  <!-- right deck (pink back) -->
+  <g filter="url(#c068shadow)" transform="translate(360 72) rotate(10)">
+    <rect x="-24" y="-34" width="48" height="68" rx="6" fill="url(#c068pink)"/>
+    <rect x="-19" y="-29" width="38" height="58" rx="4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2"/>
+    <path d="M0 -10 L8 0 L0 10 L-8 0 Z" fill="#fff" fill-opacity=".5"/>
+  </g>
+  <!-- center pile left: spade card with 3 pips -->
+  <g filter="url(#c068shadow)" transform="translate(162 113) rotate(-5)">
+    <rect x="-37" y="-52" width="74" height="104" rx="8" fill="url(#c068face)" stroke="#53e0d8" stroke-width="2.5"/>
+    <g fill="#23233f">
+      <path d="M0 -38 C12 -27 6 -18 0 -23 C-6 -18 -12 -27 0 -38 Z M0 -25 L4 -16 L-4 -16 Z"/>
+      <path d="M0 -10 C12 1 6 10 0 5 C-6 10 -12 1 0 -10 Z M0 3 L4 12 L-4 12 Z"/>
+      <path d="M0 18 C12 29 6 38 0 33 C-6 38 -12 29 0 18 Z M0 31 L4 40 L-4 40 Z"/>
+    </g>
+  </g>
+  <!-- center pile right: heart card with 4 pips -->
+  <g filter="url(#c068shadow)" transform="translate(240 113) rotate(6)">
+    <rect x="-37" y="-52" width="74" height="104" rx="8" fill="url(#c068face)" stroke="#ff5fa2" stroke-width="2.5"/>
+    <g fill="#e3246a">
+      <path d="M-15 -18 C-29 -28 -20 -40 -15 -32 C-10 -40 -1 -28 -15 -18 Z"/>
+      <path d="M15 -18 C1 -28 10 -40 15 -32 C20 -40 29 -28 15 -18 Z"/>
+      <path d="M-15 32 C-29 22 -20 10 -15 18 C-10 10 -1 22 -15 32 Z"/>
+      <path d="M15 32 C1 22 10 10 15 18 C20 10 29 22 15 32 Z"/>
+    </g>
+  </g>
+  <!-- flying card from the left: spade with 4 pips, glowing -->
+  <g filter="url(#c068glow)" transform="translate(112 146) rotate(-24)">
+    <rect x="-27" y="-38" width="54" height="76" rx="6" fill="url(#c068face)" stroke="#ffd166" stroke-width="3"/>
+    <g fill="#23233f">
+      <path d="M-11 -24 C-2 -16 -7 -9 -11 -13 C-15 -9 -20 -16 -11 -24 Z"/>
+      <path d="M11 -24 C20 -16 15 -9 11 -13 C7 -9 2 -16 11 -24 Z"/>
+      <path d="M-11 8 C-2 16 -7 23 -11 19 C-15 23 -20 16 -11 8 Z"/>
+      <path d="M11 8 C20 16 15 23 11 19 C7 23 2 16 11 8 Z"/>
+    </g>
+  </g>
+  <!-- flying card from the right: heart with 5 pips -->
+  <g filter="url(#c068shadow)" transform="translate(292 74) rotate(22)">
+    <rect x="-24" y="-34" width="48" height="68" rx="6" fill="url(#c068face)" stroke="#ff5fa2" stroke-width="2.5"/>
+    <g fill="#e3246a">
+      <path d="M-10 -10 C-19 -17 -13 -25 -10 -20 C-7 -25 -1 -17 -10 -10 Z"/>
+      <path d="M10 -10 C1 -17 7 -25 10 -20 C13 -25 19 -17 10 -10 Z"/>
+      <path d="M0 7 C-9 0 -3 -8 0 -3 C3 -8 9 0 0 7 Z"/>
+      <path d="M-10 24 C-19 17 -13 9 -10 14 C-7 9 -1 17 -10 24 Z"/>
+      <path d="M10 24 C1 17 7 9 10 14 C13 9 19 17 10 24 Z"/>
+    </g>
+  </g>
+  <!-- sparks -->
+  <g fill="#ffd166" filter="url(#c068glow)">
+    <path d="M200 44 L203 54 L213 57 L203 60 L200 70 L197 60 L187 57 L197 54 Z"/>
+    <path d="M136 92 L138 98 L144 100 L138 102 L136 108 L134 102 L128 100 L134 98 Z"/>
+    <path d="M270 168 L272 174 L278 176 L272 178 L270 184 L268 178 L262 176 L268 174 Z"/>
+  </g>
+  <g fill="#53e0d8"><rect x="84" y="112" width="5" height="5"/><rect x="72" y="176" width="4" height="4"/></g>
+  <g fill="#ff5fa2"><rect x="318" y="118" width="5" height="5"/><rect x="326" y="34" width="4" height="4"/></g>
+</svg>

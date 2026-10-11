@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>はやだしスピード｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:10px 10px 30px; overflow-x:hidden;
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; touch-action:manipulation;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;padding:5px 14px;min-width:48px;min-height:32px;cursor:pointer;font-family:inherit}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.5);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:2px solid var(--edge);border-radius:8px;touch-action:none}
+  .row{display:flex;gap:6px;margin-top:6px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:10px 0;min-height:42px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(19,19,34,.965);
+    border-radius:8px;text-align:center;padding:12px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:28px;letter-spacing:2px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6);line-height:1.25}
+  #overlay .big.win{color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6)}
+  #overlay .big.lose{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.8}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note i{font-style:normal;color:var(--cyan)}
+  #overlay .note em{font-style:normal;color:var(--pink)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:8px;padding:11px 16px;min-height:44px;cursor:pointer;letter-spacing:1px}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .modes button.ghost{background:none;border:1px solid var(--edge);color:var(--ink)}
+  .levels{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .levels span{font-size:12px;color:var(--sub)}
+  .levels button{font-family:inherit;font-size:13px;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:8px 13px;min-height:40px;cursor:pointer}
+  .levels button.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.08)}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.7}
+  .help{width:min(480px,100%);color:var(--sub);font-size:13px;margin-top:10px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover{border-color:var(--gold);color:var(--gold)}
+    .modes button:hover{filter:brightness(1.12)}
+    .levels button:hover{border-color:var(--gold)}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="まんなかのカードの1つ上か1つ下の数を、CPUより早く出すトランプ対戦。だんだん速くなる8ステージの「かちぬき」と、よわい・ふつう・つよいをえらべる「フリー」の2モード。おてつき、れんぞく出し、勝敗とベストタイムの記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/068-speed-cards/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"はやだしスピード","description":"まんなかのカードの1つ上か1つ下の数を、CPUより早く出すトランプ対戦。だんだん速くなる8ステージの「かちぬき」と、よわい・ふつう・つよいをえらべる「フリー」の2モード。おてつき、れんぞく出し、勝敗とベストタイムの記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/068-speed-cards/index.html","inLanguage":"ja","genre":"CARD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="068"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>はやだしスピード</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / CPU対戦</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="960" height="1144"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">はやだし<br>スピード</div>
+    <div class="note" id="ovNote"></div>
+    <div class="modes">
+      <button id="btnA">かちぬきで あそぶ</button>
+      <button id="btnB" class="alt">フリーで あそぶ</button>
+    </div>
+    <div class="levels" id="levels">
+      <span>フリーのあいて</span>
+      <button data-l="1">よわい</button><button data-l="2" class="on">ふつう</button><button data-l="3">つよい</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="menuBtn">メニューに もどる</button>
+</div>
+
+<div class="help">
+  <p><b>ルール</b>：まんなかの 2まいの どちらかに、<b>1つ上か 1つ下の かず</b>の カードを だせるよ。じゅんばんは なし！ あいてより 早く だして、さきに カードが ぜんぶ なくなったら かち。</p>
+  <p><b>つながり</b>：A（1）・2・3 … 10・J（11）・Q（12）・K（13）。<b>K と A も つながる</b>よ。ふたりとも だせない ときは「せーの！」で 1まいずつ めくるよ。</p>
+  <p><b>おてつき</b>：だせない カードを えらぶと すこしの あいだ うごけない。止まっている間に タップすると さいしょから まちなおし。<b>2回 つづけて</b> おてつきすると、あいての カードを <b>1まい もらって</b>しまうよ（正しく だせたら もとどおり）。<b>よく見て だす</b>のが いちばん はやい！ つづけて だすと「れんぞく」が のびるよ。</p>
+  <p>📱 だしたい カードを タップ（2まい どちらにも だせる時は、だしたい ほうへ ドラッグ）<br>⌨️ 1・2・3・4 キー（または A・S・D・F）で だす ／ ←→でえらんで Enter</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = 480, H = 572, SC = 2;
+  const KEY = 'ludot_speed-cards_';
+  const MUTE_KEY = KEY + 'mute', STAT_KEY = KEY + 'stats', LADDER_KEY = KEY + 'ladder', COMBO_KEY = KEY + 'combo';
+  const FONT = 'DotGothic16, "Hiragino Kaku Gothic ProN", monospace';
+  const RANK = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const LEVEL_NAME = ['', 'よわい', 'ふつう', 'つよい'];
+  // iv = CPUが 1まい だすまでの めやす秒, n = ひとりの まいすう, smart = かしこく えらぶ, hint = ヒントが 光るまでの秒
+  const FREE = [null,
+    { iv: 3.2, n: 26, smart: false, hint: 2.5, strict: false },
+    { iv: 1.65, n: 26, smart: true, hint: 6, strict: true },
+    { iv: 1.1, n: 26, smart: true, hint: 12, strict: true }];
+  const LADDER = [
+    { iv: 3.4, n: 12, smart: false, hint: 1.5, strict: false },
+    { iv: 3.0, n: 14, smart: false, hint: 3, strict: false },
+    { iv: 2.2, n: 16, smart: false, hint: 4.5, strict: true },
+    { iv: 1.85, n: 18, smart: true, hint: 6, strict: true },
+    { iv: 1.55, n: 20, smart: true, hint: 8, strict: true },
+    { iv: 1.3, n: 22, smart: true, hint: 10, strict: true },
+    { iv: 1.1, n: 24, smart: true, hint: 12, strict: true },
+    { iv: 0.95, n: 26, smart: true, hint: 15, strict: true }];
+  const STAGES = LADDER.length, HEARTS = 2;
+  // おてつき：やさしい あいて（strict:false）は 1.0→1.5→2.0秒、それ以外は 1.2→1.7→2.2→2.7秒と、つづけて まちがえると のびる（正しく出すと もどる）。
+  // うごけない間に さらに タップすると 止まる時間が さいしょから。
+  // 2回つづけて おてつきすると、あいての カードを 1まい もらう（山から。山が なければ 手札から。さいごの 1まいは とらない）。
+  // 見ないで 順にタップすると カードが ふえて 勝てない。よく見て出す子は ほとんど かからない。
+  // やさしい あいては、さきをこされた すぐあと（0.9秒）の タップを「おしい」で 見のがす（ふつう以上は 0.4秒）。
+  // おてつきが 10回以上の かちは ベストタイムに のせない。
+  const SOFT_STEP = 0.5, SOFT_MAX = 2.0, PENALTY_FROM = 2, BEST_MISS_MAX = 10;
+  const FREEZE_SOFT = 1.0, FREEZE_STEP = 0.5, FREEZE_MAX = 2.7, FREEZE_GRACE = 0.2, NUDGE_TIME = 6, STALL_TIME = 12, STALL_FAST = 5;
+  const READY_TIME = 1.15, FREEZE_TIME = 1.2, LATE_GRACE = 0.4, LATE_SOFT = 0.9, COMBO_GAP = 1.6, FLY_DUR = 0.17;
+
+  // ---- geometry (logical 480 x 572) ------------------------------------------
+  const PW = 84, PY = 372, PX0 = 12, PGAP = 8;          // player hand
+  const CW = 60, CY = 40, CX0 = 192, CGAP = 10;          // cpu hand
+  const LW = 104, LY = 160, LX = [130, 246];             // center piles
+  const RATIO = 1.405;
+  const PH = PW * RATIO, CH = CW * RATIO, LH = LW * RATIO;
+  const slotC = (who, i) => who === 0
+    ? { x: PX0 + i * (PW + PGAP) + PW / 2, y: PY + PH / 2, w: PW }
+    : { x: CX0 + i * (CW + CGAP) + CW / 2, y: CY + CH / 2, w: CW };
+  const deckC = who => who === 0 ? { x: 384 + PW / 2, y: PY + PH / 2, w: PW } : { x: 18 + CW / 2, y: CY + CH / 2, w: CW };
+  const pileC = i => ({ x: LX[i] + LW / 2, y: LY + LH / 2, w: LW });
+
+  // ---- random (seedable for tests) -------------------------------------------
+  let rnd = Math.random;
+  function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // ---- sound -----------------------------------------------------------------
+  let muted = false, silent = false, touched = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() {
+    touched = true;
+    if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (ac && ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted || silent || !touched || !ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(); const t = ac.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    play(combo) { const f = 520 * Math.pow(1.122, Math.min(combo - 1, 10)); tone('triangle', f, f * 1.5, 0.09, 0.09); tone('square', f * 2, f * 2, 0.04, 0.025, 0.03); },
+    cpu() { tone('square', 230, 170, 0.08, 0.04); },
+    bad() { tone('sawtooth', 190, 90, 0.22, 0.07); },
+    late() { tone('triangle', 400, 300, 0.1, 0.05); },
+    pen() { tone('square', 330, 220, 0.12, 0.05, 0.12); tone('square', 220, 147, 0.2, 0.05, 0.26); },
+    ready() { tone('triangle', 392, 392, 0.16, 0.07); tone('triangle', 392, 392, 0.16, 0.07, 0.38); },
+    flip() { tone('triangle', 784, 784, 0.2, 0.08); tone('square', 1175, 1175, 0.12, 0.03, 0.04); },
+    deal(i) { tone('square', 600 + i * 60, 500 + i * 60, 0.04, 0.025, i * 0.07); },
+    combo(n) { [0, 4, 7].forEach((s, i) => tone('square', 660 * Math.pow(1.0595, s + n), 660 * Math.pow(1.0595, s + n), 0.08, 0.04, i * 0.05)); },
+    win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.07, 0.15 + i * 0.1)); },
+    lose() { tone('sawtooth', 300, 80, 0.5, 0.07, 0.15); },
+    draw() { tone('triangle', 440, 440, 0.15, 0.06, 0.1); tone('triangle', 440, 440, 0.15, 0.06, 0.3); },
+    ui() { tone('square', 700, 950, 0.05, 0.03); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state -----------------------------------------------------------------
+  const overlay = document.getElementById('overlay');
+  const ovBig = document.getElementById('ovBig'), ovNote = document.getElementById('ovNote'), ovStats = document.getElementById('ovStats');
+  const btnA = document.getElementById('btnA'), btnB = document.getElementById('btnB'), levelsEl = document.getElementById('levels');
+  let phase = 'title', sub = 'ready', mode = 'ladder', level = 2, stage = 1, hearts = HEARTS, cfg = LADDER[0];
+  const mkP = () => ({ deck: [], hand: [null, null, null, null], freeze: 0, freezeMax: 0, combo: 0, lastPlay: -9, total: 0 });
+  let P = [mkP(), mkP()];
+  let piles = [null, null], pilePrev = [null, null], pileTilt = [0, 0], pileBump = [0, 0];
+  let clock = 0, readyT = 0, stuckT = 0, hintT = 0, cpuT = 0, endT = 0, animT = 0, flipCount = 0;
+  let penalties = 0, missStreak = 0, standT = 0, standMiss = 0, frozenTaps = 0, freezeMsg = '', forcedFlips = 0, mashP = 0, mashT = 0, mashI = 0, mashJ = 0, mashR = false, waitP = 0, waitT = 0, kid = null, kidT = -1, kidSlot = 0, glow = null, glowT = -1;
+  let winner = -2, misses = 0, maxCombo = 0, resultShown = false, lastResult = null;
+  let autoCpu = true, botP = 0, botT = 0, hold = false, paused = false, illegal = 0;
+  let flies = [], gifts = [], pops = [], particles = [], slotAnim = [[null, null, null, null], [null, null, null, null]];
+  let cursor = 0, kb = false, msg = '', msgT = 0, msgCol = '#ffd166';
+  const ptrs = new Map(); let dragId = -1;
+  let ovA = null, ovB = null;
+  let stats = { 1: { w: 0, l: 0, d: 0, best: 0 }, 2: { w: 0, l: 0, d: 0, best: 0 }, 3: { w: 0, l: 0, d: 0, best: 0 } };
+  let ladder = { best: 0, clears: 0 }, bestCombo = 0;
+  try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) for (const k of [1, 2, 3]) if (s[k]) stats[k] = Object.assign(stats[k], s[k]); } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem(LADDER_KEY) || 'null'); if (s) ladder = Object.assign(ladder, s); } catch (e) {}
+  try { bestCombo = parseInt(localStorage.getItem(COMBO_KEY) || '0', 10) || 0; } catch (e) {}
+  function save() {
+    try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); localStorage.setItem(LADDER_KEY, JSON.stringify(ladder)); localStorage.setItem(COMBO_KEY, String(bestCombo)); } catch (e) {}
+  }
+  const hoverCapable = (() => { try { return window.matchMedia('(hover:hover)').matches; } catch (e) { return false; } })();
+
+  // ---- rules -----------------------------------------------------------------
+  function fits(a, b) { const d = Math.abs(a - b); return d === 1 || d === 12; }
+  const count = who => P[who].deck.length + P[who].hand.filter(Boolean).length;
+  function legalMoves(who) {
+    const out = [];
+    for (let i = 0; i < 4; i++) { const c = P[who].hand[i]; if (!c) continue; for (let p = 0; p < 2; p++) if (piles[p] && fits(c.r, piles[p].r)) out.push({ slot: i, pile: p }); }
+    return out;
+  }
+  const anyLegal = who => legalMoves(who).length > 0;
+  // その手のあとに じぶんが つづけて だせる数 − あいてが だせる数
+  function scoreMove(who, m) {
+    const c = P[who].hand[m.slot], ps = [piles[0].r, piles[1].r]; ps[m.pile] = c.r;
+    let mine = 0, theirs = 0;
+    for (let i = 0; i < 4; i++) {
+      const a = P[who].hand[i]; if (a && i !== m.slot && (fits(a.r, ps[0]) || fits(a.r, ps[1]))) mine++;
+      const b = P[1 - who].hand[i]; if (b && (fits(b.r, ps[0]) || fits(b.r, ps[1]))) theirs++;
+    }
+    return { mine, theirs };
+  }
+  function pick(who, smart) {
+    const ms = legalMoves(who); if (!ms.length) return null;
+    if (!smart) return ms[Math.floor(rnd() * ms.length)];
+    let best = null, bv = -99;
+    for (const m of ms) { const s = scoreMove(who, m); const v = s.mine * 2 - s.theirs + rnd() * 0.5; if (v > bv) { bv = v; best = m; } }
+    return best;
+  }
+  function autoPile(slot) {           // タップだけで だす時：あとが つづく ほうへ
+    const c = P[0].hand[slot]; const cand = [0, 1].filter(p => piles[p] && fits(c.r, piles[p].r));
+    if (cand.length < 2) return cand.length ? cand[0] : -1;
+    const a = scoreMove(0, { slot, pile: 0 }).mine, b = scoreMove(0, { slot, pile: 1 }).mine;
+    return b > a ? 1 : 0;
+  }
+
+  // ---- game flow -------------------------------------------------------------
+  function buildDeck(who, n) {
+    const suits = who === 0 ? [2, 3] : [0, 1], d = [];
+    for (const s of suits) for (let r = 1; r <= 13; r++) d.push({ r, s });
+    return shuffle(d).slice(0, n);
+  }
+  function newRound() {
+    cfg = mode === 'ladder' ? LADDER[stage - 1] : FREE[level];
+    P = [mkP(), mkP()];
+    for (const who of [0, 1]) {
+      P[who].deck = buildDeck(who, cfg.n); P[who].total = cfg.n;
+      for (let i = 0; i < 4; i++) { P[who].hand[i] = P[who].deck.pop(); slotAnim[who][i] = { t: -0.15 - i * 0.07 - who * 0.03, dur: 0.2 }; }
+    }
+    for (let i = 0; i < 4; i++) SFX.deal(i);
+    piles = [null, null]; pilePrev = [null, null]; pileTilt = [0, 0]; pileBump = [0, 0];
+    flies = []; gifts = []; pops = []; particles = []; ptrs.clear(); dragId = -1;
+    clock = 0; stuckT = 0; hintT = 0; cpuT = cfg.iv; endT = 0; flipCount = 0; botT = botP;
+    winner = -2; misses = 0; maxCombo = 0; resultShown = false; cursor = 0; kb = false; msg = ''; msgT = 0;
+    missStreak = 0; penalties = 0; standT = 0; standMiss = 0; frozenTaps = 0; forcedFlips = 0; mashT = mashP; mashI = 0; waitT = waitP; kidT = -1; glowT = -1;
+    phase = 'play'; sub = 'ready'; readyT = 1.5;
+    overlay.classList.remove('show');
+  }
+  function startLadder(s) { mode = 'ladder'; stage = s || 1; hearts = HEARTS; newRound(); }
+  function startFree(lv) { mode = 'free'; if (lv) setLevel(lv); newRound(); }
+  function setLevel(lv) { level = lv; document.querySelectorAll('#levels button').forEach(x => x.classList.toggle('on', +x.dataset.l === lv)); renderStats(); }
+  function say(text, col, dur) { msg = text; msgCol = col || '#ffd166'; msgT = dur || 1.2; }
+  function burst(x, y, col, n, sp0) { for (let i = 0; i < n; i++) { const a = rnd() * Math.PI * 2, sp = sp0 * 0.4 + rnd() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30, life: 0.35 + rnd() * 0.45, c: col, s: 3 + rnd() * 3 }); } }
+  function pop(x, y, text, color, size) { pops.push({ x, y, text, t: 0, color, size: size || 18 }); }
+
+  function putOnPile(who, card, pile, from) {
+    const under = piles[pile];
+    pilePrev[pile] = { card: under, t: clock };
+    piles[pile] = card;
+    flies.push({ card, who, pile, under, from, t: 0, dur: FLY_DUR, rot0: (rnd() - 0.5) * 0.5, rot1: (rnd() - 0.5) * 0.16 });
+  }
+  function play(who, slot, pile) {
+    if (phase !== 'play' || sub !== 'live') return false;
+    const c = P[who].hand[slot];
+    if (!c || !piles[pile] || !fits(c.r, piles[pile].r)) { illegal++; return false; }
+    const me = P[who];
+    putOnPile(who, c, pile, slotC(who, slot));
+    me.hand[slot] = null;
+    if (me.deck.length) { me.hand[slot] = me.deck.pop(); slotAnim[who][slot] = { t: -0.07, dur: 0.16 }; }
+    me.combo = (clock - me.lastPlay < COMBO_GAP) ? me.combo + 1 : 1; me.lastPlay = clock;
+    stuckT = 0; standT = 0; standMiss = 0;
+    if (who === 0) {
+      hintT = 0; missStreak = 0; maxCombo = Math.max(maxCombo, me.combo);
+      SFX.play(me.combo);
+      if (me.combo >= 3) { const pc = pileC(pile); pop(pc.x, pc.y - LH / 2 - 6, 'れんぞく ×' + me.combo, '#ffd166', 17 + Math.min(me.combo, 6)); if (me.combo % 3 === 0) SFX.combo(me.combo / 3); }
+      // 場が かわると CPUは 見なおすので すこし おくれる（早く だすほど 有利）
+      cpuT = Math.min(cfg.iv, cpuT + cfg.iv * 0.35);
+    } else SFX.cpu();
+    if (count(who) === 0) finish(who);
+    return true;
+  }
+  function tryPlay(slot, pile) {         // にんげんの 入力
+    if (phase !== 'play') return 'off';
+    if (sub !== 'live') return 'wait';
+    const me = P[0], c = me.hand[slot];
+    if (!c) return 'empty';
+    if (me.freeze > 0) {
+      // うごけない間の タップ：止まる時間が さいしょから（おした直後の 0.2秒は 見のがす）
+      if (me.freezeMax - me.freeze > FREEZE_GRACE) { me.freeze = me.freezeMax; frozenTaps++; freezeMsg = '✋ タップしないで まってね'; SFX.late(); }
+      return 'frozen';
+    }
+    const target = (pile === 0 || pile === 1) ? ((piles[pile] && fits(c.r, piles[pile].r)) ? pile : -1) : autoPile(slot);
+    if (target >= 0) { play(0, slot, target); return 'ok'; }
+    const sc = slotC(0, slot);
+    // ほんの少し前まで だせた（あいてに 先をこされた）なら おてつきに しない
+    const cand = (pile === 0 || pile === 1) ? [pile] : [0, 1];
+    if (cand.some(p => pilePrev[p] && pilePrev[p].card && clock - pilePrev[p].t < (cfg.strict ? LATE_GRACE : LATE_SOFT) && fits(c.r, pilePrev[p].card.r))) {
+      pop(sc.x, sc.y - PH / 2 - 4, 'おしい！', '#53e0d8', 17); SFX.late(); me.combo = 0; return 'late';
+    }
+    me.freezeMax = me.freeze = cfg.strict ? Math.min(FREEZE_MAX, FREEZE_TIME + FREEZE_STEP * missStreak) : Math.min(SOFT_MAX, FREEZE_SOFT + SOFT_STEP * missStreak);
+    missStreak++; standMiss++; me.combo = 0; misses++; freezeMsg = '✋ おてつき！ よく見てね'; SFX.bad();
+    if (missStreak >= PENALTY_FROM && penalty()) freezeMsg = '✋ つづけて おてつき！ ＋1まい';
+    return 'miss';
+  }
+  // つづけて おてつき：あいての カードを 1まい もらう（山の いちばん上。山が なければ 手札から。あいての さいごの 1まいは とらない）
+  function penalty() {
+    let card = P[1].deck.pop(), from = deckC(1);
+    if (!card) {
+      if (count(1) < 2) return false;
+      const j = P[1].hand.findIndex(Boolean); card = P[1].hand[j]; P[1].hand[j] = null; from = slotC(1, j);
+    }
+    P[0].deck.unshift(card); penalties++;             // → じぶんの山の いちばん下
+    for (let i = 0; i < 4; i++) if (!P[0].hand[i] && P[0].deck.length) { P[0].hand[i] = P[0].deck.pop(); slotAnim[0][i] = { t: -0.32, dur: 0.16 }; }
+    gifts.push({ t: 0, dur: 0.38, from });
+    SFX.pen();
+    return true;
+  }
+  function doFlip() {
+    for (const who of [0, 1]) {
+      const me = P[who]; let card, from;
+      if (me.deck.length) { card = me.deck.pop(); from = deckC(who); }
+      else { const i = me.hand.findIndex(Boolean); if (i < 0) continue; card = me.hand[i]; me.hand[i] = null; from = slotC(who, i); }
+      putOnPile(who, card, who === 0 ? 1 : 0, from);
+      me.combo = 0;
+    }
+    pilePrev = [null, null];           // めくった あとは「おしい」を 出さない
+    flipCount++; SFX.flip();
+    sub = 'live'; stuckT = 0; hintT = 0; standT = 0; standMiss = 0; cpuT = cfg.iv * (0.85 + rnd() * 0.3); botT = botP; kidT = -1;
+    const a = count(0), b = count(1);
+    if (a === 0 && b === 0) finish(-1); else if (a === 0) finish(0); else if (b === 0) finish(1);
+  }
+  function finish(w) {
+    if (phase !== 'play') return;
+    winner = w; phase = 'over'; endT = 1.5; resultShown = false; ptrs.clear(); dragId = -1;
+    const time = Math.round(clock * 10) / 10;
+    const r = { mode, level, stage, winner: w, time, misses, maxCombo, newBest: false, newCombo: false, heartsLeft: hearts, cleared: false, allClear: false, gameOver: false };
+    if (maxCombo > bestCombo) { bestCombo = maxCombo; r.newCombo = maxCombo >= 2; }
+    if (mode === 'free') {
+      const s = stats[level];
+      if (w === 0) { s.w++; if (misses >= BEST_MISS_MAX) r.noBest = true; else if (!s.best || time < s.best) { s.best = time; r.newBest = true; } } else if (w === 1) s.l++; else s.d++;
+    } else if (w === 0) {
+      r.cleared = true; if (stage > ladder.best) { ladder.best = stage; r.newBest = true; }
+      if (stage >= STAGES) { r.allClear = true; ladder.clears++; }
+    } else if (w === 1) { hearts--; r.heartsLeft = hearts; if (hearts <= 0) r.gameOver = true; }
+    lastResult = r; save();
+    if (w === 0) { SFX.win(); say('やったね！', '#53e0d8', 3); } else if (w === 1) { SFX.lose(); say('ざんねん…', '#ff5fa2', 3); } else { SFX.draw(); say('ひきわけ！', '#ffd166', 3); }
+  }
+  const fmtTime = t => { const s = Math.floor(t); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  function showResult() {
+    resultShown = true; const r = lastResult; if (!r) return;
+    let big, cls = 'big', note = '', a, b = ['メニューへ', goMenu];
+    const line = 'タイム <b>' + fmtTime(r.time) + '</b>　れんぞく <b>' + r.maxCombo + '</b>' + (r.newCombo ? '（しんきろく！）' : '') + '　おてつき <b>' + r.misses + '</b>';
+    if (r.mode === 'free') {
+      const s = stats[r.level];
+      if (r.winner === 0) { big = 'あなたの かち！'; cls = 'big win'; } else if (r.winner === 1) { big = 'CPU の かち…'; cls = 'big lose'; } else big = 'ひきわけ';
+      note = line + (r.newBest ? '<br><b>★ ベストタイム こうしん！</b>' : r.noBest ? '<br>おてつきが ' + BEST_MISS_MAX + '回より 少ないと ベストタイムに のるよ' : '') + '<br>' + LEVEL_NAME[r.level] + ' との せいせき：<i>' + s.w + '勝</i> <em>' + s.l + '敗</em> ' + s.d + '分';
+      a = ['もういちど あそぶ', () => startFree()];
+    } else if (r.allClear) {
+      big = '🏆 ぜんぶ<br>かちぬき！'; cls = 'big win';
+      note = line + '<br>' + STAGES + 'ステージ ぜんぶ クリア！ すごい！<br>かちぬき たっせい：<b>' + ladder.clears + '回</b>';
+      a = ['さいしょから あそぶ', () => startLadder(1)];
+    } else if (r.cleared) {
+      big = 'ステージ' + r.stage + ' クリア！'; cls = 'big win';
+      note = line + (r.newBest ? '<br><b>★ ベスト こうしん！</b>' : '') + '<br>つぎの あいては もっと <b>はやい</b>よ。カードも ふえるよ';
+      a = ['つぎの ステージへ', () => { stage = r.stage + 1; newRound(); }];
+    } else if (r.winner === -1) {
+      big = 'ひきわけ'; note = line + '<br>おなじ ステージを もういちど！';
+      a = ['もういちど あそぶ', () => newRound()];
+    } else if (r.gameOver) {
+      big = 'チャレンジ<br>おしまい'; cls = 'big lose';
+      note = line + '<br>ステージ<b>' + r.stage + '</b> まで すすんだよ（ベスト：' + (ladder.best ? 'ステージ' + ladder.best + ' クリア' : 'まだ') + '）';
+      a = ['さいしょから あそぶ', () => startLadder(1)];
+    } else {
+      big = 'まけちゃった…'; cls = 'big lose';
+      note = line + '<br>のこり <em>' + '❤'.repeat(r.heartsLeft) + '</em>　おなじ ステージに もういちど ちょうせん！';
+      a = ['もういちど あそぶ', () => newRound()];
+    }
+    ovBig.innerHTML = big; ovBig.className = cls; ovNote.innerHTML = note;
+    btnA.textContent = a[0]; ovA = a[1]; btnB.textContent = b[0]; ovB = b[1]; btnB.className = 'ghost';
+    levelsEl.style.display = 'none'; renderStats(); overlay.classList.add('show');
+  }
+  function renderStats() {
+    const s = stats[level];
+    ovStats.innerHTML = 'かちぬき ベスト：' + (ladder.best ? 'ステージ' + ladder.best + ' クリア' : 'まだ') + (ladder.clears ? '（ぜんぶクリア ' + ladder.clears + '回）' : '') +
+      '<br>フリー ' + LEVEL_NAME[level] + '：' + s.w + '勝 ' + s.l + '敗' + (s.best ? '　ベスト ' + fmtTime(s.best) : '') + '　れんぞく さいこう ' + bestCombo;
+  }
+  function goMenu() {
+    phase = 'title'; ptrs.clear(); dragId = -1; flies = []; gifts = []; pops = [];
+    ovBig.innerHTML = 'はやだし<br>スピード'; ovBig.className = 'big';
+    ovNote.innerHTML = 'まんなかの カードの <b>1つ上か 1つ下</b>の かずを だそう<br>じゅんばんは なし！ <b>さきに ぜんぶ だしたら かち</b><br>K と A も つながるよ（Q → K → A → 2）';
+    btnA.textContent = 'かちぬきで あそぶ'; ovA = () => startLadder(1);
+    btnB.textContent = 'フリーで あそぶ'; ovB = () => startFree(); btnB.className = 'alt';
+    levelsEl.style.display = ''; renderStats(); overlay.classList.add('show');
+  }
+
+  // ---- drawing ---------------------------------------------------------------
+  function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  function suitPath(s, z) {
+    ctx.beginPath();
+    if (s === 0) { ctx.moveTo(0, z * 0.9); ctx.bezierCurveTo(-z * 1.5, -z * 0.1, -z * 0.6, -z * 1.15, 0, -z * 0.35); ctx.bezierCurveTo(z * 0.6, -z * 1.15, z * 1.5, -z * 0.1, 0, z * 0.9); }
+    else if (s === 1) { ctx.moveTo(0, -z); ctx.lineTo(z * 0.78, 0); ctx.lineTo(0, z); ctx.lineTo(-z * 0.78, 0); ctx.closePath(); }
+    else if (s === 2) {
+      ctx.moveTo(0, -z); ctx.bezierCurveTo(z * 1.5, 0, z * 0.65, z * 1.0, 0, z * 0.35); ctx.bezierCurveTo(-z * 0.65, z * 1.0, -z * 1.5, 0, 0, -z);
+      ctx.moveTo(0, z * 0.2); ctx.lineTo(z * 0.38, z); ctx.lineTo(-z * 0.38, z); ctx.closePath();
+    } else {
+      ctx.arc(0, -z * 0.45, z * 0.44, 0, Math.PI * 2); ctx.moveTo(-z * 0.04, z * 0.15); ctx.arc(-z * 0.48, z * 0.15, z * 0.44, 0, Math.PI * 2);
+      ctx.moveTo(z * 0.92, z * 0.15); ctx.arc(z * 0.48, z * 0.15, z * 0.44, 0, Math.PI * 2);
+      ctx.moveTo(0, z * 0.1); ctx.lineTo(z * 0.36, z); ctx.lineTo(-z * 0.36, z); ctx.closePath();
+    }
+  }
+  function drawCard(cx, cy, w, card, o) {
+    o = o || {}; const h = w * RATIO, r = w * 0.11;
+    ctx.save(); ctx.translate(cx, cy); if (o.rot) ctx.rotate(o.rot); if (o.scale) ctx.scale(o.scale, o.scale);
+    if (o.alpha != null) ctx.globalAlpha = o.alpha;
+    ctx.shadowColor = o.glow || 'rgba(0,0,0,.55)'; ctx.shadowBlur = o.glow ? 18 : 8; ctx.shadowOffsetY = o.glow ? 0 : 3;
+    if (o.back != null) {
+      const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
+      if (o.back === 0) { g.addColorStop(0, '#2aa8b8'); g.addColorStop(1, '#1b4f86'); } else { g.addColorStop(0, '#d8478f'); g.addColorStop(1, '#6a2f9c'); }
+      ctx.fillStyle = g; rr(-w / 2, -h / 2, w, h, r); ctx.fill();
+      ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+      ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = Math.max(1.5, w * 0.03); rr(-w / 2 + w * 0.07, -h / 2 + w * 0.07, w * 0.86, h - w * 0.14, r * 0.6); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,.22)';
+      for (let iy = -1; iy <= 1; iy++) for (let ix = -1; ix <= 1; ix += 2) { ctx.save(); ctx.translate(ix * w * 0.19, iy * h * 0.25); suitPath(1, w * 0.1); ctx.fill(); ctx.restore(); }
+      ctx.save(); suitPath(1, w * 0.15); ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fill(); ctx.restore();
+      ctx.restore(); return;
+    }
+    const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2); g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#dedaf3');
+    ctx.fillStyle = g; rr(-w / 2, -h / 2, w, h, r); ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    const red = card.s < 2, col = red ? '#e3246a' : '#23233f';
+    ctx.strokeStyle = o.edge || (red ? 'rgba(255,95,162,.9)' : 'rgba(83,224,216,.95)'); ctx.lineWidth = o.edge ? 4 : Math.max(2, w * 0.03); rr(-w / 2 + 1, -h / 2 + 1, w - 2, h - 2, r); ctx.stroke();
+    ctx.fillStyle = col;
+    const z = w * 0.105;
+    ctx.save(); ctx.translate(-w / 2 + w * 0.18, -h / 2 + w * 0.2); suitPath(card.s, z); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(w / 2 - w * 0.18, h / 2 - w * 0.2); ctx.rotate(Math.PI); suitPath(card.s, z); ctx.fill(); ctx.restore();
+    const face = card.r === 1 || card.r > 10, showSub = face && w >= 80;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = Math.round(w * (card.r === 10 ? 0.5 : 0.6)) + 'px ' + FONT;
+    ctx.fillText(RANK[card.r], 0, showSub ? -h * 0.03 : h * 0.02);
+    if (showSub) { ctx.font = Math.round(w * 0.2) + 'px ' + FONT; ctx.fillStyle = red ? '#a02c66' : '#4d4a7a'; ctx.fillText('＝' + card.r, -w * 0.06, h * 0.31); }
+    if (o.dim) { ctx.fillStyle = 'rgba(19,19,34,' + o.dim + ')'; rr(-w / 2, -h / 2, w, h, r); ctx.fill(); }
+    ctx.restore(); ctx.textBaseline = 'alphabetic';
+  }
+  function drawEmptySlot(c, col) {
+    const h = c.w * RATIO; ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash([6, 6]); rr(c.x - c.w / 2, c.y - h / 2, c.w, h, c.w * 0.11); ctx.stroke(); ctx.restore();
+  }
+  function drawDeck(who) {
+    const c = deckC(who), n = P[who].deck.length, h = c.w * RATIO;
+    if (phase === 'title') { drawCard(c.x, c.y, c.w, null, { back: who }); return; }
+    if (!n) { drawEmptySlot(c, who === 0 ? 'rgba(83,224,216,.3)' : 'rgba(255,95,162,.3)'); }
+    else {
+      const layers = Math.min(3, Math.ceil(n / 5));
+      const pulse = sub === 'ready' && phase === 'play' ? 1 + Math.sin(animT * 14) * 0.03 : 1;
+      for (let i = layers - 1; i >= 0; i--) drawCard(c.x - i * 2, c.y - i * 2.5, c.w, null, { back: who, scale: pulse });
+    }
+    ctx.textAlign = 'center'; ctx.font = (who === 0 ? 15 : 14) + 'px ' + FONT;
+    ctx.fillStyle = n ? '#eeecfa' : '#9d99c0';
+    if (who === 0) ctx.fillText('山 ' + n, c.x, c.y + h / 2 + 18); else ctx.fillText('山 ' + n, c.x, c.y + h / 2 + 17);
+  }
+  function drawBar(who, y) {
+    const me = P[who], col = who === 0 ? '#53e0d8' : '#ff5fa2', left = phase === 'title' ? 0 : count(who), tot = me.total || 1;
+    ctx.textAlign = 'left'; ctx.font = '15px ' + FONT; ctx.fillStyle = col;
+    const name = who === 0 ? 'あなた' : (mode === 'ladder' ? 'CPU ステージ' + stage : 'CPU ' + LEVEL_NAME[level]);
+    ctx.fillText(name, 14, y + 15);
+    const nw = ctx.measureText(name).width, bx = 14 + nw + 12, bw = 480 - bx - 118;
+    ctx.fillStyle = '#23233f'; rr(bx, y + 4, bw, 12, 6); ctx.fill();
+    const k = phase === 'title' ? 0 : Math.max(0, Math.min(1, 1 - left / tot));
+    if (k > 0) { ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 8; rr(bx, y + 4, Math.max(12, bw * k), 12, 6); ctx.fill(); ctx.shadowBlur = 0; }
+    ctx.textAlign = 'right'; ctx.fillStyle = '#eeecfa'; ctx.fillText('のこり ' + (phase === 'title' ? '-' : left) + 'まい', 466, y + 15);
+  }
+  function draw() {
+    ctx.setTransform(SC, 0, 0, SC, 0, 0); ctx.clearRect(0, 0, W, H);
+    // table
+    const tg = ctx.createRadialGradient(240, 233, 30, 240, 233, 300); tg.addColorStop(0, '#1f1f45'); tg.addColorStop(1, '#0e0e1c');
+    ctx.fillStyle = tg; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,95,162,.05)'; ctx.fillRect(0, 0, W, 146);
+    ctx.fillStyle = 'rgba(83,224,216,.05)'; ctx.fillRect(0, 356, W, H - 356);
+    ctx.strokeStyle = 'rgba(160,107,255,.35)'; ctx.lineWidth = 2; ctx.shadowColor = '#a06bff'; ctx.shadowBlur = 14;
+    rr(110, 146, 260, 174, 18); ctx.stroke(); ctx.shadowBlur = 0;
+
+    drawBar(1, 8); drawBar(0, 540);
+    const live = phase === 'play' && sub === 'live';
+    // cpu side
+    drawDeck(1);
+    ctx.font = '34px ' + FONT; ctx.textAlign = 'center';
+    const bob = live && anyLegal(1) ? Math.sin(animT * 9) * 2 : 0;
+    ctx.fillText(phase === 'over' ? (winner === 1 ? '😆' : winner === 0 ? '😵' : '🤖') : '🤖', 135, 92 + bob);
+    for (let i = 0; i < 4; i++) {
+      const c = slotC(1, i), card = P[1].hand[i];
+      if (phase === 'title') { drawCard(c.x, c.y, c.w, null, { back: 1 }); continue; }
+      if (!card) { drawEmptySlot(c, 'rgba(255,95,162,.22)'); continue; }
+      drawHandCard(1, i, card, c, {});
+    }
+    // piles
+    for (let p = 0; p < 2; p++) {
+      const c = pileC(p); const fl = flies.filter(f => f.pile === p);
+      const top = fl.length ? fl[0].under : piles[p];
+      if (phase === 'title') { drawCard(c.x, c.y, c.w, { r: p === 0 ? 7 : 12, s: p === 0 ? 2 : 0 }, { rot: p ? 0.05 : -0.05 }); continue; }
+      if (!top) drawEmptySlot(c, 'rgba(160,107,255,.5)');
+      else {
+        drawCard(c.x + 3, c.y + 3, c.w, top, { alpha: 0.35, rot: pileTilt[p] * 0.5 });
+        let glow = null;
+        if (dragId >= 0) { const d = ptrs.get(dragId); const dc = d && P[0].hand[d.slot]; if (dc && piles[p] && fits(dc.r, piles[p].r)) glow = '#ffd166'; }
+        drawCard(c.x, c.y, c.w, top, { rot: pileTilt[p], scale: 1 + pileBump[p] * 0.12, glow, edge: glow });
+      }
+    }
+    // side info
+    ctx.textAlign = 'center';
+    if (phase !== 'title') {
+      ctx.font = '15px ' + FONT;
+      if (mode === 'ladder') {
+        ctx.fillStyle = '#ffd166'; ctx.fillText('ステージ', 58, 196); ctx.font = '30px ' + FONT; ctx.fillText(stage + '/' + STAGES, 58, 230);
+        ctx.font = '18px ' + FONT; ctx.fillStyle = '#ff5fa2'; ctx.fillText('❤'.repeat(Math.max(0, hearts)) + '♡'.repeat(Math.max(0, HEARTS - hearts)), 58, 262);
+      } else {
+        ctx.fillStyle = '#ffd166'; ctx.fillText('フリー', 58, 200); ctx.font = '20px ' + FONT; ctx.fillText(LEVEL_NAME[level], 58, 230);
+      }
+      ctx.font = '15px ' + FONT; ctx.fillStyle = '#9d99c0'; ctx.fillText('タイム', 422, 196);
+      ctx.font = '24px ' + FONT; ctx.fillStyle = '#eeecfa'; ctx.fillText(fmtTime(clock), 422, 226);
+      const cb = P[0].combo, hot = cb >= 2 && clock - P[0].lastPlay < COMBO_GAP && phase === 'play';
+      ctx.font = '15px ' + FONT; ctx.fillStyle = hot ? '#ffd166' : '#9d99c0'; ctx.fillText('れんぞく', 422, 258);
+      ctx.font = (hot ? 26 : 22) + 'px ' + FONT; ctx.fillText('×' + (hot ? cb : 0), 422, 286);
+    }
+    // message line
+    let text = '', col = '#ffd166', size = 17;
+    if (phase === 'play' && sub === 'ready') { const k = readyT / READY_TIME; text = k > 0.5 ? 'せー…' : 'の！'; size = 30; if (flipCount === 0 && readyT > READY_TIME) text = 'よーい…'; }
+    else if (phase === 'play' && P[0].freeze > 0) {
+      text = freezeMsg; col = '#ff5fa2'; size = 18;
+      const k = P[0].freeze / (P[0].freezeMax || 1);
+      ctx.fillStyle = '#2c2c4d'; rr(150, 354, 180, 6, 3); ctx.fill(); ctx.fillStyle = '#ff5fa2'; rr(150, 354, Math.max(6, 180 * k), 6, 3); ctx.fill();
+    }
+    else if (msgT > 0) { text = msg; col = msgCol; size = phase === 'over' ? 28 : 17; }
+    else if (live && nudging()) { text = '👇 ひかっている カードを タップ！'; col = '#ffd166'; size = 19; }
+    else if (live && P[0].freeze <= 0) { text = anyLegal(0) ? '1つ上か 1つ下の かずを だそう！' : 'だせる カードが ないよ…'; col = '#9d99c0'; size = 15; }
+    if (text) { ctx.font = size + 'px ' + FONT; ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = size > 20 ? 14 : 0; ctx.fillText(text, 240, size > 20 ? 352 : 346); ctx.shadowBlur = 0; }
+    // player side
+    drawDeck(0);
+    const hinting = live && (hintT > cfg.hint || nudging()) && P[0].freeze <= 0;
+    for (let i = 0; i < 4; i++) {
+      const c = slotC(0, i), card = P[0].hand[i];
+      if (phase === 'title') { drawCard(c.x, c.y, c.w, null, { back: 0 }); continue; }
+      if (hoverCapable) { ctx.font = '14px ' + FONT; ctx.textAlign = 'center'; ctx.fillStyle = kb && cursor === i ? '#ffd166' : 'rgba(157,153,192,.8)'; ctx.fillText(String(i + 1), c.x, PY + PH + 17); }
+      if (!card) { drawEmptySlot(c, 'rgba(83,224,216,.22)'); continue; }
+      const d = dragId >= 0 ? ptrs.get(dragId) : null;
+      if (d && d.slot === i) continue;
+      const o = {};
+      if (P[0].freeze > 0) o.dim = 0.42;
+      else if (hinting && (fitsAny(card))) { o.glow = '#ffd166'; o.edge = '#ffd166'; o.scale = 1 + Math.sin(animT * 7) * 0.025; }
+      if (kb && cursor === i && live) { o.edge = '#ffd166'; }
+      drawHandCard(0, i, card, c, o);
+    }
+    // flying cards
+    for (const f of flies) {
+      const k = easeOut(Math.min(1, f.t / f.dur)), to = pileC(f.pile);
+      drawCard(f.from.x + (to.x - f.from.x) * k, f.from.y + (to.y - f.from.y) * k, f.from.w + (to.w - f.from.w) * k, f.card, { rot: f.rot0 + (f.rot1 - f.rot0) * k });
+    }
+    // おてつきで もらう カード（あいての山か 手札 → じぶんの山）
+    for (const g of gifts) {
+      const k = easeOut(Math.min(1, g.t / g.dur)), a = g.from, b = deckC(0);
+      drawCard(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k - Math.sin(k * Math.PI) * 30, a.w + (b.w - a.w) * k, null, { back: 1, rot: (1 - k) * 0.5, glow: '#ff5fa2' });
+    }
+    // dragged card
+    if (dragId >= 0) { const d = ptrs.get(dragId), card = d && P[0].hand[d.slot]; if (card) drawCard(d.x, d.y - 20, PW * 1.08, card, { rot: (d.x - d.x0) * 0.0015, glow: '#53e0d8' }); }
+    // particles & pops
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 2)); ctx.fillStyle = s.c; ctx.fillRect(s.x - s.s / 2, s.y - s.s / 2, s.s, s.s); }
+    ctx.globalAlpha = 1; ctx.textAlign = 'center';
+    for (const p of pops) {
+      const u = p.t / 0.9, sc = u < 0.15 ? 0.6 + u / 0.15 * 0.5 : 1.1 - Math.min(0.1, (u - 0.15) * 0.5);
+      ctx.globalAlpha = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3; ctx.fillStyle = p.color; ctx.font = Math.round(p.size * sc) + 'px ' + FONT;
+      ctx.shadowColor = p.color; ctx.shadowBlur = 8; ctx.fillText(p.text, Math.max(60, Math.min(420, p.x)), p.y - u * 26); ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+  }
+  const nudging = () => phase === 'play' && sub === 'live' && standT > NUDGE_TIME && P[0].freeze <= 0 && anyLegal(0);
+  function fitsAny(card) { return (piles[0] && fits(card.r, piles[0].r)) || (piles[1] && fits(card.r, piles[1].r)); }
+  function drawHandCard(who, i, card, c, o) {
+    const a = slotAnim[who][i];
+    if (a) {
+      if (a.t < 0) { drawEmptySlot(c, who === 0 ? 'rgba(83,224,216,.22)' : 'rgba(255,95,162,.22)'); return; }
+      const k = easeOut(Math.min(1, a.t / a.dur)), d = deckC(who);
+      drawCard(d.x + (c.x - d.x) * k, d.y + (c.y - d.y) * k, c.w, card, Object.assign({ alpha: 0.5 + k * 0.5 }, o)); return;
+    }
+    drawCard(c.x, c.y, c.w, card, o);
+  }
+
+  // ---- update ----------------------------------------------------------------
+  function update(dt) {
+    animT += dt;
+    for (const f of flies) {
+      f.t += dt;
+      if (f.t >= f.dur && !f.done) {
+        f.done = true; const c = pileC(f.pile); pileTilt[f.pile] = f.rot1; pileBump[f.pile] = 1;
+        burst(c.x, c.y, f.who === 0 ? '#53e0d8' : '#ff5fa2', f.who === 0 ? 10 : 6, 150);
+      }
+    }
+    flies = flies.filter(f => !f.done);
+    for (const g of gifts) g.t += dt; gifts = gifts.filter(g => g.t < g.dur);
+    for (const who of [0, 1]) for (let i = 0; i < 4; i++) { const a = slotAnim[who][i]; if (a) { a.t += dt; if (a.t >= a.dur) slotAnim[who][i] = null; } }
+    for (let p = 0; p < 2; p++) pileBump[p] = Math.max(0, pileBump[p] - dt * 7);
+    for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 0.9);
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 300 * dt; s.life -= dt; return s.life > 0; });
+    if (msgT > 0) msgT -= dt;
+    if (phase === 'over') {
+      endT -= dt;
+      if (winner === 0 && endT > 0 && rnd() < 0.5) burst(60 + rnd() * 360, 150 + rnd() * 200, ['#53e0d8', '#ffd166', '#ff5fa2', '#a06bff'][Math.floor(rnd() * 4)], 5, 170);
+      if (endT <= 0 && !resultShown) showResult();
+      return;
+    }
+    if (phase !== 'play') return;
+    for (const who of [0, 1]) if (P[who].freeze > 0) P[who].freeze = Math.max(0, P[who].freeze - dt);
+    if (sub === 'ready') { readyT -= dt; if (readyT <= 0) doFlip(); return; }
+    clock += dt;
+    const l0 = anyLegal(0), l1 = anyLegal(1);
+    if (!l0 && !l1) { stuckT += dt; if (stuckT > 0.45) { sub = 'ready'; readyT = READY_TIME; SFX.ready(); return; } } else stuckT = 0;
+    hintT = l0 ? hintT + dt : 0;
+    // じぶんは 出せるのに 出さず、CPUは 出せない：しばらく まって うごかなければ「せーの」で すすめる
+    standT += dt;
+    if (l0 && !l1 && standT > (standMiss >= 3 ? STALL_FAST : STALL_TIME)) { sub = 'ready'; readyT = READY_TIME; forcedFlips++; say('じかんぎれ！', '#ffd166', 1); SFX.ready(); return; }
+    if (autoCpu) {
+      if (l1) {
+        cpuT -= dt;
+        if (cpuT <= 0) { const m = pick(1, cfg.smart); if (m) play(1, m.slot, m.pile); cpuT = cfg.iv * (0.75 + rnd() * 0.5) * (P[1].combo > 1 ? 0.85 : 1); }
+      } else cpuT = Math.max(cpuT, cfg.iv * 0.7);
+    }
+    if (phase === 'play' && sub === 'live' && mashP > 0) {     // テスト用：見ないで 順に連打する人
+      mashT -= dt; if (mashT <= 0) { tryPlay(mashSlot(), null); mashT += mashP * (1 + rnd() * mashJ); }
+    }
+    if (phase === 'play' && sub === 'live' && waitP > 0) {     // テスト用：止まっている間は待ち、うごけるようになったら 見ないで 順にタップする人
+      if (P[0].freeze > 0) waitT = Math.max(waitT, 0.06);
+      else { waitT -= dt; if (waitT <= 0) { tryPlay(mashSlot(), null); waitT = waitP; } }
+    }
+    if (phase === 'play' && sub === 'live' && kid) {           // テスト用：よく見て ゆっくり出す子（たまに まちがえる）
+      if (P[0].freeze > 0) kidT = -1;
+      else if (kidT < 0) { const ms = legalMoves(0); if (ms.length) { kidSlot = ms[0].slot; kidT = kid.a + rnd() * (kid.b - kid.a); } }
+      else { kidT -= dt; if (kidT <= 0) { const ms = legalMoves(0); let k = ms.length ? ms[0].slot : kidSlot; if (rnd() < kid.err) k = (k + 1) % 4; tryPlay(k, null); kidT = -1; } }
+    }
+    if (phase === 'play' && sub === 'live' && glow) {          // テスト用：数字は見ず、カードが 光るまで まってから 光ったカードを タップする子
+      if (P[0].freeze > 0 || !(hintT > cfg.hint || nudging())) glowT = -1;
+      else if (glowT < 0) glowT = glow.a + rnd() * (glow.b - glow.a);
+      else { glowT -= dt; if (glowT <= 0) { const ms = legalMoves(0); if (ms.length) tryPlay(ms[Math.floor(rnd() * ms.length)].slot, null); glowT = -1; } }
+    }
+    if (phase === 'play' && sub === 'live' && botP > 0 && l0 && P[0].freeze <= 0) {
+      botT -= dt; if (botT <= 0) { const m = pick(0, true); if (m) play(0, m.slot, m.pile); botT = botP * (0.8 + rnd() * 0.4); }
+    }
+  }
+  function mashSlot() { return mashR ? Math.floor(rnd() * 4) : mashI++ % 4; }
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    if (!hold && !paused) update(dt);
+    draw(); requestAnimationFrame(loop);
+  }
+
+  // ---- input -----------------------------------------------------------------
+  function pos(e) { const rc = cv.getBoundingClientRect(); return { x: (e.clientX - rc.left) * (W / rc.width), y: (e.clientY - rc.top) * (H / rc.height) }; }
+  function slotAt(p) {
+    if (p.y < PY - 8 || p.y > PY + PH + 8) return -1;
+    for (let i = 0; i < 4; i++) { const c = slotC(0, i); if (Math.abs(p.x - c.x) <= PW / 2 + PGAP / 2) return i; }
+    return -1;
+  }
+  function pileAt(p) {
+    if (p.y < LY - 50 || p.y > LY + LH + 40) return -1;
+    if (p.x < 90 || p.x > 390) return -1;
+    return p.x < 240 ? 0 : 1;
+  }
+  function keyPlay(i) { kb = true; cursor = i; tryPlay(i, null); }
+
+  // ---- wiring (kept at the end) ----------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); audio(); SFX.ui(); });
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault(); audio(); kb = false;
+    if (phase !== 'play') return;
+    const p = pos(e), s = slotAt(p);
+    if (s >= 0 && P[0].hand[s]) ptrs.set(e.pointerId, { slot: s, x0: p.x, y0: p.y, x: p.x, y: p.y, drag: false });
+  });
+  cv.addEventListener('pointermove', e => {
+    const d = ptrs.get(e.pointerId); if (!d) return;
+    const p = pos(e); d.x = p.x; d.y = p.y;
+    if (!d.drag && Math.hypot(p.x - d.x0, p.y - d.y0) > 16 && dragId < 0 && sub === 'live' && P[0].freeze <= 0) { d.drag = true; dragId = e.pointerId; }
+  });
+  function pointerEnd(e, cancel) {
+    const d = ptrs.get(e.pointerId); if (!d) return;
+    ptrs.delete(e.pointerId);
+    const wasDrag = d.drag; if (dragId === e.pointerId) dragId = -1;
+    if (cancel) return;
+    if (wasDrag) { const pl = pileAt(pos(e)); if (pl >= 0) tryPlay(d.slot, pl); }
+    else tryPlay(d.slot, null);
+  }
+  cv.addEventListener('pointerup', e => { e.preventDefault(); pointerEnd(e, false); });
+  cv.addEventListener('pointercancel', e => pointerEnd(e, true));
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.repeat) return;
+    const k = e.key;
+    if (overlay.classList.contains('show')) { if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); if (ovA) ovA(); } return; }
+    if (phase !== 'play') return;
+    const map = { '1': 0, '2': 1, '3': 2, '4': 3, a: 0, s: 1, d: 2, f: 3, A: 0, S: 1, D: 2, F: 3 };
+    if (k in map) { e.preventDefault(); audio(); keyPlay(map[k]); return; }
+    if (k === 'ArrowLeft' || k === 'ArrowRight') { e.preventDefault(); kb = true; cursor = (cursor + (k === 'ArrowLeft' ? 3 : 1)) % 4; return; }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); keyPlay(cursor); return; }
+    if (k === 'ArrowUp' || k === 'ArrowDown') e.preventDefault();
+  });
+  btnA.addEventListener('click', () => { audio(); SFX.ui(); if (ovA) ovA(); });
+  btnB.addEventListener('click', () => { audio(); SFX.ui(); if (ovB) ovB(); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); SFX.ui(); setLevel(+b.dataset.l); }));
+  document.getElementById('menuBtn').addEventListener('click', () => { audio(); SFX.ui(); goMenu(); });
+  document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!document.hidden) last = performance.now(); });
+
+  const cardOut = c => (c ? c.r : 0);
+  const mk = (r, who) => (r ? { r, s: who === 0 ? 2 + (r % 2) : (r % 2) } : null);
+  window.__test = {
+    state: () => ({
+      phase, sub, mode, level, stage, hearts, winner, overlay: overlay.classList.contains('show'),
+      piles: piles.map(cardOut), pHand: P[0].hand.map(cardOut), cHand: P[1].hand.map(cardOut),
+      pDeck: P[0].deck.length, cDeck: P[1].deck.length, pCount: count(0), cCount: count(1),
+      freeze: P[0].freeze, freezeMax: P[0].freezeMax, missStreak, penalties, frozenTaps, forcedFlips, standT, nudge: nudging(), combo: P[0].combo, maxCombo, misses, clock, flipCount, illegal,
+      pLegal: legalMoves(0), cLegal: legalMoves(1), cfg: Object.assign({}, cfg),
+      stats: JSON.parse(JSON.stringify(stats)), ladder: Object.assign({}, ladder), bestCombo, muted, result: lastResult,
+    }),
+    fits,
+    seed: n => { rnd = mulberry(n); },
+    startLadder: s => startLadder(s), startFree: lv => startFree(lv), menu: goMenu,
+    setAuto: v => { autoCpu = !!v; }, setBot: s => { botP = s || 0; botT = botP; }, setMash: s => { mashP = s || 0; mashT = mashP; mashI = 0; }, hold: v => { hold = !!v; },
+    // o = { p:[4], c:[4], piles:[2], pDeck:[..], cDeck:[..] }（かずだけ。0 は から）
+    set: o => {
+      if (phase !== 'play') newRound();
+      P[0].hand = o.p.map(r => mk(r, 0)); P[1].hand = o.c.map(r => mk(r, 1));
+      P[0].deck = (o.pDeck || []).map(r => mk(r, 0)); P[1].deck = (o.cDeck || []).map(r => mk(r, 1));
+      P[0].total = Math.max(1, count(0)); P[1].total = Math.max(1, count(1));
+      piles = o.piles.map((r, i) => mk(r, i)); pilePrev = [null, null]; flies = []; slotAnim = [[null, null, null, null], [null, null, null, null]];
+      P[0].freeze = 0; P[1].freeze = 0; P[0].combo = 0; P[0].lastPlay = -9; stuckT = 0; hintT = 0; cpuT = cfg.iv; missStreak = 0; standT = 0; standMiss = 0;
+      phase = 'play'; sub = 'live'; winner = -2; resultShown = false; overlay.classList.remove('show');
+    },
+    play: (slot, pile) => tryPlay(slot, pile == null ? null : pile),
+    cpuPlay: () => { const m = pick(1, true); return m ? play(1, m.slot, m.pile) : false; },
+    cpuPick: smart => pick(1, !!smart),
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    slotPoint: i => { const rc = cv.getBoundingClientRect(), c = slotC(0, i); return { x: rc.left + c.x * rc.width / W, y: rc.top + c.y * rc.height / H }; },
+    pilePoint: i => { const rc = cv.getBoundingClientRect(), c = pileC(i); return { x: rc.left + c.x * rc.width / W, y: rc.top + c.y * rc.height / H }; },
+    // CPUどうしで さいごまで あそばせて、かならず おわるか・ルールいはんが ないかを しらべる
+    // opt なし：CPUどうし（いろいろな速さ）／ opt.mash=秒：見ないで順に連打する人 ／ opt.bot=秒：よく見て出す人
+    // opt.mode 'free'|'ladder'、opt.n = つよさ or ステージ
+    sim: (games, seed0, opt) => {
+      const keep = { rnd, autoCpu, botP, hold, silent, stats: JSON.stringify(stats), ladder: JSON.stringify(ladder), bestCombo };
+      silent = true; hold = true; autoCpu = true; illegal = 0;
+      const out = { done: 0, w0: 0, w1: 0, draw: 0, maxSec: 0, illegal: 0, badEnd: 0, misses: 0, forced: 0, sec: 0, winSec: 0, left: 0 };
+      for (let g = 0; g < games; g++) {
+        rnd = mulberry((seed0 || 1) + g * 7919);
+        botP = 0; mashP = 0; mashJ = 0; mashR = false; waitP = 0; kid = null; glow = null;
+        if (opt) { mashP = opt.mash || 0; mashJ = opt.jit || 0; mashR = !!opt.rand; botP = opt.bot || 0; waitP = opt.wait || 0; kid = opt.kid || null; glow = opt.glow || null; if (opt.mode === 'free') startFree(opt.n); else startLadder(opt.n); }
+        else { botP = 0.3 + (g % 5) * 0.4; if (g % 2) startLadder(1 + (g % STAGES)); else startFree(1 + (g % 3)); }
+        botT = botP; mashT = mashP;
+        let n = 0; while (phase === 'play' && n < 60000) { update(0.016); n++; }
+        if (phase === 'over') {
+          out.done++; if (winner === 0) out.w0++; else if (winner === 1) out.w1++; else out.draw++;
+          if ((winner === 0 && count(0) !== 0) || (winner === 1 && count(1) !== 0) || (winner >= 0 && count(1 - winner) === 0)) out.badEnd++;
+        }
+        out.maxSec = Math.max(out.maxSec, Math.round(n * 0.016)); out.misses += misses; out.forced += forcedFlips; out.sec += clock; if (winner === 0) out.winSec += clock; out.left += count(winner === 0 ? 1 : 0);
+      }
+      out.illegal = illegal;
+      rnd = keep.rnd; autoCpu = keep.autoCpu; botP = keep.botP; mashP = 0; mashJ = 0; mashR = false; waitP = 0; kid = null; glow = null; hold = keep.hold; silent = keep.silent;
+      stats = JSON.parse(keep.stats); ladder = JSON.parse(keep.ladder); bestCombo = keep.bestCombo; save();
+      goMenu(); lastResult = null;
+      return out;
+    },
+  };
+
+  // ---- init (last) -----------------------------------------------------------
+  drawMute(); goMenu(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
