@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>いろもじチャレンジ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:460px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#221f45 0%,var(--bg) 62%);
+    background-color:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN','Yu Gothic',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 10px 26px; overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  }
+  .backbar,header,#wrap,.row,.help{width:min(var(--w),100%)}
+  .backbar{margin:0 0 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .backbar a{color:var(--sub);text-decoration:none;padding:8px 2px}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:15px;min-width:48px;height:34px;cursor:pointer;font-family:inherit}
+  header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+  h1{font-size:21px;margin:0;letter-spacing:1px;color:var(--pink);text-shadow:0 0 12px rgba(255,95,162,.6);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid #4a3d8a;border-radius:14px;background:linear-gradient(180deg,#191933,#12122a);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 22px rgba(255,95,162,.16);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .hud{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:6px;padding:7px 8px 6px;background:linear-gradient(180deg,rgba(64,53,122,.94),rgba(34,29,74,.95))}
+  .cell{background:linear-gradient(180deg,#060514,#141033);border:1px solid rgba(160,107,255,.45);border-radius:10px;padding:2px 4px 3px;text-align:center;line-height:1.2;min-width:0}
+  .cell small{display:block;font-size:11px;color:var(--sub);letter-spacing:1px}
+  .cell b{display:block;font-weight:400;font-size:21px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #hTime{color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.7)}
+  #hTime.low{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.8)}
+  #hScore{color:var(--gold);text-shadow:0 0 8px rgba(255,209,102,.7)}
+  #hCombo{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.7)}
+  .cell.bump b{animation:bump .22s}
+  @keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.28)}100%{transform:scale(1)}}
+  #timebar{height:6px;background:#0b0a1d}
+  #timebar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--cyan),#8af5ef);transform-origin:left center}
+  #timebar i.low{background:linear-gradient(90deg,var(--pink),#ff9cc6)}
+
+  #rule{margin:8px 10px 0;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:17px;letter-spacing:1px;border:2px solid var(--cyan);color:var(--cyan);background:rgba(83,224,216,.10);box-shadow:0 0 14px rgba(83,224,216,.25);white-space:nowrap}
+  #rule b{font-weight:400;font-size:22px;color:#fff;text-shadow:0 0 10px currentColor}
+  #rule.word{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.10);box-shadow:0 0 14px rgba(255,209,102,.25)}
+  #rule.flip{animation:flip .5s}
+  @keyframes flip{0%{transform:scaleY(1)}35%{transform:scaleY(.05)}60%{transform:scaleY(1.12)}100%{transform:scaleY(1)}}
+
+  #card{position:relative;margin:8px 10px 0;height:126px;border-radius:16px;border:2px solid rgba(83,224,216,.55);background:
+    radial-gradient(90% 120% at 50% 40%,#26264a 0%,#0d0d22 78%);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 0 0 26px rgba(0,0,0,.6)}
+  #card.word{border-color:rgba(255,209,102,.6)}
+  #word{font-size:62px;letter-spacing:4px;line-height:1;white-space:nowrap;text-shadow:0 3px 0 rgba(0,0,0,.55),0 0 22px currentColor}
+  #word.pop{animation:wpop .2s}
+  @keyframes wpop{0%{transform:scale(.6);opacity:.2}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
+  #card.ng #word{animation:nudge .3s}
+  @keyframes nudge{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+  #card.okf{box-shadow:inset 0 0 26px rgba(0,0,0,.6),0 0 0 3px rgba(124,255,160,.55)}
+  #card.ng{box-shadow:inset 0 0 26px rgba(0,0,0,.6),0 0 0 3px rgba(255,95,162,.6)}
+  #cover{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;background:rgba(13,13,34,.96);font-size:24px;letter-spacing:2px;color:var(--gold);text-align:center;line-height:1.4}
+  #cover.show{display:flex}
+  #cover small{font-size:14px;color:var(--ink);letter-spacing:1px}
+  #qbar{position:absolute;left:0;right:0;bottom:0;height:7px;background:rgba(255,255,255,.08)}
+  #qbar i{display:block;height:100%;width:100%;background:var(--violet);transform-origin:left center}
+  #qbar i.hot{background:var(--pink)}
+
+  #tipRow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 12px 0;height:22px;font-size:13px}
+  #tip{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #tip.good{color:#7cffa0} #tip.bad{color:var(--pink)} #tip.info{color:var(--gold)}
+  #lv{color:var(--sub);white-space:nowrap}
+
+  #answers{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:6px 10px 10px}
+  #answers.six{grid-template-columns:repeat(3,1fr)}
+  .ans{position:relative;height:60px;border-radius:14px;border:2px solid rgba(255,255,255,.55);background-color:var(--c);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 46%,rgba(0,0,0,.20));
+    color:#15152c;font-family:inherit;font-size:20px;letter-spacing:1px;cursor:pointer;padding:0;
+    box-shadow:0 4px 0 rgba(0,0,0,.55);box-shadow:0 4px 0 rgba(0,0,0,.55),0 0 12px color-mix(in srgb,var(--c) 45%,transparent);touch-action:manipulation;transition:transform .06s}
+  #answers.six .ans{font-size:17px;letter-spacing:0}
+  .ans:active{transform:translateY(3px)}
+  .ans .k{display:none;position:absolute;left:6px;top:3px;font-size:11px;color:rgba(20,20,44,.75)}
+  .ans.glow{animation:glow .7s infinite alternate;z-index:1}
+  @keyframes glow{from{box-shadow:0 4px 0 rgba(0,0,0,.55),0 0 0 3px #fff,0 0 10px 4px #fff}to{box-shadow:0 4px 0 rgba(0,0,0,.55),0 0 0 5px #fff,0 0 24px 10px #fff}}
+  .ans.reveal{box-shadow:0 4px 0 rgba(0,0,0,.55),0 0 0 4px #7cffa0,0 0 20px 6px #7cffa0}
+  .ans.miss{filter:brightness(.45)}
+  .ans.hit{animation:hit .18s}
+  @keyframes hit{0%{transform:scale(1)}50%{transform:scale(.92)}100%{transform:scale(1)}}
+
+  #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;touch-action:none}
+
+  #overlay{position:absolute;inset:0;display:none;flex-direction:column;gap:8px;align-items:center;justify-content:center;background:rgba(15,15,32,.985);text-align:center;padding:10px;overflow:auto;z-index:2}
+  #overlay.show{display:flex}
+  #overlay .big{font-size:27px;letter-spacing:2px;line-height:1.25;text-shadow:0 3px 0 rgba(0,0,0,.5)}
+  #overlay .big.end{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.7)}
+  #stars{font-size:30px;letter-spacing:4px;color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.7);line-height:1}
+  #stars i{font-style:normal;color:#3d3a66;text-shadow:none}
+  #demo{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px}
+  #demo .mini{padding:6px 14px;border-radius:10px;border:2px solid rgba(83,224,216,.55);background:#0d0d22;font-size:26px;color:#3d8bff;text-shadow:0 0 12px #3d8bff}
+  #demo .arrow{color:var(--sub);font-size:16px}
+  #demo .a{padding:8px 14px;border-radius:10px;background:#3d8bff;color:#15152c;font-size:17px;border:2px solid rgba(255,255,255,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.65}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .c{color:var(--cyan)} #overlay .note .p{color:var(--pink)}
+  #overlay .note .rec{color:#7cffa0}
+  .result{display:grid;grid-template-columns:auto auto;gap:2px 14px;font-size:14px;text-align:left;line-height:1.5}
+  .result span{color:var(--sub)} .result b{font-weight:400;color:var(--ink);text-align:right}
+  .result b.gold{color:var(--gold);font-size:20px}
+  .levels{display:flex;gap:6px;justify-content:center;width:100%}
+  .levels button{flex:1;max-width:128px;font-family:inherit;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:10px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;gap:1px;align-items:center;min-height:58px}
+  .levels button b{font-weight:400;font-size:14px;color:var(--ink)}
+  .levels button small{font-size:11px}
+  .levels button em{font-style:normal;font-size:11px;color:var(--gold)}
+  .levels button.on{border-color:var(--pink);background:rgba(255,95,162,.14);box-shadow:0 0 10px rgba(255,95,162,.4)}
+  .levels button.on b{color:var(--pink)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .modes button{font-family:inherit;font-size:18px;background:var(--pink);color:#2a0a1c;border:none;border-radius:10px;padding:0 30px;height:46px;cursor:pointer;letter-spacing:2px;box-shadow:0 4px 0 #8a2456,0 0 16px rgba(255,95,162,.5)}
+  .modes button:active{transform:translateY(3px);box-shadow:0 1px 0 #8a2456}
+  .modes button.alt{background:none;color:var(--sub);border:1px solid var(--edge);font-size:14px;box-shadow:none;padding:0 14px;letter-spacing:0}
+  #ovStats{font-size:12px;color:var(--sub)}
+
+  .row{display:flex;gap:6px;margin-top:8px}
+  .btn{flex:1;font-family:inherit;font-size:14px;height:42px;border-radius:12px;border:2px solid #5a4b9e;background:linear-gradient(180deg,#4a3f8c,#2b2460 58%,#211b4c);color:var(--ink);cursor:pointer;letter-spacing:1px;box-shadow:0 3px 0 #120e2c}
+  .btn:active{transform:translateY(2px)}
+  .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.75;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal} .help .c3{color:var(--gold);font-style:normal}
+
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover{border-color:var(--gold);color:var(--gold)}
+    .ans:hover{border-color:#fff;filter:brightness(1.08)}
+    .ans.miss:hover{filter:brightness(.45)}
+    .levels button:hover{border-color:var(--gold)}
+    .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
+  }
+  @media (hover:hover) and (pointer:fine){ .ans .k{display:block} }
+  @media (max-width:420px){
+    h1{font-size:19px}
+    #word{font-size:56px}
+    #overlay .big{font-size:25px}
+  }
+  @media (max-height:600px){
+    #card{height:104px}
+    .ans{height:52px}
+    #cover{font-size:21px;line-height:1.25;padding-bottom:6px}
+    #cover small{font-size:13px}
+  }
+  /* 幅のせまいスマホ：下の文は2行まで出す（高さは固定＝ボタンが動かない）。タイトルは少しつめる */
+  @media (max-width:374px){
+    #tipRow{height:36px}
+    #tip{white-space:normal;line-height:1.3;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+    #overlay{gap:5px;padding:8px 6px}
+    #overlay .big{font-size:22px;line-height:1.2}
+    #demo .mini{font-size:22px;padding:4px 12px}
+    #demo .a{font-size:15px;padding:6px 12px}
+    #overlay .note{line-height:1.5}
+    .levels{gap:4px}
+    .levels button{padding:4px 1px;min-height:54px}
+    .modes button{height:44px}
+    #stars{font-size:26px}
+    .result{font-size:13px;line-height:1.4}
+    .result b.gold{font-size:18px}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="「あか」と書いてあるのに色は青…もじにだまされず、もじの「いろ」を答える45秒の頭のたいそう。とちゅうで「いろ」と「もじ」のルールが入れかわり、レベルが上がると考える時間もみじかくなる。コンボで点アップ、10コンボごとに+2秒。3つのモードごとにベストを記録、平均はんのう時間と★もわかる。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/082-color-word/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"いろもじチャレンジ","description":"「あか」と書いてあるのに色は青…もじにだまされず、もじの「いろ」を答える45秒の頭のたいそう。とちゅうで「いろ」と「もじ」のルールが入れかわり、レベルが上がると考える時間もみじかくなる。コンボで点アップ、10コンボごとに+2秒。3つのモードごとにベストを記録、平均はんのう時間と★もわかる。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/082-color-word/index.html","inLanguage":"ja","genre":"BRAIN","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="082"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>いろもじチャレンジ</h1>
+  <div class="age-badge">目安：6歳〜 / 45びょう</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div class="cell" id="cTime"><small>のこり</small><b id="hTime">45</b></div>
+    <div class="cell" id="cScore"><small>スコア</small><b id="hScore">0</b></div>
+    <div class="cell" id="cCombo"><small>コンボ</small><b id="hCombo">0</b></div>
+  </div>
+  <div id="timebar"><i id="timeFill"></i></div>
+  <div id="rule">🎨 <b>いろ</b> を こたえよう</div>
+  <div id="card">
+    <div id="word" style="color:#3d8bff">あか</div>
+    <div id="cover"></div>
+    <div id="qbar"><i id="qFill"></i></div>
+  </div>
+  <div id="tipRow"><div id="tip">もじの いろは なにいろ？</div><div id="lv">レベル 1</div></div>
+  <div id="answers"></div>
+  <canvas id="fx"></canvas>
+
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig"></div>
+    <div id="stars" style="display:none"></div>
+    <div id="demo"><span class="mini">あか</span><span class="arrow">▶</span><span class="a">あお</span></div>
+    <div class="note" id="ovNote"></div>
+    <div class="result" id="ovResult" style="display:none"></div>
+    <div class="levels" id="levels"></div>
+    <div class="modes">
+      <button id="startBtn">スタート</button>
+      <button id="toTitleBtn" class="alt" style="display:none">モードをえらぶ</button>
+    </div>
+    <div id="ovStats"></div>
+  </div>
+</div>
+
+<div class="row">
+  <button class="btn" id="resetBtn">🔄 さいしょから</button>
+  <button class="btn" id="menuBtn">モードをえらぶ</button>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：まん中に 色の名前が 出るよ。でも <i class="c2">もじ</i>と <i class="c1">もじの色</i>は ちがうかも！ 上の かんばんが「<i class="c1">🎨 いろ</i>」のときは <b>もじの色</b>、「<i class="c3">📖 もじ</i>」のときは <b>書いてある ことば</b>の ボタンを おそう。<br>
+  ⏱ 45びょうで なんもん できるかな。れんぞく せいかいで コンボが のびて 点が ふえる。<b>10コンボごとに +2びょう</b>。まちがえると −1.5びょう。1もんごとの 時間ぎれにも 注意！<br>
+  📱 ボタンを タップ。⌨️ ボタンの 左上の 数字キー（1〜6）でも こたえられるよ。Enter・スペースで スタート。<br>
+  <i class="c3">コツ</i>：かんばんの 色（みずいろ＝いろ／きいろ＝もじ）を 目のはしで 見ておこう。あわてて おすより、1びょう 見てからの ほうが コンボが つづくよ。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const KEY = 'ludot_color-word_';
+  const GAME_TIME = 45;
+  const COLORS = [
+    { id: 'red',    name: 'あか',     hex: '#ff4d5e' },
+    { id: 'blue',   name: 'あお',     hex: '#3d8bff' },
+    { id: 'yellow', name: 'きいろ',   hex: '#ffd23f' },
+    { id: 'green',  name: 'みどり',   hex: '#3fd67a' },
+    { id: 'purple', name: 'むらさき', hex: '#b673ff' },
+    { id: 'white',  name: 'しろ',     hex: '#ffffff' },
+  ];
+  const MODES = {
+    easy:   { name: 'やさしい',   sub: '4色・ゆっくり',   n: 4, base: 5.0, min: 2.6, step: 0.30, first: 7, shuffle: false },
+    normal: { name: 'ふつう',     sub: '4色・ルールこうたい', n: 4, base: 3.8, min: 1.6, step: 0.30, first: 5, shuffle: false },
+    hard:   { name: 'むずかしい', sub: '6色・ならびもかわる', n: 6, base: 3.2, min: 1.3, step: 0.28, first: 3, shuffle: true },
+  };
+  const MODE_IDS = ['easy', 'normal', 'hard'];
+  // ★の基準（モードごと）。ふつう は なれると点が のびやすいので ★5 だけ高くしてある
+  const STAR_AT = {
+    easy:   [120, 260, 420, 620, 850],
+    normal: [120, 260, 420, 620, 1000],
+    hard:   [120, 260, 420, 620, 850],
+  };
+  // でたらめ連打の対策：たくさん こたえて 正解が少ないときは ★と記録をつけない
+  const LOW_ACC = 0.4, LOW_ACC_MIN_TOTAL = 20;
+  const RANKS = ['いろの たまご', 'いろ みならい', 'いろ ハンター', 'いろ はかせ', 'いろ めいじん', 'いろもじ マスター'];
+  const MAX_LEVEL = 8;
+  // はじめてのときの れんしゅう（時間は へらない）
+  const TUT = [
+    { w: 0, c: 1, rule: 'ink',  tip: 'もじの「いろ」は あお！ ひかる ボタンを おそう' },
+    { w: 3, c: 2, rule: 'ink',  tip: 'もじは「みどり」でも、いろは きいろ！' },
+    { w: 1, c: 0, rule: 'word', tip: 'かんばんが「もじ」に！ こんどは ことばを よもう' },
+  ];
+
+  // ---- save ------------------------------------------------------------------
+  function load(k, def) { try { const v = localStorage.getItem(KEY + k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } }
+  function save(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
+
+  // ---- sound -----------------------------------------------------------------
+  let muted = load('mute', false) === true;
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + (delay || 0);
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SCALE = [523, 587, 659, 784, 880, 1046, 1175, 1318, 1568, 1760];
+  const SFX = {
+    ok(combo) { const f = SCALE[Math.min(SCALE.length - 1, Math.max(0, combo - 1))]; tone('square', f, f, 0.09, 0.06); tone('triangle', f * 2, f * 2, 0.12, 0.04, 0.04); },
+    ng() { tone('sawtooth', 200, 110, 0.22, 0.08); tone('square', 150, 90, 0.22, 0.05, 0.03); },
+    timeout() { tone('triangle', 330, 180, 0.3, 0.07); },
+    swap() { tone('square', 440, 880, 0.12, 0.06); tone('square', 660, 1320, 0.14, 0.06, 0.12); tone('triangle', 990, 1980, 0.18, 0.05, 0.24); },
+    level() { [659, 784, 1046].forEach((f, i) => tone('triangle', f, f, 0.12, 0.06, i * 0.07)); },
+    bonus() { [784, 988, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.1, 0.05, i * 0.06)); },
+    start() { [392, 523, 659, 784].forEach((f, i) => tone('square', f, f, 0.1, 0.06, i * 0.08)); },
+    tick() { tone('square', 1200, 1200, 0.04, 0.04); },
+    end() { [784, 659, 523, 659, 784, 1046].forEach((f, i) => tone('square', f, f, 0.16, 0.06, i * 0.1)); },
+    record() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.22, 0.07, 0.7 + i * 0.09)); },
+    click() { tone('square', 1000, 1000, 0.03, 0.03); },
+  };
+
+  // ---- random ----------------------------------------------------------------
+  let seedV = (Date.now() ^ (Math.random() * 0x7fffffff)) >>> 0;
+  function rnd() { seedV = (seedV + 0x6D2B79F5) >>> 0; let t = seedV; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+  const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+
+  // ---- state -----------------------------------------------------------------
+  let best = load('best', {}); if (!best || typeof best !== 'object') best = {};
+  let plays = Number(load('plays', 0)) || 0;
+  let tutSeen = load('tut', false) === true;
+  let selMode = load('mode', 'normal'); if (!MODES[selMode]) selMode = 'normal';
+  const S = {
+    phase: 'title', mode: selMode, time: GAME_TIME, score: 0, combo: 0, maxCombo: 0,
+    correct: 0, miss: 0, total: 0, level: 1, rule: 'ink', w: 0, c: 1, qT: 0, limit: 4,
+    lock: 0, pendingNext: false, swapIn: 5, swaps: 0, rtSum: 0, order: [0, 1, 2, 3], tut: -1,
+    newBest: false, stars: 0, lastTick: 99, tipAns: false, lowAcc: false,
+  };
+  let frozen = false, paused = false, lastTs = 0;
+  let particles = [], pops = [];
+
+  const el = {
+    wrap: $('wrap'), overlay: $('overlay'), ovBig: $('ovBig'), ovNote: $('ovNote'), ovResult: $('ovResult'), ovStats: $('ovStats'),
+    stars: $('stars'), demo: $('demo'), levels: $('levels'), startBtn: $('startBtn'), toTitleBtn: $('toTitleBtn'),
+    hTime: $('hTime'), hScore: $('hScore'), hCombo: $('hCombo'), cScore: $('cScore'), cCombo: $('cCombo'), cTime: $('cTime'),
+    timeFill: $('timeFill'), rule: $('rule'), card: $('card'), word: $('word'), cover: $('cover'), qFill: $('qFill'),
+    tip: $('tip'), lv: $('lv'), answers: $('answers'), fx: $('fx'), mute: $('mute-btn'),
+  };
+  const fctx = el.fx.getContext('2d');
+  let fxW = 0, fxH = 0, fxR = 1;
+
+  // ---- rules (pure) ----------------------------------------------------------
+  function limitFor(mode, lv) { const M = MODES[mode]; return Math.max(M.min, +(M.base - M.step * (lv - 1)).toFixed(2)); }
+  function gapFor(mode, lv) {
+    if (mode === 'easy') return [7, 9];
+    if (mode === 'hard') return [Math.max(1, 5 - lv), Math.max(2, 7 - lv)];
+    return [Math.max(2, 7 - lv), Math.max(3, 9 - lv)];
+  }
+  function incongP(mode, lv) { return mode === 'easy' ? 0.6 : mode === 'hard' ? 0.9 : Math.min(0.9, 0.6 + 0.05 * lv); }
+  function levelFor(correct) { return Math.min(MAX_LEVEL, 1 + Math.floor(correct / 5)); }
+  function answerOf(rule, w, c) { return rule === 'ink' ? c : w; }
+  function pointsFor(combo, rt) { return 10 + Math.min(combo, 20) + (rt < 0.7 ? 5 : rt < 1.0 ? 3 : 0); }
+  function starsFor(score, mode) { let n = 0; for (const s of (STAR_AT[mode] || STAR_AT.easy)) if (score >= s) n++; return n; }
+  function isLowAcc(correct, total) { return total >= LOW_ACC_MIN_TOTAL && correct / total < LOW_ACC; }
+  const promptFor = rule => rule === 'ink' ? 'もじの いろは なにいろ？' : 'なんて 書いてある？';
+  const avgRt = () => S.correct ? S.rtSum / S.correct : null;
+  const fmtAvg = v => v == null ? '--' : v.toFixed(2) + 'びょう';
+
+  // ---- render ----------------------------------------------------------------
+  function bump(node) { node.classList.remove('bump'); void node.offsetWidth; node.classList.add('bump'); }
+  function setTip(text, cls) { el.tip.textContent = text; el.tip.className = cls || ''; }
+  function renderHud() {
+    const t = Math.max(0, S.time);
+    el.hTime.textContent = String(Math.ceil(t - 1e-6));
+    const low = t <= 10;
+    el.hTime.classList.toggle('low', low); el.timeFill.classList.toggle('low', low);
+    el.timeFill.style.transform = 'scaleX(' + Math.min(1, t / GAME_TIME).toFixed(4) + ')';
+    el.hScore.textContent = String(S.score);
+    el.hCombo.textContent = String(S.combo);
+    el.lv.textContent = S.tut >= 0 ? '' : 'レベル ' + S.level;
+    const q = S.phase === 'play' && S.tut < 0 ? Math.max(0, 1 - S.qT / S.limit) : 1;
+    el.qFill.style.transform = 'scaleX(' + q.toFixed(4) + ')';
+    el.qFill.classList.toggle('hot', q < 0.35);
+  }
+  function renderRule(flip) {
+    const ink = S.rule === 'ink';
+    el.rule.innerHTML = ink ? '🎨 <b>いろ</b> を こたえよう' : '📖 <b>もじ</b> を よもう';
+    el.rule.classList.toggle('word', !ink);
+    el.card.classList.toggle('word', !ink);
+    if (flip) { el.rule.classList.remove('flip'); void el.rule.offsetWidth; el.rule.classList.add('flip'); }
+  }
+  function renderWord() {
+    el.word.textContent = COLORS[S.w].name;
+    el.word.style.color = COLORS[S.c].hex;
+    el.word.classList.remove('pop'); void el.word.offsetWidth; el.word.classList.add('pop');
+    el.card.classList.remove('ng', 'okf');
+  }
+  function renderButtons() {
+    const n = S.order.length;
+    el.answers.classList.toggle('six', n > 4);
+    el.answers.innerHTML = S.order.map((ci, i) =>
+      '<button class="ans" type="button" data-c="' + ci + '" style="--c:' + COLORS[ci].hex + '"><span class="k">' + (i + 1) + '</span>' + COLORS[ci].name + '</button>').join('');
+  }
+  function btnOf(ci) { return el.answers.querySelector('.ans[data-c="' + ci + '"]'); }
+  function clearMarks() { el.answers.querySelectorAll('.ans').forEach(b => b.classList.remove('glow', 'reveal', 'miss')); }
+  function showCover(html) { el.cover.innerHTML = html; el.cover.classList.add('show'); }
+  function hideCover() { el.cover.classList.remove('show'); }
+
+  // ---- fx ----------------------------------------------------------------------
+  function sizeFx() {
+    const r = el.wrap.getBoundingClientRect();
+    fxR = Math.min(2, window.devicePixelRatio || 1); fxW = r.width; fxH = r.height;
+    el.fx.width = Math.max(1, Math.round(fxW * fxR)); el.fx.height = Math.max(1, Math.round(fxH * fxR));
+  }
+  function centerOf(node) { const a = node.getBoundingClientRect(), b = el.wrap.getBoundingClientRect(); return { x: a.left - b.left + a.width / 2, y: a.top - b.top + a.height / 2 }; }
+  function burst(x, y, color, n) {
+    for (let i = 0; i < n; i++) {
+      const a = rndFx() * Math.PI * 2, sp = 70 + rndFx() * 210;
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 60, life: 0.45 + rndFx() * 0.35, t: 0, color, size: 3 + rndFx() * 4 });
+    }
+    if (particles.length > 260) particles.splice(0, particles.length - 260);
+  }
+  function rndFx() { return Math.random(); }
+  function pop(x, y, text, color, size, vy) { pops.push({ x, y, text, color, size: size || 20, t: 0, life: 0.8, vy: vy === undefined ? -46 : vy }); if (pops.length > 12) pops.shift(); }
+  // のこり時間の ふえた／へった は、もじカードの下のはしに出す（HUDの数字や かんばんに重ねない）
+  function timePop(text, color) {
+    const a = el.card.getBoundingClientRect(), b = el.wrap.getBoundingClientRect();
+    pop(a.left - b.left + a.width / 2, a.bottom - b.top - 19, text, color, 18, -8);
+  }
+  function fxStep(dt) {
+    for (const p of particles) { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 520 * dt; }
+    particles = particles.filter(p => p.t < p.life);
+    for (const p of pops) { p.t += dt; p.y += p.vy * dt; }
+    pops = pops.filter(p => p.t < p.life);
+  }
+  function fxDraw() {
+    fctx.setTransform(fxR, 0, 0, fxR, 0, 0);
+    fctx.clearRect(0, 0, fxW, fxH);
+    for (const p of particles) {
+      fctx.globalAlpha = Math.max(0, 1 - p.t / p.life);
+      fctx.fillStyle = p.color;
+      fctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+    }
+    fctx.textAlign = 'center'; fctx.textBaseline = 'middle';
+    for (const p of pops) {
+      const k = p.t / p.life, sc = k < 0.15 ? 0.6 + k / 0.15 * 0.5 : 1.1 - Math.min(0.1, (k - 0.15));
+      fctx.globalAlpha = k < 0.7 ? 1 : Math.max(0, 1 - (k - 0.7) / 0.3);
+      fctx.font = Math.round(p.size * sc) + 'px "DotGothic16",monospace';
+      fctx.lineWidth = 4; fctx.strokeStyle = 'rgba(10,10,28,.9)'; fctx.strokeText(p.text, p.x, p.y);
+      fctx.fillStyle = p.color; fctx.fillText(p.text, p.x, p.y);
+    }
+    fctx.globalAlpha = 1;
+  }
+
+  // ---- game flow -------------------------------------------------------------
+  function shuffleOrder() {
+    const prev = S.order.join(',');
+    for (let k = 0; k < 6; k++) {
+      for (let i = S.order.length - 1; i > 0; i--) { const j = ri(0, i); const t = S.order[i]; S.order[i] = S.order[j]; S.order[j] = t; }
+      if (S.order.join(',') !== prev) break;
+    }
+  }
+  function genQuestion() {
+    const n = MODES[S.mode].n, pw = S.w, pc = S.c;
+    let w = 0, c = 0;
+    for (let k = 0; k < 30; k++) {
+      w = ri(0, n - 1);
+      if (rnd() < incongP(S.mode, S.level)) { c = ri(0, n - 2); if (c >= w) c++; } else c = w;
+      if (!(w === pw && c === pc)) break;
+    }
+    if (w === pw && c === pc) { w = (w + 1) % n; }
+    S.w = w; S.c = c;
+  }
+  function nextQuestion(keepTip) {
+    clearMarks();
+    S.pendingNext = false;
+    if (S.tut >= 0) {
+      S.tipAns = false;
+      const t = TUT[S.tut];
+      const changed = S.rule !== t.rule;
+      S.rule = t.rule; S.w = t.w; S.c = t.c;
+      renderRule(changed); if (changed) SFX.swap();
+      renderWord(); setTip(t.tip, 'info');
+      const b = btnOf(answerOf(S.rule, S.w, S.c)); if (b) b.classList.add('glow');
+      S.qT = 0; renderHud();
+      return;
+    }
+    S.swapIn--;
+    if (S.swapIn < 0) {
+      S.rule = S.rule === 'ink' ? 'word' : 'ink';
+      S.swaps++;
+      const g = gapFor(S.mode, S.level); S.swapIn = ri(g[0], g[1]) - 1;
+      if (MODES[S.mode].shuffle) { shuffleOrder(); renderButtons(); }
+      renderRule(true); SFX.swap();
+      showCover('ルール チェンジ！<small>' + (S.rule === 'ink' ? '🎨 こんどは「いろ」を こたえよう' : '📖 こんどは「もじ」を よもう') + '</small>');
+      if (!keepTip) setTip(promptFor(S.rule), 'info');
+      S.lock = Math.max(S.lock, 0.85);
+    }
+    // 前の問題の「こたえは「X」」を、次の問題の下に のこさない（次の問題の答えに見えてしまう）
+    if (S.tipAns) { setTip(promptFor(S.rule), 'info'); }
+    S.tipAns = false;
+    genQuestion();
+    S.limit = limitFor(S.mode, S.level);
+    S.qT = 0;
+    renderWord(); renderHud();
+  }
+  function startGame(mode, opt) {
+    opt = opt || {};
+    if (MODES[mode]) S.mode = mode;
+    selMode = S.mode; save('mode', selMode);
+    const M = MODES[S.mode];
+    Object.assign(S, { phase: 'play', time: GAME_TIME, score: 0, combo: 0, maxCombo: 0, correct: 0, miss: 0, total: 0, level: 1,
+      rule: 'ink', qT: 0, lock: 0, pendingNext: false, swapIn: M.first, swaps: 0, rtSum: 0, newBest: false, stars: 0, lastTick: 99, w: -1, c: -1,
+      tipAns: false, lowAcc: false });
+    S.order = []; for (let i = 0; i < M.n; i++) S.order.push(i);
+    S.tut = (opt.tut === undefined ? !tutSeen : !!opt.tut) ? 0 : -1;
+    S.limit = limitFor(S.mode, 1);
+    particles = []; pops = [];
+    renderButtons(); renderRule(false);
+    el.overlay.classList.remove('show');
+    hideCover();
+    sizeFx();
+    if (S.tut >= 0) { nextQuestion(); }
+    else { nextQuestion(); setTip('もじの いろは なにいろ？', 'info'); showCover('よーい…<small>スタート！</small>'); S.lock = 0.6; }
+    SFX.start();
+    renderHud();
+  }
+  function answer(ci) {
+    if (S.phase !== 'play' || S.lock > 0) return 'ignored';
+    ci = Number(ci);
+    if (S.order.indexOf(ci) < 0) return 'ignored';
+    const right = answerOf(S.rule, S.w, S.c);
+    const b = btnOf(ci);
+    if (b) { b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit'); }
+    // れんしゅう
+    if (S.tut >= 0) {
+      if (ci !== right) { SFX.ng(); setTip('ひかっている ボタンを おしてね', 'bad'); return 'ng'; }
+      SFX.ok(S.tut + 1);
+      const p = centerOf(el.card); burst(p.x, p.y, COLORS[right].hex, 16);
+      S.tut++;
+      if (S.tut >= TUT.length) {
+        S.tut = -1; tutSeen = true; save('tut', true);
+        S.rule = 'ink'; S.w = -1; S.c = -1; renderRule(true);
+        showCover('れんしゅう おわり！<small>ほんばん スタート！ ⏱ 45びょう</small>');
+        setTip('もじの いろは なにいろ？', 'info');
+        S.lock = 1.2; S.pendingNext = true;
+      } else nextQuestion();
+      return 'ok';
+    }
+    S.total++;
+    if (ci === right) {
+      const rt = S.qT;
+      S.correct++; S.combo++; S.maxCombo = Math.max(S.maxCombo, S.combo); S.rtSum += rt;
+      const pts = pointsFor(S.combo, rt); S.score += pts;
+      const p = centerOf(el.card);
+      burst(p.x, p.y, COLORS[right].hex, 14 + Math.min(18, S.combo));
+      pop(p.x, p.y - 34, '+' + pts, '#ffd166', 22 + Math.min(10, S.combo));
+      SFX.ok(S.combo);
+      bump(el.cScore); bump(el.cCombo);
+      el.card.classList.add('okf');
+      let tip = rt < 0.7 ? 'はやい！ ⚡' : S.combo >= 3 ? S.combo + 'コンボ！' : 'せいかい！', cls = 'good';
+      const bonus = S.combo > 0 && S.combo % 10 === 0;
+      if (bonus) {
+        S.time = Math.min(GAME_TIME + 15, S.time + 2);
+        timePop('+2びょう', '#53e0d8');
+        SFX.bonus(); bump(el.cTime); tip = S.combo + 'コンボ！ ボーナス +2びょう'; cls = 'info';
+      }
+      const lv = levelFor(S.correct);
+      if (lv > S.level) {
+        S.level = lv; SFX.level(); cls = 'info';
+        // 10コンボと かさなったときは 両方 出す
+        tip = bonus ? S.combo + 'コンボ！ +2びょう ／ レベル ' + lv + '！' : 'レベル ' + lv + '！ もっと はやく！';
+      }
+      setTip(tip, cls); S.tipAns = false;
+      S.lock = 0.12;
+      nextQuestion(cls === 'info');           // ボーナス・レベルアップの文は、ルールチェンジと かさなっても のこす
+      return 'ok';
+    }
+    S.miss++; S.combo = 0; S.time -= 1.5;
+    SFX.ng();
+    el.card.classList.remove('okf'); el.card.classList.add('ng');
+    if (b) b.classList.add('miss');
+    const rb = btnOf(right); if (rb) rb.classList.add('reveal');
+    timePop('-1.5びょう', '#ff5fa2');
+    setTip('ざんねん… こたえは「' + COLORS[right].name + '」', 'bad'); S.tipAns = true;
+    bump(el.cCombo); bump(el.cTime);
+    S.lock = 0.7; S.pendingNext = true;
+    renderHud();
+    return 'ng';
+  }
+  function timeoutQ() {
+    S.total++; S.miss++; S.combo = 0;
+    SFX.timeout();
+    const right = answerOf(S.rule, S.w, S.c);
+    el.card.classList.add('ng');
+    const rb = btnOf(right); if (rb) rb.classList.add('reveal');
+    setTip('じかんぎれ… こたえは「' + COLORS[right].name + '」', 'bad'); S.tipAns = true;
+    S.lock = 0.6; S.pendingNext = true;
+  }
+  function endGame() {
+    S.phase = 'end'; S.time = 0; S.lock = 0; S.pendingNext = false;
+    clearMarks(); hideCover();
+    S.lowAcc = isLowAcc(S.correct, S.total);
+    S.stars = S.lowAcc ? 0 : starsFor(S.score, S.mode);
+    plays++; save('plays', plays);
+    const prev = best[S.mode];
+    S.newBest = !S.lowAcc && S.score > 0 && (!prev || S.score > prev.score);
+    if (S.newBest) { best[S.mode] = { score: S.score, combo: S.maxCombo, avg: avgRt() == null ? null : +avgRt().toFixed(3), stars: S.stars }; save('best', best); }
+    renderHud();
+    showEnd();
+    SFX.end(); if (S.newBest) SFX.record();
+    const n = S.newBest ? 70 : 20 + S.stars * 8;
+    for (let i = 0; i < n; i++) {
+      const col = COLORS[i % COLORS.length].hex;
+      particles.push({ x: fxW * (0.1 + Math.random() * 0.8), y: fxH * (0.05 + Math.random() * 0.2), vx: (Math.random() - 0.5) * 160, vy: -80 - Math.random() * 160, life: 1.1 + Math.random() * 0.8, t: 0, color: col, size: 4 + Math.random() * 4 });
+    }
+  }
+  function update(dt) {
+    if (S.phase !== 'play') return;
+    if (S.time <= 0) { endGame(); return; }
+    if (S.lock > 0) {
+      S.lock -= dt;
+      if (S.lock <= 0) { S.lock = 0; hideCover(); if (S.pendingNext) nextQuestion(); else el.card.classList.remove('okf'); }
+      return;
+    }
+    if (S.tut >= 0) return;
+    S.time -= dt; S.qT += dt;
+    if (S.time <= 0) { S.time = 0; endGame(); return; }
+    const sec = Math.ceil(S.time);
+    if (sec <= 5 && sec < S.lastTick) { S.lastTick = sec; SFX.tick(); bump(el.cTime); }
+    if (S.qT >= S.limit) timeoutQ();
+    renderHud();
+  }
+
+  // ---- overlay -----------------------------------------------------------------
+  function rainbow(text) {
+    let i = 0;
+    return text.split('').map(ch => '<span style="color:' + COLORS[(i++) % 5].hex + '">' + ch + '</span>').join('');
+  }
+  function renderLevels() {
+    el.levels.innerHTML = MODE_IDS.map(id => {
+      const M = MODES[id], b = best[id];
+      return '<button type="button" data-m="' + id + '" class="' + (id === selMode ? 'on' : '') + '"><b>' + M.name + '</b><small>' + M.sub + '</small><em>🏆 ' + (b ? b.score + '点' : '--') + '</em></button>';
+    }).join('');
+  }
+  function showTitle() {
+    S.phase = 'title'; S.lock = 0; S.pendingNext = false; S.tut = -1; S.tipAns = false;
+    hideCover(); clearMarks();
+    el.ovBig.className = 'big'; el.ovBig.innerHTML = rainbow('いろもじ') + '<br>' + rainbow('チャレンジ');
+    el.stars.style.display = 'none'; el.ovResult.style.display = 'none';
+    el.demo.style.display = ''; el.levels.style.display = '';
+    el.ovNote.innerHTML = 'もじに だまされないで！<br><b class="c">もじの「いろ」</b>の ボタンを おそう。<br>とちゅうで <b>ルールが いれかわる</b>よ！<br><span class="p">45びょう</span>で なんもん できるかな？';
+    el.startBtn.textContent = 'スタート'; el.toTitleBtn.style.display = 'none';
+    el.ovStats.textContent = plays ? 'あそんだ回数：' + plays + '回' : 'はじめは れんしゅうが 3もん あるよ';
+    renderLevels();
+    el.overlay.classList.add('show');
+  }
+  function showEnd() {
+    el.ovBig.className = 'big end'; el.ovBig.textContent = 'タイムアップ！';
+    let st = ''; for (let i = 0; i < 5; i++) st += i < S.stars ? '★' : '<i>★</i>';
+    el.stars.innerHTML = st; el.stars.style.display = '';
+    el.demo.style.display = 'none'; el.levels.style.display = 'none';
+    const acc = S.total ? Math.round(S.correct / S.total * 100) : 0;
+    el.ovResult.innerHTML =
+      '<span>スコア</span><b class="gold">' + S.score + '点</b>' +
+      '<span>せいかい</span><b>' + S.correct + ' / ' + S.total + 'もん（' + acc + '%）</b>' +
+      '<span>へいきん はんのう</span><b>' + fmtAvg(avgRt()) + '</b>' +
+      '<span>さいだいコンボ</span><b>' + S.maxCombo + '</b>' +
+      '<span>とどいた レベル</span><b>' + S.level + '</b>';
+    el.ovResult.style.display = '';
+    const next = STAR_AT[S.mode][S.stars];
+    const b = best[S.mode];
+    el.ovNote.innerHTML = 'しょうごう：<b>' + RANKS[S.stars] + '</b><br>' +
+      (S.newBest ? '<span class="rec">🎉 ' + MODES[S.mode].name + 'の しんきろく！</span>' : '<span class="c">' + MODES[S.mode].name + 'の ベスト：' + (b ? b.score + '点' : '--') + '</span>') +
+      (S.lowAcc ? '<br><span class="p">まちがいが 多いと ★なし</span>。よく 見てね！'
+        : next ? '<br>つぎの ★まで あと <b>' + (next - S.score) + '点</b>' : '<br><b>★5つ たっせい！ すごい！</b>');
+    el.startBtn.textContent = 'もういちど'; el.toTitleBtn.style.display = '';
+    el.ovStats.textContent = 'あそんだ回数：' + plays + '回';
+    el.overlay.classList.add('show');
+  }
+  function drawMute() { el.mute.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- loop ------------------------------------------------------------------
+  function frame(ts) {
+    const dt = lastTs ? Math.min(0.05, Math.max(0, (ts - lastTs) / 1000)) : 0;
+    lastTs = ts;
+    if (!paused) {
+      if (!frozen) update(dt);
+      fxStep(dt); fxDraw();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---- test hooks ------------------------------------------------------------
+  window.__test = {
+    state() {
+      return {
+        phase: S.phase, mode: S.mode, time: +S.time.toFixed(3), score: S.score, combo: S.combo, maxCombo: S.maxCombo,
+        correct: S.correct, miss: S.miss, total: S.total, level: S.level, rule: S.rule,
+        word: S.w >= 0 ? COLORS[S.w].id : null, ink: S.c >= 0 ? COLORS[S.c].id : null,
+        w: S.w, c: S.c, answer: S.w >= 0 ? answerOf(S.rule, S.w, S.c) : null,
+        limit: S.limit, qT: +S.qT.toFixed(3), lock: +S.lock.toFixed(3), tut: S.tut, swaps: S.swaps, swapIn: S.swapIn,
+        order: S.order.slice(), avg: avgRt(), stars: S.stars, newBest: S.newBest, lowAcc: S.lowAcc,
+        tip: el.tip.textContent, tipClass: el.tip.className, tipAns: S.tipAns,
+        pops: pops.map(p => ({ text: p.text, x: Math.round(p.x), y: Math.round(p.y) })),
+        best: JSON.parse(JSON.stringify(best)), plays, muted, tutSeen,
+      };
+    },
+    start(mode, withTut) { startGame(mode || 'normal', { tut: !!withTut }); return true; },
+    seed(n) { seedV = n >>> 0; },
+    freeze(b) { frozen = !!b; },
+    step(ms) { let left = ms; while (left > 0) { const d = Math.min(50, left); update(d / 1000); left -= d; } return true; },
+    skipLock() { let g = 0; while (S.phase === 'play' && S.lock > 0 && g++ < 100) update(0.05); return S.lock; },
+    setQuestion(w, c, rule) { if (rule) { S.rule = rule; renderRule(false); } S.w = w; S.c = c; S.qT = 0; S.lock = 0; S.pendingNext = false; hideCover(); clearMarks(); renderWord(); renderHud(); },
+    answer(ci) { return answer(ci); },
+    setTime(s) { S.time = s; renderHud(); },
+    setCombo(n) { S.combo = n; },
+    setCorrect(n) { S.correct = n; S.level = levelFor(n); S.limit = limitFor(S.mode, S.level); },
+    title() { showTitle(); },
+    rules: { limitFor, gapFor, incongP, levelFor, pointsFor, starsFor, answerOf, isLowAcc },
+    colors() { return COLORS.map(c => c.id); },
+  };
+
+  // ---- init & events (さいごに) ------------------------------------------------
+  el.answers.addEventListener('pointerdown', e => {
+    const b = e.target.closest('.ans'); if (!b) return;
+    e.preventDefault(); answer(b.dataset.c);
+  });
+  el.answers.addEventListener('click', e => {            // キーボードで ボタンを えらんだとき
+    if (e.detail !== 0) return;
+    const b = e.target.closest('.ans'); if (b) answer(b.dataset.c);
+  });
+  el.answers.addEventListener('contextmenu', e => e.preventDefault());
+  el.levels.addEventListener('click', e => {
+    const b = e.target.closest('button[data-m]'); if (!b) return;
+    selMode = b.dataset.m; save('mode', selMode); SFX.click(); renderLevels();
+  });
+  el.startBtn.addEventListener('click', () => startGame(S.phase === 'end' ? S.mode : selMode));
+  el.toTitleBtn.addEventListener('click', () => { SFX.click(); showTitle(); });
+  $('resetBtn').addEventListener('click', () => startGame(S.phase === 'title' ? selMode : S.mode));
+  $('menuBtn').addEventListener('click', () => { SFX.click(); showTitle(); });
+  el.mute.addEventListener('click', () => { muted = !muted; save('mute', muted); drawMute(); if (!muted) SFX.click(); });
+  window.addEventListener('keydown', e => {
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (S.phase !== 'play') {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const t = e.target && e.target.tagName;
+        if (t === 'BUTTON' || t === 'A') return;        // フォーカス中の ボタンに まかせる
+        e.preventDefault(); startGame(S.phase === 'end' ? S.mode : selMode);
+      }
+      return;
+    }
+    const n = Number(e.key);
+    if (n >= 1 && n <= S.order.length) { e.preventDefault(); answer(S.order[n - 1]); }
+  });
+  document.addEventListener('visibilitychange', () => { paused = document.hidden; lastTs = 0; });
+  window.addEventListener('resize', sizeFx);
+  document.addEventListener('dblclick', e => e.preventDefault());
+
+  S.order = []; for (let i = 0; i < MODES[selMode].n; i++) S.order.push(i);
+  S.mode = selMode;
+  renderButtons(); renderRule(false); renderHud(); drawMute(); sizeFx();
+  showTitle();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

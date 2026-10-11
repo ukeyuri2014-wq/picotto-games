@@ -1,0 +1,61 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c082bg" cx="50%" cy="38%" r="80%">
+      <stop offset="0" stop-color="#2c2760"/>
+      <stop offset="0.6" stop-color="#17162f"/>
+      <stop offset="1" stop-color="#0d0d1e"/>
+    </radialGradient>
+    <linearGradient id="c082card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2a52"/>
+      <stop offset="1" stop-color="#101026"/>
+    </linearGradient>
+    <linearGradient id="c082shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.22"/>
+    </linearGradient>
+    <radialGradient id="c082glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#3d8bff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#3d8bff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="c082blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c082bg)"/>
+  <g opacity="0.5" fill="#ffffff">
+    <circle cx="34" cy="30" r="1.6"/><circle cx="92" cy="14" r="1.1"/><circle cx="356" cy="26" r="1.5"/>
+    <circle cx="312" cy="12" r="1"/><circle cx="20" cy="120" r="1.2"/><circle cx="382" cy="110" r="1.3"/>
+  </g>
+  <!-- しつもんカード -->
+  <ellipse cx="200" cy="84" rx="150" ry="70" fill="url(#c082glow)"/>
+  <rect x="78" y="24" width="244" height="112" rx="18" fill="#000" opacity="0.45" filter="url(#c082blur)"/>
+  <rect x="78" y="20" width="244" height="112" rx="18" fill="url(#c082card)" stroke="#53e0d8" stroke-width="3"/>
+  <!-- 赤いラベル（もじ）と、青い大きなしずく（いろ） -->
+  <g transform="translate(112 46)">
+    <rect x="0" y="6" width="70" height="46" rx="10" fill="#ff4d5e"/>
+    <rect x="0" y="6" width="70" height="46" rx="10" fill="url(#c082shine)"/>
+    <rect x="12" y="20" width="46" height="6" rx="3" fill="#15152c" opacity="0.8"/>
+    <rect x="12" y="32" width="30" height="6" rx="3" fill="#15152c" opacity="0.8"/>
+  </g>
+  <path d="M200 66 l10 10 l-10 10 M192 76 h18" fill="none" stroke="#9d99c0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(252 76)">
+    <path d="M0 -38 C16 -14 26 -2 26 12 A26 26 0 0 1 -26 12 C-26 -2 -16 -14 0 -38 Z" fill="#3d8bff" stroke="#bcd8ff" stroke-width="2.5"/>
+    <path d="M-12 8 A14 14 0 0 0 -2 24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+  </g>
+  <!-- こたえボタン -->
+  <g>
+    <g transform="translate(40 152)"><rect y="5" width="72" height="48" rx="13" fill="#000" opacity="0.5"/><rect width="72" height="48" rx="13" fill="#ff4d5e" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2"/><rect width="72" height="48" rx="13" fill="url(#c082shine)"/></g>
+    <g transform="translate(124 152)"><rect y="5" width="72" height="48" rx="13" fill="#000" opacity="0.5"/><rect x="-5" y="-5" width="82" height="58" rx="17" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9"/><rect width="72" height="48" rx="13" fill="#3d8bff" stroke="#ffffff" stroke-width="2"/><rect width="72" height="48" rx="13" fill="url(#c082shine)"/></g>
+    <g transform="translate(208 152)"><rect y="5" width="72" height="48" rx="13" fill="#000" opacity="0.5"/><rect width="72" height="48" rx="13" fill="#ffd23f" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2"/><rect width="72" height="48" rx="13" fill="url(#c082shine)"/></g>
+    <g transform="translate(292 152)"><rect y="5" width="72" height="48" rx="13" fill="#000" opacity="0.5"/><rect width="72" height="48" rx="13" fill="#3fd67a" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2"/><rect width="72" height="48" rx="13" fill="url(#c082shine)"/></g>
+  </g>
+  <!-- きらきら -->
+  <g fill="#ffd166">
+    <path d="M160 142 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 z"/>
+    <path d="M336 44 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 z"/>
+    <path d="M58 64 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 z"/>
+  </g>
+  <g fill="#ff5fa2"><rect x="50" y="100" width="6" height="6" transform="rotate(20 53 103)"/><rect x="346" y="96" width="5" height="5" transform="rotate(35 348 98)"/></g>
+  <g fill="#53e0d8"><rect x="30" y="76" width="5" height="5" transform="rotate(40 32 78)"/><rect x="364" y="70" width="6" height="6" transform="rotate(15 367 73)"/></g>
+</svg>
