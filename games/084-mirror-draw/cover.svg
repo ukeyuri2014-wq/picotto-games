@@ -1,0 +1,64 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c084bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0" stop-color="#2a2060"/>
+      <stop offset="0.55" stop-color="#17173a"/>
+      <stop offset="1" stop-color="#0c0c1c"/>
+    </radialGradient>
+    <radialGradient id="c084disc" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#26265a"/>
+      <stop offset="1" stop-color="#0e0e22"/>
+    </radialGradient>
+    <radialGradient id="c084glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffd166" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c084pen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#a06bff"/>
+    </linearGradient>
+    <g id="c084petal" fill="none" stroke-linecap="round">
+      <path d="M0 -14 C 26 -38, -22 -62, 0 -96" stroke="#ff5fa2" stroke-width="9" opacity="0.22"/>
+      <path d="M0 -14 C 26 -38, -22 -62, 0 -96" stroke="#ff5fa2" stroke-width="3.2"/>
+      <path d="M0 -14 C -26 -38, 22 -62, 0 -96" stroke="#53e0d8" stroke-width="9" opacity="0.22"/>
+      <path d="M0 -14 C -26 -38, 22 -62, 0 -96" stroke="#53e0d8" stroke-width="3.2"/>
+      <path d="M-13 -70 Q 0 -84 13 -70" stroke="#ffd166" stroke-width="2.6"/>
+      <circle cx="0" cy="-52" r="4" fill="#a06bff" stroke="none"/>
+    </g>
+    <path id="c084star" d="M0 -9 L2.6 -3 L9 -2.6 L4 1.6 L5.6 8 L0 4.4 L-5.6 8 L-4 1.6 L-9 -2.6 L-2.6 -3 Z"/>
+  </defs>
+  <rect width="400" height="225" fill="url(#c084bg)"/>
+  <g fill="#ffffff" opacity="0.7">
+    <circle cx="28" cy="30" r="1.4"/><circle cx="62" cy="180" r="1.2"/><circle cx="352" cy="26" r="1.5"/>
+    <circle cx="378" cy="150" r="1.2"/><circle cx="330" cy="204" r="1.3"/><circle cx="88" cy="52" r="1"/>
+  </g>
+  <circle cx="200" cy="112" r="106" fill="#a06bff" opacity="0.14"/>
+  <circle cx="200" cy="112" r="100" fill="url(#c084disc)" stroke="#a06bff" stroke-width="3"/>
+  <g stroke="#a06bff" stroke-width="1" opacity="0.3">
+    <path d="M200 12 V212 M100 112 H300 M129 41 L271 183 M271 41 L129 183"/>
+  </g>
+  <g transform="translate(200 112)">
+    <use href="#c084petal"/>
+    <use href="#c084petal" transform="rotate(45)"/>
+    <use href="#c084petal" transform="rotate(90)"/>
+    <use href="#c084petal" transform="rotate(135)"/>
+    <use href="#c084petal" transform="rotate(180)"/>
+    <use href="#c084petal" transform="rotate(225)"/>
+    <use href="#c084petal" transform="rotate(270)"/>
+    <use href="#c084petal" transform="rotate(315)"/>
+    <circle r="22" fill="url(#c084glow)"/>
+    <use href="#c084star" fill="#ffe9a8" transform="scale(1.5)"/>
+  </g>
+  <g fill="#ffd166">
+    <use href="#c084star" transform="translate(52 84) scale(1.3)"/>
+    <use href="#c084star" transform="translate(348 84) scale(1.3)"/>
+    <use href="#c084star" transform="translate(70 196) scale(0.8)" opacity="0.7"/>
+    <use href="#c084star" transform="translate(330 40) scale(0.8)" opacity="0.7"/>
+  </g>
+  <g transform="translate(262 36) rotate(38)">
+    <rect x="-6" y="-44" width="12" height="40" rx="3" fill="url(#c084pen)" stroke="#ffffff" stroke-width="1"/>
+    <path d="M-6 -4 L6 -4 L0 10 Z" fill="#ffd166"/>
+    <rect x="-6" y="-48" width="12" height="6" rx="2" fill="#ff5fa2"/>
+  </g>
+  <circle cx="254" cy="44" r="9" fill="#ffd166" opacity="0.35"/>
+</svg>

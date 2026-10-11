@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まんげきょうおえかき｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#221a44 0%,var(--bg) 60%);
+    background-color:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:8px 8px 18px; overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  }
+  .backbar{width:min(440px,100%);margin:0 0 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:#c9c5e6;text-decoration:none;padding:4px 2px}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;padding:4px 14px;min-width:48px;min-height:32px;cursor:pointer;font-family:inherit}
+  header{width:min(440px,100%);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+  h1{font-size:20px;margin:0;letter-spacing:1px;color:var(--violet);text-shadow:0 0 12px rgba(160,107,255,.65);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 9px;border:1px solid rgba(160,107,255,.45);border-radius:999px;color:#cdb4ff;background:rgba(160,107,255,.1);font-size:11px;white-space:nowrap}
+  #wrap{position:relative;width:min(440px,100%)}
+  #hud{display:flex;align-items:center;gap:8px;height:28px;font-size:13px;color:var(--ink);padding:0 2px}
+  #hudL{white-space:nowrap}
+  #hudR{white-space:nowrap;color:var(--gold)}
+  #hudR i{font-style:normal}
+  #inkWrap{flex:1;height:12px;border-radius:999px;background:#0d0d1c;border:1px solid var(--edge);overflow:hidden;visibility:hidden}
+  #inkWrap.on{visibility:visible}
+  #inkBar{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--gold),var(--cyan));transform-origin:left center}
+  #inkBar.low{background:var(--pink)}
+  #stage{position:relative}
+  canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;background:#0b0b18;border:1px solid rgba(160,107,255,.4);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.55);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+  #msg{height:26px;margin-top:5px;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1.5;color:var(--ink);pointer-events:none;transition:opacity .25s}
+  #msg span{display:block;max-width:100%;white-space:nowrap;overflow:hidden;background:rgba(13,13,28,.82);border:1px solid rgba(160,107,255,.35);border-radius:999px;padding:2px 10px}
+  #msg.bad span{border-color:var(--pink);color:#ffd0e2}
+  #msg.off{opacity:0}
+  #freeCtl,#chalCtl{width:min(440px,100%)}
+  .row{display:flex;gap:5px;margin-top:6px;width:100%}
+  #swRow{gap:3px}
+  .btn{flex:1;min-width:0;min-height:40px;font-family:inherit;font-size:13px;padding:6px 2px;border-radius:10px;border:1px solid rgba(160,107,255,.35);background:linear-gradient(#26264a,#1b1b36);color:var(--ink);cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.35);white-space:nowrap;user-select:none;-webkit-user-select:none}
+  .btn.sq{flex:0 0 44px;font-size:18px}
+  .btn.on{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,.1)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .num{flex:0 0 56px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);border:1px dashed var(--edge);border-radius:10px;white-space:nowrap}
+  .sw{flex:1;min-width:0;height:40px;border-radius:10px;border:2px solid rgba(255,255,255,.14);cursor:pointer;padding:0;font-size:15px;line-height:1;font-family:inherit;color:#1b1b36;position:relative}
+  .sw.sel{border-color:#fff;box-shadow:0 0 0 2px var(--bg),0 0 12px rgba(255,255,255,.7);transform:translateY(-2px);z-index:1}
+  .sw.rb{background:conic-gradient(#ff5fa2,#ffd166,#7cf29a,#53e0d8,#a06bff,#ff5fa2)}
+  .sw.kira{background:linear-gradient(135deg,#fff6d0,#ffd166 55%,#ff9bd0)}
+  .sw.lock{background:#2a2a48;color:#cfcbe8;font-size:11px;line-height:1.25}
+  .hide{display:none !important}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(15,15,30,.94);
+    border-radius:16px;text-align:center;padding:12px;z-index:5;
+  }
+  #overlay.show{display:flex}
+  #overlay.res{background:rgba(15,15,30,.74)}
+  #overlay .big{font-size:29px;letter-spacing:2px;color:var(--violet);text-shadow:0 0 16px rgba(160,107,255,.75);line-height:1.25}
+  #overlay .big.gold{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.7)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.8}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.6}
+  #overlay .stars{font-size:40px;letter-spacing:6px;color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.7);line-height:1.1}
+  #overlay .stars i{font-style:normal;color:#3d3a5e;text-shadow:none}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--violet);color:#150a30;border:none;border-radius:8px;padding:10px 14px;min-height:44px;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 14px rgba(160,107,255,.35)}
+  .modes button.alt{background:var(--cyan);color:#062a28;box-shadow:0 4px 14px rgba(83,224,216,.3)}
+  .modes button.sub{background:none;border:1px solid var(--edge);color:var(--ink);box-shadow:none;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:100%;max-width:340px}
+  .grid button{font-family:inherit;font-size:15px;min-height:44px;border-radius:8px;border:1px solid var(--edge);background:#22223f;color:var(--ink);cursor:pointer;padding:2px 0;line-height:1.15}
+  .grid button i{display:block;font-style:normal;font-size:11px;color:var(--gold);letter-spacing:0}
+  .grid button.done{border-color:rgba(255,209,102,.5)}
+  .grid button:disabled{opacity:.42;cursor:default}
+  .help{width:min(440px,100%);color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,13,28,.6);border:1px solid var(--edge);border-radius:12px;padding:10px 12px 4px}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (max-width:374px){ h1{font-size:18px;letter-spacing:0} }   /* せまい画面で 見出しが 2行に ならないように */
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+    .modes button:hover{filter:brightness(1.12)}
+    .grid button:hover:not(:disabled){border-color:var(--gold)}
+    .sw:hover{border-color:#fff}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="1ぽん線をかくと、かがみでふえて万華鏡のもようになるおえかき。かがみの数・色・線のふとさをえらべて、もどす・ゆっくり回してながめるモードつき。1ぽんの線でほしをぜんぶ光らせる「おだい」20面＋ランダムおだいで★をあつめよう。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/084-mirror-draw/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"まんげきょうおえかき","description":"1ぽん線をかくと、かがみでふえて万華鏡のもようになるおえかき。かがみの数・色・線のふとさをえらべて、もどす・ゆっくり回してながめるモードつき。1ぽんの線でほしをぜんぶ光らせる「おだい」20面＋ランダムおだいで★をあつめよう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/084-mirror-draw/index.html","inLanguage":"ja","genre":"CREATIVE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="084"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>まんげきょうおえかき</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜</div>
+</header>
+
+<div id="wrap">
+  <div id="hud"><span id="hudL">まんげきょう</span><div id="inkWrap"><div id="inkBar"></div></div><span id="hudR"></span></div>
+  <div id="stage">
+    <canvas id="cv" width="720" height="720" aria-label="おえかきの がめん"></canvas>
+  </div>
+  <div id="msg" class="off" aria-live="polite"><span id="msgT"></span></div>
+  <div id="overlay" class="show"></div>
+</div>
+
+<div id="freeCtl" class="hide">
+  <div class="row">
+    <button class="btn sq" id="nMinus" aria-label="かがみの数をへらす">−</button>
+    <div class="num" id="nLabel">6まい</div>
+    <button class="btn sq" id="nPlus" aria-label="かがみの数をふやす">＋</button>
+    <button class="btn on" id="mirBtn">かがみ ON</button>
+    <button class="btn" id="wBtn">線 ふつう</button>
+  </div>
+  <div class="row" id="swRow"></div>
+  <div class="row">
+    <button class="btn" id="undoBtn">↩ もどす</button>
+    <button class="btn" id="clearBtn">🗑 けす</button>
+    <button class="btn" id="kanBtn">🌀 まわす</button>
+    <button class="btn" id="menuBtnF">メニュー</button>
+  </div>
+</div>
+<div id="chalCtl" class="hide">
+  <div class="row">
+    <button class="btn" id="retryBtn">↻ やりなおし</button>
+    <button class="btn" id="hintBtn">💡 ヒント</button>
+    <button class="btn" id="menuBtnC">ステージ</button>
+  </div>
+</div>
+
+<div class="help">
+  <p><b>じゆうに かく</b>：1ぽん 線をかくと、かがみで ふえて もようになるよ。かがみの数・色・線のふとさを かえて、「まわす」で ゆっくり 回る もようを ながめよう。かいた絵は つぎに ひらいた時も のこるよ。</p>
+  <p><b>おだい</b>：ゆびを はなさず、1ぽんの線で ほしを ぜんぶ 光らせる ひとふでパズル。かがみに うつった線が ほしに とどけば OK。同じ色の ほしは、どれか1つに とどけば ぜんぶ 光るよ。インクを あまり つかわないと ★が ふえるよ。✖ に さわると しっぱい。</p>
+  <p>⌨️ キーボード：矢印キーで ペンを うごかす／スペースで ペンを おろす・あげる／Z もどす／R やりなおし</p>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= きほん ================= */
+const TAU = Math.PI * 2, C = 240, R = 226, S = 1.5;
+const KEY = 'ludot_mirror-draw_';
+const HIT_STAR = 17, HIT_OBS = 12;
+const N_LIST = [2, 3, 4, 5, 6, 8, 10, 12, 16];
+const WIDTHS = [3, 6, 11], W_NAMES = ['ほそい', 'ふつう', 'ふとい'];
+const COLORS = ['#ff5fa2', '#ffd166', '#53e0d8', '#a06bff', '#7cf29a', '#ffffff'];
+const COL_RAINBOW = 6, COL_KIRA = 7, KIRA_NEED = 10;
+const MAX_STROKES = 60, MAX_PTS = 500;
+// ほしの組ごとの色（同じ色＝同じ組）。✖ の ピンクは つかわない
+const GROUP = ['#ffd166', '#53e0d8', '#c9a4ff', '#7cf29a', '#ffffff', '#ff9d5c'];
+const GROUP_RGB = ['255,209,102', '83,224,216', '201,164,255', '124,242,154', '255,255,255', '255,157,92'];
+
+// おだい20面：n=かがみの数, mir=かがみあり, m=ほしの組, obs=✖の組, all=ぜんぶの うつしを見せる, tight=せまい面（きょりの きまりを ゆるめる）
+const STAGES = [
+  { n: 4, mir: true, m: 1, obs: 0, all: true },
+  { n: 3, mir: true, m: 2, obs: 0, all: true },
+  { n: 6, mir: true, m: 2, obs: 0 },
+  { n: 4, mir: true, m: 3, obs: 0 },
+  { n: 5, mir: false, m: 3, obs: 0 },
+  { n: 6, mir: true, m: 3, obs: 1 },
+  { n: 4, mir: true, m: 4, obs: 1 },
+  { n: 8, mir: true, m: 3, obs: 1 },
+  { n: 3, mir: false, m: 4, obs: 2 },
+  { n: 5, mir: true, m: 4, obs: 2 },
+  { n: 6, mir: false, m: 4, obs: 2 },
+  { n: 8, mir: true, m: 4, obs: 2, tight: true },
+  { n: 3, mir: true, m: 5, obs: 2 },
+  { n: 10, mir: false, m: 4, obs: 3 },
+  { n: 4, mir: true, m: 5, obs: 3 },
+  { n: 12, mir: false, m: 4, obs: 2 },
+  { n: 5, mir: false, m: 5, obs: 3 },
+  { n: 6, mir: true, m: 5, obs: 3, tight: true },
+  { n: 3, mir: true, m: 6, obs: 3 },
+  { n: 4, mir: false, m: 6, obs: 4 }
+];
+
+function rngOf(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ================= たいしょう（かがみ）の計算 ================= */
+// 点(x,y) の うつし ぜんぶを [x0,y0,x1,y1,...] で返す。先頭は 自分自身。
+function images(x, y, n, mir) {
+  const out = [];
+  for (let k = 0; k < n; k++) {
+    const a = TAU * k / n, c = Math.cos(a), s = Math.sin(a);
+    out.push(x * c - y * s, x * s + y * c);
+    if (mir) out.push(x * c + y * s, x * s - y * c);
+  }
+  return out;
+}
+function distToImgs(x, y, imgs) {
+  let best = 1e9;
+  for (let i = 0; i < imgs.length; i += 2) {
+    const d = Math.hypot(imgs[i] - x, imgs[i + 1] - y);
+    if (d < best) best = d;
+  }
+  return best;
+}
+function selfDist(x, y, n, mir) {
+  const im = images(x, y, n, mir);
+  let best = 1e9;
+  for (let i = 2; i < im.length; i += 2) {
+    const d = Math.hypot(im[i] - x, im[i + 1] - y);
+    if (d < best) best = d;
+  }
+  return best;
+}
+
+/* ================= おだいの 面づくり ＋ ソルバー ================= */
+function bestOrder(pts) {
+  // ほしを ぜんぶ通る いちばん短い じゅんばん（総当たり・枝かり）
+  const m = pts.length;
+  let best = 1e9, bestSeq = [];
+  const used = new Array(m).fill(false), seq = [];
+  (function go(len) {
+    if (len >= best) return;
+    if (seq.length === m) { best = len; bestSeq = seq.slice(); return; }
+    for (let i = 0; i < m; i++) {
+      if (used[i]) continue;
+      const add = seq.length ? Math.hypot(pts[i][0] - pts[seq[seq.length - 1]][0], pts[i][1] - pts[seq[seq.length - 1]][1]) : 0;
+      used[i] = true; seq.push(i);
+      go(len + add);
+      seq.pop(); used[i] = false;
+    }
+  })(0);
+  return { len: m ? best : 0, seq: bestSeq };
+}
+function samplePath(path, stepLen) {
+  const out = [];
+  for (let i = 0; i < path.length; i++) {
+    if (i === 0) { out.push(path[0][0], path[0][1]); continue; }
+    const ax = path[i - 1][0], ay = path[i - 1][1], bx = path[i][0], by = path[i][1];
+    const d = Math.hypot(bx - ax, by - ay), k = Math.max(1, Math.ceil(d / stepLen));
+    for (let j = 1; j <= k; j++) out.push(ax + (bx - ax) * j / k, ay + (by - ay) * j / k);
+  }
+  return out;
+}
+// きょりの きまり。tight は せまい面（かがみが多い面）用に 少し ゆるめたもの
+function distRule(P) {
+  if (P.tight) return { self: 32, mut: 34, oself: 24, ostar: 32, oo: 26, opath: 28 };
+  return { self: P.n >= 8 ? 34 : 42, mut: P.n >= 8 ? 40 : 46, oself: 30, ostar: 40, oo: 34, opath: 36 };
+}
+// 1回ぶんの 面づくり。quick=true のとき、ほしの組が たりなければ すぐ null を返す
+function buildOnce(P, seed, idx, quick) {
+  const rng = rngOf(seed), n = P.n, mir = P.mir, K = distRule(P);
+  const W = mir ? Math.PI / n : TAU / n;
+  const orbits = [];
+  for (let t = 0; t < 900 && orbits.length < P.m; t++) {
+    const r = 58 + rng() * 152, a = W * (0.1 + 0.8 * rng());
+    const x = r * Math.cos(a), y = r * Math.sin(a);
+    if (selfDist(x, y, n, mir) < K.self) continue;
+    if (orbits.some(function (o) { return distToImgs(x, y, o.imgs) < K.mut; })) continue;
+    orbits.push({ p: [x, y], imgs: images(x, y, n, mir), show: [] });
+  }
+  if (quick && orbits.length < P.m) return null;
+  const bo = bestOrder(orbits.map(function (o) { return o.p; }));
+  const path = bo.seq.map(function (i) { return orbits[i].p.slice(); });
+  const samples = samplePath(path, 6);
+  const obs = [];
+  for (let t = 0; t < 2400 && obs.length < P.obs; t++) {
+    const r = 40 + rng() * 172, a = W * rng();
+    const x = r * Math.cos(a), y = r * Math.sin(a);
+    if (selfDist(x, y, n, mir) < K.oself) continue;
+    const im = images(x, y, n, mir);
+    if (orbits.some(function (o) { return distToImgs(o.p[0], o.p[1], im) < K.ostar; })) continue;
+    if (obs.some(function (o) { return distToImgs(o.p[0], o.p[1], im) < K.oo; })) continue;
+    let d = 1e9;
+    for (let i = 0; i < samples.length; i += 2) d = Math.min(d, distToImgs(samples[i], samples[i + 1], im));
+    if (d < K.opath) continue;
+    if (t < 1200 && d > 80) continue;     // なるべく 道の近くに置いて「よける」判断を生む
+    obs.push({ p: [x, y], imgs: im });
+  }
+  // 画面に見せる ほし（うつしの中から えらぶ）
+  for (const o of orbits) {
+    const cnt = o.imgs.length / 2;
+    if (P.all) { for (let i = 0; i < cnt; i++) o.show.push(i); continue; }
+    const k = 1 + Math.floor(rng() * Math.min(3, cnt));
+    while (o.show.length < k) {
+      const i = Math.floor(rng() * cnt);
+      if (o.show.indexOf(i) < 0) o.show.push(i);
+    }
+  }
+  const lv = idx >= 0 ? idx : 14;
+  const base = bo.len;
+  return {
+    idx: idx, seed: seed, n: n, mir: mir, W: W, orbits: orbits, obs: obs, path: path, base: base,
+    ink: base * Math.max(1.4, 1.9 - 0.025 * lv) + 50,
+    t3: base * 1.12 + 36, t2: base * 1.32 + 44
+  };
+}
+// 直線 A→B（むげんに のばした線）の上で、点の集まり imgs に rad より近づく はんい を out に足す
+function lineSpans(imgs, ax, ay, ux, uy, rad, out) {
+  for (let i = 0; i < imgs.length; i += 2) {
+    const rx = imgs[i] - ax, ry = imgs[i + 1] - ay, d = Math.abs(rx * uy - ry * ux);
+    if (d >= rad) continue;
+    const t = rx * ux + ry * uy, h = Math.sqrt(rad * rad - d * d);
+    out.push(t - h, t + h);
+  }
+  return out;
+}
+// (ax,ay) を通る 向き (ux,uy) の まっすぐな線1本で、✖に さわらず インク内に ぜんぶ 光るか
+function lineWins(st, ax, ay, ux, uy) {
+  const star = [], block = [];
+  for (const o of st.orbits) {
+    const sp = lineSpans(o.imgs, ax, ay, ux, uy, HIT_STAR, []);
+    if (!sp.length) return false;
+    star.push(sp);
+  }
+  for (const o of st.obs) lineSpans(o.imgs, ax, ay, ux, uy, HIT_OBS, block);
+  for (let k = 0; k < star.length; k++) {
+    for (let i = 0; i < star[k].length; i += 2) {
+      const from = star[k][i + 1];          // かきはじめ（ここより左には もどらない）
+      let to = from, ok = true;
+      for (let j = 0; j < star.length && ok; j++) {
+        let best = 1e9;
+        for (let q = 0; q < star[j].length; q += 2) if (star[j][q + 1] >= from - 1e-9) best = Math.min(best, Math.max(from, star[j][q]));
+        if (best > 1e8) ok = false; else if (best > to) to = best;
+      }
+      if (!ok || to - from > st.ink) continue;
+      let hit = false;
+      for (let q = 0; q < block.length; q += 2) if (block[q] <= to && block[q + 1] >= from) { hit = true; break; }
+      if (!hit) return true;
+    }
+  }
+  return false;
+}
+// まん中から 外へ まっすぐ1本 ひくだけで クリアできる（かんたんすぎる）面か
+function rayClears(st) {
+  const steps = Math.ceil(st.W / 0.018);
+  for (let i = 0; i <= steps; i++) {
+    const a = st.W * i / steps, ux = Math.cos(a), uy = Math.sin(a);
+    for (let off = -8; off <= 8; off += 8) if (lineWins(st, -uy * off, ux * off, ux, uy)) return true;
+  }
+  return false;
+}
+// ほし・✖ の数が 設計どおりに なるまで（10面から先と ランダムは「まっすぐ1本」で とけない面に なるまで）
+// seed を ずらして 作りなおす。同じ seed からは いつも 同じ面が できる。
+function buildStage(P, seed, idx) {
+  const strict = idx < 0 || idx >= 9;
+  for (let a = 0; a < 160; a++) {
+    const st = buildOnce(P, (seed + a * 104729) >>> 0, idx, true);
+    if (!st || st.obs.length !== P.obs) continue;
+    if (strict && rayClears(st)) continue;
+    st.seed = seed; st.tries = a + 1; st.want = P.m; st.wantObs = P.obs;
+    return st;
+  }
+  const fb = buildOnce(P, seed, idx, false);   // ここには まず来ない。来ても あそべる面を返す
+  fb.tries = 0; fb.want = P.m; fb.wantObs = P.obs;
+  return fb;
+}
+function stageSeed(i) { return 4021 + i * 7919; }
+
+/* ================= ほぞん ================= */
+function load(k, def) { try { const v = localStorage.getItem(KEY + k); return v === null ? def : JSON.parse(v); } catch (e) { return def; } }
+function store(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) { /* ほぞんできなくても あそべる */ } }
+
+let muted = !!load('mute', false);
+const save = (function () {
+  const s = load('save', null) || {};
+  const stars = [];
+  for (let i = 0; i < STAGES.length; i++) stars.push(s.stars && s.stars[i] > 0 ? Math.min(3, s.stars[i] | 0) : 0);
+  const f = s.free || {};
+  return {
+    stars: stars, rand: s.rand > 0 ? s.rand | 0 : 0,
+    free: {
+      n: N_LIST.indexOf(f.n) >= 0 ? f.n : 6, mir: f.mir !== false,
+      col: f.col >= 0 && f.col <= 7 ? f.col | 0 : COL_RAINBOW, w: f.w >= 0 && f.w <= 2 ? f.w | 0 : 1
+    }
+  };
+})();
+function totalStars() { return save.stars.reduce(function (a, b) { return a + b; }, 0); }
+function persist() { store('save', save); }
+function persistArt() {
+  const out = [];
+  let pts = 0;
+  for (let i = strokes.length - 1; i >= 0 && out.length < 40; i--) {
+    const s = strokes[i];
+    if (pts + s.pts.length > 9000) break;
+    pts += s.pts.length;
+    out.unshift({ n: s.n, mir: s.mir, col: s.col, w: s.w, h0: s.h0, pts: s.pts.map(Math.round) });
+  }
+  store('art', out);
+}
+
+/* ================= 音 ================= */
+let actx = null;
+function ensureAudio() {
+  if (actx) { if (actx.state === 'suspended') actx.resume(); return; }
+  try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); } catch (e) { actx = null; }
+}
+function tone(freq, dur, type, vol, delay) {
+  if (muted || !actx) return;
+  try {
+    const t = actx.currentTime + (delay || 0), o = actx.createOscillator(), g = actx.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.06, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.03);
+  } catch (e) { /* 音が出なくても つづける */ }
+}
+const PENTA = [0, 2, 4, 7, 9];
+function drawNote(r) {
+  const i = Math.max(0, Math.min(11, Math.floor(r / R * 12)));
+  tone(294 * Math.pow(2, (PENTA[i % 5] + 12 * Math.floor(i / 5)) / 12), 0.22, 'triangle', 0.04);
+}
+const sfx = {
+  click: function () { tone(620, 0.07, 'square', 0.03); },
+  star: function (k) { const f = 660 * Math.pow(2, (PENTA[k % 5] + 12 * Math.floor(k / 5)) / 12); tone(f, 0.3, 'sine', 0.09); tone(f * 2, 0.4, 'sine', 0.05, 0.06); },
+  fail: function () { tone(180, 0.25, 'sawtooth', 0.05); tone(130, 0.3, 'sawtooth', 0.05, 0.12); },
+  clear: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.45, 'triangle', 0.08, i * 0.09); }); },
+  undo: function () { tone(440, 0.08, 'sine', 0.05); tone(330, 0.1, 'sine', 0.05, 0.06); },
+  kan: function () { [392, 523, 659].forEach(function (f, i) { tone(f, 0.5, 'sine', 0.05, i * 0.12); }); }
+};
+
+/* ================= がめんの部品 ================= */
+const $ = function (id) { return document.getElementById(id); };
+const cv = $('cv'), g = cv.getContext('2d');
+const art = document.createElement('canvas');
+art.width = art.height = 720;
+const ag = art.getContext('2d');
+ag.setTransform(S, 0, 0, S, C * S, C * S);
+const overlay = $('overlay'), msgBox = $('msg'), msgT = $('msgT');
+
+let mode = 'title';            // 'title' | 'free' | 'chal'
+let ovKind = 'title';          // null | 'title' | 'select' | 'result'
+let strokes = [];              // じゆうモードの線
+let lastCleared = null;        // 「けす」を もどせるように
+let cur = null;                // いま かいている線
+let kan = false;               // かんしょう（回す）
+let theta = 0, time = 0;
+let noteAcc = 0;
+const parts = [], rings = [];
+const kb = { x: 0, y: -90, on: false, pen: false, keys: {} };
+const ch = { st: null, lit: [], used: 0, phase: 'ready', failT: 0, clearT: 0, hint: false, hintUsed: false, got: 0, isNew: false, look: false };
+
+/* ================= 線を かく ================= */
+function colorOf(col, hue) {
+  if (col === COL_RAINBOW) { const c = 'hsl(' + (hue % 360) + ',100%,66%)'; return { core: c, glow: c }; }
+  if (col === COL_KIRA) return { core: '#fff3c4', glow: '#ffd166' };
+  if (col === 5) return { core: '#ffffff', glow: '#b9c6ff' };
+  return { core: COLORS[col], glow: COLORS[col] };
+}
+function clearArt() {
+  ag.save(); ag.setTransform(1, 0, 0, 1, 0, 0); ag.clearRect(0, 0, 720, 720); ag.restore();
+}
+function pathOf(pts, i0, i1) {
+  const p = new Path2D();
+  p.moveTo(pts[i0 * 2], pts[i0 * 2 + 1]);
+  if (i1 === i0) p.lineTo(pts[i0 * 2] + 0.01, pts[i0 * 2 + 1]);
+  for (let i = i0 + 1; i <= i1; i++) p.lineTo(pts[i * 2], pts[i * 2 + 1]);
+  return p;
+}
+// st の i0〜i1 番目の点を、うつし ぜんぶに かく。dbl=true は「となりと1本かさねる」かきかた用（うすめに ぬる）
+function paint(st, i0, i1, dbl, butt) {
+  const path = pathOf(st.pts, i0, i1);
+  const col = colorOf(st.col, st.h0 + i0 * 3), w = WIDTHS[st.w];
+  const a1 = dbl ? 0.051 : 0.10, a2 = dbl ? 0.128 : 0.24;
+  const reps = st.mir ? 2 : 1;
+  for (let k = 0; k < st.n; k++) {
+    for (let m = 0; m < reps; m++) {
+      ag.save();
+      ag.rotate(TAU * k / st.n);
+      if (m) ag.scale(1, -1);
+      ag.lineJoin = 'round';
+      ag.lineCap = butt ? 'butt' : 'round';
+      ag.strokeStyle = col.glow;
+      ag.globalAlpha = a1; ag.lineWidth = w * 3.2 + 6; ag.stroke(path);
+      ag.globalAlpha = a2; ag.lineWidth = w * 1.9 + 2; ag.stroke(path);
+      ag.lineCap = 'round'; ag.globalAlpha = 1; ag.strokeStyle = col.core; ag.lineWidth = w; ag.stroke(path);
+      if (st.col === COL_KIRA) glitter(st, dbl ? i1 : i0, i1, w);
+      ag.restore();
+    }
+  }
+}
+function glitter(st, i0, i1, w) {
+  const cols = ['#ff9bd0', '#8ff3ec', '#ffffff', '#ffd166'];
+  for (let i = i0; i <= i1; i++) {
+    if (i % 3) continue;
+    const h = Math.sin((i + st.h0) * 12.9898) * 43758.5453, f = h - Math.floor(h);
+    const h2 = Math.sin((i + st.h0) * 78.233) * 12543.123, f2 = h2 - Math.floor(h2);
+    ag.fillStyle = cols[i % 4]; ag.globalAlpha = 0.95;
+    ag.beginPath();
+    ag.arc(st.pts[i * 2] + (f - 0.5) * (w * 2 + 14), st.pts[i * 2 + 1] + (f2 - 0.5) * (w * 2 + 14), 0.9 + f * 1.3, 0, TAU);
+    ag.fill();
+  }
+}
+function paintLive(st) {
+  const last = st.pts.length / 2 - 1;
+  if (last === 0) paint(st, 0, 0, false, false);
+  else paint(st, Math.max(0, last - 2), last, last >= 2, true);
+}
+function paintWhole(st) {
+  const last = st.pts.length / 2 - 1;
+  if (st.col === COL_RAINBOW && last > 0) {
+    for (let i = 0; i < last; i += 3) paint(st, i, Math.min(last, i + 3), false, true);
+  } else paint(st, 0, last, false, false);
+}
+function redrawArt() {
+  clearArt();
+  for (const s of strokes) paintWhole(s);
+}
+
+/* ================= えんしゅつ ================= */
+function burst(x, y, col, n, sp) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * TAU, v = (0.3 + Math.random()) * (sp || 90);
+    parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0, max: 0.5 + Math.random() * 0.6, col: col, s: 1.5 + Math.random() * 2.5 });
+  }
+  if (parts.length > 500) parts.splice(0, parts.length - 500);
+}
+function ring(x, y, col) { rings.push({ x: x, y: y, t: 0, col: col }); }
+
+function setMsg(text, bad) {
+  if (!text) { msgBox.classList.add('off'); return; }
+  msgT.textContent = text;
+  msgBox.classList.toggle('bad', !!bad);
+  msgBox.classList.remove('off');
+}
+
+/* ================= おだいモード ================= */
+function stageMsg() {
+  const s = ch.st;
+  if (s.idx === 0) return 'ほしを タッチ！ かがみの ほしも 光るよ';
+  if (s.idx === 1) return 'ゆびを はなさず 1ぽんの線で ぜんぶ 光らせよう';
+  if (s.idx === 2) return 'かがみに うつった線でも ほしは 光るよ';
+  if (s.idx === 3) return '同じ色の ほしは どれか1つで ぜんぶ 光るよ';
+  if (s.idx === 4) return 'この面は かがみなし。くるっと 回って ふえるよ';
+  if (s.idx === 5) return '✖ に 線が さわると しっぱい！';
+  return 'インクが なくなる前に ぜんぶ 光らせよう';
+}
+function setStage(st) {
+  mode = 'chal'; kan = false; theta = 0; cur = null; kb.pen = false;
+  ch.st = st; ch.hint = false; ch.hintUsed = false; ch.look = false;
+  resetStroke();
+  hideOverlay();
+  $('freeCtl').classList.add('hide'); $('chalCtl').classList.remove('hide');
+  $('hintBtn').classList.remove('on');
+  setMsg(stageMsg());
+  updateHud();
+}
+function startStage(i) { setStage(buildStage(STAGES[i], stageSeed(i), i)); }
+function startRandom(seed) {
+  const sd = seed === undefined ? Math.floor(Math.random() * 1e9) : seed;
+  const pick = rngOf(sd ^ 0x5bd1e995);
+  setStage(buildStage(STAGES[9 + Math.floor(pick() * 11)], sd, -1));
+}
+function nextOpen() {
+  for (let i = 0; i < STAGES.length; i++) if (!save.stars[i]) return i;
+  return -1;
+}
+function unlocked(i) { return i === 0 || save.stars[i - 1] > 0; }
+function resetStroke() {
+  clearArt(); cur = null; kb.pen = false;
+  ch.lit = ch.st.orbits.map(function () { return false; });
+  ch.used = 0; ch.phase = 'ready'; ch.failT = 0; ch.clearT = 0; theta = 0;
+  updateHud();
+}
+function litCount() { return ch.lit.filter(Boolean).length; }
+function hitTest(x, y) {
+  const s = ch.st;
+  for (const o of s.obs) if (distToImgs(x, y, o.imgs) < HIT_OBS) return 'obs';
+  for (let i = 0; i < s.orbits.length; i++) {
+    if (ch.lit[i]) continue;
+    const o = s.orbits[i];
+    if (distToImgs(x, y, o.imgs) < HIT_STAR) {
+      ch.lit[i] = true;
+      sfx.star(litCount() - 1);
+      const gc = GROUP[i % GROUP.length];
+      for (const k of o.show) { burst(o.imgs[k * 2], o.imgs[k * 2 + 1], gc, 12, 110); ring(o.imgs[k * 2], o.imgs[k * 2 + 1], gc); }
+    }
+  }
+  return litCount() === s.orbits.length ? 'clear' : '';
+}
+function failStroke(why) {
+  ch.phase = 'fail'; ch.failT = 1.0; cur = null; kb.pen = false;
+  sfx.fail();
+  setMsg(why === 'obs' ? '✖ に さわっちゃった！ もういちど' : why === 'ink' ? 'インクぎれ！ もっと 近道を さがそう' : 'まだ ほしが のこってるよ。ゆびを はなさずに！', true);
+  updateHud();
+}
+function clearStage() {
+  const s = ch.st;
+  ch.phase = 'clear'; ch.clearT = 1.1; cur = null; kb.pen = false; ch.look = false;
+  let got = ch.used <= s.t3 ? 3 : ch.used <= s.t2 ? 2 : 1;
+  if (ch.hintUsed && got > 2) got = 2;
+  ch.got = got; ch.isNew = false;
+  if (s.idx >= 0) {
+    if (got > save.stars[s.idx]) { save.stars[s.idx] = got; ch.isNew = true; }
+  } else save.rand++;
+  persist();
+  sfx.clear();
+  burst(0, 0, '#ffd166', 50, 220); burst(0, 0, '#53e0d8', 40, 170); burst(0, 0, '#ff5fa2', 40, 130);
+  setMsg('');
+  updateHud(); syncSwatches();
+}
+
+/* ================= ペン（マウス・ゆび・キーボード・テスト 共通） ================= */
+function penDown(x, y) {
+  if (ovKind) return;
+  ensureAudio();
+  if (mode === 'free') {
+    if (kan) { setKan(false); return; }
+    cur = { n: save.free.n, mir: save.free.mir, col: save.free.col, w: save.free.w, h0: Math.floor(Math.random() * 360), pts: [x, y] };
+    paintLive(cur); noteAcc = 0; drawNote(Math.hypot(x, y));
+    setMsg('');
+  } else if (mode === 'chal') {
+    if (ch.phase === 'clear') { if (ch.look) showResult(); return; }
+    if (ch.phase !== 'ready') return;
+    ch.phase = 'draw'; ch.used = 0;
+    cur = { n: ch.st.n, mir: ch.st.mir, col: COL_RAINBOW, w: 1, h0: 180, pts: [x, y] };
+    paintLive(cur); noteAcc = 0; drawNote(Math.hypot(x, y));
+    setMsg('');
+    const r = hitTest(x, y);
+    if (r === 'obs') failStroke('obs'); else if (r === 'clear') clearStage();
+    updateHud();
+  }
+}
+function penMove(x, y) {
+  if (!cur) return;
+  const n = cur.pts.length, lx = cur.pts[n - 2], ly = cur.pts[n - 1];
+  let d = Math.hypot(x - lx, y - ly);
+  if (d < 2.5) return;
+  let out = false;
+  if (mode === 'chal') {
+    const left = ch.st.ink - ch.used;
+    if (d >= left) { const t = Math.max(0, left / d); x = lx + (x - lx) * t; y = ly + (y - ly) * t; d = left; out = true; }
+    ch.used += d;
+    const k = Math.max(1, Math.ceil(d / 4));
+    let res = '';
+    for (let j = 1; j <= k && !res; j++) res = hitTest(lx + (x - lx) * j / k, ly + (y - ly) * j / k);
+    cur.pts.push(x, y); paintLive(cur);
+    if (res === 'obs') { failStroke('obs'); return; }
+    if (res === 'clear') { clearStage(); return; }
+    if (out) { failStroke('ink'); return; }
+    updateInk();
+  } else {
+    cur.pts.push(x, y); paintLive(cur);
+    if (cur.pts.length / 2 >= MAX_PTS) {   // 長すぎる線は つないで つづける
+      const keep = cur; commitFree();
+      cur = { n: keep.n, mir: keep.mir, col: keep.col, w: keep.w, h0: keep.h0 + MAX_PTS * 3, pts: [x, y] };
+    }
+  }
+  noteAcc += d;
+  if (noteAcc > 34) { noteAcc = 0; drawNote(Math.hypot(x, y)); }
+}
+function penUp() {
+  if (!cur) return;
+  if (mode === 'chal') { if (ch.phase === 'draw') failStroke('lift'); return; }
+  commitFree();
+}
+function commitFree() {
+  if (!cur) return;
+  strokes.push(cur); cur = null; lastCleared = null;
+  if (strokes.length > MAX_STROKES) strokes.shift();
+  persistArt(); updateHud();
+}
+
+/* ================= じゆうモード ================= */
+function startFree() {
+  mode = 'free'; cur = null; kb.pen = false; theta = 0; kan = false;
+  hideOverlay();
+  $('chalCtl').classList.add('hide'); $('freeCtl').classList.remove('hide');
+  redrawArt(); syncFree(); updateHud();
+  setMsg(strokes.length ? '' : 'すきな ところに 線を かいてみよう');
+}
+function undo() {
+  if (mode !== 'free' || cur) return;
+  if (!strokes.length && lastCleared) { strokes = lastCleared; lastCleared = null; }
+  else if (strokes.length) strokes.pop();
+  else return;
+  sfx.undo(); redrawArt(); persistArt(); updateHud();
+}
+function clearFree() {
+  if (mode !== 'free' || !strokes.length) return;
+  lastCleared = strokes; strokes = []; cur = null;
+  sfx.undo(); redrawArt(); persistArt(); updateHud();
+  setMsg('ぜんぶ けしたよ（「もどす」で もどせる）');
+}
+function setKan(on) {
+  kan = !!on && mode === 'free';
+  if (!kan) theta = 0; else { sfx.kan(); cur = null; }
+  $('kanBtn').classList.toggle('on', kan);
+  $('kanBtn').textContent = kan ? '⏹ とめる' : '🌀 まわす';
+  setMsg(kan ? 'ゆっくり 回るよ。タッチで とまる' : '');
+}
+function setFree(o) {
+  if (o.n !== undefined && N_LIST.indexOf(o.n) >= 0) save.free.n = o.n;
+  if (o.mir !== undefined) save.free.mir = !!o.mir;
+  if (o.w !== undefined && o.w >= 0 && o.w <= 2) save.free.w = o.w | 0;
+  if (o.col !== undefined && o.col >= 0 && o.col <= 7) {
+    if (o.col === COL_KIRA && totalStars() < KIRA_NEED) setMsg('きらきらペンは おだいの ★' + KIRA_NEED + 'こで つかえるよ');
+    else save.free.col = o.col | 0;
+  }
+  persist(); syncFree();
+}
+function syncFree() {
+  $('nLabel').textContent = save.free.n + 'まい';
+  $('mirBtn').textContent = 'かがみ ' + (save.free.mir ? 'ON' : 'OFF');
+  $('mirBtn').classList.toggle('on', save.free.mir);
+  $('wBtn').textContent = '線 ' + W_NAMES[save.free.w];
+  $('nMinus').disabled = N_LIST.indexOf(save.free.n) === 0;
+  $('nPlus').disabled = N_LIST.indexOf(save.free.n) === N_LIST.length - 1;
+  syncSwatches();
+}
+function syncSwatches() {
+  const sw = $('swRow').children;
+  for (let i = 0; i < sw.length; i++) {
+    sw[i].classList.toggle('sel', i === save.free.col);
+    if (i === COL_KIRA) {
+      const ok = totalStars() >= KIRA_NEED;
+      sw[i].className = 'sw ' + (ok ? 'kira' : 'lock') + (i === save.free.col ? ' sel' : '');
+      sw[i].innerHTML = ok ? '✨' : '🔒<br>★' + KIRA_NEED;
+    }
+  }
+}
+function buildSwatches() {
+  const row = $('swRow'), names = ['ピンク', 'きいろ', 'みずいろ', 'むらさき', 'みどり', 'しろ', 'にじいろ', 'きらきら'];
+  for (let i = 0; i < 8; i++) {
+    const b = document.createElement('button');
+    b.className = 'sw' + (i === COL_RAINBOW ? ' rb' : '');
+    b.setAttribute('aria-label', names[i] + 'の ペン');
+    if (i < 6) b.style.background = COLORS[i];
+    b.addEventListener('click', function () { sfx.click(); setFree({ col: i }); b.blur(); });
+    row.appendChild(b);
+  }
+}
+
+/* ================= HUD・オーバーレイ ================= */
+function updateInk() {
+  const s = ch.st, left = Math.max(0, 1 - ch.used / s.ink);
+  $('inkBar').style.transform = 'scaleX(' + left.toFixed(3) + ')';
+  $('inkBar').classList.toggle('low', left < 0.25);
+}
+function updateHud() {
+  if (mode === 'chal') {
+    const s = ch.st;
+    $('hudL').textContent = (s.idx >= 0 ? 'ステージ' + (s.idx + 1) : 'ランダム') + '・' + s.n + 'まい';
+    let h = '';      // 組の色の ほし。光ったら ★、まだなら ☆
+    for (let i = 0; i < s.orbits.length; i++) h += '<i style="color:' + GROUP[i % GROUP.length] + '">' + (ch.lit[i] ? '★' : '☆') + '</i>';
+    $('hudR').innerHTML = h;
+    $('hudR').setAttribute('aria-label', 'ほし ' + litCount() + '/' + s.orbits.length);
+    $('inkWrap').classList.add('on');
+    updateInk();
+  } else if (mode === 'free') {
+    $('hudL').textContent = 'じゆうに かく';
+    $('hudR').textContent = '線 ' + strokes.length + '本';
+    $('hudR').removeAttribute('aria-label');
+    $('inkWrap').classList.remove('on');
+  } else {
+    $('hudL').textContent = 'まんげきょう';
+    $('hudR').textContent = '★ ' + totalStars() + '/' + STAGES.length * 3;
+    $('hudR').removeAttribute('aria-label');
+    $('inkWrap').classList.remove('on');
+  }
+}
+function hideOverlay() { ovKind = null; overlay.classList.remove('show', 'res'); overlay.innerHTML = ''; }
+function showOverlay(kind, html) {
+  ovKind = kind; overlay.innerHTML = html;
+  overlay.classList.add('show'); overlay.classList.toggle('res', kind === 'result');
+  cur = null; kb.pen = false;
+  setMsg('');
+}
+function showTitle() {
+  mode = 'title'; kan = false; theta = 0;
+  $('freeCtl').classList.add('hide'); $('chalCtl').classList.add('hide');
+  showOverlay('title',
+    '<div class="big">まんげきょう<br>おえかき</div>' +
+    '<div class="note">1ぽん 線をかくと <b>かがみで ふえて</b> もようになるよ。<br>' +
+    '「おだい」は 1ぽんの線で <b>ほしを ぜんぶ 光らせる</b> パズル。<br>' +
+    '📱 ゆびで なぞる ／ ⌨️ 矢印キー＋スペース</div>' +
+    '<div class="modes"><button data-act="chal">おだいで あそぶ</button><button data-act="free" class="alt">じゆうに あそぶ</button></div>' +
+    '<div class="modes"><button data-act="select" class="sub">ステージを えらぶ</button></div>' +
+    '<div class="rule">あつめた ★ ' + totalStars() + '/' + STAGES.length * 3 + '　ランダムおだい クリア ' + save.rand + '回</div>');
+  updateHud();
+}
+function starText(n) { return '★★★'.slice(0, n) + '<i>' + '★★★'.slice(n) + '</i>'; }
+function showSelect() {
+  let h = '<div class="big" style="font-size:22px">ステージを えらぶ</div><div class="grid">';
+  for (let i = 0; i < STAGES.length; i++) {
+    const st = save.stars[i], open = unlocked(i);
+    h += '<button data-act="s' + i + '"' + (open ? '' : ' disabled') + (st ? ' class="done"' : '') + ' aria-label="ステージ' + (i + 1) + '">' +
+      (open ? (i + 1) : '🔒') + '<i>' + (st ? '★'.repeat(st) : open ? 'NEW' : '−−') + '</i></button>';
+  }
+  const rnd = save.stars[2] > 0;
+  h += '</div><div class="modes"><button data-act="random" class="alt"' + (rnd ? '' : ' disabled style="opacity:.45"') + '>' + (rnd ? '🎲 ランダムおだい' : '🔒 ランダム（3面クリアで）') + '</button>' +
+    '<button data-act="title" class="sub">タイトルへ</button></div>' +
+    '<div class="rule">★ ' + totalStars() + '/' + STAGES.length * 3 + '　★' + KIRA_NEED + 'こで「きらきらペン」が つかえるよ</div>';
+  showOverlay('select', h);
+}
+function showResult() {
+  const s = ch.st, last = s.idx === STAGES.length - 1;
+  ch.look = false;
+  const pct = Math.max(0, Math.round((1 - ch.used / s.ink) * 100));
+  let h = '<div class="big gold">' + (last ? 'ぜんぶ クリア！' : 'クリア！') + '</div>' +
+    '<div class="stars">' + starText(ch.got) + '</div>' +
+    '<div class="note">インク のこり <b>' + pct + '%</b>' + (ch.isNew && s.idx >= 0 ? '　<b>きろく こうしん！</b>' : '') +
+    (s.idx < 0 ? '<br>ランダムおだい クリア <b>' + save.rand + '回</b>' : '') +
+    (ch.hintUsed ? '<br>ヒントを つかうと ★は 2つまで' : ch.got < 3 ? '<br>もっと 近道すると ★が ふえるよ' : '') + '</div><div class="modes">';
+  if (s.idx < 0) h += '<button data-act="random">つぎへ</button>';
+  else if (!last) h += '<button data-act="next">つぎへ</button>';
+  else h += '<button data-act="random">ランダムおだい</button>';
+  h += '<button data-act="retry" class="alt">もういちど</button></div>' +
+    '<div class="modes"><button data-act="look" class="sub">もようを ながめる</button><button data-act="select" class="sub">ステージ</button></div>';
+  showOverlay('result', h);
+}
+function onAct(a) {
+  ensureAudio(); sfx.click();
+  if (a === 'chal') { const i = nextOpen(); if (i < 0) startRandom(); else startStage(i); }
+  else if (a === 'free') startFree();
+  else if (a === 'select') showSelect();
+  else if (a === 'title') showTitle();
+  else if (a === 'random') startRandom();
+  else if (a === 'next') startStage(Math.min(STAGES.length - 1, ch.st.idx + 1));
+  else if (a === 'retry') { if (ch.st.idx >= 0) startStage(ch.st.idx); else startRandom(ch.st.seed); }
+  else if (a === 'look') { hideOverlay(); ch.look = true; setMsg('タッチで もどる'); }
+  else if (a.charAt(0) === 's') { const i = parseInt(a.slice(1), 10); if (unlocked(i)) startStage(i); }
+}
+
+/* ================= えがく ================= */
+function starShape(x, y, r, rot) {
+  g.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = rot + i * Math.PI / 5 - Math.PI / 2, rr = i % 2 ? r * 0.46 : r;
+    if (i) g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); else g.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+  }
+  g.closePath();
+}
+function render() {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, 720, 720);
+  g.setTransform(S, 0, 0, S, C * S, C * S);
+  // 台
+  const bgG = g.createRadialGradient(0, 0, 10, 0, 0, R);
+  bgG.addColorStop(0, '#20204a'); bgG.addColorStop(0.7, '#141430'); bgG.addColorStop(1, '#0c0c1c');
+  g.fillStyle = bgG; g.beginPath(); g.arc(0, 0, R, 0, TAU); g.fill();
+  const spinning = kan || (mode === 'chal' && ch.phase === 'clear');
+  const n = mode === 'chal' && ch.st ? ch.st.n : save.free.n;
+  const mir = mode === 'chal' && ch.st ? ch.st.mir : save.free.mir;
+  // ガイド線
+  if (!spinning && mode !== 'title') {
+    const lines = mir ? n * 2 : n;
+    g.lineWidth = 1;
+    for (let k = 0; k < lines; k++) {
+      const a = TAU * k / lines;
+      g.strokeStyle = mir && k % 2 ? 'rgba(160,107,255,.13)' : 'rgba(160,107,255,.26)';
+      g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * R, Math.sin(a) * R); g.stroke();
+    }
+  }
+  // ヒント：かく場所（1まいぶん）。ほしを そこへ うつした場所の「点線の わ」は drawChal で ほしの後に かく
+  if (mode === 'chal' && ch.hint && ch.phase !== 'clear') {
+    const s = ch.st;
+    g.fillStyle = 'rgba(83,224,216,' + (0.1 + 0.04 * Math.sin(time * 4)) + ')';
+    g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, 0, s.W); g.closePath(); g.fill();
+  }
+  // もよう
+  g.save();
+  g.beginPath(); g.arc(0, 0, R, 0, TAU); g.clip();
+  let alpha = 1;
+  if (mode === 'chal' && ch.phase === 'fail') alpha = Math.max(0, ch.failT);
+  if (mode !== 'title') {
+    if (spinning) {
+      g.save(); g.rotate(-theta * 0.6); g.globalAlpha = 0.4; g.scale(1.06, 1.06);
+      g.drawImage(art, -C, -C, 480, 480); g.restore();
+    }
+    g.save(); g.rotate(theta); g.globalAlpha = alpha;
+    g.drawImage(art, -C, -C, 480, 480);
+    g.restore();
+  } else drawTitleDeco();
+  g.restore();
+  // ふち
+  g.lineWidth = 3; g.strokeStyle = 'rgba(160,107,255,.75)';
+  g.beginPath(); g.arc(0, 0, R, 0, TAU); g.stroke();
+  g.lineWidth = 8; g.strokeStyle = 'rgba(160,107,255,.14)';
+  g.beginPath(); g.arc(0, 0, R + 4, 0, TAU); g.stroke();
+
+  if (mode === 'chal' && ch.st) drawChal();
+  // パーティクル
+  for (const r of rings) {
+    const t = r.t / 0.5;
+    g.globalAlpha = Math.max(0, 1 - t); g.strokeStyle = r.col; g.lineWidth = 3 * (1 - t) + 0.5;
+    g.beginPath(); g.arc(r.x, r.y, 10 + t * 30, 0, TAU); g.stroke();
+  }
+  for (const p of parts) {
+    g.globalAlpha = Math.max(0, 1 - p.life / p.max); g.fillStyle = p.col;
+    g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s);
+  }
+  g.globalAlpha = 1;
+  // キーボードのペン
+  if (kb.on && !ovKind && mode !== 'title') {
+    g.strokeStyle = kb.pen ? '#ffd166' : '#eeecfa'; g.lineWidth = 2;
+    g.beginPath(); g.arc(kb.x, kb.y, kb.pen ? 6 : 9, 0, TAU); g.stroke();
+    g.beginPath(); g.moveTo(kb.x - 14, kb.y); g.lineTo(kb.x - 5, kb.y); g.moveTo(kb.x + 5, kb.y); g.lineTo(kb.x + 14, kb.y);
+    g.moveTo(kb.x, kb.y - 14); g.lineTo(kb.x, kb.y - 5); g.moveTo(kb.x, kb.y + 5); g.lineTo(kb.x, kb.y + 14); g.stroke();
+  }
+}
+function drawTitleDeco() {
+  // タイトルのうしろで ゆっくり 回る かざり
+  for (let k = 0; k < 12; k++) {
+    g.save(); g.rotate(TAU * k / 12 + time * 0.15); if (k % 2) g.scale(1, -1);
+    g.strokeStyle = 'hsla(' + ((k * 30 + time * 20) % 360) + ',100%,66%,.5)'; g.lineWidth = 3; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(30, 6); g.bezierCurveTo(90, 60, 150, -30, 205, 30); g.stroke();
+    g.restore();
+  }
+}
+function drawChal() {
+  const s = ch.st;
+  g.save();
+  if (ch.phase === 'clear') g.rotate(theta);
+  // ✖
+  for (const o of s.obs) {
+    for (let i = 0; i < o.imgs.length; i += 2) {
+      const x = o.imgs[i], y = o.imgs[i + 1];
+      g.fillStyle = 'rgba(255,95,162,.16)'; g.beginPath(); g.arc(x, y, 11, 0, TAU); g.fill();
+      g.strokeStyle = '#ff5fa2'; g.lineWidth = 2.5; g.lineCap = 'round';
+      g.beginPath(); g.moveTo(x - 5, y - 5); g.lineTo(x + 5, y + 5); g.moveTo(x + 5, y - 5); g.lineTo(x - 5, y + 5); g.stroke();
+    }
+  }
+  // ほし
+  for (let i = 0; i < s.orbits.length; i++) {
+    const o = s.orbits[i], lit = ch.lit[i], col = GROUP[i % GROUP.length], rgb = GROUP_RGB[i % GROUP.length];
+    for (const k of o.show) {
+      const x = o.imgs[k * 2], y = o.imgs[k * 2 + 1];
+      const pulse = 1 + 0.08 * Math.sin(time * 4 + i * 1.7 + k);
+      if (lit) {
+        const gl = g.createRadialGradient(x, y, 2, x, y, 30);
+        gl.addColorStop(0, 'rgba(' + rgb + ',.75)'); gl.addColorStop(1, 'rgba(' + rgb + ',0)');
+        g.fillStyle = gl; g.beginPath(); g.arc(x, y, 30, 0, TAU); g.fill();
+        starShape(x, y, 15 * pulse, time * 0.8); g.fillStyle = col; g.fill();
+        g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.stroke();
+      } else {
+        g.fillStyle = 'rgba(13,13,28,.8)'; g.beginPath(); g.arc(x, y, 16, 0, TAU); g.fill();
+        starShape(x, y, 13 * pulse, 0); g.fillStyle = 'rgba(' + rgb + ',.18)'; g.fill();
+        g.strokeStyle = col; g.lineWidth = 2; g.stroke();
+      }
+    }
+  }
+  // ヒントの「点線の わ」：ほしの上に、ほしより大きく かく（かくれないように）
+  if (ch.hint && ch.phase !== 'clear') {
+    g.setLineDash([6, 5]); g.lineWidth = 2.5; g.lineCap = 'butt';
+    for (let i = 0; i < s.orbits.length; i++) {
+      if (ch.lit[i]) continue;
+      const hx = s.orbits[i].p[0], hy = s.orbits[i].p[1];
+      g.strokeStyle = 'rgba(13,13,28,.85)'; g.lineWidth = 5; g.setLineDash([]);
+      g.beginPath(); g.arc(hx, hy, 18.5, 0, TAU); g.stroke();
+      g.strokeStyle = GROUP[i % GROUP.length]; g.lineWidth = 2.5; g.setLineDash([6, 5]);
+      g.lineDashOffset = -time * 14;
+      g.beginPath(); g.arc(hx, hy, 18.5, 0, TAU); g.stroke();
+    }
+    g.setLineDash([]); g.lineDashOffset = 0;
+  }
+  g.restore();
+}
+
+/* ================= ループ ================= */
+function update(dt) {
+  time += dt;
+  if (kb.on && !ovKind && mode !== 'title') {
+    const sp = 170 * dt;
+    let dx = (kb.keys.ArrowRight ? 1 : 0) - (kb.keys.ArrowLeft ? 1 : 0), dy = (kb.keys.ArrowDown ? 1 : 0) - (kb.keys.ArrowUp ? 1 : 0);
+    if (dx || dy) {
+      const l = Math.hypot(dx, dy);
+      kb.x = Math.max(-C + 6, Math.min(C - 6, kb.x + dx / l * sp));
+      kb.y = Math.max(-C + 6, Math.min(C - 6, kb.y + dy / l * sp));
+      if (kb.pen) { penMove(kb.x, kb.y); if (!cur) kb.pen = false; }
+    }
+  }
+  if (mode === 'chal') {
+    if (ch.phase === 'fail') { ch.failT -= dt; if (ch.failT <= 0) { resetStroke(); setMsg(stageMsg()); } }
+    else if (ch.phase === 'clear') {
+      theta += dt * 0.35;
+      if (ch.clearT > 0) { ch.clearT -= dt; if (ch.clearT <= 0) showResult(); }
+    }
+  } else if (mode === 'free' && kan) theta += dt * 0.3;
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const p = parts[i];
+    p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.96; p.vy *= 0.96;
+    if (p.life >= p.max) parts.splice(i, 1);
+  }
+  for (let i = rings.length - 1; i >= 0; i--) { rings[i].t += dt; if (rings[i].t >= 0.5) rings.splice(i, 1); }
+}
+let lastT = 0, rafId = 0, running = false;
+function frame(t) {
+  if (!running) return;
+  const dt = Math.min(0.05, lastT ? (t - lastT) / 1000 : 0.016);
+  lastT = t;
+  update(dt); render();
+  rafId = requestAnimationFrame(frame);
+}
+function startLoop() { if (running) return; running = true; lastT = 0; rafId = requestAnimationFrame(frame); }
+function stopLoop() { running = false; cancelAnimationFrame(rafId); }
+
+/* ================= 入力 ================= */
+function toLocal(e) {
+  const r = cv.getBoundingClientRect();
+  return [(e.clientX - r.left) * 480 / r.width - C, (e.clientY - r.top) * 480 / r.height - C];
+}
+let activePtr = null;
+function onDown(e) {
+  if (activePtr !== null) return;
+  e.preventDefault();
+  activePtr = e.pointerId; kb.on = false; kb.pen = false;
+  try { cv.setPointerCapture(e.pointerId); } catch (err) { /* なくても うごく */ }
+  const p = toLocal(e); penDown(p[0], p[1]);
+}
+function onMove(e) {
+  if (e.pointerId !== activePtr) return;
+  e.preventDefault();
+  const p = toLocal(e); penMove(p[0], p[1]);
+}
+function onUp(e) {
+  if (e.pointerId !== activePtr) return;
+  activePtr = null;
+  const p = toLocal(e); penMove(p[0], p[1]);
+  penUp();
+}
+function onKey(e) {
+  const k = e.key;
+  if (k.indexOf('Arrow') === 0) {
+    if (ovKind) return;
+    kb.keys[k] = true; kb.on = true; e.preventDefault(); return;
+  }
+  if (ovKind || mode === 'title' || e.repeat) return;
+  if (k === ' ' || k === 'Spacebar') {
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.blur && document.activeElement !== document.body) document.activeElement.blur();
+    kb.on = true;
+    if (kb.pen) { kb.pen = false; penUp(); }
+    else { penDown(kb.x, kb.y); kb.pen = !!cur; }
+  } else if (k === 'z' || k === 'Z') undo();
+  else if (k === 'r' || k === 'R') { if (mode === 'chal' && (ch.phase === 'ready' || ch.phase === 'draw')) { resetStroke(); setMsg(stageMsg()); } }
+  else if (k === 'h' || k === 'H') { if (mode === 'chal') toggleHint(); }
+}
+function toggleHint() {
+  ch.hint = !ch.hint;
+  if (ch.hint) ch.hintUsed = true;
+  $('hintBtn').classList.toggle('on', ch.hint);
+  if (ch.phase === 'ready') setMsg(ch.hint ? '光る 1まいの中で 点線の わ を ぜんぶ 通ろう' : stageMsg());
+}
+function setMute(m) {
+  muted = !!m; store('mute', muted);
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+function bind(id, fn) { $(id).addEventListener('click', function (e) { ensureAudio(); fn(); e.currentTarget.blur(); }); }
+
+/* ================= テスト用 ================= */
+window.__test = {
+  state: function () {
+    return {
+      mode: mode, overlay: ovKind, kan: kan, muted: muted,
+      stage: ch.st ? ch.st.idx : null, phase: mode === 'chal' ? ch.phase : null,
+      lit: mode === 'chal' ? litCount() : 0, orbits: ch.st ? ch.st.orbits.length : 0,
+      used: Math.round(ch.used * 10) / 10, ink: ch.st ? Math.round(ch.st.ink * 10) / 10 : 0,
+      got: ch.got, hintUsed: ch.hintUsed,
+      stars: save.stars.slice(), total: totalStars(), rand: save.rand,
+      free: { n: save.free.n, mir: save.free.mir, col: save.free.col, w: save.free.w, strokes: strokes.length },
+      drawing: !!cur, theta: Math.round(theta * 1000) / 1000
+    };
+  },
+  start: function (m) { if (m === 'free') startFree(); else if (m === 'title') showTitle(); else onAct('chal'); },
+  loadStage: function (i) { startStage(i); },
+  loadRandom: function (seed) { startRandom(seed); },
+  stageInfo: function () {
+    const s = ch.st;
+    return {
+      idx: s.idx, n: s.n, mir: s.mir, want: s.want, wantObs: s.wantObs,
+      orbits: s.orbits.map(function (o) { return { p: o.p, show: o.show.map(function (k) { return [o.imgs[k * 2], o.imgs[k * 2 + 1]]; }) }; }),
+      obs: s.obs.map(function (o) { return o.p; }), path: s.path, base: s.base, ink: s.ink, t3: s.t3, t2: s.t2,
+      tries: s.tries, easyLine: rayClears(s), hintOn: ch.hint
+    };
+  },
+  count: function () { return STAGES.length; },
+  // 線を1本 ひく（中心を0,0とした 480の ます目）。up=false なら ペンを おろしたまま
+  drawPath: function (pts, up) {
+    penDown(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], d = Math.hypot(b[0] - a[0], b[1] - a[1]), k = Math.max(1, Math.ceil(d / 3));
+      for (let j = 1; j <= k; j++) penMove(a[0] + (b[0] - a[0]) * j / k, a[1] + (b[1] - a[1]) * j / k);
+    }
+    if (up !== false) penUp();
+  },
+  penUp: function () { penUp(); },
+  step: function (ms) { let left = ms / 1000; while (left > 1e-6) { const d = Math.min(0.05, left); update(d); left -= d; } render(); },
+  setFree: function (o) { setFree(o); },
+  undo: function () { undo(); },
+  clear: function () { clearFree(); },
+  setKan: function (on) { setKan(on); },
+  hint: function () { toggleHint(); },
+  setStars: function (arr) { for (let i = 0; i < STAGES.length; i++) save.stars[i] = arr[i] | 0; persist(); syncSwatches(); updateHud(); },
+  alphaAt: function (x, y) { return ag.getImageData(Math.round((C + x) * S), Math.round((C + y) * S), 1, 1).data[3]; },
+  toClient: function (x, y) { const r = cv.getBoundingClientRect(); return [r.left + (C + x) * r.width / 480, r.top + (C + y) * r.height / 480]; },
+  resetAll: function () { try { localStorage.removeItem(KEY + 'save'); localStorage.removeItem(KEY + 'art'); localStorage.removeItem(KEY + 'mute'); } catch (e) { /* 何もしない */ } }
+};
+
+/* ================= はじめる（かならず いちばん最後） ================= */
+(function init() {
+  const a = load('art', []);
+  if (Array.isArray(a)) {
+    for (const s of a) {
+      if (!s || !Array.isArray(s.pts) || s.pts.length < 2 || s.pts.length > MAX_PTS * 2 + 4) continue;
+      if (!(s.n >= 2 && s.n <= 16) || !(s.col >= 0 && s.col <= 7) || !(s.w >= 0 && s.w <= 2)) continue;
+      if (s.pts.some(function (v) { return typeof v !== 'number' || !isFinite(v); })) continue;
+      strokes.push({ n: s.n | 0, mir: !!s.mir, col: s.col | 0, w: s.w | 0, h0: (s.h0 | 0) || 0, pts: s.pts.slice() });
+    }
+  }
+  buildSwatches();
+  setMute(muted);
+  showTitle();
+
+  cv.addEventListener('pointerdown', onDown);
+  cv.addEventListener('pointermove', onMove);
+  cv.addEventListener('pointerup', onUp);
+  cv.addEventListener('pointercancel', onUp);
+  cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  overlay.addEventListener('click', function (e) {
+    const b = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (b && !b.disabled) onAct(b.getAttribute('data-act'));
+  });
+  window.addEventListener('keydown', onKey);
+  window.addEventListener('keyup', function (e) { kb.keys[e.key] = false; });
+  window.addEventListener('blur', function () { kb.keys = {}; });
+  $('mute-btn').addEventListener('click', function (e) { setMute(!muted); ensureAudio(); sfx.click(); e.currentTarget.blur(); });
+  bind('nMinus', function () { sfx.click(); setFree({ n: N_LIST[Math.max(0, N_LIST.indexOf(save.free.n) - 1)] }); });
+  bind('nPlus', function () { sfx.click(); setFree({ n: N_LIST[Math.min(N_LIST.length - 1, N_LIST.indexOf(save.free.n) + 1)] }); });
+  bind('mirBtn', function () { sfx.click(); setFree({ mir: !save.free.mir }); });
+  bind('wBtn', function () { sfx.click(); setFree({ w: (save.free.w + 1) % 3 }); });
+  bind('undoBtn', undo);
+  bind('clearBtn', clearFree);
+  bind('kanBtn', function () { setKan(!kan); });
+  bind('menuBtnF', function () { sfx.click(); if (cur) commitFree(); showTitle(); });
+  bind('retryBtn', function () { sfx.click(); if (ch.phase !== 'clear') { resetStroke(); setMsg(stageMsg()); } else if (ch.st.idx >= 0) startStage(ch.st.idx); });
+  bind('hintBtn', function () { sfx.click(); toggleHint(); });
+  bind('menuBtnC', function () { sfx.click(); showSelect(); });
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { stopLoop(); if (cur && mode === 'free') commitFree(); kb.keys = {}; }
+    else startLoop();
+  });
+  startLoop();
+})();
+
+})();
+</script>
+</body>
+</html>
