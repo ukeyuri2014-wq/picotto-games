@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ピカピカおぼえ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:480px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#1f1c40 0%,var(--bg) 62%);
+    background-color:var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:12px 10px 30px; overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+  }
+  .backbar,header,#wrap,.help{width:min(var(--w),100%)}
+  .backbar{margin:0 2px 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:4px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;padding:4px 14px;min-width:48px;min-height:32px;cursor:pointer;font-family:inherit}
+  header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 8px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.6);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid #4a3d8a;border-radius:14px;background:rgba(13,11,32,.86);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 22px rgba(255,209,102,.14)}
+  .hud{display:flex;align-items:stretch;justify-content:space-between;gap:6px;padding:7px 8px;background:linear-gradient(180deg,rgba(64,53,122,.94),rgba(34,29,74,.95));border-bottom:2px solid #171233}
+  .hud .box{flex:1;min-width:0;text-align:center;border:1px solid rgba(160,107,255,.45);border-radius:10px;background:linear-gradient(180deg,#060514,#141033);padding:3px 2px;line-height:1.25}
+  .hud .box small{display:block;font-size:11px;color:var(--sub);letter-spacing:1px}
+  .hud .box b{display:block;font-weight:400;font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  #hudLives b{font-size:14px;letter-spacing:1px;line-height:1.55}
+  #hudLen b{color:var(--gold);text-shadow:0 0 8px rgba(255,209,102,.7)}
+  #hudBest b{color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.7)}
+  #hudScore b{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.7)}
+  .hud .box.bump b{animation:bump .3s}
+  @keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
+
+  #status{padding:7px 10px 4px;text-align:center}
+  #msg{font-size:15px;letter-spacing:1px;min-height:22px;line-height:22px;white-space:nowrap;overflow:hidden}
+  #msg.you{color:var(--cyan)} #msg.good{color:var(--gold)} #msg.ng{color:var(--pink)}
+  #dots{display:flex;gap:3px;justify-content:center;align-items:center;height:14px;margin-top:3px}
+  #dots i{flex:0 1 10px;min-width:3px;max-width:10px;height:8px;border-radius:4px;background:#34315c}
+  #dots i.done{background:var(--gold);box-shadow:0 0 6px rgba(255,209,102,.8)}
+  #dots i.now{background:var(--cyan);box-shadow:0 0 6px rgba(83,224,216,.8)}
+  #bar{height:5px;margin:4px auto 0;width:86%;background:#24224a;border-radius:3px;overflow:hidden}
+  #barIn{height:100%;width:100%;background:linear-gradient(90deg,var(--pink),var(--gold),var(--cyan));transform-origin:left center}
+
+  #stageBox{padding:6px 10px 4px;display:flex;justify-content:center}
+  #stage{position:relative;width:min(100%,max(220px,calc(100vh - 318px)));aspect-ratio:1/1;display:grid;gap:10px;padding:10px;border-radius:18px;background:radial-gradient(circle at 50% 50%,#201d45,#0d0b20 75%);border:2px solid #2c2c4d;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  #stage.nine{gap:7px;padding:8px}
+  .pad{position:relative;border:none;padding:0;margin:0;border-radius:16px;background:var(--c);cursor:pointer;font-family:inherit;color:#fff;overflow:hidden;touch-action:none;-webkit-tap-highlight-color:transparent;transition:transform .09s,box-shadow .09s;box-shadow:inset 0 -6px 10px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.25),0 3px 0 #07061a;outline:none}
+  .pad::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(19,19,34,.58),rgba(10,9,26,.78));transition:opacity .09s}
+  .pad .sym{position:relative;font-size:26px;opacity:.55;text-shadow:0 2px 3px rgba(0,0,0,.6);pointer-events:none}
+  #stage.nine .pad .sym{font-size:20px}
+  .pad .k{position:absolute;right:7px;bottom:5px;font-size:12px;color:#fff;opacity:.6;display:none;pointer-events:none}
+  .pad.lit{transform:scale(1.045);box-shadow:0 0 24px 2px var(--c),inset 0 0 22px rgba(255,255,255,.75);z-index:1}
+  .pad.lit::before{opacity:0}
+  .pad.lit .sym{opacity:1;color:#fff}
+  .pad.bad{animation:wob .32s 2;box-shadow:0 0 0 4px #ff3b5c,0 0 22px #ff3b5c}
+  .pad.want{animation:blink .36s 4;z-index:1}
+  .pad.hint::after{content:"";position:absolute;inset:6px;border:3px dashed #fff;border-radius:12px;animation:pulse .8s infinite}
+  .pad:focus-visible{box-shadow:0 0 0 3px #fff}
+  @keyframes wob{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  @keyframes blink{0%,100%{filter:none;box-shadow:inset 0 -6px 10px rgba(0,0,0,.45)}50%{filter:brightness(2.2);box-shadow:0 0 24px var(--c)}}
+  @keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+  #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;touch-action:none}
+
+  .row{display:flex;gap:8px;padding:6px 10px 10px}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:0 4px;min-height:44px;border-radius:12px;border:2px solid #5a4b9e;background:linear-gradient(180deg,#4a3f8c,#2b2460 58%,#211b4c);color:var(--ink);cursor:pointer;letter-spacing:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 #120e2c;touch-action:manipulation}
+  .btn:active{transform:translateY(2px)}
+  .btn:disabled{opacity:.42;cursor:default}
+  .btn.thin{flex:0 0 34%}
+
+  #overlay{position:absolute;inset:0;display:none;flex-direction:column;gap:9px;align-items:center;justify-content:center;background:rgba(19,19,34,.95);text-align:center;padding:10px;overflow:auto;z-index:5}
+  #overlay.show{display:flex}
+  #overlay .big{font-size:28px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.7);line-height:1.2}
+  #overlay .big.end{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.7)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.75}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .rec{color:var(--cyan)}
+  #overlay .note .rank{display:inline-block;font-size:18px;color:var(--gold);margin-top:2px}
+  .lamps{display:flex;gap:7px;justify-content:center}
+  .lamps i{width:16px;height:16px;border-radius:5px;animation:lamp 1.6s infinite}
+  .lamps i:nth-child(1){background:var(--pink);box-shadow:0 0 10px var(--pink)}
+  .lamps i:nth-child(2){background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation-delay:.4s}
+  .lamps i:nth-child(3){background:var(--gold);box-shadow:0 0 10px var(--gold);animation-delay:.8s}
+  .lamps i:nth-child(4){background:var(--violet);box-shadow:0 0 10px var(--violet);animation-delay:1.2s}
+  @keyframes lamp{0%,30%,100%{opacity:.28;transform:scale(.9)}10%{opacity:1;transform:scale(1.15)}}
+  .pick{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;width:100%}
+  .pick button{font-family:inherit;background:none;border:1px solid var(--edge);color:var(--sub);border-radius:10px;padding:5px 4px;cursor:pointer;min-height:44px;display:flex;flex-direction:column;gap:1px;align-items:center;justify-content:center;touch-action:manipulation}
+  .pick button b{font-weight:400;font-size:14px;color:var(--ink);letter-spacing:1px}
+  .pick button small{font-size:11px}
+  .pick button em{font-style:normal;font-size:11px;color:var(--gold)}
+  .pick button.on{border-color:var(--gold);background:rgba(255,209,102,.12);box-shadow:0 0 10px rgba(255,209,102,.35)}
+  .pick button.on b{color:var(--gold)}
+  #modes button{flex:0 1 150px}
+  #speeds button{flex:0 1 100px}
+  .go{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .go button{font-family:inherit;font-size:17px;background:var(--gold);color:#2a1a00;border:none;border-radius:10px;padding:0 30px;min-height:48px;cursor:pointer;letter-spacing:2px;box-shadow:0 0 16px rgba(255,209,102,.5),0 3px 0 #8a6a1c;touch-action:manipulation}
+  .go button.alt{background:none;color:var(--sub);border:1px solid var(--edge);font-size:13px;box-shadow:none;padding:0 14px;min-height:44px}
+  #overlay .rule{font-size:11px;color:var(--sub);min-height:14px}
+
+  .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--cyan);font-style:normal} .help .c3{color:var(--gold);font-style:normal}
+
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+    .pick button:hover{border-color:var(--gold)}
+    .go button.alt:hover{color:var(--gold);border-color:var(--gold)}
+    .pad:hover::before{opacity:.82}
+  }
+  @media (hover:hover) and (pointer:fine){ .pad .k{display:block} }
+  @media (max-width:400px){
+    h1{font-size:20px}
+    .hud .box b{font-size:15px}
+    #hudLives b{font-size:12px}
+    #msg{font-size:14px}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="マスが光った じゅんばんを おぼえて、おなじ じゅんにタップする きおくゲーム。せいかいするたびに1つずつ長く、光る はやさも上がるよ。4いろ／9マスの2モード、はやさ3だんかい、ライフ3つ、お手本を見なおせる「もういちど見る」、さいちょう きろくの ほぞんつき。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/097-follow-lights/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ピカピカおぼえ","description":"マスが光った じゅんばんを おぼえて、おなじ じゅんにタップする きおくゲーム。せいかいするたびに1つずつ長く、光る はやさも上がるよ。4いろ／9マスの2モード、はやさ3だんかい、ライフ3つ、お手本を見なおせる「もういちど見る」、さいちょう きろくの ほぞんつき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/097-follow-lights/index.html","inLanguage":"ja","genre":"BRAIN","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="097"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>ピカピカおぼえ</h1>
+  <div class="age-badge">6歳〜・ひとり用</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div class="box" id="hudLives"><small>ライフ</small><b>❤️❤️❤️</b></div>
+    <div class="box" id="hudLen"><small>ながさ</small><b>0</b></div>
+    <div class="box" id="hudBest"><small>さいちょう</small><b>0</b></div>
+    <div class="box" id="hudScore"><small>スコア</small><b>0</b></div>
+  </div>
+  <div id="status">
+    <div id="msg">ひかる じゅんばんを おぼえよう</div>
+    <div id="dots"></div>
+    <div id="bar"><div id="barIn"></div></div>
+  </div>
+  <div id="stageBox"><div id="stage"><canvas id="fx"></canvas></div></div>
+  <div class="row">
+    <button class="btn" id="replayBtn">👀 もういちど見る ×1</button>
+    <button class="btn thin" id="quitBtn">やめる</button>
+  </div>
+
+  <div id="overlay" class="show">
+    <div class="lamps" id="ovLamps"><i></i><i></i><i></i><i></i></div>
+    <div class="big" id="ovBig">ピカピカおぼえ</div>
+    <div class="note" id="ovNote"></div>
+    <div class="pick" id="modes">
+      <button data-m="four"><b>4いろ</b><small>やさしい</small><em>🏆 0</em></button>
+      <button data-m="nine"><b>9マス</b><small>むずかしい</small><em>🏆 0</em></button>
+    </div>
+    <div class="pick" id="speeds">
+      <button data-s="slow"><b>ゆっくり</b><small>×1てん</small></button>
+      <button data-s="normal"><b>ふつう</b><small>×2てん</small></button>
+      <button data-s="fast"><b>はやい</b><small>×3てん</small></button>
+    </div>
+    <div class="go">
+      <button id="startBtn">はじめる</button>
+      <button id="toTitleBtn" class="alt" style="display:none">モードをえらぶ</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：マスが ピカッと ひかるよ。<b>ひかった じゅんばん</b>を おぼえて、おなじ じゅんに タップ！ せいかいすると 1つずつ 長くなって、ひかる はやさも 上がっていくよ。<br>
+  まちがえたり 時間ぎれになると ❤️が 1つ へる（3つ なくなると おしまい）。こまったら <i class="c1">「👀 もういちど見る」</i>で お手本を 見なおせる。5回 せいかいするごとに 1回ぶん ふえるよ。<br>
+  📱 マスを タップ。⌨️ マスの すうじキー（1〜9）で おす、Rで もういちど見る、Enterで スタート。<br>
+  <i class="c3">コツ</i>：色の名前や 音の たかさを、歌みたいに 口に出して おぼえると 長く つづくよ。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const KEY = 'ludot_follow-lights_';
+  const MODES = {
+    four: { name: '4いろ', n: 4, cols: 2,
+      colors: ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff'],
+      freq: [329.63, 440, 554.37, 659.25] },
+    nine: { name: '9マス', n: 9, cols: 3,
+      colors: ['#ff5fa2', '#ff8c42', '#ffd166', '#7cff7c', '#53e0d8', '#4db8ff', '#a06bff', '#ff7bf0', '#d8d4ff'],
+      freq: [261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.25, 783.99] },
+  };
+  const SYMS = ['●', '▲', '■', '★', '♥', '◆', '✚', '☾', '♪'];
+  const SPEEDS = {
+    slow:   { name: 'ゆっくり', on: 0.62, limit: 8, mult: 1 },
+    normal: { name: 'ふつう',   on: 0.42, limit: 6, mult: 2 },
+    fast:   { name: 'はやい',   on: 0.26, limit: 4, mult: 3 },
+  };
+  const RANKS = [
+    [18, '🌟 でんせつの きおくおう'], [13, '👑 おぼえの たつじん'], [9, '🏅 おぼえ めいじん'],
+    [6, '✨ きらきら きおく'], [3, '🐣 ひよこ きおく'], [0, '🥚 たまご きおく'],
+  ];
+  const MAX_LIVES = 3, MAX_REPLAY = 3;
+  const TITLE_NOTE = '① マスが <b>ピカッ</b>と ひかるのを 見る<br>② <b>おなじ じゅんばん</b>で タップ！<br>③ せいかいで 1つずつ 長くなるよ';
+
+  const stage = $('stage'), cv = $('fx'), ctx = cv.getContext('2d');
+  const overlay = $('overlay'), msgEl = $('msg'), dotsEl = $('dots'), barIn = $('barIn');
+  const replayBtn = $('replayBtn'), quitBtn = $('quitBtn'), muteBtn = $('mute-btn');
+  const RS = Math.min(2, window.devicePixelRatio || 1);
+
+  // ---- save ------------------------------------------------------------------
+  function load(k, d) { try { const v = localStorage.getItem(KEY + k); return v == null ? d : v; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(KEY + k, v); } catch (e) {} }
+  let muted = load('mute', '0') === '1';
+  let best = { four: { slow: 0, normal: 0, fast: 0 }, nine: { slow: 0, normal: 0, fast: 0 } };
+  try {
+    const b = JSON.parse(load('best', 'null'));
+    if (b && typeof b === 'object') for (const m in best) for (const s in best[m]) { const v = b[m] && Number(b[m][s]); if (v > 0 && isFinite(v)) best[m][s] = Math.floor(v); }
+  } catch (e) {}
+  let seen = load('seen', '0') === '1';
+
+  // ---- sound -----------------------------------------------------------------
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') { try { ac.resume(); } catch (e) {} } return ac; }
+  function tone(type, f0, f1, dur, vol, delay) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + (delay || 0);
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  const SFX = {
+    pad(i, dur) { const f = MODES[mode].freq[i]; tone('triangle', f, f, Math.max(0.14, dur), 0.16); tone('sine', f * 2, f * 2, Math.max(0.1, dur * 0.7), 0.05); },
+    wrong() { tone('sawtooth', 170, 70, 0.45, 0.14); tone('square', 120, 60, 0.4, 0.07, 0.04); },
+    clear(n) { const fs = [523.25, 659.25, 783.99, 1046.5]; fs.forEach((f, i) => tone('square', f, f, 0.12, 0.055, 0.12 + i * 0.07)); if (n) [1318.5, 1568, 2093].forEach((f, i) => tone('triangle', f, f, 0.2, 0.07, 0.45 + i * 0.09)); },
+    over() { [392, 330, 262, 196].forEach((f, i) => tone('triangle', f, f * 0.97, 0.28, 0.1, i * 0.2)); },
+    record() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.2, 0.08, 0.9 + i * 0.09)); },
+    click() { tone('square', 900, 900, 0.035, 0.035); },
+    deny() { tone('square', 220, 180, 0.06, 0.04); },
+    tick() { tone('square', 1300, 1300, 0.03, 0.03); },
+  };
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state -----------------------------------------------------------------
+  let mode = MODES[load('mode', 'four')] ? load('mode', 'four') : 'four';
+  let speed = SPEEDS[load('speed', 'slow')] ? load('speed', 'slow') : 'slow';
+  let phase = 'title';            // title | show | input | between | miss | over
+  let seq = [], round = 0, inputIdx = 0, lives = MAX_LIVES, score = 0, cleared = 0, replays = 1;
+  let showIdx = -1, showOn = false, timer = 0, tLeft = 0, tMax = 1, clock = 0;
+  let litFrom = [], litUntil = [], badPad = -1, badUntil = 0, wantPad = -1, wantUntil = 0, hintPad = -1;
+  let newRecord = false, tutorial = false, misses = 0, lastTick = 0;
+  let pads = [], particles = [], pops = [];
+  let manual = false, lastT = 0, SW = 300;
+
+  const N = () => MODES[mode].n;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  function onTime(sp, r) { return SPEEDS[sp || speed].on * Math.max(0.55, 1 - 0.035 * ((r || round) - 1)); }
+  function gapTime(sp, r) { return onTime(sp, r) * 0.4 + 0.06; }
+  function limitTime(sp, r) { return SPEEDS[sp || speed].limit * Math.max(0.6, 1 - 0.025 * ((r || round) - 1)); }
+  function nextPad(list, n) {
+    let p = Math.floor(Math.random() * n);
+    const L = list.length;
+    // おなじマスが 3回つづくのは さける
+    if (L >= 2 && list[L - 1] === p && list[L - 2] === p) p = (p + 1 + Math.floor(Math.random() * (n - 1))) % n;
+    return p;
+  }
+  function gen(m, len) { const out = [], n = MODES[m].n; for (let i = 0; i < len; i++) out.push(nextPad(out, n)); return out; }
+  function rankOf(c) { for (const r of RANKS) if (c >= r[0]) return r[1]; return RANKS[RANKS.length - 1][1]; }
+
+  // ---- pads ------------------------------------------------------------------
+  function buildPads() {
+    const M = MODES[mode];
+    for (const p of pads) p.remove();
+    pads = [];
+    stage.style.gridTemplateColumns = 'repeat(' + M.cols + ',1fr)';
+    stage.classList.toggle('nine', mode === 'nine');
+    for (let i = 0; i < M.n; i++) {
+      const b = document.createElement('button');
+      b.className = 'pad'; b.type = 'button'; b.dataset.i = i; b.style.setProperty('--c', M.colors[i]);
+      b.setAttribute('aria-label', (i + 1) + 'ばんの マス');
+      b.innerHTML = '<span class="sym">' + SYMS[i] + '</span><span class="k">' + (i + 1) + '</span>';
+      stage.insertBefore(b, cv);
+      pads.push(b);
+    }
+    litFrom = new Array(M.n).fill(0); litUntil = new Array(M.n).fill(0);
+    badPad = wantPad = hintPad = -1;
+    fitCanvas();
+  }
+  function fitCanvas() {
+    SW = stage.clientWidth || 300;
+    cv.width = Math.round(SW * RS); cv.height = Math.round((stage.clientHeight || SW) * RS);
+  }
+  function padCenter(i) { const p = pads[i]; return p ? { x: p.offsetLeft + p.offsetWidth / 2, y: p.offsetTop + p.offsetHeight / 2 } : { x: SW / 2, y: SW / 2 }; }
+  function light(i, dur, delay) { litFrom[i] = clock + (delay || 0); litUntil[i] = clock + (delay || 0) + dur; }
+  function clearLights() { for (let i = 0; i < litUntil.length; i++) { litFrom[i] = 0; litUntil[i] = 0; } badPad = wantPad = -1; }
+  function litNow() { const out = []; for (let i = 0; i < litUntil.length; i++) if (clock >= litFrom[i] && clock < litUntil[i]) out.push(i); return out; }
+  function paint() {
+    for (let i = 0; i < pads.length; i++) {
+      const c = pads[i].classList;
+      c.toggle('lit', clock >= litFrom[i] && clock < litUntil[i]);
+      c.toggle('bad', i === badPad && clock < badUntil);
+      c.toggle('want', i === wantPad && clock < wantUntil);
+      c.toggle('hint', i === hintPad && phase === 'input');
+    }
+    const k = (phase === 'input') ? clamp(tLeft / tMax, 0, 1) : (phase === 'show' ? 1 : 0);
+    barIn.style.transform = 'scaleX(' + k.toFixed(3) + ')';
+  }
+
+  // ---- hud -------------------------------------------------------------------
+  function setMsg(t, cls) { msgEl.textContent = t; msgEl.className = cls || ''; }
+  function bump(id) { const e = $(id); e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); }
+  function updateHud() {
+    let h = ''; for (let i = 0; i < MAX_LIVES; i++) h += i < lives ? '❤️' : '🖤';
+    $('hudLives').querySelector('b').textContent = h;
+    $('hudLen').querySelector('b').textContent = String(seq.length);
+    $('hudBest').querySelector('b').textContent = String(best[mode][speed]);
+    $('hudScore').querySelector('b').textContent = String(score);
+    replayBtn.textContent = '👀 もういちど見る ×' + replays;
+    replayBtn.disabled = !(phase === 'input' && replays > 0);
+    quitBtn.disabled = (phase === 'title' || phase === 'over');
+  }
+  function buildDots() {
+    let h = ''; for (let i = 0; i < seq.length; i++) h += '<i></i>';
+    dotsEl.innerHTML = h; updateDots();
+  }
+  function updateDots() {
+    const ds = dotsEl.children;
+    for (let i = 0; i < ds.length; i++) {
+      const on = phase === 'show' ? i <= showIdx : i < inputIdx;
+      ds[i].className = on ? (phase === 'show' ? 'now' : 'done') : '';
+    }
+  }
+
+  // ---- fx --------------------------------------------------------------------
+  function burst(x, y, col, n, power) {
+    if (particles.length > 500) return;
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = (60 + Math.random() * 190) * (power || 1);
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.45 + Math.random() * 0.5, max: 0.95, col: Array.isArray(col) ? col[i % col.length] : col, size: 2 + Math.random() * 2.6 });
+    }
+  }
+  function pop(x, y, text, col) { pops.push({ x, y, text, col, life: 0.9 }); }
+  function drawFx() {
+    ctx.setTransform(RS, 0, 0, RS, 0, 0);
+    ctx.clearRect(0, 0, SW + 2, SW + 2);
+    for (const p of particles) {
+      ctx.globalAlpha = clamp(p.life / 0.5, 0, 1); ctx.fillStyle = p.col;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const p of pops) {
+      const k = 1 - p.life / 0.9;
+      ctx.globalAlpha = clamp(p.life / 0.35, 0, 1);
+      ctx.font = Math.round(18 + 6 * Math.min(1, k * 4)) + 'px DotGothic16, sans-serif';
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(8,6,24,.9)'; ctx.strokeText(p.text, p.x, p.y - k * 34);
+      ctx.fillStyle = p.col; ctx.fillText(p.text, p.x, p.y - k * 34);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- game flow -------------------------------------------------------------
+  function startGame() {
+    seq = []; round = 0; inputIdx = 0; lives = MAX_LIVES; score = 0; cleared = 0; replays = 1; misses = 0;
+    newRecord = false; particles = []; pops = []; tutorial = !seen;
+    buildPads(); overlay.classList.remove('show');
+    save('mode', mode); save('speed', speed);
+    nextRound();
+  }
+  function nextRound() {
+    seq.push(nextPad(seq, N())); round = seq.length;
+    beginShow(0.75, '👀 よく見て おぼえてね');
+  }
+  function beginShow(lead, text) {
+    phase = 'show'; showIdx = -1; showOn = false; timer = lead; inputIdx = 0; hintPad = -1;
+    clearLights(); setMsg(text || '👀 よく見て おぼえてね'); buildDots(); updateHud();
+  }
+  function beginInput() {
+    phase = 'input'; inputIdx = 0; tMax = limitTime(); tLeft = tMax; lastTick = 99;
+    hintPad = (tutorial && round === 1) ? seq[0] : -1;
+    setMsg(hintPad >= 0 ? '👉 ひかった マスを タップ！' : '👉 きみのばん！ おなじ じゅんに', 'you');
+    updateDots(); updateHud();
+  }
+  function press(i) {
+    i = Number(i);
+    if (!(i >= 0 && i < N())) return false;
+    if (phase === 'show') { SFX.deny(); setMsg('👀 まだだよ、さいごまで 見てね'); return false; }
+    if (phase !== 'input') return false;
+    if (i !== seq[inputIdx]) { miss(i, 'wrong'); return false; }
+    const c = padCenter(i), col = MODES[mode].colors[i], pts = 10 * SPEEDS[speed].mult;
+    light(i, 0.2); SFX.pad(i, 0.2);
+    score += pts; inputIdx++; tLeft = tMax = limitTime(); lastTick = 99; hintPad = -1;
+    burst(c.x, c.y, [col, '#ffffff'], 9, 0.7); pop(c.x, c.y, '+' + pts, col);
+    setMsg('👉 いいね！ ' + inputIdx + ' / ' + seq.length, 'you');
+    updateDots();
+    if (inputIdx >= seq.length) roundClear();
+    updateHud();
+    return true;
+  }
+  function roundClear() {
+    cleared = round;
+    const bonus = seq.length * 5 * SPEEDS[speed].mult; score += bonus;
+    const milestone = cleared % 5 === 0;
+    if (tutorial) { tutorial = false; seen = true; save('seen', '1'); }
+    if (cleared > best[mode][speed]) { best[mode][speed] = cleared; newRecord = true; save('best', JSON.stringify(best)); bump('hudBest'); }
+    if (milestone && replays < MAX_REPLAY) replays++;
+    phase = 'between'; timer = milestone ? 1.5 : 1.0;
+    // ごほうびの光のなみ
+    const n = N();
+    for (let i = 0; i < n; i++) light(i, 0.16, 0.26 + i * (milestone ? 0.07 : 0.045));
+    burst(SW / 2, SW / 2, MODES[mode].colors.concat(['#ffffff']), milestone ? 70 : 26, milestone ? 1.5 : 1);
+    pop(SW / 2, SW / 2, 'ボーナス +' + bonus, '#ffd166');
+    SFX.clear(milestone);
+    setMsg(milestone ? '🎉 ' + cleared + 'こ せいこう！ 👀が 1つ ふえた' : '⭕ せいかい！ つぎは ' + (cleared + 1) + 'こ', 'good');
+    bump('hudLen'); bump('hudScore');
+  }
+  function miss(i, why) {
+    lives--; misses++;
+    wantPad = seq[inputIdx]; wantUntil = clock + 1.45; hintPad = -1;
+    if (why === 'wrong') { badPad = i; badUntil = clock + 0.7; }
+    phase = 'miss'; timer = 1.6;
+    SFX.wrong(); bump('hudLives');
+    try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
+    setMsg(why === 'time' ? '⏰ 時間ぎれ… ひかっているのが こたえ' : '❌ ざんねん… ひかっているのが こたえ', 'ng');
+    updateHud();
+  }
+  function useReplay() {
+    if (phase !== 'input' || replays <= 0) return false;
+    replays--; SFX.click();
+    beginShow(0.45, '👀 もういちど 見せるよ');
+    return true;
+  }
+  function gameOver() {
+    phase = 'over'; clearLights();
+    SFX.over(); if (newRecord) SFX.record();
+    $('ovLamps').style.display = 'none';
+    $('ovBig').textContent = 'おしまい！'; $('ovBig').className = 'big end';
+    $('ovNote').innerHTML = 'おぼえた ながさ <b>' + cleared + 'こ</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '') +
+      '<br>スコア <b>' + score + 'てん</b>（' + MODES[mode].name + '・' + SPEEDS[speed].name + '）' +
+      '<br><span class="rank">' + rankOf(cleared) + '</span>';
+    $('modes').style.display = 'none'; $('speeds').style.display = 'none';
+    $('startBtn').textContent = 'もういちど'; $('toTitleBtn').style.display = '';
+    $('ovStats').textContent = 'さいちょう きろく：' + best[mode][speed] + 'こ';
+    overlay.classList.add('show'); updateHud();
+  }
+  function toTitle() {
+    phase = 'title'; clearLights(); seq = []; round = 0; inputIdx = 0; lives = MAX_LIVES; score = 0; cleared = 0; replays = 1; newRecord = false;
+    particles = []; pops = [];
+    $('ovLamps').style.display = '';
+    $('ovBig').textContent = 'ピカピカおぼえ'; $('ovBig').className = 'big';
+    $('ovNote').innerHTML = TITLE_NOTE;
+    $('modes').style.display = ''; $('speeds').style.display = '';
+    $('startBtn').textContent = 'はじめる'; $('toTitleBtn').style.display = 'none';
+    $('ovStats').textContent = 'ライフは 3つ。まちがえても つづけられるよ';
+    setMsg('ひかる じゅんばんを おぼえよう'); dotsEl.innerHTML = '';
+    syncPick(); overlay.classList.add('show'); updateHud(); paint();
+  }
+  function syncPick() {
+    document.querySelectorAll('#modes button').forEach(b => {
+      b.classList.toggle('on', b.dataset.m === mode);
+      b.querySelector('em').textContent = '🏆 ' + best[b.dataset.m][speed] + 'こ';
+    });
+    document.querySelectorAll('#speeds button').forEach(b => b.classList.toggle('on', b.dataset.s === speed));
+  }
+  function pickMode(m) { if (!MODES[m] || phase !== 'title') return; mode = m; save('mode', m); buildPads(); syncPick(); updateHud(); SFX.click(); }
+  function pickSpeed(s) { if (!SPEEDS[s] || phase !== 'title') return; speed = s; save('speed', s); syncPick(); updateHud(); SFX.click(); }
+
+  // ---- update ----------------------------------------------------------------
+  function update(dt) {
+    clock += dt;
+    if (phase === 'show') {
+      timer -= dt;
+      while (timer <= 0 && phase === 'show') {
+        if (showOn) {
+          showOn = false;
+          if (showIdx >= seq.length - 1) { beginInput(); break; }
+          timer += gapTime();
+        } else {
+          showIdx++;
+          const d = onTime();
+          light(seq[showIdx], d); SFX.pad(seq[showIdx], d);
+          showOn = true; timer += d; updateDots();
+        }
+      }
+    } else if (phase === 'input') {
+      tLeft -= dt;
+      const sec = Math.ceil(tLeft);
+      if (sec <= 3 && sec < lastTick && tLeft > 0) { SFX.tick(); }
+      lastTick = sec;
+      if (tLeft <= 0) miss(-1, 'time');
+    } else if (phase === 'between') {
+      timer -= dt; if (timer <= 0) nextRound();
+    } else if (phase === 'miss') {
+      timer -= dt;
+      if (timer <= 0) { if (lives <= 0) gameOver(); else beginShow(0.55, '👀 もういちど 見てね'); }
+    }
+    if (particles.length) particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 320 * dt; p.vx *= (1 - 1.4 * dt); p.life -= dt; return p.life > 0; });
+    if (pops.length) pops = pops.filter(p => { p.life -= dt; return p.life > 0; });
+  }
+  function frame(t) {
+    requestAnimationFrame(frame);
+    if (document.hidden) { lastT = 0; return; }
+    if (!lastT) lastT = t;
+    const dt = Math.min(0.05, Math.max(0, (t - lastT) / 1000)); lastT = t;
+    if (!manual) update(dt);
+    paint(); drawFx();
+  }
+  function onVisibility() {
+    lastT = 0;
+    if (document.hidden) return;
+    // 見ていない間に お手本が進まないよう、もどったら さいしょから見せる
+    if (phase === 'show') beginShow(0.7, '👀 よく見て おぼえてね');
+    else if (phase === 'input') { tLeft = tMax = limitTime(); }
+  }
+
+  // ---- test hooks ------------------------------------------------------------
+  window.__test = {
+    state() {
+      return { phase, mode, speed, round, seqLen: seq.length, inputIdx, lives, score, cleared, replays, showIdx,
+        lit: litNow(), tLeft: Math.round(tLeft * 1000) / 1000, best: JSON.parse(JSON.stringify(best)), bestNow: best[mode][speed],
+        newRecord, muted, pads: pads.length, tutorial, overlay: overlay.classList.contains('show') };
+    },
+    seq() { return seq.slice(); },
+    manual(v) { manual = !!v; return manual; },
+    start(m, s) { if (MODES[m]) mode = m; if (SPEEDS[s]) speed = s; startGame(); return true; },
+    setSeq(arr) { seq = arr.map(Number).filter(v => v >= 0 && v < N()); round = seq.length; beginShow(0.3); return seq.slice(); },
+    step(ms) { let left = ms / 1000; while (left > 1e-9) { const d = Math.min(0.025, left); update(d); left -= d; } paint(); drawFx(); return true; },
+    press(i) { return press(i); },
+    replay() { return useReplay(); },
+    gen(m, len) { return gen(MODES[m] ? m : 'four', len); },
+    timing(s, r) { return { on: onTime(s, r), gap: gapTime(s, r), limit: limitTime(s, r) }; },
+    rank(c) { return rankOf(c); },
+    toTitle() { toTitle(); return true; },
+  };
+
+  // ---- init & events（いちばん最後）------------------------------------------
+  buildPads(); toTitle(); drawMute();
+
+  stage.addEventListener('pointerdown', e => {
+    const b = e.target.closest ? e.target.closest('.pad') : null;
+    if (!b) return;
+    e.preventDefault(); audio();
+    press(Number(b.dataset.i));
+  });
+  stage.addEventListener('click', e => {           // キーボード（Enter・スペース）で おした時
+    if (e.detail !== 0) return;
+    const b = e.target.closest ? e.target.closest('.pad') : null;
+    if (b) { audio(); press(Number(b.dataset.i)); }
+  });
+  stage.addEventListener('contextmenu', e => e.preventDefault());
+  $('modes').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { audio(); pickMode(b.dataset.m); } });
+  $('speeds').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { audio(); pickSpeed(b.dataset.s); } });
+  $('startBtn').addEventListener('click', () => { audio(); SFX.click(); startGame(); });
+  $('toTitleBtn').addEventListener('click', () => { audio(); SFX.click(); toTitle(); });
+  replayBtn.addEventListener('click', () => { audio(); useReplay(); });
+  quitBtn.addEventListener('click', () => { if (phase === 'title' || phase === 'over') return; audio(); SFX.click(); toTitle(); });
+  muteBtn.addEventListener('click', () => { muted = !muted; save('mute', muted ? '1' : '0'); drawMute(); if (!muted) { audio(); SFX.click(); } });
+  window.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (overlay.classList.contains('show')) {
+      if (k === 'Enter' || k === ' ') { e.preventDefault(); if (!e.repeat) { audio(); SFX.click(); startGame(); } }
+      return;
+    }
+    if (/^[1-9]$/.test(k)) { if (!e.repeat) { audio(); press(Number(k) - 1); } e.preventDefault(); return; }
+    if (k === 'r' || k === 'R') { if (!e.repeat) { audio(); useReplay(); } }
+  });
+  window.addEventListener('resize', fitCanvas);
+  document.addEventListener('visibilitychange', onVisibility);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
