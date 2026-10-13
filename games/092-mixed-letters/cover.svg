@@ -1,0 +1,92 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c092bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241f4d"/>
+      <stop offset="0.6" stop-color="#15142a"/>
+      <stop offset="1" stop-color="#0e0d1c"/>
+    </linearGradient>
+    <radialGradient id="c092glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd166" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c092tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3c8"/>
+      <stop offset="0.5" stop-color="#ffd976"/>
+      <stop offset="1" stop-color="#f2b233"/>
+    </linearGradient>
+    <linearGradient id="c092ok" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dcfffb"/>
+      <stop offset="0.5" stop-color="#7fe9e1"/>
+      <stop offset="1" stop-color="#2fb9b1"/>
+    </linearGradient>
+    <filter id="c092sh" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c092bg)"/>
+  <ellipse cx="200" cy="150" rx="210" ry="95" fill="url(#c092glow)"/>
+  <g fill="#fff" opacity="0.8">
+    <circle cx="30" cy="26" r="1.6"/><circle cx="92" cy="14" r="1.2"/><circle cx="356" cy="22" r="1.8"/>
+    <circle cx="300" cy="12" r="1.1"/><circle cx="376" cy="96" r="1.3"/><circle cx="18" cy="110" r="1.2"/>
+  </g>
+  <!-- ばらばらの タイル（上） -->
+  <g filter="url(#c092sh)">
+    <g transform="translate(70 62) rotate(-14)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092tile)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#a86a05" opacity="0.5"/>
+      <circle r="12" fill="none" stroke="#3a2400" stroke-width="5"/>
+    </g>
+    <g transform="translate(152 46) rotate(9)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092tile)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#a86a05" opacity="0.5"/>
+      <path d="M0 -14 L13 10 L-13 10 Z" fill="none" stroke="#3a2400" stroke-width="5" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(246 58) rotate(-7)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092tile)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#a86a05" opacity="0.5"/>
+      <path d="M0 -15 L4.4 -5 L15 -4.2 L7 3.2 L9.4 14 L0 8.4 L-9.4 14 L-7 3.2 L-15 -4.2 L-4.4 -5 Z" fill="#3a2400"/>
+    </g>
+    <g transform="translate(330 48) rotate(15)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092tile)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#a86a05" opacity="0.5"/>
+      <rect x="-11" y="-11" width="22" height="22" rx="3" fill="none" stroke="#3a2400" stroke-width="5"/>
+    </g>
+  </g>
+  <!-- ならべかえる やじるし -->
+  <g fill="none" stroke="#53e0d8" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="2 8" opacity="0.9">
+    <path d="M70 96 C 80 130, 190 110, 244 138"/>
+    <path d="M246 92 C 230 118, 110 112, 96 138"/>
+    <path d="M152 80 C 150 104, 168 118, 170 138"/>
+    <path d="M330 82 C 332 108, 318 120, 316 138"/>
+  </g>
+  <!-- ならんだ タイル（下） -->
+  <rect x="52" y="140" width="296" height="68" rx="16" fill="#0e0d1f" stroke="#53e0d8" stroke-width="2" stroke-dasharray="7 6" opacity="0.95"/>
+  <g filter="url(#c092sh)">
+    <g transform="translate(96 174)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092ok)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#06645f" opacity="0.5"/>
+      <path d="M0 -15 L4.4 -5 L15 -4.2 L7 3.2 L9.4 14 L0 8.4 L-9.4 14 L-7 3.2 L-15 -4.2 L-4.4 -5 Z" fill="#04302d"/>
+    </g>
+    <g transform="translate(170 174)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092ok)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#06645f" opacity="0.5"/>
+      <path d="M0 -14 L13 10 L-13 10 Z" fill="none" stroke="#04302d" stroke-width="5" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(244 174)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092ok)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#06645f" opacity="0.5"/>
+      <circle r="12" fill="none" stroke="#04302d" stroke-width="5"/>
+    </g>
+    <g transform="translate(316 170) rotate(6)">
+      <rect x="-26" y="-26" width="52" height="52" rx="11" fill="url(#c092tile)"/>
+      <rect x="-26" y="18" width="52" height="8" rx="4" fill="#a86a05" opacity="0.5"/>
+      <rect x="-11" y="-11" width="22" height="22" rx="3" fill="none" stroke="#3a2400" stroke-width="5"/>
+    </g>
+  </g>
+  <!-- きらきら -->
+  <g fill="#ffd166">
+    <path d="M36 150 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/>
+    <path d="M370 136 l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/>
+    <path d="M200 20 l2 5.4 5.4 2 -5.4 2 -2 5.4 -2 -5.4 -5.4 -2 5.4 -2z" fill="#ff5fa2"/>
+  </g>
+</svg>
