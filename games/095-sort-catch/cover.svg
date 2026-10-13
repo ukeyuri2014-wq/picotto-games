@@ -1,0 +1,75 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c095bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22224a"/><stop offset="0.7" stop-color="#131326"/><stop offset="1" stop-color="#0b0b1a"/>
+    </linearGradient>
+    <linearGradient id="c095beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.35"/><stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="c095box" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2e2e5c"/><stop offset="1" stop-color="#141428"/>
+    </linearGradient>
+    <radialGradient id="c095p" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#ffd0e3"/><stop offset="0.5" stop-color="#ff5fa2"/><stop offset="1" stop-color="#b02e69"/></radialGradient>
+    <radialGradient id="c095c" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#d4fffb"/><stop offset="0.5" stop-color="#53e0d8"/><stop offset="1" stop-color="#1f8f8a"/></radialGradient>
+    <radialGradient id="c095g" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#fff6d6"/><stop offset="0.5" stop-color="#ffd166"/><stop offset="1" stop-color="#c08a1e"/></radialGradient>
+    <radialGradient id="c095v" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#e6dbff"/><stop offset="0.5" stop-color="#a06bff"/><stop offset="1" stop-color="#6236c0"/></radialGradient>
+    <filter id="c095glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="c095soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c095bg)"/>
+  <g fill="#cfd0ff">
+    <circle cx="28" cy="30" r="1.4" opacity="0.7"/><circle cx="66" cy="72" r="1" opacity="0.5"/><circle cx="352" cy="26" r="1.5" opacity="0.7"/><circle cx="378" cy="88" r="1" opacity="0.5"/>
+    <circle cx="318" cy="60" r="1.1" opacity="0.6"/><circle cx="92" cy="22" r="1.1" opacity="0.6"/><circle cx="22" cy="112" r="1.2" opacity="0.5"/><circle cx="296" cy="112" r="0.9" opacity="0.5"/>
+  </g>
+  <polygon points="150,22 250,22 330,150 70,150" fill="url(#c095beam)"/>
+  <g filter="url(#c095glow)">
+    <rect x="140" y="-10" width="120" height="30" rx="12" fill="#22224a" stroke="#53e0d8" stroke-width="2.5"/>
+  </g>
+  <!-- falling items -->
+  <g opacity="0.35" filter="url(#c095soft)">
+    <circle cx="200" cy="52" r="20" fill="#53e0d8"/><circle cx="238" cy="96" r="20" fill="#ffd166"/><circle cx="118" cy="118" r="22" fill="#ff5fa2"/>
+  </g>
+  <rect x="192" y="18" width="16" height="26" rx="8" fill="#53e0d8" opacity="0.25"/>
+  <circle cx="200" cy="54" r="17" fill="url(#c095c)" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.5"/>
+  <polygon points="200,44 208,54 200,64 192,54" fill="#ffffff" opacity="0.92"/>
+  <rect x="230" y="58" width="16" height="30" rx="8" fill="#ffd166" opacity="0.22"/>
+  <circle cx="238" cy="98" r="17" fill="url(#c095g)" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.5"/>
+  <polygon points="238,89 247,104 229,104" fill="#ffffff" opacity="0.92"/>
+  <!-- tossed pink ball with trail -->
+  <path d="M190 104 Q150 92 122 116" fill="none" stroke="#ff5fa2" stroke-width="14" stroke-linecap="round" opacity="0.28"/>
+  <path d="M184 104 Q150 96 126 114" fill="none" stroke="#ffd0e3" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="116" cy="120" r="19" fill="url(#c095p)" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.5"/>
+  <circle cx="116" cy="120" r="8" fill="#ffffff" opacity="0.92"/>
+  <!-- star -->
+  <g filter="url(#c095glow)">
+    <polygon points="306,62 311,76 326,76 314,85 319,100 306,91 293,100 298,85 286,76 301,76" fill="url(#c095g)" stroke="#fff6d6" stroke-width="1.5"/>
+  </g>
+  <!-- little ghost -->
+  <g transform="translate(66 62)" filter="url(#c095glow)">
+    <path d="M-16 14 V-4 A16 16 0 0 1 16 -4 V14 L10 9 L5 14 L0 9 L-5 14 L-10 9 Z" fill="url(#c095v)" stroke="#e6dbff" stroke-width="1.5"/>
+    <circle cx="-6" cy="-4" r="3" fill="#1a1030"/><circle cx="6" cy="-4" r="3" fill="#1a1030"/><ellipse cx="0" cy="4" rx="3" ry="2" fill="#1a1030"/>
+  </g>
+  <!-- boxes -->
+  <rect x="0" y="196" width="400" height="29" fill="#0a0a18"/>
+  <g filter="url(#c095glow)">
+    <rect x="62" y="146" width="84" height="66" rx="12" fill="url(#c095box)" stroke="#ff5fa2" stroke-width="3"/>
+    <rect x="158" y="146" width="84" height="66" rx="12" fill="url(#c095box)" stroke="#53e0d8" stroke-width="3"/>
+    <rect x="254" y="146" width="84" height="66" rx="12" fill="url(#c095box)" stroke="#ffd166" stroke-width="3"/>
+  </g>
+  <rect x="62" y="146" width="84" height="66" rx="12" fill="#ff5fa2" opacity="0.2"/>
+  <rect x="158" y="146" width="84" height="66" rx="12" fill="#53e0d8" opacity="0.16"/>
+  <rect x="254" y="146" width="84" height="66" rx="12" fill="#ffd166" opacity="0.16"/>
+  <ellipse cx="104" cy="152" rx="34" ry="6" fill="#07071a" stroke="#ff5fa2" stroke-width="1.5"/>
+  <ellipse cx="200" cy="152" rx="34" ry="6" fill="#07071a" stroke="#53e0d8" stroke-width="1.5"/>
+  <ellipse cx="296" cy="152" rx="34" ry="6" fill="#07071a" stroke="#ffd166" stroke-width="1.5"/>
+  <circle cx="104" cy="184" r="14" fill="url(#c095p)" stroke="#ffffff" stroke-opacity="0.7" stroke-width="1.5"/>
+  <polygon points="200,168 214,184 200,200 186,184" fill="url(#c095c)" stroke="#ffffff" stroke-opacity="0.7" stroke-width="1.5"/>
+  <polygon points="296,169 312,197 280,197" fill="url(#c095g)" stroke="#ffffff" stroke-opacity="0.7" stroke-width="1.5"/>
+  <!-- sparkles -->
+  <g fill="#ffffff">
+    <path d="M86 132 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z" opacity="0.9"/>
+    <path d="M140 138 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5z" opacity="0.8"/>
+    <path d="M344 120 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5z" opacity="0.7"/>
+    <circle cx="96" cy="140" r="2" fill="#ffd166"/><circle cx="128" cy="144" r="1.6" fill="#ff5fa2"/><circle cx="76" cy="126" r="1.6" fill="#53e0d8"/>
+  </g>
+</svg>
