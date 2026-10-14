@@ -1,0 +1,90 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c100bg" cx="50%" cy="20%" r="85%">
+      <stop offset="0" stop-color="#2e2160"/>
+      <stop offset="0.6" stop-color="#171431"/>
+      <stop offset="1" stop-color="#0d0c1c"/>
+    </radialGradient>
+    <linearGradient id="c100board" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a3c8c"/>
+      <stop offset="1" stop-color="#2a2256"/>
+    </linearGradient>
+    <radialGradient id="c100hole" cx="35%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#04030b"/>
+      <stop offset="1" stop-color="#1a1438"/>
+    </radialGradient>
+    <linearGradient id="c100pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffb3d2"/>
+      <stop offset="0.5" stop-color="#ff5fa2"/>
+      <stop offset="1" stop-color="#b8326e"/>
+    </linearGradient>
+    <linearGradient id="c100gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0c4"/>
+      <stop offset="0.5" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#b88a22"/>
+    </linearGradient>
+    <linearGradient id="c100cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c4fbf7"/>
+      <stop offset="0.5" stop-color="#53e0d8"/>
+      <stop offset="1" stop-color="#23938d"/>
+    </linearGradient>
+    <linearGradient id="c100green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d4ffc9"/>
+      <stop offset="0.5" stop-color="#7be36b"/>
+      <stop offset="1" stop-color="#3f9a33"/>
+    </linearGradient>
+    <filter id="c100glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c100bg)"/>
+  <circle cx="200" cy="60" r="120" fill="#a06bff" opacity="0.10" filter="url(#c100glow)"/>
+  <!-- いた -->
+  <rect x="42" y="18" width="316" height="122" rx="18" fill="#000" opacity="0.4" transform="translate(0 6)"/>
+  <rect x="42" y="18" width="316" height="122" rx="18" fill="url(#c100board)" stroke="#7b66d6" stroke-width="3"/>
+  <circle cx="56" cy="32" r="4" fill="#9d8ce8"/><circle cx="344" cy="32" r="4" fill="#9d8ce8"/>
+  <circle cx="56" cy="126" r="4" fill="#9d8ce8"/><circle cx="344" cy="126" r="4" fill="#9d8ce8"/>
+  <!-- あな：ほし（まわる）・ハート・さんかく・みかづき -->
+  <g transform="translate(95 78) rotate(14)">
+    <path d="M0,-34 L9.3,-12.8 L32.3,-10.5 L15,4.9 L20,27.5 L0,15.8 L-20,27.5 L-15,4.9 L-32.3,-10.5 L-9.3,-12.8Z" fill="url(#c100hole)" stroke="#c9bbff" stroke-opacity="0.45" stroke-width="1.5"/>
+  </g>
+  <path d="M60,60 A40,40 0 0 1 82,40" fill="none" stroke="#53e0d8" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M130,96 A40,40 0 0 1 108,116" fill="none" stroke="#53e0d8" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M175,107 C138,82 152,46 175,62 C198,46 212,82 175,107Z" fill="url(#c100hole)" stroke="#ffd166" stroke-width="3" opacity="0.95"/>
+  <path d="M175,107 C138,82 152,46 175,62 C198,46 212,82 175,107Z" fill="none" stroke="#ffd166" stroke-width="5" opacity="0.5" filter="url(#c100glow)"/>
+  <path d="M250,44 L280,100 L220,100Z" fill="url(#c100hole)" stroke="#c9bbff" stroke-opacity="0.45" stroke-width="1.5"/>
+  <path d="M327,54 A30,30 0 1 0 330,102 A24,24 0 1 1 327,54Z" fill="url(#c100hole)" stroke="#c9bbff" stroke-opacity="0.45" stroke-width="1.5"/>
+  <!-- おぼん -->
+  <rect x="42" y="152" width="316" height="64" rx="14" fill="#100e24" stroke="#a06bff" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="6 6"/>
+  <!-- ピース（かおつき） -->
+  <g transform="translate(80 184)">
+    <path d="M0,-24 L6.6,-9 L22.8,-7.4 L10.6,3.5 L14.1,19.4 L0,11.2 L-14.1,19.4 L-10.6,3.5 L-22.8,-7.4 L-6.6,-9Z" fill="url(#c100gold)" stroke="#8a6412" stroke-width="2"/>
+    <circle cx="-5" cy="-1" r="2" fill="#1b1430"/><circle cx="5" cy="-1" r="2" fill="#1b1430"/>
+    <path d="M-3,4 Q0,7 3,4" fill="none" stroke="#1b1430" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(250 186)">
+    <path d="M0,-22 L22,18 L-22,18Z" fill="url(#c100cyan)" stroke="#1d6f6a" stroke-width="2"/>
+    <circle cx="-5" cy="4" r="2" fill="#1b1430"/><circle cx="5" cy="4" r="2" fill="#1b1430"/>
+    <path d="M-3,9 Q0,12 3,9" fill="none" stroke="#1b1430" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(318 184)">
+    <path d="M4,-22 A22,22 0 1 0 6,14 A17,17 0 1 1 4,-22Z" fill="url(#c100green)" stroke="#2d6e25" stroke-width="2"/>
+    <circle cx="-12" cy="-3" r="2" fill="#1b1430"/><circle cx="-4" cy="-3" r="2" fill="#1b1430"/>
+  </g>
+  <!-- はこばれる ハート -->
+  <path d="M150,190 Q160,150 172,124" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="3 6" opacity="0.8"/>
+  <g transform="translate(168 140) rotate(-8)">
+    <ellipse cx="6" cy="12" rx="26" ry="8" fill="#000" opacity="0.3"/>
+    <path d="M0,24 C-34,2 -21,-27 0,-12 C21,-27 34,2 0,24Z" fill="url(#c100pink)" stroke="#8e2456" stroke-width="2"/>
+    <ellipse cx="-9" cy="-10" rx="9" ry="4" fill="#fff" opacity="0.35" transform="rotate(-25 -9 -10)"/>
+    <path d="M-9,-2 a3,3 0 0 1 6,0" fill="none" stroke="#1b1430" stroke-width="2"/>
+    <path d="M3,-2 a3,3 0 0 1 6,0" fill="none" stroke="#1b1430" stroke-width="2"/>
+    <path d="M-4,4 Q0,9 4,4" fill="#1b1430"/>
+  </g>
+  <!-- きらきら -->
+  <g fill="#fff">
+    <path d="M206,124 l2,6 6,2 -6,2 -2,6 -2,-6 -6,-2 6,-2Z" opacity="0.9"/>
+    <path d="M136,128 l1.5,4 4,1.5 -4,1.5 -1.5,4 -1.5,-4 -4,-1.5 4,-1.5Z" opacity="0.7"/>
+    <circle cx="300" cy="30" r="1.6" opacity="0.7"/><circle cx="24" cy="70" r="1.4" opacity="0.6"/><circle cx="380" cy="150" r="1.6" opacity="0.6"/>
+  </g>
+</svg>
