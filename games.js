@@ -51,21 +51,6 @@ const GAMES = [
   "cover": "assets/covers/105.webp"
 },
 {
-  "id": "103",
-  "title": "まちづくりタイル",
-  "genre": "SIM",
-  "cat": "sim",
-  "emoji": "🏘️",
-  "color": "#7be07a",
-  "author": "LUDOT制作チーム",
-  "age": "6歳〜",
-  "date": "2026-10-14",
-  "description": "いえ・おみせ・こうえん・こうじょう・がっこうのタイルを6×6のまちに おこう。となり合わせで点がかわるよ。1年5まい×5年、まいとしの もくひょうと「おねがい」ボーナスに ちょうせん。町と てふだは毎回ちがい、ベストと★をきろく。",
-  "controls": "タッチ／マウス：したのタイルをえらんで マスをタップ　キーボード：1〜3でえらぶ・やじるし＋Enterでおく・Rでいれかえ・Zでもどす",
-  "path": "games/103-town-tiles/index.html",
-  "cover": "assets/covers/103.webp"
-},
-{
   "id": "102",
   "title": "そらとぶほうき",
   "genre": "SHOOTING",
