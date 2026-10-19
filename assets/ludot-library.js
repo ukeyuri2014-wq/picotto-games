@@ -72,6 +72,8 @@
     });
   }
   function render() {
+    const home = document.getElementById('my-games');
+    if (home) home.hidden = !state.favorites.length && !state.recent.length;
     renderList('favorite-games',state.favorites,'ゲームの「☆ 保存」を押すと、ここに並びます。');
     renderList('recent-games',state.recent,'遊んだゲームから、すぐに戻れます。');
     document.querySelectorAll('[data-favorite-id]').forEach(b => {
