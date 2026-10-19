@@ -942,6 +942,119 @@
     .hero-stage .hero { padding: 322px 0 40px; }
     .hero-stage .hero h1 { font-size: clamp(2rem, 10.2vw, 3rem); }
   }
+
+  /* ============ 2026-10-19：最初に迷わない「あそびかた案内」 ============ */
+  .hero-stage > .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1.04fr) minmax(360px, .96fr);
+    align-items: end;
+    gap: clamp(30px, 5vw, 76px);
+  }
+  .hero-stage .hero { max-width: 610px; }
+  .play-finder {
+    position: relative;
+    z-index: 3;
+    margin: 112px 0 54px;
+    padding: 25px;
+    color: #17213d;
+    background: rgba(255,255,255,.9);
+    border: 1px solid rgba(23,33,61,.1);
+    border-radius: 28px;
+    box-shadow: 0 24px 70px rgba(48,61,96,.18);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    backdrop-filter: blur(18px) saturate(1.08);
+  }
+  .finder-kicker { margin: 0 0 6px; color: #ef5363; font: 800 .67rem/1 var(--mono); letter-spacing: .2em; }
+  .play-finder h2 { margin: 0; font-size: clamp(1.45rem, 2.6vw, 2rem); line-height: 1.35; letter-spacing: -.035em; }
+  .finder-lead { margin: 7px 0 20px; color: #69748c; font-size: .82rem; line-height: 1.7; }
+  .finder-group + .finder-group { margin-top: 17px; }
+  .finder-label { display: block; margin-bottom: 9px; color: #4c5872; font-size: .75rem; font-weight: 900; }
+  .finder-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .finder-options.ages { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .finder-option {
+    display: grid;
+    place-items: center;
+    gap: 2px;
+    min-height: 58px;
+    padding: 8px 6px;
+    color: #26324c;
+    background: #fff;
+    border: 1.5px solid #dfe4ed;
+    border-radius: 15px;
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 900;
+    line-height: 1.25;
+    cursor: pointer;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .finder-option .option-icon { font-size: 1.22rem; line-height: 1; }
+  .finder-option .option-count { color: #8490a8; font: 700 .61rem/1 var(--mono); }
+  .finder-option:hover { transform: translateY(-2px); border-color: #7c5cff; }
+  .finder-option[aria-pressed="true"] { color: #fff; background: #17213d; border-color: #17213d; box-shadow: 0 9px 24px rgba(23,33,61,.2); }
+  .finder-option[aria-pressed="true"] .option-count { color: rgba(255,255,255,.7); }
+  .finder-option[data-audience="kids"] { color: #934254; background: #fff4f4; border-color: #ffd1d7; }
+  .finder-option[data-audience="kids"][aria-pressed="true"] { color: #fff; background: #ef5363; border-color: #ef5363; }
+  .finder-options.ages .finder-option { min-height: 43px; padding: 6px 4px; border-radius: 12px; font-size: .75rem; }
+  .finder-actions { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+  .finder-submit {
+    flex: 1;
+    min-height: 50px;
+    padding: 0 18px;
+    color: #fff;
+    background: linear-gradient(135deg, #ef5363, #ff7c73);
+    border: 0;
+    border-radius: 15px;
+    box-shadow: 0 11px 26px rgba(239,83,99,.25);
+    font: inherit;
+    font-size: .88rem;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .finder-submit:hover { filter: brightness(1.03); transform: translateY(-1px); }
+  .finder-reset { padding: 8px 2px; color: #69748c; background: transparent; border: 0; font: inherit; font-size: .73rem; font-weight: 800; cursor: pointer; }
+  .finder-result { min-height: 1.4em; margin: 11px 0 0; color: #59657c; font-size: .72rem; text-align: center; }
+  .browse-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -5px 0 18px; padding: 12px 15px; color: #4c5872; background: rgba(255,255,255,.76); border: 1px solid rgba(23,33,61,.08); border-radius: 14px; font-size: .78rem; }
+  .browse-summary[hidden] { display: none; }
+  .browse-summary button { color: #ef5363; background: transparent; border: 0; font: inherit; font-weight: 900; cursor: pointer; }
+  .filter-empty { margin: 12px 0 24px; padding: 28px 18px; color: #59657c; background: rgba(255,255,255,.78); border: 1px dashed #cbd2df; border-radius: 18px; text-align: center; }
+  .filter-empty[hidden] { display: none; }
+
+  @media (max-width: 900px) {
+    .hero-stage > .wrap { grid-template-columns: 1fr; gap: 0; }
+    .hero-stage .hero { max-width: 680px; padding-bottom: 14px; }
+    .play-finder { margin: 0 0 44px; }
+  }
+  @media (max-width: 720px) {
+    .nav .links a[href="blog/index.html"], .nav .links a[href="submit.html"] { display: none; }
+    .nav .links { gap: 17px; }
+    .hero-stage::before { background-size: auto 132px; background-position: 69% top; }
+    .hero-stage::after { background: linear-gradient(180deg, rgba(255,249,233,0) 0, rgba(255,249,233,.15) 72px, rgba(255,249,233,.92) 116px, #fff9e9 132px, #fff9e9 100%); }
+    .hero-stage .hero { padding: 130px 0 9px; }
+    .hero-stage .eyebrow, .hero-stage .hero p.lead { display: none; }
+    .hero-stage .hero h1 { margin: 0; font-size: clamp(1.65rem, 8vw, 2.05rem); line-height: 1.2; }
+    .hero-stage .hero h1 br { display: none; }
+    .hero-stage .hero h1 em { margin-left: .18em; }
+    .hero-actions, .hero-stage .stats, .hero-credit { display: none; }
+    .play-finder { margin: 0 0 23px; padding: 15px 14px 13px; border-radius: 20px; box-shadow: 0 16px 40px rgba(48,61,96,.14); }
+    .finder-kicker { margin-bottom: 4px; font-size: .58rem; }
+    .play-finder h2 { font-size: 1.18rem; }
+    .finder-lead { display: none; }
+    .finder-label { margin: 10px 0 6px; font-size: .69rem; }
+    .finder-group + .finder-group { margin-top: 6px; }
+    .finder-options { gap: 7px; }
+    .finder-option { min-height: 48px; padding: 5px 4px; font-size: .7rem; border-radius: 12px; }
+    .finder-option .option-icon { font-size: 1rem; }
+    .finder-option .option-count { font-size: .55rem; }
+    .finder-options.ages { grid-template-columns: repeat(5, minmax(54px, 1fr)); overflow-x: auto; padding-bottom: 3px; scrollbar-width: none; }
+    .finder-options.ages::-webkit-scrollbar { display: none; }
+    .finder-options.ages .finder-option { min-width: 54px; min-height: 38px; }
+    .finder-actions { margin-top: 11px; }
+    .finder-submit { min-height: 43px; font-size: .78rem; }
+    .finder-reset { font-size: .66rem; }
+    .finder-result { margin-top: 7px; font-size: .64rem; }
+    .showcase { padding-top: 10px; }
+  }
 </style>
 <meta name="google-site-verification" content="phPPCuL0M-oXA27EPZqe92ctgHxwwvjLBnGJCQ-ECVY">
 <meta name="application-name" content="ルドット">
@@ -957,7 +1070,7 @@
     <nav class="nav">
       <a class="logo" href="#">LUDOT<span>.</span></a>
       <div class="links">
-        <a href="#my-games">お気に入り</a><a href="#games">GAMES</a>
+        <a href="#play-finder">えらぶ</a><a href="#games">GAMES</a>
         <a href="blog/index.html">BLOG</a>
         <a href="submit.html">SUBMIT</a>
       </div>
@@ -970,10 +1083,10 @@
   <div class="wrap">
     <header class="hero">
       <div class="eyebrow">LUDOT · ルドット｜無料ブラウザゲーム</div>
-      <h1>ちょっと空いた？<br><em>ゲームしようぜ。</em></h1>
+      <h1>きょうは、<br><em>どう遊ぶ？</em></h1>
       <p class="lead">
-        むずかしい準備はいらない。気になるやつを選んだら、すぐスタート。
-        すきま時間にちょうどいい<b>無料ミニゲーム</b>、いろいろあります。
+        ひとりでも、ふたりでも。年齢や遊び方を選ぶだけで、
+        今の気分に合う<b>無料ミニゲーム</b>が見つかります。
       </p>
       <div class="hero-actions">
         <a class="hero-play" id="hero-play" href="#games">▶ おすすめをあそぶ</a>
@@ -986,6 +1099,35 @@
       </div>
     </header>
 
+    <section class="play-finder" id="play-finder" aria-labelledby="finder-title">
+      <p class="finder-kicker">QUICK START</p>
+      <h2 id="finder-title">ぴったりのゲームを見つけよう</h2>
+      <p class="finder-lead">遊ぶ人数と年齢の目安を選べます。どちらか片方だけでもOK。</p>
+      <div class="finder-group">
+        <span class="finder-label">だれと遊ぶ？</span>
+        <div class="finder-options" role="group" aria-label="遊ぶ人数">
+          <button class="finder-option" type="button" data-audience="solo" aria-pressed="false"><span class="option-icon" aria-hidden="true">👤</span><span>ひとりで</span><span class="option-count" data-count-for="solo"></span></button>
+          <button class="finder-option" type="button" data-audience="two" aria-pressed="false"><span class="option-icon" aria-hidden="true">👥</span><span>ふたりで</span><span class="option-count" data-count-for="two"></span></button>
+          <button class="finder-option" type="button" data-audience="kids" aria-pressed="false"><span class="option-icon" aria-hidden="true">🧸</span><span>ちいさい子向け</span><span class="option-count" data-count-for="kids"></span></button>
+        </div>
+      </div>
+      <div class="finder-group">
+        <span class="finder-label">お子さんの年齢は？</span>
+        <div class="finder-options ages" role="group" aria-label="年齢の目安">
+          <button class="finder-option" type="button" data-age="3" aria-pressed="false">3歳</button>
+          <button class="finder-option" type="button" data-age="6" aria-pressed="false">6歳</button>
+          <button class="finder-option" type="button" data-age="8" aria-pressed="false">8歳</button>
+          <button class="finder-option" type="button" data-age="10" aria-pressed="false">10歳</button>
+          <button class="finder-option" type="button" data-age="adult" aria-pressed="false">大人</button>
+        </div>
+      </div>
+      <div class="finder-actions">
+        <button class="finder-submit" id="finder-submit" type="button">この条件でゲームを見る →</button>
+        <button class="finder-reset" id="finder-reset" type="button">リセット</button>
+      </div>
+      <p class="finder-result" id="finder-result" role="status" aria-live="polite">条件を選ぶと、遊べる本数がここに出ます。</p>
+    </section>
+
   </div>
   <div class="hero-credit">COME PLAY WITH LUDOT</div>
 </div>
@@ -997,7 +1139,7 @@
 </div>
 
 <div class="wrap">
-  <section id="my-games" class="my-games" aria-labelledby="my-games-title">
+  <section id="my-games" class="my-games" aria-labelledby="my-games-title" hidden>
     <div class="library-heading library-top"><div><div class="library-kicker">MY GAMES</div><h2 id="my-games-title">遊びのつづき。</h2></div><button class="bookmark-help" type="button" data-bookmark-help><span aria-hidden="true">＋</span> サイトを保存</button></div>
     <div class="library-shelves">
       <section class="library-shelf shelf-favorites" aria-labelledby="favorites-title">
@@ -1029,6 +1171,7 @@
       <div class="label">ALL GAMES</div>
       <h2>今日は、どこへ行く？ <span class="count" id="game-count"></span></h2>
     </div>
+    <div class="browse-summary" id="browse-summary" hidden><span id="browse-summary-text"></span><button type="button" id="browse-clear">条件を解除</button></div>
     <div class="genre-filter" id="genre-filter" role="group" aria-label="ジャンルでしぼる"></div>
     <div class="grid" id="game-grid"><!-- STATIC-GAMES-START -->
 <a class="card" data-game-id="107" href="games/107-cave-flight/index.html"><div class="art"><div class="fallback">🛩️</div></div><div class="card-body"><div class="chips"><span class="chip">ACTION</span></div><h3>どうくつフライト</h3><p class="desc">おしているあいだ上へ、はなすと下へ。まいかい形がかわる どうくつを、かべにぶつからずに どこまでとべるか。すすむほど はやく せまくなり、クリスタルのはしらも出てくる。250mごとに けしきがかわり、★をあつめると ひこうきの色がふえる。2モードでベストきょりをきろく。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
@@ -2022,6 +2165,8 @@
     ["brain", "ことば・ちえ"], ["board", "ボード・カード"], ["versus", "たいせん"], ["sim", "ぼうけん・そだてる"],
   ];
   const CAT_MERGE = { arcade: "action", rhythm: "action", sports: "action", word: "brain", kids: "brain", card: "board", adventure: "sim", creative: "sim" };
+  let activeAudience = "all";
+  let activeAge = null;
   function catOf(g) {
     let c = typeof g.cat === "string" ? g.cat : "";
     if (!c) {
@@ -2037,6 +2182,30 @@
     c = CAT_MERGE[c] || c;
     return CAT_TABS.some(function (t) { return t[0] === c; }) ? c : "other";
   }
+  function minAgeOf(g) {
+    const match = String(g.age || "").match(/(\d{1,2})\s*歳/);
+    return match ? Number(match[1]) : 99;
+  }
+  function gameText(g) {
+    return [g.genre, g.description, g.controls].filter(Boolean).join(" ");
+  }
+  function supportsTwo(g) {
+    return /(?:2P|ふたり|2人|二人|P1.+P2)/i.test(gameText(g));
+  }
+  function supportsSolo(g) {
+    const text = gameText(g);
+    return !supportsTwo(g) || /(?:CPU|ひとり|1人|一人)/i.test(text);
+  }
+  function isForKids(g) {
+    return String(g.cat || "").toLowerCase() === "kids" || /KIDS/i.test(String(g.genre || "")) || minAgeOf(g) <= 5;
+  }
+  function finderMatch(g) {
+    if (activeAudience === "solo" && !supportsSolo(g)) return false;
+    if (activeAudience === "two" && !supportsTwo(g)) return false;
+    if (activeAudience === "kids" && !isForKids(g)) return false;
+    if (typeof activeAge === "number" && minAgeOf(g) > activeAge) return false;
+    return true;
+  }
   function renderGames(availableGames) {
     const grid = document.getElementById("game-grid");
     const count = document.getElementById("game-count");
@@ -2045,6 +2214,12 @@
     const heroPlay = document.getElementById("hero-play");
     const ranking = document.getElementById("ranking");
     const arrivals = document.getElementById("new-arrivals");
+    const gamesMain = document.getElementById("games");
+    // 最初の導線を「案内 → 一覧」に絞り、ランキングと新着は一覧の後で楽しめる順番にする。
+    if (gamesMain && ranking && arrivals && ranking.previousElementSibling !== gamesMain) {
+      gamesMain.after(arrivals);
+      gamesMain.after(ranking);
+    }
     arrivals.hidden = availableGames.length < 4;
     if (!availableGames.length) {
       grid.innerHTML = '<p class="empty">COMING SOON...</p>';
@@ -2091,7 +2266,7 @@
       .map(function (g) {
         const ac = g.color || "#ff2e88";
         return (
-          '<a class="card" data-game-id="' + g.id + '" data-cat="' + catOf(g) + '" style="--ac:' + ac + '" href="' + g.path + '">' +
+          '<a class="card" data-game-id="' + g.id + '" data-cat="' + catOf(g) + '" data-age="' + minAgeOf(g) + '" data-solo="' + supportsSolo(g) + '" data-two="' + supportsTwo(g) + '" data-kids="' + isForKids(g) + '" style="--ac:' + ac + '" href="' + g.path + '">' +
           '<div class="art">' + artOf(g) + "</div>" +
           '<div class="card-body">' +
           '<div class="chips"><span class="chip">' + (g.genre || "GAME") + "</span>" +
@@ -2110,11 +2285,36 @@
     // 一覧は24本ずつ表示（ゲームが増えても最初の表示を軽く保つ）。ジャンルでしぼった時は、合うものだけを数える。
     const more = document.getElementById("more-games");
     const filterBox = document.getElementById("genre-filter");
+    let filterEmpty = document.getElementById("filter-empty");
+    if (!filterEmpty) {
+      filterEmpty = document.createElement("p");
+      filterEmpty.id = "filter-empty";
+      filterEmpty.className = "filter-empty";
+      filterEmpty.hidden = true;
+      filterEmpty.textContent = "この条件に合うゲームは、まだありません。条件を少し変えてみてね。";
+      grid.insertAdjacentElement("afterend", filterEmpty);
+    }
+    const finderResult = document.getElementById("finder-result");
+    const browseSummary = document.getElementById("browse-summary");
+    const browseSummaryText = document.getElementById("browse-summary-text");
+    const audienceLabel = function () {
+      return ({solo:"ひとりで遊べる", two:"ふたりで遊べる", kids:"ちいさい子向け"})[activeAudience] || "";
+    };
+    const ageLabel = function () { return activeAge === "adult" ? "大人向けを含む" : (typeof activeAge === "number" ? activeAge + "歳でも遊べる" : ""); };
+    const syncFinderButtons = function () {
+      document.querySelectorAll("[data-audience]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.audience === activeAudience)); });
+      document.querySelectorAll("[data-age]").forEach(function (b) {
+        const value = b.dataset.age === "adult" ? "adult" : Number(b.dataset.age);
+        b.setAttribute("aria-pressed", String(value === activeAge));
+      });
+    };
     const applyPager = function () {
       const cards = grid.querySelectorAll(".card");
       let match = 0, shown = 0;
       cards.forEach(function (c) {
-        const ok = activeCat === "all" || c.dataset.cat === activeCat;
+        const audienceOk = activeAudience === "all" || c.dataset[activeAudience] === "true";
+        const ageOk = typeof activeAge !== "number" || Number(c.dataset.age) <= activeAge;
+        const ok = (activeCat === "all" || c.dataset.cat === activeCat) && audienceOk && ageOk;
         if (ok) match++;
         const show = ok && shown < shownCount;
         if (show) shown++;
@@ -2125,6 +2325,13 @@
       });
       more.hidden = shown >= match;
       more.textContent = "もっと見る（のこり " + Math.max(0, match - shown) + "本）";
+      filterEmpty.hidden = match !== 0;
+      const labels = [audienceLabel(), ageLabel()].filter(Boolean);
+      if (finderResult) finderResult.textContent = labels.length ? labels.join("・") + "ゲームが " + match + "本あります。" : "条件を選ぶと、遊べる本数がここに出ます。";
+      if (browseSummary && browseSummaryText) {
+        browseSummary.hidden = !labels.length;
+        browseSummaryText.textContent = labels.length ? labels.join("・") + "ゲームを表示中（" + match + "本）" : "";
+      }
     };
     more.onclick = function () { shownCount += PAGE_SIZE; applyPager(); };
     if (filterBox) {
@@ -2143,6 +2350,45 @@
         filterBox.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
         applyPager();
       };
+    }
+    const finder = document.getElementById("play-finder");
+    if (finder) {
+      ["solo", "two", "kids"].forEach(function (key) {
+        const target = finder.querySelector('[data-count-for="' + key + '"]');
+        if (target) target.textContent = availableGames.filter(function (g) {
+          return key === "solo" ? supportsSolo(g) : key === "two" ? supportsTwo(g) : isForKids(g);
+        }).length + "本";
+      });
+      finder.querySelectorAll("[data-audience]").forEach(function (button) {
+        button.onclick = function () {
+          activeAudience = activeAudience === button.dataset.audience ? "all" : button.dataset.audience;
+          shownCount = PAGE_SIZE;
+          syncFinderButtons();
+          applyPager();
+        };
+      });
+      finder.querySelectorAll("[data-age]").forEach(function (button) {
+        button.onclick = function () {
+          const value = button.dataset.age === "adult" ? "adult" : Number(button.dataset.age);
+          activeAge = activeAge === value ? null : value;
+          shownCount = PAGE_SIZE;
+          syncFinderButtons();
+          applyPager();
+        };
+      });
+      document.getElementById("finder-submit").onclick = function () {
+        document.getElementById("games").scrollIntoView({behavior:"smooth", block:"start"});
+      };
+      document.getElementById("finder-reset").onclick = function () {
+        activeAudience = "all"; activeAge = null; activeCat = "all"; shownCount = PAGE_SIZE;
+        filterBox.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.cat === "all")); });
+        syncFinderButtons(); applyPager();
+      };
+      document.getElementById("browse-clear").onclick = function () {
+        activeAudience = "all"; activeAge = null; shownCount = PAGE_SIZE;
+        syncFinderButtons(); applyPager();
+      };
+      syncFinderButtons();
     }
     applyPager();
 
