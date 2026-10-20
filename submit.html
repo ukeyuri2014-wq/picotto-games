@@ -455,6 +455,7 @@
 
   function showStatus(message, kind) {
     formStatus.className = "form-status show " + kind;
+    formStatus.style.whiteSpace = "pre-line";
     formStatus.textContent = message;
   }
 
@@ -495,10 +496,11 @@
       const response = await fetch(SUBMISSION_API + "/api/submit", { method: "POST", mode: "cors", credentials: "omit", body: new FormData(submitForm) });
       const result = await response.json();
       if (!response.ok) {
-        const detail = Array.isArray(result.details) && result.details.length ? "（" + result.details.join("、") + "）" : "";
+        const detail = Array.isArray(result.details) && result.details.length ? "\n・" + result.details.join("\n・") : "";
         throw new Error((result.error || "投稿できませんでした") + detail);
       }
-      showStatus("投稿できました！受付番号：" + result.receipt + "。管理者の確認後、公開されます。", "ok");
+      const adjusted = Array.isArray(result.adjusted) && result.adjusted.length ? "\n\nそのままでは動かない部分を、自動で調整しました：\n・" + result.adjusted.join("\n・") : "";
+      showStatus("投稿できました！受付番号：" + result.receipt + "。管理者の確認後、公開されます。" + adjusted, "ok");
       submitForm.reset();
       document.getElementById("color").value = "#ff2e88";
       document.getElementById("emoji").value = "🎮";
