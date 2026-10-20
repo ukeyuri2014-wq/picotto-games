@@ -87,9 +87,29 @@
   .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
   .help b{color:var(--ink);font-weight:400}
   .help .c1{color:var(--cyan);font-style:normal} .help .c2{color:var(--pink);font-style:normal} .help .c3{color:var(--gold);font-style:normal}
+
+  /* ライフ：へった時に ゆれる・のこり すくないと ハートが どきどき */
+  .lifebox span{display:inline-block}
+  .lifebox.hurt{animation:hurt .4s}
+  .lifebox.hurt .bar{border-color:#ff3b5c;box-shadow:0 0 12px rgba(255,59,92,.9)}
+  .lifebox.low span{animation:beat .55s infinite}
+  @keyframes hurt{0%,100%{transform:none}20%{transform:translateX(-4px)}45%{transform:translateX(4px)}70%{transform:translateX(-2px)}}
+  @keyframes beat{50%{transform:scale(1.35)}}
+  /* れんしゅう中の HUD */
+  #skipBtn{display:none;flex:1;min-width:0;font-family:inherit;font-size:15px;min-height:36px;border-radius:10px;border:1px solid rgba(255,209,102,.6);background:rgba(255,209,102,.1);color:var(--gold);cursor:pointer;letter-spacing:1px;padding:0 8px}
+  .hud.tut .lifebox{display:none}
+  .hud.tut #skipBtn{display:block}
+  .hud.tut .lcd{color:var(--gold);border-color:rgba(255,209,102,.5);text-shadow:0 0 8px rgba(255,209,102,.7);font-size:17px}
+  /* けっか */
+  #ovBadge{display:none;font-size:14px;color:#1b1430;background:linear-gradient(90deg,#ffd166,#ffb347);border-radius:999px;padding:3px 14px;letter-spacing:1px;box-shadow:0 0 14px rgba(255,209,102,.6);animation:pop .5s backwards}
+  .prog{display:inline-block;width:120px;height:9px;border-radius:999px;background:#07071a;border:1px solid #3b3b66;vertical-align:middle;overflow:hidden;margin-left:6px}
+  .prog span{display:block;height:100%;background:linear-gradient(90deg,#ff5fa2,#ffd166)}
+  .songs button i{font-style:normal;font-size:13px;color:var(--gold);white-space:nowrap}
+  .songs button i.no{color:#6a6694}
   @media (hover:hover){
     .backbar a:hover{color:var(--gold)}
     .backbar button:hover,#pauseBtn:hover{color:var(--gold);border-color:var(--gold)}
+    #skipBtn:hover{background:rgba(255,209,102,.22)}
     .songs button:hover:not(.lock){border-color:var(--gold)}
     .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
   }
@@ -99,9 +119,9 @@
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="おんがくに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが あしもとに きた しゅんかんに おすと パーフェクト！ きいろは おしたまま レールを すべる。だんだん はやくなる 3きょくで、パッドの ならびは まいかい かわる。コンボと ★3つ、ベストスコアを めざそう。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="おんがくに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが ◎に きたら タップ、きいろは おしたまま。はじめてでも ゆっくりの れんしゅうで やりながら おぼえられるよ。ミスで ♥が へり、0に なると しっぱい。3きょくを さいごまで かんそうして ★3つを めざそう。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/087-beat-jump/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ビートジャンプ","description":"おんがくに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが あしもとに きた しゅんかんに おすと パーフェクト！ きいろは おしたまま レールを すべる。だんだん はやくなる 3きょくで、パッドの ならびは まいかい かわる。コンボと ★3つ、ベストスコアを めざそう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/087-beat-jump/index.html","inLanguage":"ja","genre":"RHYTHM","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ビートジャンプ","description":"おんがくに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが ◎に きたら タップ、きいろは おしたまま。はじめてでも ゆっくりの れんしゅうで やりながら おぼえられるよ。ミスで ♥が へり、0に なると しっぱい。3きょくを さいごまで かんそうして ★3つを めざそう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/087-beat-jump/index.html","inLanguage":"ja","genre":"RHYTHM","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="087"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -115,19 +135,22 @@
 </header>
 
 <div id="wrap">
-  <div class="hud">
+  <div class="hud" id="hud">
     <div class="lcd" id="hudScore">00000</div>
-    <div class="lifebox"><span>♥</span><div class="bar"><i id="lifeFill"></i></div></div>
+    <div class="lifebox" id="lifeBox"><span>♥</span><div class="bar"><i id="lifeFill"></i></div></div>
+    <button id="skipBtn" aria-label="れんしゅうを スキップ">スキップ ▶</button>
     <button id="pauseBtn" aria-label="ひとやすみ">⏸</button>
   </div>
   <canvas id="cv" width="480" height="500"></canvas>
   <div id="overlay" class="show">
+    <div id="ovBadge"></div>
     <div class="big" id="ovBig">ビートジャンプ</div>
     <div id="ovStars"></div>
     <div class="note" id="ovNote"></div>
     <div class="songs" id="songs"></div>
     <div class="modes">
       <button id="startBtn">▶ はじめる</button>
+      <button id="tutBtn" class="alt">🔰 れんしゅう</button>
       <button id="nextBtn" class="alt" style="display:none">つぎのきょく ▶</button>
       <button id="toTitleBtn" class="alt" style="display:none">きょくをえらぶ</button>
     </div>
@@ -140,6 +163,8 @@
   <b>あそびかた</b>：おんがくに あわせて はしる ピョンを ジャンプさせよう。<i class="c1">ひかるパッド</i>が あしもとの ◎ に かさなった しゅんかんに タップ！ ぴったりなら <i class="c3">パーフェクト</i>、すこし ずれると グッド。おくれると トゲに ぶつかって <i class="c2">♥</i> が へるよ。<br>
   <i class="c2">れんだは だめ！</i> パッドが ない ところで おすと「からぶり」で <i class="c2">♥</i> が へって、すこしの あいだ とべなくなるよ。<br>
   <i class="c3">きいろの ながいパッド</i>は、おしたまま ひかりのレールを すべって、おわりまで はなさない。<br>
+  <i class="c2">♥</i> が 0 に なると <i class="c2">しっぱい</i>。パーフェクトと グッドで すこし もどるよ。さいごまで はしりきれば <i class="c3">かんそう</i>！ きょくえらびに 🏁 が つくよ。<br>
+  <i class="c1">🔰 れんしゅう</i>：ゆっくりの テンポで、タップ → ながおし → みじかい フレーズ の じゅんに やりながら おぼえられるよ。はじめての ときは じどうで はじまり、タイトルから いつでも できる（S キーで スキップ）。<br>
   📱 がめん か 下の大きなボタンを タップ。🖱 クリック。⌨️ スペース・↑・Z キーで ジャンプ、P で ひとやすみ。<br>
   <i class="c3">コツ</i>：目だけでなく、ドラムの「ドン」を よく きこう。パッドの ならびは あそぶたびに かわるよ。
 </div>
@@ -152,10 +177,13 @@
   const W = 480, H = 500, GY = 372, CX = 118, RAIL = 76;
   const LIFE_MAX = 100;
   // きょくごとの はんてい。perf/good＝ぴったりの はば（秒）、miss/empty＝ミス・からぶりで へる ♥、heal＝[パーフェクト, グッド] で もどる ♥
+  // ボットで はかって きめた（fix-20261019/work-087/sim.cjs）：
+  //   1きょくめ＝なにもしない・でたらめは 半分ぐらいで しっぱい、半分 あたる人は ぎりぎり、7〜8わり あたれば よゆうで かんそう
+  //   2・3きょくめ＝なにもしない・でたらめは 2〜4わりで しっぱい、半分では ほぼ むり、7〜8わりなら かんそう
   const RULES = [
-    { perf: 0.07, good: 0.18, miss: 8, empty: 5, heal: [3, 1] },
-    { perf: 0.06, good: 0.14, miss: 10, empty: 6, heal: [3, 1] },
-    { perf: 0.06, good: 0.12, miss: 11, empty: 8, heal: [3, 1] },
+    { perf: 0.07, good: 0.18, miss: 2.5, empty: 5, heal: [1.5, 0.5] },
+    { perf: 0.06, good: 0.14, miss: 3, empty: 6, heal: [1.5, 0.5] },
+    { perf: 0.06, good: 0.12, miss: 2.5, empty: 7, heal: [1.5, 0.5] },
   ];
   const LATE_GRACE = 0.3;                // ミスの すぐあとの「おそい」おしなおしは ♥を へらさない（秒）
   const POP_Y = GY - 172;                // はんていの文字は キャラの あたまより 上に出す
@@ -191,12 +219,27 @@
     F: ['x.......'],
   };
 
+  // ---------- れんしゅう ----------
+  // ゆっくりの テンポで、やりながら おぼえる。♥は へらない・きろくにも のこらない
+  const TUT_SONG = { name: 'れんしゅう', sub: '', bpm: 80, speed: 175, color: '#ffd166', lead: 'bell',
+    scale: [0, 2, 4, 7, 9],
+    chords: [{ r: 48, t: [0, 4, 7] }, { r: 45, t: [9, 0, 4] }, { r: 41, t: [5, 9, 0] }, { r: 43, t: [7, 11, 2] }],
+    kick: [0, 4], snare: [2, 6], hat: [0, 2, 4, 6], bass: [0, null, null, null, 0, null, 7, null], arp: null,
+    bars: new Array(600).fill(1) };
+  const TUT_RULE = { perf: 0.08, good: 0.2, miss: 0, empty: 0, heal: [0, 0] };
+  const TUT = [
+    { kind: 'tap', need: 3, name: 'タップ', l1: 'ひかるパッドが ◎ に かさなったら', l2: 'その しゅんかんに タップ！' },
+    { kind: 'hold', need: 2, name: 'ながおし', l1: 'きいろの パッドは おしたまま', l2: 'おわりの ● まで はなさない！' },
+    { kind: 'phrase', need: 4, name: 'しあげ', l1: 'さいごは みじかい フレーズ', l2: 'ドラムの「ドン」に のって やってみよう' },
+  ];
+  const PHRASE = ['x...x.x.', 'h===..x.', 'x.......'];   // 7はんてい（ながおしは 2）のうち 4つ できれば ごうかく
+
   // ---------- 要素 ----------
   const cv = $('cv'), ctx = cv.getContext('2d');
-  const overlay = $('overlay'), ovBig = $('ovBig'), ovNote = $('ovNote'), ovStars = $('ovStars'), ovStats = $('ovStats');
-  const songsEl = $('songs'), startBtn = $('startBtn'), nextBtn = $('nextBtn'), toTitleBtn = $('toTitleBtn');
-  const muteBtn = $('mute-btn'), pauseBtn = $('pauseBtn'), tapPad = $('tapPad');
-  const hudScore = $('hudScore'), lifeFill = $('lifeFill');
+  const overlay = $('overlay'), ovBig = $('ovBig'), ovNote = $('ovNote'), ovStars = $('ovStars'), ovStats = $('ovStats'), ovBadge = $('ovBadge');
+  const songsEl = $('songs'), startBtn = $('startBtn'), nextBtn = $('nextBtn'), toTitleBtn = $('toTitleBtn'), tutBtn = $('tutBtn');
+  const muteBtn = $('mute-btn'), pauseBtn = $('pauseBtn'), tapPad = $('tapPad'), skipBtn = $('skipBtn');
+  const hudEl = $('hud'), hudScore = $('hudScore'), lifeFill = $('lifeFill'), lifeBox = $('lifeBox');
 
   // ---------- らんすう ----------
   function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let x = Math.imul(a ^ a >>> 15, 1 | a); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
@@ -205,13 +248,19 @@
 
   // ---------- 保存 ----------
   let muted = false, best = {}, songIdx = 0;
+  let tutDone = false, finishCnt = {};   // れんしゅうの 自動あんない ずみ／きょくごとの かんそう回数
   function load() {
     try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
     try { const b = JSON.parse(localStorage.getItem(KEY + 'best') || 'null'); if (b && typeof b === 'object') best = b; } catch (e) {}
     try { const s = parseInt(localStorage.getItem(KEY + 'song'), 10); if (s >= 0 && s < SONGS.length && unlocked(s)) songIdx = s; } catch (e) {}
+    try { tutDone = localStorage.getItem(KEY + 'tut') === '1'; } catch (e) {}
+    try { const f = JSON.parse(localStorage.getItem(KEY + 'finish') || 'null'); if (f && typeof f === 'object') finishCnt = f; } catch (e) {}
+    // まえの きろく：best は クリアした ときだけ 入るので、best が ある きょくは かんそう ずみ
+    for (const k in best) if (best[k] && !(finishCnt[k] > 0)) finishCnt[k] = 1;
   }
   function save(k, v) { try { localStorage.setItem(KEY + k, v); } catch (e) {} }
   function unlocked(i) { return i === 0 || !!(best[i - 1] && best[i - 1].stars > 0); }
+  function needTut() { return !tutDone && Object.keys(best).length === 0; }
 
   // ---------- 音 ----------
   const VOL = 0.52;
@@ -284,6 +333,8 @@
     else if (name === 'clear') { [72, 76, 79, 84, 88].forEach((m, i) => tone('triangle', mtof(m), w + i * 0.09, 0.3, 0.17)); tone('sine', mtof(96), w + 0.45, 0.5, 0.08); }
     else if (name === 'over') { [67, 63, 60, 55].forEach((m, i) => tone('triangle', mtof(m), w + i * 0.16, 0.3, 0.15)); }
     else if (name === 'lock') { tone('square', 200, w, 0.08, 0.08, 0, 800); }
+    else if (name === 'ok') { tone('sine', 1568, w + 0.04, 0.12, 0.08); tone('sine', 2093, w + 0.1, 0.16, 0.07); }
+    else if (name === 'stage') { [67, 72, 76, 79].forEach((m, i) => tone('triangle', mtof(m), w + i * 0.07, 0.22, 0.15)); tone('sine', mtof(91), w + 0.3, 0.35, 0.07); }
   }
   // バックの えんそうを 1こま ぶん よやくする
   function scheduleStep(s, when) {
@@ -328,6 +379,7 @@
   let manual = false, auto = false, autoOff = 0;
   let downs = 0, keysDown = {}, ptrDown = {};
   let hintHold = false, firstRun = true;
+  let tut = null;                 // れんしゅう中の じょうたい（ふだんは null）
 
   function buildChart(s) {
     const r = fixedSeed === null ? Math.random : mulberry(fixedSeed);
@@ -367,24 +419,126 @@
     return out;
   }
 
-  function startSong(i) {
-    if (!unlocked(i)) return false;
-    songIdx = i; song = SONGS[i]; save('song', String(i));
+  function setTempo(r) {
     beat = 60 / song.bpm; stepDur = beat / 2; barDur = beat * 4;
-    rule = RULES[i]; earlyZone = Math.min(0.25, stepDur * 0.8); lockDur = Math.min(0.2, stepDur * 0.6);
-    lockT = -9; mashT = -9; karaLog = [];
-    notes = buildChart(song);
-    total = notes.reduce((a, n) => a + (n.type === 'hold' ? 2 : 1), 0);
-    endT = song.bars.length * barDur;
-    t = -4 * beat; nextStep = -8; ni = 0;
+    rule = r; earlyZone = Math.min(0.25, stepDur * 0.8); lockDur = Math.min(0.2, stepDur * 0.6);
+  }
+  function resetRun() {
+    lockT = -9; mashT = -9; karaLog = []; ni = 0;
     score = 0; combo = 0; maxCombo = 0; life = LIFE_MAX; cnt = { p: 0, g: 0, m: 0, e: 0, x: 0 };
     hold = null; jmp = null; fall = null; stumbleT = -9; comboBump = -9; landT = -9;
     parts = []; pops = []; result = null; pendingResult = -1;
     downs = 0; keysDown = {}; ptrDown = {}; hintHold = false;
     stopHoldVoice();
+  }
+  function startSong(i) {
+    if (!unlocked(i)) return false;
+    songIdx = i; song = SONGS[i]; save('song', String(i));
+    tut = null; hudEl.classList.remove('tut');
+    setTempo(RULES[i]);
+    notes = buildChart(song);
+    total = notes.reduce((a, n) => a + (n.type === 'hold' ? 2 : 1), 0);
+    endT = song.bars.length * barDur;
+    t = -4 * beat; nextStep = -8;
+    resetRun();
     phase = 'play'; overlay.classList.remove('show');
     audio(); sfx('start'); updateHud();
     return true;
+  }
+
+  // ---------- れんしゅう ----------
+  function ceilStep(x) { return Math.ceil(x / stepDur - 1e-9) * stepDur; }
+  function ceilBar(x) { return Math.ceil(x / barDur - 1e-9) * barDur; }
+  function startTutorial(autoIntro) {
+    if (autoIntro) { tutDone = true; save('tut', '1'); }    // じどうの あんないは さいしょの 1回だけ
+    song = TUT_SONG; setTempo(TUT_RULE);
+    notes = []; total = 0; endT = Infinity;
+    t = -2 * beat; nextStep = -4;
+    resetRun();
+    tut = { stage: 0, got: 0, nextT: ceilBar(t + 4.2), spawned: false, cleared: false, clearAt: 0, st0: t, tip: '', tipT: -9, tries: 0, mi: 0, intro: !!autoIntro };
+    hudEl.classList.add('tut');
+    tutUpdate();                      // さいしょの パッドを すぐ よういする
+    phase = 'play'; overlay.classList.remove('show');
+    audio(); sfx('start'); updateHud();
+    return true;
+  }
+  function skipTutorial() { if (!tut || phase !== 'play') return false; return startSong(songIdx); }
+  function tutAdd(type, t0, len) {
+    const bar = Math.floor(t0 / barDur + 1e-9), ch = song.chords[((bar % 4) + 4) % 4];
+    let midi = 72 + ch.t[tut.mi++ % 3]; if (midi > 79) midi -= 12;
+    notes.push({ t: t0, type, end: type === 'hold' ? t0 + len : 0, midi, j: 0, tj: 0, hop: 0.42, burst: false, ts: tut.stage });
+  }
+  function tutPhrase() {
+    const base = Math.max(tut.nextT, ceilBar(t + 2.4));
+    PHRASE.forEach((pat, b) => {
+      for (let i = 0; i < 8; i++) {
+        if (pat[i] === 'x') tutAdd('tap', base + (b * 8 + i) * stepDur, 0);
+        else if (pat[i] === 'h') { let k = i; while (k + 1 < 8 && pat[k + 1] === '=') k++; tutAdd('hold', base + (b * 8 + i) * stepDur, (k - i) * stepDur); }
+      }
+    });
+  }
+  function tutPending() {
+    let p = 0;
+    for (const n of notes) if (n.ts === tut.stage && !(n.type === 'hold' ? n.tj : n.j)) p++;
+    return p;
+  }
+  function tutGot() {
+    tut.got++; sfx('ok');
+    const need = TUT[tut.stage].need, i = Math.min(need, tut.got) - 1;
+    burst(W - 22 - (need - 1 - i) * 24, 19, '#ffd166', 10, 120);
+  }
+  function tutTip(text) { if (tut) { tut.tip = text; tut.tipT = t; } }
+  function stageClear() {
+    tut.cleared = true; tut.clearAt = t; pops = [];
+    sfx('stage'); burst(W / 2, 160, '#ffd166', 26, 240); burst(W / 2, 160, '#53e0d8', 14, 180);
+  }
+  function tutUpdate() {
+    const T = tut, st = TUT[T.stage];
+    if (T.cleared) {
+      if (t - T.clearAt >= 1.3) {
+        if (T.stage >= TUT.length - 1) { finishTutorial(); return; }
+        T.stage++; T.got = 0; T.cleared = false; T.spawned = false; T.tries = 0; T.st0 = t; T.tip = ''; T.tipT = -9;
+        T.nextT = ceilBar(t + 4.2);      // つぎの せつめいを 読む じかん
+      }
+      return;
+    }
+    const pend = tutPending();
+    if (st.kind === 'phrase') {
+      if (!T.spawned) { tutPhrase(); T.spawned = true; }
+      else if (pend === 0) {
+        if (T.got >= st.need) stageClear();
+        else { T.tries++; T.got = 0; T.spawned = false; T.nextT = ceilBar(t + 3.2); tutTip('おしい！ もういちど いくよ'); }
+      }
+      return;
+    }
+    if (T.got >= st.need) { if (pend === 0) stageClear(); return; }
+    // できるまで パッドを おくりつづける（まっている パッドは 2つまで）
+    if (pend < Math.min(2, st.need - T.got)) {
+      const t0 = Math.max(T.nextT, ceilStep(t + 2.4));
+      if (st.kind === 'tap') { tutAdd('tap', t0, 0); T.nextT = t0 + stepDur * 4; }
+      else { tutAdd('hold', t0, stepDur * 4); T.nextT = t0 + stepDur * 8; }
+    }
+  }
+  function finishTutorial() {
+    tutDone = true; save('tut', '1');
+    hold = null; stopHoldVoice();
+    result = { tutorial: true, clear: true, stars: 0, rate: 0, fc: false, newRec: false, progress: 1, t0: t };
+    phase = 'result'; pendingResult = 1.1;
+    sfx('clear');
+    for (let i = 0; i < 4; i++) burst(80 + i * 105, 120 + (i % 2) * 50, ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff'][i], 20, 220);
+  }
+  // いま おすべき パッド（「いま！」の ガイド用）
+  function tutGuide() {
+    if (!tut || tut.cleared || phase !== 'play') return null;
+    for (let i = ni; i < notes.length; i++) {
+      const n = notes[i];
+      if (n.j) continue;
+      const d = n.t - t;
+      if (d > 1.1) return null;
+      if (d < -rule.good) continue;
+      return { n, d, now: d <= 0.15 };
+    }
+    return null;
   }
 
   function stopHoldVoice() {
@@ -421,34 +575,55 @@
       fall = null; jmp = { t0: t, dur: n.hop, h: 30 + n.hop * 150 };
       leadNote(n.midi, n.hop * 1.1, kind === 1);
     }
+    if (tut) {
+      const k = TUT[tut.stage].kind;
+      if (k === 'phrase' || (k === 'tap' && n.type === 'tap')) tutGot();
+      else if (n.type === 'hold') tutTip('そのまま！ ● まで おしたまま');
+    }
+  }
+  // ♥が へった時の ゆれ（れんしゅう中は へらない）
+  function hurt() {
+    if (tut) return;
+    lifeBox.classList.remove('hurt'); void lifeBox.offsetWidth; lifeBox.classList.add('hurt');
   }
   function missNote(n, label) {
     n.j = 3; cnt.m++; combo = 0; life -= rule.miss; stumbleT = t;
     if (n.type === 'hold') { n.tj = 3; cnt.m++; }
-    addPop(label || 'ミス', '#ff5fa2'); sfx('miss');
+    addPop(label || 'ミス', '#ff5fa2'); sfx('miss'); hurt();
+    if (tut) tutTip(label === 'はやい！' ? 'はやいよ！ ◎に かさなるまで まってね'
+      : n.type === 'hold' ? 'きいろも ◎に きたら おしはじめるよ' : 'おそかった！ ◎に きた しゅんかんに タップ');
   }
   // からぶり：パッドが ない ところで おした。♥が へって、すこしの あいだ とべない
   function emptyPress() {
-    cnt.e++; combo = 0; life -= rule.empty; stumbleT = t; lockT = t + lockDur;
+    cnt.e++; combo = 0; stumbleT = t; lockT = t + lockDur;
     karaLog.push(t); if (karaLog.length > 3) karaLog.shift();
-    if (karaLog.length === 3 && t - karaLog[0] < 3) mashT = t;      // れんだ している → てびきを出す
-    addPop('からぶり', '#ff5fa2'); sfx('kara');
+    const mashing = karaLog.length === 3 && t - karaLog[0] < 3;
+    if (mashing) mashT = t;                                          // れんだ している → てびきを出す
+    life -= rule.empty * (mashing ? 1.6 : 1);                        // れんだの からぶりは 何もしないより へる
+    addPop('からぶり', '#ff5fa2'); sfx('kara'); hurt();
+    if (tut) tutTip('パッドが ない ときは おさないでね');
   }
   function tailHit(n) {
     n.tj = 1; gain(1); hold = null;
     fall = { t0: t, dur: Math.min(0.24, n.hop * 0.8), from: RAIL };
     addPop('パーフェクト', '#ffd166', true); burst(CX, GY - RAIL, '#ffd166', 16);
     if (ac) tone('sine', mtof(n.midi + 12), now(), 0.14, 0.08);
+    if (tut) { const k = TUT[tut.stage].kind; if (k === 'hold' || k === 'phrase') tutGot(); tut.tipT = -9; }
   }
   function tailMiss(n) {
     const from = charLiftRaw(n);
     n.tj = 3; cnt.m++; combo = 0; life -= Math.min(8, rule.miss); hold = null; stumbleT = t;
     fall = { t0: t, dur: 0.2, from };
-    addPop('はなしちゃった', '#ff5fa2'); stopHoldVoice(); sfx('miss');
+    addPop('はなしちゃった', '#ff5fa2'); stopHoldVoice(); sfx('miss'); hurt();
+    if (tut) tutTip('はなすのが はやい！ ● まで おしたまま');
   }
   function press() {
     if (phase !== 'play') return;
-    if (t < lockT) { lockT = t + lockDur; stumbleT = t; mashT = t; cnt.x++; return; }   // つまずき中は とべない。れんだすると のびる
+    if (t < lockT) {                       // つまずき中は とべない。れんだすると のびて、♥も すこし へる
+      lockT = t + lockDur; stumbleT = t; mashT = t; cnt.x++;
+      if (rule.empty) { life -= rule.empty * 0.3; hurt(); }
+      updateHud(); return;
+    }
     const G = rule.good;
     let target = null;
     for (let i = ni; i < notes.length; i++) {
@@ -523,7 +698,8 @@
       if (n.t > t) break;
       if (n.j === 3 && !n.burst && n.type === 'tap' && t >= n.t + n.hop / 2 - 0.02) { n.burst = true; burst(noteX(n.t + n.hop / 2), GY - 12, '#ff5fa2', 12, 150); }
     }
-    if (life <= 0) { life = 0; finish(false); }
+    if (tut) tutUpdate();
+    else if (life <= 0) { life = 0; finish(false); }
     else if (t >= endT) finish(true);
     updateHud();
   }
@@ -553,14 +729,17 @@
     const prev = best[songIdx] || { score: 0, stars: 0, fc: false };
     const wasNextLocked = songIdx + 1 < SONGS.length && !unlocked(songIdx + 1);
     let newRec = false;
+    const prevFin = finishCnt[songIdx] || 0;
     if (clear) {
       newRec = score > prev.score;
       best[songIdx] = { score: Math.max(prev.score, score), stars: Math.max(prev.stars, stars), fc: prev.fc || fc };
       save('best', JSON.stringify(best));
+      finishCnt[songIdx] = prevFin + 1;            // かんそう（さいごまで いけた）回数
+      save('finish', JSON.stringify(finishCnt));
     }
     result = { clear, stars, rate, fc, newRec, prevBest: prev.score, progress: Math.max(0, Math.min(1, t / endT)), judged,
-      unlockedNext: clear && wasNextLocked };
-    phase = 'result'; pendingResult = clear ? 0.9 : 0.6;
+      unlockedNext: clear && wasNextLocked, firstFinish: clear && prevFin === 0, finishN: finishCnt[songIdx] || 0, t0: t };
+    phase = 'result'; pendingResult = clear ? 1.3 : 1.0;
     sfx(clear ? 'clear' : 'over');
     if (clear) for (let i = 0; i < 4; i++) burst(80 + i * 105, 120 + (i % 2) * 50, ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff'][i], 20, 220);
   }
@@ -574,7 +753,9 @@
       const ok = unlocked(i), rec = best[i];
       b.dataset.s = String(i);
       b.className = (i === songIdx ? 'on' : '') + (ok ? '' : ' lock');
-      b.innerHTML = '<b>' + s.name + '</b><small>' + s.sub + '</small><em>' + (ok ? starText(rec ? rec.stars : 0) : '🔒 まだ') + '</em>';
+      const fin = finishCnt[i] > 0;
+      b.innerHTML = '<b>' + s.name + '</b><small>' + s.sub + '</small><em>' + (ok ? starText(rec ? rec.stars : 0) : '🔒 まだ') + '</em>'
+        + (ok ? (fin ? '<i>🏁 かんそう！</i>' : '<i class="no">🏁 まだ</i>') : '');
       b.addEventListener('click', () => {
         audio();
         if (!unlocked(i)) { sfx('lock'); ovStats.textContent = '「' + SONGS[i - 1].name + '」を クリアすると あそべるよ'; return; }
@@ -584,16 +765,21 @@
     });
   }
   function renderTitleStats() {
-    const rec = best[songIdx];
-    ovStats.textContent = rec ? '🏆 ベスト ' + rec.score + ' てん' + (rec.fc ? '・フルコンボ ずみ' : '') : 'きょくを えらんで はじめよう';
+    const rec = best[songIdx], fin = finishCnt[songIdx] || 0;
+    ovStats.textContent = rec ? (fin ? '🏁 かんそう ' + fin + 'かい・' : '') + '🏆 ベスト ' + rec.score + ' てん' + (rec.fc ? '・フルコンボ' : '')
+      : needTut() ? 'はじめては れんしゅうから（スキップ OK）' : 'きょくを えらんで はじめよう';
   }
   function showTitle() {
     phase = 'title'; result = null; pendingResult = -1; overlay.classList.remove('guard');
+    if (tut || song === TUT_SONG) { tut = null; hudEl.classList.remove('tut'); song = SONGS[songIdx]; setTempo(RULES[songIdx]); endT = song.bars.length * barDur; t = 0; }
+    ovBadge.style.display = 'none';
     ovBig.className = 'big'; ovBig.textContent = 'ビートジャンプ';
     ovStars.style.display = 'none';
-    ovNote.innerHTML = '♪ おんがくに あわせて ジャンプ！<br><i>ひかるパッド</i>が あしもとの <b>◎</b> に きたら タップ。<br><b>きいろ</b>は おしたまま。<u>れんだ</u>は ♥が へるよ！';
+    ovNote.innerHTML = '♪ おんがくに あわせて ジャンプ！<br><i>ひかるパッド</i>が あしもとの <b>◎</b> に きたら タップ。<br><b>きいろ</b>は おしたまま。<u>♥</u> が 0に なると しっぱい！'
+      + (needTut() ? '<br>🔰 はじめては まず <i>れんしゅう</i> から！' : '');
     songsEl.style.display = 'flex';
     startBtn.textContent = '▶ はじめる';
+    tutBtn.style.display = ''; tutBtn.textContent = '🔰 れんしゅう';
     nextBtn.style.display = 'none'; toTitleBtn.style.display = 'none';
     renderSongs(); renderTitleStats();
     overlay.classList.add('show'); updateHud();
@@ -601,14 +787,27 @@
   function showResult() {
     const r = result; pendingResult = -1;
     songsEl.style.display = 'none';
+    if (r.tutorial) {
+      ovBadge.style.display = 'inline-block'; ovBadge.textContent = '🔰 じゅんび OK！';
+      ovBig.className = 'big win'; ovBig.textContent = 'れんしゅう クリア！';
+      ovStars.style.display = 'none';
+      ovNote.innerHTML = 'タップ・ながおし・フレーズ ぜんぶ できたね！<br>ほんばんでは ミスで <u>♥</u> が へって、<br><u>0</u> に なると <u>しっぱい</u>。<br>♥を のこして さいごまで <b>かんそう</b> しよう！';
+      startBtn.textContent = '▶ ほんばんへ';
+      tutBtn.style.display = 'none'; nextBtn.style.display = 'none';
+      toTitleBtn.style.display = ''; toTitleBtn.textContent = 'タイトルへ';
+      ovStats.textContent = 'れんしゅうは タイトルの 🔰 から いつでも できるよ';
+    } else {
+    ovBadge.style.display = r.clear ? 'inline-block' : 'none';
+    ovBadge.textContent = r.firstFinish ? '🎉 はじめての かんそう！' : '🏁 ' + r.finishN + 'かいめの かんそう';
     ovBig.className = 'big ' + (r.clear ? 'win' : 'lose');
-    ovBig.textContent = r.clear ? (r.fc ? 'フルコンボ！' : 'クリア！') : 'ざんねん…';
+    ovBig.textContent = r.clear ? (r.fc ? 'フルコンボ！' : 'かんそう！') : 'しっぱい…';
     if (r.clear) { ovStars.style.display = 'block'; ovStars.innerHTML = '<b>★</b>'.repeat(r.stars) + '☆'.repeat(3 - r.stars); }
     else ovStars.style.display = 'none';
     const b = best[songIdx];
     let h = '「' + song.name + '」';
+    const pc = Math.round(r.progress * 100);
     h += r.clear ? '<br>スコア <b>' + score + '</b> てん' + (r.newRec ? ' <u>✨しんきろく！</u>' : '（🏆 ' + (b ? b.score : score) + '）')
-                 : '<br>きょくの <b>' + Math.round(r.progress * 100) + '%</b> まで すすんだよ';
+                 : ' <u>♥</u> が なくなっちゃった<br>きょくの <b>' + pc + '%</b> まで すすんだよ<span class="prog"><span style="width:' + pc + '%"></span></span>';
     h += '<br><b>パーフェクト ' + cnt.p + '</b>・<i>グッド ' + cnt.g + '</i>・<u>ミス ' + cnt.m + '</u>';
     h += '<br>さいだい <b>' + maxCombo + '</b> コンボ' + (cnt.e ? '・<u>からぶり ' + cnt.e + '</u>' : '');
     if (r.unlockedNext) h += '<br>🔓 <i>「' + SONGS[songIdx + 1].name + '」が あそべるよ！</i>';
@@ -616,9 +815,11 @@
     startBtn.textContent = 'もういちど';
     const hasNext = r.clear && songIdx + 1 < SONGS.length && unlocked(songIdx + 1);
     nextBtn.style.display = hasNext ? '' : 'none';
+    tutBtn.style.display = r.clear ? 'none' : ''; tutBtn.textContent = '🔰 れんしゅう';
     toTitleBtn.style.display = ''; toTitleBtn.textContent = 'きょくをえらぶ';
     ovStats.textContent = r.clear ? (r.stars === 3 ? 'すごい！ かんぺきな リズムだ' : r.stars === 2 ? '★3つは パーフェクトを もっと ふやそう' : 'グッドを パーフェクトに して ★を ふやそう')
                                   : (cnt.e + cnt.x >= 6 && cnt.e + cnt.x >= cnt.p + cnt.g ? 'れんだは ♥が へるよ。◎に きた ときだけ タップ！' : 'ドラムの「ドン」に あわせて タップしてみよう');
+    }
     overlay.classList.add('show');
     // けっかが 出た しゅんかんの おしっぱなし・れんだで すぐ きえないように、すこしの あいだ ボタンを とめる
     resultAt = performance.now();
@@ -631,19 +832,21 @@
     if (phase !== 'play') return;
     phase = 'pause'; downs = 0; keysDown = {}; ptrDown = {}; tapPad.classList.remove('down');
     stopHoldVoice();
-    songsEl.style.display = 'none'; ovStars.style.display = 'none';
+    songsEl.style.display = 'none'; ovStars.style.display = 'none'; ovBadge.style.display = 'none';
     ovBig.className = 'big'; ovBig.textContent = 'ひとやすみ';
     ovNote.innerHTML = '「' + song.name + '」の とちゅうだよ。<br>つづきから あそべるよ。';
     startBtn.textContent = '▶ つづける';
+    tutBtn.style.display = 'none';
     nextBtn.style.display = 'none'; toTitleBtn.style.display = ''; toTitleBtn.textContent = 'やめる';
     ovStats.textContent = '';
     overlay.classList.add('show');
   }
   function resumeGame() { if (phase !== 'pause') return; phase = 'play'; overlay.classList.remove('show'); audio(); last = performance.now(); }
   function updateHud() {
-    hudScore.textContent = String(score).padStart(5, '0');
+    hudScore.textContent = tut ? 'れんしゅう' : String(score).padStart(5, '0');
     lifeFill.style.width = Math.max(0, life) + '%';
     lifeFill.className = life <= 30 ? 'low' : '';
+    lifeBox.classList.toggle('low', life <= 30 && phase === 'play');
   }
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; if (master && ac) master.gain.value = muted ? 0 : VOL; }
 
@@ -845,7 +1048,91 @@
     }
     ctx.globalAlpha = 1;
   }
-  function drawTop() {
+  function hintBox(text, size, color) {
+    ctx.font = size + 'px DotGothic16, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const w = ctx.measureText(text).width + 30, h = size + 16, y = H - 45 - h / 2;
+    ctx.fillStyle = 'rgba(8,8,24,.8)'; rr(W / 2 - w / 2, y, w, h, h / 2); ctx.fill();
+    ctx.strokeStyle = hexA(color, 0.75); ctx.lineWidth = 1.5; rr(W / 2 - w / 2, y, w, h, h / 2); ctx.stroke();
+    ctx.fillStyle = color; ctx.fillText(text, W / 2, H - 45);
+  }
+  // れんしゅうの がめん：うえに せつめい、◎に ちかづく わ、「いま！」
+  function drawTut(pulse) {
+    const T = tut, st = TUT[T.stage];
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.font = '17px DotGothic16, sans-serif';
+    ctx.fillStyle = '#ffd166'; ctx.fillText('れんしゅう ' + (T.stage + 1) + '/' + TUT.length + '  ' + st.name, 16, 19);
+    for (let i = 0; i < st.need; i++) {
+      const x = W - 22 - (st.need - 1 - i) * 24;
+      ctx.beginPath(); ctx.arc(x, 19, 8, 0, 7);
+      if (i < T.got) { ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0; }
+      else { ctx.strokeStyle = 'rgba(255,209,102,.6)'; ctx.lineWidth = 2; ctx.stroke(); }
+    }
+    // せつめい（だんが かわった時は すこし はずむ）
+    const ia = t - T.st0, sc = ia >= 0 && ia < 0.25 ? 0.9 + ia * 0.4 : 1;
+    ctx.save(); ctx.translate(W / 2, 71); ctx.scale(sc, sc);
+    ctx.fillStyle = 'rgba(8,8,24,.8)'; rr(-(W - 28) / 2, -36, W - 28, 72, 12); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,209,102,.6)'; ctx.lineWidth = 1.5; rr(-(W - 28) / 2, -36, W - 28, 72, 12); ctx.stroke();
+    ctx.textAlign = 'center'; ctx.font = '19px DotGothic16, sans-serif';
+    ctx.fillStyle = '#eeecfa'; ctx.fillText(st.l1, 0, -13);
+    const tipOn = T.tip && t - T.tipT < 2.4;
+    ctx.fillStyle = tipOn ? '#ff8fbf' : '#ffd166'; ctx.fillText(tipOn ? T.tip : st.l2, 0, 15);
+    ctx.restore();
+    // カウント
+    if (phase === 'play' && t < 0) {
+      ctx.textAlign = 'center'; ctx.font = '60px DotGothic16, sans-serif';
+      ctx.shadowColor = song.color; ctx.shadowBlur = 20; ctx.fillStyle = '#fff';
+      ctx.fillText(String(Math.ceil(-t / beat)), W / 2, 205); ctx.shadowBlur = 0;
+    }
+    // できた！
+    if (T.cleared) {
+      const a = t - T.clearAt, s2 = a < 0.15 ? 0.5 + a * 3.4 : 1;
+      ctx.textAlign = 'center'; ctx.font = Math.round(48 * s2) + 'px DotGothic16, sans-serif';
+      ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 18; ctx.fillStyle = '#ffd166';
+      ctx.fillText(T.stage >= TUT.length - 1 ? 'ぜんぶ できた！' : 'できた！', W / 2, 160); ctx.shadowBlur = 0;
+    }
+    if (phase !== 'play') return;
+    const g = tutGuide();
+    if (g) {
+      // ◎に ちかづいてくる わ（かさなった時が タップの しゅんかん）
+      const k = Math.max(0, Math.min(1, g.d / 1.1));
+      ctx.save(); ctx.translate(CX, GY + 13);
+      ctx.strokeStyle = 'rgba(255,209,102,' + (0.35 + 0.65 * (1 - k)) + ')'; ctx.lineWidth = 3;
+      ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.ellipse(0, 0, 22 + 70 * k, 7 + 22 * k, 0, 0, 7); ctx.stroke();
+      if (g.now) {
+        ctx.fillStyle = 'rgba(255,209,102,' + (0.35 + 0.3 * pulse) + ')';
+        ctx.beginPath(); ctx.ellipse(0, 0, 30, 10, 0, 0, 7); ctx.fill();
+      }
+      ctx.restore();
+      if (g.now) hintBox(g.n.type === 'hold' ? 'いま！ おしたまま' : 'いま！ タップ', 26, '#ffd166');
+    } else if (hold) hintBox('そのまま… ● まで はなさない', 18, '#ffd166');
+    if (!g || !g.now) {   // ◎ を さす やじるし
+      const b = Math.sin(t / beat * Math.PI * 2) * 4;
+      ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.moveTo(CX, GY + 26 + b); ctx.lineTo(CX - 8, GY + 40 + b); ctx.lineTo(CX + 8, GY + 40 + b); ctx.closePath(); ctx.fill();
+    }
+  }
+  // きょくの おわり：かんそう！／しっぱい…／れんしゅう クリア！
+  function drawBanner() {
+    if (phase !== 'result' || !result || pendingResult < 0) return;
+    const a = t - result.t0, s = a < 0.18 ? 0.4 + a * 3.4 : 1;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if (!result.clear) { ctx.fillStyle = 'rgba(10,8,24,' + Math.min(0.5, a * 1.5) + ')'; ctx.fillRect(0, 0, W, H); }
+    const big = result.tutorial ? 'れんしゅう クリア！' : result.clear ? 'かんそう！' : 'しっぱい…';
+    const sub = result.tutorial ? 'これで じゅんび OK！' : result.clear ? 'さいごまで はしりきった！' : '♥ が なくなっちゃった';
+    const col = result.clear ? '#ffd166' : '#ff5fa2';
+    ctx.save(); ctx.translate(W / 2, 175); ctx.scale(s, s);
+    ctx.font = (result.tutorial ? 44 : 64) + 'px DotGothic16, sans-serif';
+    ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(10,10,24,.9)'; ctx.strokeText(big, 0, 0);
+    ctx.shadowColor = col; ctx.shadowBlur = 22; ctx.fillStyle = col; ctx.fillText(big, 0, 0);
+    ctx.restore();
+    if (a > 0.25) {
+      ctx.globalAlpha = Math.min(1, (a - 0.25) * 4);
+      ctx.font = '21px DotGothic16, sans-serif'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(10,10,24,.9)';
+      ctx.strokeText(sub, W / 2, 232); ctx.fillStyle = '#eeecfa'; ctx.fillText(sub, W / 2, 232);
+      ctx.globalAlpha = 1;
+    }
+  }
+  function drawTop(pulse) {
+    if (tut) { drawTut(pulse); drawBanner(); return; }
     // すすみぐあい
     const pr = Math.max(0, Math.min(1, t / endT));
     ctx.fillStyle = 'rgba(8,8,24,.7)'; rr(12, 10, W - 24, 8, 4); ctx.fill();
@@ -892,13 +1179,21 @@
         ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.moveTo(CX, GY + 26 + b); ctx.lineTo(CX - 8, GY + 40 + b); ctx.lineTo(CX + 8, GY + 40 + b); ctx.closePath(); ctx.fill();
       }
     }
+    drawBanner();
+  }
+  // ♥が のこり すくない：がめんの ふちが あかく どきどき
+  function drawDanger(pulse) {
+    if (phase !== 'play' || tut || life > 30) return;
+    const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.32, W / 2, H / 2, H * 0.78);
+    g.addColorStop(0, 'rgba(255,40,80,0)'); g.addColorStop(1, 'rgba(255,40,80,' + (0.16 + 0.22 * pulse) + ')');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   }
   function draw() {
     const fr = t >= -4 * beat ? (((t / beat) % 1) + 1) % 1 : 1;
     const pulse = phase === 'play' || phase === 'result' ? Math.exp(-fr * 4.5) : 0.2;
     const bi = Math.floor(t / beat);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    drawBack(pulse, bi); drawFloor(pulse); drawRing(pulse); drawNotes(); drawChar(pulse); drawFx(); drawTop();
+    drawBack(pulse, bi); drawFloor(pulse); drawRing(pulse); drawNotes(); drawChar(pulse); drawFx(); drawDanger(pulse); drawTop(pulse);
   }
 
   // ---------- ループ ----------
@@ -937,6 +1232,7 @@
     const k = e.key;
     if (phase === 'play') {
       if (k === 'p' || k === 'P' || k === 'Escape') { e.preventDefault(); pauseGame(); return; }
+      if (tut && (k === 's' || k === 'S')) { e.preventDefault(); skipTutorial(); return; }
       if (JUMP_KEYS[k]) { e.preventDefault(); if (!e.repeat) inputDown('k' + k); return; }
       if (k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight') e.preventDefault();
       return;
@@ -969,9 +1265,14 @@
         holding: !!hold, lift: Math.round(charLift()), overlay: overlay.classList.contains('show'),
         pops: pops.filter(p => t - p.t0 >= 0 && t - p.t0 <= 0.7).map(p => p.text), popY: POP_Y, groundY: GY,
         best: JSON.parse(JSON.stringify(best)), unlocked: SONGS.map((s, i) => unlocked(i)), muted,
-        result: result ? { clear: result.clear, stars: result.stars, fc: result.fc, newRec: result.newRec } : null,
+        result: result ? { clear: result.clear, stars: result.stars, fc: result.fc, newRec: result.newRec, tutorial: !!result.tutorial,
+          firstFinish: !!result.firstFinish, finishN: result.finishN || 0, progress: Math.round((result.progress || 0) * 1000) / 1000 } : null,
         windows: { perfect: rule.perf, good: rule.good, early: earlyZone, lateGrace: LATE_GRACE, lock: lockDur },
         rule: { miss: rule.miss, empty: rule.empty, heal: rule.heal.slice() },
+        mode: tut ? 'tutorial' : 'song', tutDone, firstTime: needTut(),
+        finish: JSON.parse(JSON.stringify(finishCnt)),
+        tut: tut ? (() => { const g = tutGuide(); return { stage: tut.stage, got: tut.got, need: TUT[tut.stage].need, kind: TUT[tut.stage].kind, cleared: tut.cleared, tries: tut.tries,
+          tip: tut.tip && t - tut.tipT < 2.4 ? tut.tip : '', now: !!(g && g.now) }; })() : null,
       };
     },
     seed(n) { fixedSeed = (n === null || n === undefined) ? null : n; return fixedSeed; },
@@ -988,6 +1289,8 @@
     setLife(v) { life = v; updateHud(); return life; },
     pause() { pauseGame(); return phase; },
     title() { showTitle(); return phase; },
+    tutorial() { startTutorial(false); return this.state(); },
+    skip() { skipTutorial(); return this.state(); },
   };
 
   // ---------- しょきか（いちばん さいご） ----------
@@ -1004,8 +1307,12 @@
   startBtn.addEventListener('click', e => {
     if (keyGuard(e)) return;
     audio(); startBtn.blur();
-    if (phase === 'pause') resumeGame(); else startSong(songIdx);
+    if (phase === 'pause') resumeGame();
+    else if (phase === 'title' && needTut()) startTutorial(true);   // はじめての人は さいしょだけ れんしゅうへ
+    else startSong(songIdx);
   });
+  tutBtn.addEventListener('click', e => { if (keyGuard(e)) return; audio(); tutBtn.blur(); startTutorial(false); });
+  skipBtn.addEventListener('click', () => { audio(); skipBtn.blur(); skipTutorial(); });
   nextBtn.addEventListener('click', e => { if (keyGuard(e)) return; audio(); nextBtn.blur(); if (songIdx + 1 < SONGS.length && unlocked(songIdx + 1)) startSong(songIdx + 1); });
   toTitleBtn.addEventListener('click', e => { if (keyGuard(e)) return; audio(); sfx('ui'); toTitleBtn.blur(); showTitle(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); last = performance.now(); });
