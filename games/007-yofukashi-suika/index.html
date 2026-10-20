@@ -41,7 +41,11 @@
     cursor: pointer;
     font-family: inherit;
   }
-  .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+  @media (hover: hover) {
+    .topbar a:hover, .topbar button.mute:hover { border-color: #53e0d8; }
+    .btn:hover { filter: brightness(1.1); }
+    .mode-btn:hover { border-color: #9d99c0; }
+  }
   .topbar h1 {
     font-family: "Mochiy Pop One", "Zen Maru Gothic", sans-serif;
     font-weight: 400;
@@ -102,20 +106,73 @@
     cursor: pointer;
     box-shadow: 0 4px 22px rgba(111, 216, 106, 0.45);
   }
-  .btn:hover { filter: brightness(1.1); }
   .btn:active { transform: translateY(2px); }
-  .btn:focus-visible, .topbar button.mute:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
+  .btn:focus-visible, .topbar button.mute:focus-visible, .mode-btn:focus-visible { outline: 2px solid #53e0d8; outline-offset: 2px; }
   .hint { font-size: 0.78rem; color: #9d99c0; }
   .hint a { color: #9d99c0; }
   .age-badge { display:inline-flex; width:fit-content; margin:0; padding:5px 12px; border:1px solid rgba(83,224,216,.35); border-radius:999px; color:#53e0d8!important; background:rgba(83,224,216,.08); font-size:.72rem!important; font-weight:900; letter-spacing:.06em; }
+
+  /* ---- タイトル・結果のレイアウト（スマホでも画面内に入るように詰める） ---- */
+  #title-screen, #over-screen { padding: 14px 12px; gap: 8px; }
+  #title-screen h2 { font-size: 1.4rem; }
+  #title-screen .lead { font-size: 0.84rem; line-height: 1.6; }
+  .modes { display: flex; gap: 8px; width: 100%; max-width: 400px; }
+  .mode-btn {
+    flex: 1 1 0; min-width: 0; min-height: 52px;
+    border: 2px solid #2c2c4d; border-radius: 14px;
+    background: rgba(28, 28, 51, 0.92); color: #eeecfa;
+    font-family: inherit; font-weight: 900; font-size: 0.98rem;
+    padding: 6px 4px; cursor: pointer; line-height: 1.25;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mode-btn small { font-size: 11px; color: #9d99c0; font-weight: 700; }
+  .mode-btn.on[data-mode="doki"] { border-color: #ff5fa2; background: rgba(255, 95, 162, 0.16); box-shadow: 0 0 16px rgba(255, 95, 162, 0.3); }
+  .mode-btn.on[data-mode="nonbiri"] { border-color: #53e0d8; background: rgba(83, 224, 216, 0.13); box-shadow: 0 0 16px rgba(83, 224, 216, 0.28); }
+  .mode-btn.on small { color: #eeecfa; }
+  .overlay p.mode-desc { font-size: 12px; line-height: 1.45; color: #c9c5e6; min-height: 1.45em; }
+  .overlay p.mode-chip { font-size: 12px; line-height: 1.4; font-weight: 900; color: #9d99c0; }
+  #over-screen .big { font-size: 2rem; line-height: 1; }
+  #over-screen h2 { font-size: 1.4rem; }
+  .overlay .best-line .newrec { color: #ffd166; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .btn-row .btn { padding: 11px 18px; font-size: 1rem; letter-spacing: 0.06em; }
+  .btn.sub { background: #2a2a48; box-shadow: none; border: 1px solid #4a4670; color: #eeecfa; }
+  #start-btn { padding: 11px 46px; }
+
+  /* ---- どうぶつずかん（スタンプ帳） ---- */
+  .zukan {
+    width: 100%; max-width: 400px;
+    background: rgba(28, 28, 51, 0.9);
+    border: 1px solid #2c2c4d; border-radius: 14px;
+    padding: 6px 8px 6px;
+  }
+  .zukan.complete { border-color: #ffd166; box-shadow: 0 0 18px rgba(255, 209, 102, 0.4); }
+  .zukan-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 900; color: #ffd166; margin-bottom: 3px; line-height: 1.3; }
+  .zukan-head .cnt { color: #eeecfa; font-size: 13px; }
+  .zukan.complete .zukan-head { color: #ffd166; text-shadow: 0 0 8px rgba(255, 209, 102, 0.6); }
+  .zukan-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px 2px; }
+  .stamp { position: relative; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+  .stamp canvas { width: 42px; height: 42px; border: none; border-radius: 50%; box-shadow: none; touch-action: auto; }
+  .stamp span { font-size: 11px; line-height: 1.25; color: #c9c5e6; white-space: nowrap; font-weight: 700; }
+  .stamp.off span { color: #6d6896; }
+  .stamp.new canvas { animation: stampin 0.7s ease-out var(--d, 0s) both; filter: drop-shadow(0 0 6px rgba(255, 209, 102, 0.8)); }
+  .stamp.new::after {
+    content: "NEW"; position: absolute; top: -2px; right: 50%; margin-right: -30px;
+    font-size: 11px; font-weight: 900; line-height: 1; color: #131322; background: #ffd166;
+    border-radius: 999px; padding: 2px 4px;
+  }
+  @keyframes stampin { 0% { transform: scale(1.8) rotate(-12deg); opacity: 0; } 60% { transform: scale(0.9) rotate(4deg); opacity: 1; } 100% { transform: scale(1) rotate(0); } }
+  .zukan-foot { font-size: 11px; line-height: 1.3; color: #9d99c0; margin-top: 2px; text-align: center; }
+  .zukan.complete .zukan-foot { color: #ffd166; font-weight: 900; }
 </style>
 <!-- LUDOT-TITLE-ART:START --><style>
 #title-screen{background:radial-gradient(125% 78% at 50% 44%,rgba(9,12,28,.9) 0%,rgba(9,12,28,.8) 46%,rgba(9,12,28,.36) 100%),url("../../assets/covers/007.webp") center top/cover no-repeat !important}
 </style><!-- LUDOT-TITLE-ART:END -->
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="同じ動物を合体させると、もっと大きくて強い動物へ進化。ひよこから始めて、最後のゾウを目指す動物マージパズル。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="同じ動物をくっつけて大きな動物に進化させ、ゾウをめざす落ちものパズル。時間で自動で落ちる「どきどき」と、時間なしの「のんびり」の2モード。はじめて作れた動物は、ずかんにスタンプが押されるよ。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/007-yofukashi-suika/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"よふかしアニマル","description":"同じ動物を合体させると、もっと大きくて強い動物へ進化。ひよこから始めて、最後のゾウを目指す動物マージパズル。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/007-yofukashi-suika/index.html","inLanguage":"ja","genre":"ANIMAL MERGE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"よふかしアニマル","description":"同じ動物をくっつけて大きな動物に進化させ、ゾウをめざす落ちものパズル。時間で自動で落ちる「どきどき」と、時間なしの「のんびり」の2モード。はじめて作れた動物は、ずかんにスタンプが押されるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/007-yofukashi-suika/index.html","inLanguage":"ja","genre":"ANIMAL MERGE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="007"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -131,25 +188,32 @@
   <canvas id="game" width="480" height="640"></canvas>
 
   <div class="overlay" id="title-screen">
-    <div class="big">🐥🐺🐘</div>
     <h2>よふかしアニマル</h2>
     <p class="age-badge">対象年齢の目安：6歳〜</p>
-    <p>
-      動物をフィールドに呼び出して、<br>
-      <b>同じ動物同士</b>をくっつけると…<b>強い動物に進化！</b><br>
-      どんどん大きくして、百獣をこえる<b>ゾウ</b>を目指そう。<br>
-      上の<b>ラインをこえたら</b>ゲームオーバー。
+    <p class="lead">
+      <b>同じ動物</b>をくっつけると<b>進化！</b>めざせ<b>ゾウ</b>。<br>
+      はなすと落ちる。上の<b>ライン</b>をこえたらおしまい。
     </p>
+    <div class="modes" role="radiogroup" aria-label="モードをえらぶ">
+      <button class="mode-btn" data-mode="doki" role="radio" aria-checked="false">⏱ どきどき<small id="best-doki">ベスト 0</small></button>
+      <button class="mode-btn" data-mode="nonbiri" role="radio" aria-checked="false">🌙 のんびり<small id="best-nonbiri">ベスト 0</small></button>
+    </div>
+    <p class="mode-desc" id="mode-desc"></p>
+    <div class="zukan" id="zukan-title"></div>
     <button class="btn" id="start-btn">スタート！</button>
-    <p class="hint">そうさ：ゆびやマウスでねらって、はなすと落ちる</p>
   </div>
 
   <div class="overlay hidden" id="over-screen">
     <div class="big">🌙</div>
     <h2>おしまい！</h2>
+    <p class="mode-chip" id="over-mode"></p>
     <p class="score-line" id="final-score">スコア：0</p>
     <p class="best-line" id="best-score"></p>
-    <button class="btn" id="retry-btn">もういちど！</button>
+    <div class="zukan" id="zukan-over"></div>
+    <div class="btn-row">
+      <button class="btn" id="retry-btn">もういちど！</button>
+      <button class="btn sub" id="menu-btn">モードをえらぶ</button>
+    </div>
     <p class="hint"><a href="../../index.html">ゲームいちらんへもどる</a></p>
   </div>
 </div>
@@ -172,10 +236,16 @@ const ANIMALS = [
   { r: 80, emoji: "🐘", name: "ゾウ",       c1: "#a9c8dc", c2: "#4f7894" },
 ];
 const SCORES = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55];
-const STORAGE_KEY = "yofukashi-animal-best";
+const STORAGE_KEY = "yofukashi-animal-best";            // のんびりモードのベスト（むかしからの記録をそのまま使う）
+const STORAGE_KEY_DOKI = "ludot_yofukashi-suika_best_doki"; // どきどきモードのベスト
+const STORAGE_KEY_ZUKAN = "ludot_yofukashi-suika_zukan";    // どうぶつずかん（作れた動物の番号の配列）
+const STORAGE_KEY_MODE = "ludot_yofukashi-suika_mode";      // さいごにえらんだモード
+// どきどきモード：持っている動物が自動で落ちるまでの秒数
+const TIMER_BASE = 6.5, TIMER_MIN = 3.5;
 // ================================================================
 
 (function () {
+  "use strict";
   const W = 480, H = 640;
   const WALL_L = 52, WALL_R = 428, FLOOR = 592, LINE_Y = 152;
   const G = 1600;
@@ -204,6 +274,43 @@ const STORAGE_KEY = "yofukashi-animal-best";
   let dangerPulse = 0;
   let lastTime = 0;
 
+  // ---- ほぞん（できなくても遊べるように） ----
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  // ---- モード・せいげんじかん ----
+  const MODE_INFO = {
+    doki:    { label: "⏱ どきどき", desc: "もっている動物は 時間がたつと かってに落ちる！" },
+    nonbiri: { label: "🌙 のんびり", desc: "時間せいげんなし。ゆっくり考えて 落とそう。" },
+  };
+  let mode = lsGet(STORAGE_KEY_MODE) === "nonbiri" ? "nonbiri" : "doki";
+  let dropTimer = 0;      // のこり秒数
+  let dropLimit = 0;      // このターンの持ち時間
+  let lastTickSec = 99;
+  let dropCount = 0;
+  let pointerIsDown = false;
+  let ignoreNextUp = false;
+  let testHold = false;   // テスト用：自動で時間を進めない
+
+  // ---- どうぶつずかん ----
+  let zukan = loadZukan();     // 作れた動物の番号（ひよこ=0 は さいしょから）
+  let newThisGame = [];
+  let stampQueue = [];         // NEW！スタンプ演出のまち行列
+  let stampShow = null;
+
+  function loadZukan() {
+    let arr = [];
+    try {
+      const raw = JSON.parse(lsGet(STORAGE_KEY_ZUKAN) || "[]");
+      if (Array.isArray(raw)) arr = raw.filter(function (n) { return Number.isInteger(n) && n >= 0 && n < ANIMALS.length; });
+    } catch (e) { arr = []; }
+    if (arr.indexOf(0) < 0) arr.push(0);
+    return Array.from(new Set(arr)).sort(function (a, b) { return a - b; });
+  }
+  function saveZukan() { lsSet(STORAGE_KEY_ZUKAN, JSON.stringify(zukan)); }
+  function zukanComplete() { return zukan.length >= ANIMALS.length; }
+  function getBest(m) { return Number(lsGet(m === "doki" ? STORAGE_KEY_DOKI : STORAGE_KEY) || 0) || 0; }
+
   const bgStars = [];
   for (let i = 0; i < 34; i++) {
     bgStars.push({ x: Math.random() * W, y: Math.random() * 120, r: 0.5 + Math.random() * 1.2, tw: Math.random() * Math.PI * 2 });
@@ -211,7 +318,7 @@ const STORAGE_KEY = "yofukashi-animal-best";
 
   // ============ おと ============
   let audioCtx = null;
-  let muted = localStorage.getItem("picotto-muted") === "1";
+  let muted = lsGet("picotto-muted") === "1";
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     return audioCtx;
@@ -278,10 +385,29 @@ const STORAGE_KEY = "yofukashi-animal-best";
   function updateMuteBtn() { muteBtn.textContent = muted ? "🔇" : "🔊"; }
   muteBtn.addEventListener("click", function () {
     muted = !muted;
-    localStorage.setItem("picotto-muted", muted ? "1" : "0");
+    lsSet("picotto-muted", muted ? "1" : "0");
     updateMuteBtn();
   });
-  updateMuteBtn();
+  // スタンプを押す音：ポン＋キラリ
+  function stampSound(big) {
+    if (muted) return;
+    try {
+      const c = getCtx(), t0 = c.currentTime;
+      tone(150, t0, 0.12, "triangle", 0.16);
+      tone(90, t0, 0.1, "sine", 0.12);
+      const notes = big ? [784, 988, 1175, 1568, 1319, 1568] : [1047, 1319, 1568];
+      notes.forEach(function (f, i) { tone(f, t0 + 0.1 + i * (big ? 0.11 : 0.07), big ? 0.3 : 0.18, "triangle", 0.07); });
+    } catch (e) {}
+  }
+  // のこり時間の「ピッ」
+  function tickSound(sec) {
+    if (muted) return;
+    try {
+      const c = getCtx();
+      tone(sec <= 1 ? 1175 : 880, c.currentTime, 0.07, "square", 0.035);
+      if (sec <= 1) tone(1175, c.currentTime + 0.12, 0.07, "square", 0.035);
+    } catch (e) {}
+  }
 
   // ============ エフェクト ============
   function burst(x, y, color, n) {
@@ -295,16 +421,24 @@ const STORAGE_KEY = "yofukashi-animal-best";
   }
 
   // ============ ゲームのながれ ============
-  function randTier() { return Math.floor(Math.random() * 5); }
-  function startGame() {
+  let rng = Math.random; // テストでは決まった乱数にできる
+  function randTier() { return Math.floor(rng() * 5); }
+  function startGame(m) {
+    if (m === "doki" || m === "nonbiri") setMode(m);
     animals = [];
     sparks = [];
     popups = [];
     score = 0;
     dropCd = 0;
+    dropCount = 0;
+    newThisGame = [];
+    stampQueue = [];
+    stampShow = null;
+    ignoreNextUp = false;
     currentTier = randTier();
     nextTier = randTier();
     state = "play";
+    armTimer();
     titleScreen.classList.add("hidden");
     overScreen.classList.add("hidden");
     beep(660, 0.15);
@@ -313,16 +447,142 @@ const STORAGE_KEY = "yofukashi-animal-best";
   function gameOver() {
     state = "over";
     BGM.stop();
-    const best = Math.max(score, Number(localStorage.getItem(STORAGE_KEY) || 0));
-    localStorage.setItem(STORAGE_KEY, String(best));
+    stampQueue = [];
+    stampShow = null;
+    const prev = getBest(mode);
+    const best = Math.max(score, prev);
+    lsSet(mode === "doki" ? STORAGE_KEY_DOKI : STORAGE_KEY, String(best));
+    document.getElementById("over-mode").textContent = MODE_INFO[mode].label + " モード";
     finalScoreEl.textContent = "スコア：" + score;
-    bestScoreEl.textContent = "さいこうきろく：" + best;
+    bestScoreEl.innerHTML = "さいこうきろく：" + best + (score > prev && score > 0 ? ' <span class="newrec">🎉 きろくこうしん！</span>' : "");
+    renderZukan(document.getElementById("zukan-over"), newThisGame);
+    updateTitle();
     overScreen.classList.remove("hidden");
     beep(220, 0.4, "sawtooth", 0.09);
     setTimeout(function () { beep(165, 0.5, "sawtooth", 0.08); }, 200);
   }
-  document.getElementById("start-btn").addEventListener("click", startGame);
-  document.getElementById("retry-btn").addEventListener("click", startGame);
+  function showTitle() {
+    state = "title";
+    BGM.stop();
+    animals = [];
+    sparks = [];
+    popups = [];
+    stampQueue = [];
+    stampShow = null;
+    updateTitle();
+    overScreen.classList.add("hidden");
+    titleScreen.classList.remove("hidden");
+  }
+  function setMode(m) {
+    mode = m === "nonbiri" ? "nonbiri" : "doki";
+    lsSet(STORAGE_KEY_MODE, mode);
+    updateTitle();
+  }
+
+  // ---- タイトル画面・ずかんの表示 ----
+  function updateTitle() {
+    document.querySelectorAll(".mode-btn").forEach(function (b) {
+      const on = b.getAttribute("data-mode") === mode;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-checked", on ? "true" : "false");
+    });
+    document.getElementById("best-doki").textContent = "ベスト " + getBest("doki");
+    document.getElementById("best-nonbiri").textContent = "ベスト " + getBest("nonbiri");
+    document.getElementById("mode-desc").textContent = MODE_INFO[mode].desc;
+    renderZukan(document.getElementById("zukan-title"), []);
+  }
+  function renderZukan(box, fresh) {
+    const done = zukanComplete();
+    box.classList.toggle("complete", done);
+    box.innerHTML = "";
+    const head = document.createElement("div");
+    head.className = "zukan-head";
+    const ttl = document.createElement("span");
+    ttl.textContent = done ? "🏆 ずかん コンプリート！" : "📖 どうぶつずかん";
+    const cnt = document.createElement("span");
+    cnt.className = "cnt";
+    cnt.textContent = zukan.length + " / " + ANIMALS.length;
+    head.appendChild(ttl); head.appendChild(cnt);
+    box.appendChild(head);
+    const grid = document.createElement("div");
+    grid.className = "zukan-grid";
+    for (let k = 0; k < ANIMALS.length; k++) {
+      const got = zukan.indexOf(k) >= 0;
+      const cell = document.createElement("div");
+      cell.className = "stamp" + (got ? "" : " off") + (fresh.indexOf(k) >= 0 ? " new" : "");
+      cell.setAttribute("data-tier", String(k));
+      if (fresh.indexOf(k) >= 0) cell.style.setProperty("--d", (fresh.indexOf(k) * 0.28 + 0.15) + "s");
+      const cv = document.createElement("canvas");
+      cv.width = 84; cv.height = 84;
+      cv.setAttribute("aria-hidden", "true");
+      drawStamp(cv.getContext("2d"), 42, 42, 1.95, k, got, done);
+      const nm = document.createElement("span");
+      nm.textContent = got ? ANIMALS[k].name : "？？？";
+      cell.appendChild(cv); cell.appendChild(nm);
+      grid.appendChild(cell);
+    }
+    box.appendChild(grid);
+    const foot = document.createElement("div");
+    foot.className = "zukan-foot";
+    if (done) foot.textContent = "ぜんぶの動物に会えたよ！ すごい！";
+    else if (fresh.length) foot.textContent = "こんかい " + fresh.length + "こ スタンプゲット！ あと " + (ANIMALS.length - zukan.length) + "しゅるい";
+    else foot.textContent = "同じ動物をくっつけて 進化させるとスタンプがもらえる";
+    box.appendChild(foot);
+  }
+  // スタンプ1こ（s=大きさの倍率、ずかん用・プレイ中の演出の両方で使う）
+  function drawStamp(c, x, y, s, tier, got, gold) {
+    c.save();
+    const R = 20 * s;
+    if (got) {
+      c.fillStyle = gold ? "rgba(255, 209, 102, 0.16)" : "rgba(255, 95, 162, 0.13)";
+      c.beginPath(); c.arc(x, y, R, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = gold ? "#ffd166" : "#ff5fa2";
+      c.lineWidth = 2.2 * s;
+      c.beginPath(); c.arc(x, y, R - 1.2 * s, 0, Math.PI * 2); c.stroke();
+      c.lineWidth = 0.9 * s;
+      c.globalAlpha = 0.7;
+      c.beginPath(); c.arc(x, y, R - 4 * s, 0, Math.PI * 2); c.stroke();
+      c.globalAlpha = 1;
+      const r = (tier === 2 ? 9 : tier === 7 ? 10.5 : 12) * s;
+      drawAnimal(c, x, y + (tier === 2 ? 5 : 2) * s, r, tier, 0);
+    } else {
+      c.fillStyle = "rgba(255, 255, 255, 0.04)";
+      c.beginPath(); c.arc(x, y, R, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = "#4a4670";
+      c.lineWidth = 1.4 * s;
+      c.setLineDash([3 * s, 3 * s]);
+      c.beginPath(); c.arc(x, y, R - 1.2 * s, 0, Math.PI * 2); c.stroke();
+      c.setLineDash([]);
+      c.fillStyle = "#6d6896";
+      c.font = "900 " + Math.round(17 * s) + "px 'Zen Maru Gothic', sans-serif";
+      c.textAlign = "center"; c.textBaseline = "middle";
+      c.fillText("？", x, y + 1 * s);
+    }
+    c.restore();
+  }
+
+  // ---- どきどきモードの持ち時間 ----
+  // 持っている動物が大きいほど・盤面がうまるほど・たくさん落とすほど 少しずつ短くなる
+  function calcLimit() {
+    let top = FLOOR;
+    for (const f of animals) if (f.grace <= 0) top = Math.min(top, f.y - f.r);
+    const fill = Math.max(0, Math.min(1, (FLOOR - top) / (FLOOR - LINE_Y)));
+    const lim = TIMER_BASE - currentTier * 0.15 - Math.min(dropCount * 0.012, 0.9) - fill * fill * 1.2;
+    return Math.round(Math.max(TIMER_MIN, Math.min(TIMER_BASE, lim)) * 10) / 10;
+  }
+  function armTimer() {
+    dropLimit = calcLimit();
+    dropTimer = dropLimit;
+    lastTickSec = 99;
+  }
+  function autoDrop() {
+    if (state !== "play" || dropCd > 0) return;
+    const spec = ANIMALS[currentTier];
+    const x = Math.max(WALL_L + spec.r + 1, Math.min(WALL_R - spec.r - 1, aimX));
+    popup(x, 150, "じかんぎれ！", "#ff7aa8");
+    if (pointerIsDown) ignoreNextUp = true;
+    dropAnimal();
+  }
 
   function dropAnimal() {
     if (state !== "play" || dropCd > 0) return;
@@ -332,7 +592,25 @@ const STORAGE_KEY = "yofukashi-animal-best";
     currentTier = nextTier;
     nextTier = randTier();
     dropCd = 0.55;
+    dropCount++;
     beep(520, 0.07, "sine", 0.05);
+  }
+
+  // ---- はじめて作れた動物 → スタンプ ----
+  function gotAnimal(tier, x, y) {
+    if (zukan.indexOf(tier) >= 0) return;
+    zukan.push(tier);
+    zukan.sort(function (a, b) { return a - b; });
+    newThisGame.push(tier);
+    saveZukan();
+    stampQueue.push({ tier: tier, complete: false, n: zukan.length });
+    if (zukanComplete()) stampQueue.push({ tier: tier, complete: true, n: zukan.length });
+    burst(x, y, "#ffd166", 18);
+  }
+  function nextStamp() {
+    if (stampShow || !stampQueue.length) return;
+    const s = stampQueue.shift();
+    stampShow = { tier: s.tier, complete: s.complete, n: s.n, t: 0, dur: s.complete ? 3.2 : 1.9, hit: false };
   }
 
   // ============ 物理 ============
@@ -424,6 +702,7 @@ const STORAGE_KEY = "yofukashi-animal-best";
         popup(mx, my - spec.r - 10, spec.emoji + " " + spec.name + "!  +" + SCORES[tier], "#ffd166");
         burst(mx, my, ANIMALS[tier].c2, 12);
         mergeSound(tier);
+        gotAnimal(nt, mx, my);
       }
     }
     if (merges.length) animals = animals.filter(function (f) { return !f.dead; });
@@ -445,8 +724,35 @@ const STORAGE_KEY = "yofukashi-animal-best";
   }
 
   function update(dt) {
-    if (dropCd > 0) dropCd -= dt;
+    // NEW！スタンプ演出（出ている間は持ち時間を止める）
+    nextStamp();
+    if (stampShow) {
+      stampShow.t += dt;
+      if (!stampShow.hit && stampShow.t >= 0.22) {
+        stampShow.hit = true;
+        stampSound(stampShow.complete);
+        if (stampShow.complete) {
+          for (let k = 0; k < 4; k++) burst(W / 2 + (k - 1.5) * 90, 300, ["#ffd166", "#ff5fa2", "#53e0d8", "#a06bff"][k], 22);
+        } else {
+          burst(W / 2, 290, "#ff5fa2", 16);
+        }
+      }
+      if (stampShow.t >= stampShow.dur) stampShow = null;
+    }
+    if (dropCd > 0) {
+      dropCd -= dt;
+      if (dropCd <= 0) armTimer();
+    } else if (mode === "doki" && !stampShow) {
+      dropTimer -= dt;
+      const sec = Math.ceil(dropTimer);
+      if (sec !== lastTickSec) {
+        if (sec <= 3 && sec >= 1 && lastTickSec !== 99) tickSound(sec);
+        lastTickSec = sec;
+      }
+      if (dropTimer <= 0) { dropTimer = 0; autoDrop(); }
+    }
     physics(dt);
+    if (state !== "play") return;
     for (let i = sparks.length - 1; i >= 0; i--) {
       const p = sparks[i];
       p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; p.life -= dt;
@@ -750,9 +1056,43 @@ const STORAGE_KEY = "yofukashi-animal-best";
       ctx.setLineDash([4, 8]);
       ctx.beginPath(); ctx.moveTo(gx, 118); ctx.lineTo(gx, FLOOR); ctx.stroke();
       ctx.setLineDash([]);
+      // どきどき：のこり時間のリング
+      const timed = mode === "doki" && dropCd <= 0;
+      const ratio = timed && dropLimit > 0 ? Math.max(0, dropTimer / dropLimit) : 1;
+      const urgent = timed && dropTimer <= 2;
+      let wob = 0;
+      if (urgent && !stampShow) wob = Math.sin(t / 45) * (2.2 - dropTimer) * 1.6;
       ctx.globalAlpha = dropCd > 0 ? 0.35 : 0.9;
-      drawAnimal(ctx, gx, 108, spec.r, currentTier, 0);
+      drawAnimal(ctx, gx + wob, 108, spec.r, currentTier, 0);
       ctx.globalAlpha = 1;
+      if (timed) {
+        const rr = spec.r + 8;
+        const col = ratio > 0.5 ? "#53e0d8" : dropTimer > 2 ? "#ffd166" : "#ff4d6d";
+        ctx.lineCap = "round";
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.13)";
+        ctx.beginPath(); ctx.arc(gx, 108, rr, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = col;
+        if (urgent) { ctx.shadowColor = col; ctx.shadowBlur = 8 + 6 * Math.abs(Math.sin(t / 90)); }
+        ctx.beginPath(); ctx.arc(gx, 108, rr, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.lineCap = "butt";
+        if (dropTimer <= 3) {
+          const sec = Math.max(1, Math.ceil(dropTimer));
+          const frac = sec - dropTimer; // 0→1 で毎秒ぽんと出る
+          const sc = 1 + Math.max(0, 0.35 - frac) * 1.4;
+          ctx.save();
+          ctx.translate(gx < W / 2 ? gx + rr + 20 : gx - rr - 20, 108);
+          ctx.scale(sc, sc);
+          ctx.font = "900 24px 'Zen Maru Gothic', sans-serif";
+          ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.lineWidth = 5; ctx.strokeStyle = "rgba(19, 19, 34, 0.9)";
+          ctx.strokeText(String(sec), 0, 0);
+          ctx.fillStyle = col;
+          ctx.fillText(String(sec), 0, 0);
+          ctx.restore();
+        }
+      }
     }
 
     // パーティクル・ポップアップ
@@ -793,9 +1133,94 @@ const STORAGE_KEY = "yofukashi-animal-best";
     ctx.fillRect(0, H - 32, W, 32);
     let gx2 = 28;
     for (let k = 0; k < ANIMALS.length; k++) {
+      const got = zukan.indexOf(k) >= 0;
+      ctx.globalAlpha = got ? 1 : 0.3;
       drawMini(ctx, gx2, H - 16, 8 + k * 0.55, k);
       gx2 += 47;
     }
+    ctx.globalAlpha = 1;
+
+    // モードとずかんの進みぐあい（上のまんなか）
+    if (state === "play") {
+      ctx.font = "900 15px 'Zen Maru Gothic', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(19, 19, 34, 0.78)";
+      roundRect(ctx, W / 2 - 66, 12, 132, 40, 12);
+      ctx.fillStyle = mode === "doki" ? "#ff8fbd" : "#7fe7ff";
+      ctx.fillText(MODE_INFO[mode].label, W / 2, 24);
+      ctx.fillStyle = "#ffd166";
+      ctx.font = "900 14px 'Zen Maru Gothic', sans-serif";
+      ctx.fillText("📖 ずかん " + zukan.length + "/" + ANIMALS.length, W / 2, 42);
+    }
+
+    if (stampShow) drawStampShow(t);
+  }
+
+  // NEW！スタンプゲット／コンプリートの演出
+  function drawStampShow(t) {
+    const s = stampShow;
+    const inA = Math.min(1, s.t / 0.22);
+    const outA = Math.min(1, Math.max(0, (s.dur - s.t) / 0.3));
+    const a = Math.min(inA * 1.2, 1) * outA;
+    const cx = W / 2, cy = s.complete ? 300 : 292;
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.fillStyle = "rgba(19, 19, 34, 0.86)";
+    const pw = s.complete ? 360 : 270, ph = s.complete ? 250 : 196;
+    roundRect(ctx, cx - pw / 2, cy - ph / 2 - 10, pw, ph, 22);
+    ctx.strokeStyle = s.complete ? "#ffd166" : "#ff5fa2";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(cx - pw / 2, cy - ph / 2 - 10, pw, ph, 22) : ctx.rect(cx - pw / 2, cy - ph / 2 - 10, pw, ph);
+    ctx.stroke();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    if (s.complete) {
+      // ぜんぶの動物がまるくならぶ
+      const hue = (t / 8) % 360;
+      for (let k = 0; k < ANIMALS.length; k++) {
+        const ang = -Math.PI / 2 + (Math.PI * 2 / ANIMALS.length) * (k + 0.5) + s.t * 0.25;
+        const pop = Math.min(1, Math.max(0, (s.t - 0.2 - k * 0.06) / 0.2));
+        if (pop <= 0) continue;
+        drawAnimal(ctx, cx + Math.cos(ang) * 148, cy + 2 + Math.sin(ang) * 92, 14 * pop, k, 0);
+      }
+      ctx.font = "400 30px 'Mochiy Pop One', 'Zen Maru Gothic', sans-serif";
+      ctx.lineWidth = 6; ctx.strokeStyle = "rgba(19, 19, 34, 0.95)";
+      ctx.strokeText("コンプリート！", cx, cy - 2);
+      ctx.fillStyle = "hsl(" + hue + ", 90%, 72%)";
+      ctx.fillText("コンプリート！", cx, cy - 2);
+      ctx.font = "900 16px 'Zen Maru Gothic', sans-serif";
+      ctx.fillStyle = "#ffd166";
+      ctx.fillText("ずかんが ぜんぶ うまったよ！", cx, cy + 30);
+    } else {
+      // スタンプがポンと押される
+      const p = Math.min(1, s.t / 0.22);
+      const sc = p < 1 ? 2.3 - 1.3 * (p * p) : 1 + Math.max(0, 0.1 - (s.t - 0.22)) * 1.5;
+      ctx.save();
+      ctx.translate(cx, cy - 22);
+      ctx.rotate(-0.12 * Math.min(1, p));
+      ctx.scale(sc, sc);
+      drawStamp(ctx, 0, 0, 2.2, s.tier, true, false);
+      ctx.restore();
+      // NEW! リボン
+      ctx.save();
+      ctx.translate(cx + 52, cy - 76);
+      ctx.rotate(0.2);
+      ctx.fillStyle = "#ffd166";
+      roundRect(ctx, -30, -13, 60, 26, 13);
+      ctx.fillStyle = "#131322";
+      ctx.font = "900 17px 'Zen Maru Gothic', sans-serif";
+      ctx.fillText("NEW!", 0, 1);
+      ctx.restore();
+      ctx.font = "900 22px 'Zen Maru Gothic', sans-serif";
+      ctx.fillStyle = "#ffd166";
+      ctx.fillText("スタンプゲット！", cx, cy + 46);
+      ctx.font = "900 17px 'Zen Maru Gothic', sans-serif";
+      ctx.fillStyle = "#eeecfa";
+      ctx.fillText(ANIMALS[s.tier].name + "  （" + s.n + "/" + ANIMALS.length + "）", cx, cy + 72);
+    }
+    ctx.restore();
   }
   function drawMini(c, x, y, r, tier) {
     drawAnimal(c, x, y, r, tier, 0);
@@ -818,7 +1243,7 @@ const STORAGE_KEY = "yofukashi-animal-best";
     lastTime = t;
     acc += dt;
     while (acc >= 1 / 60) {
-      if (state === "play") update(1 / 60);
+      if (state === "play" && !testHold) update(1 / 60);
       acc -= 1 / 60;
     }
     draw(t);
@@ -831,23 +1256,102 @@ const STORAGE_KEY = "yofukashi-animal-best";
     return ((e.touches ? e.touches[0].clientX : e.clientX) - rect.left) / rect.width * W;
   }
   canvas.addEventListener("pointermove", function (e) { aimX = canvasX(e); });
-  canvas.addEventListener("pointerdown", function (e) { aimX = canvasX(e); });
-  canvas.addEventListener("pointerup", function (e) {
+  canvas.addEventListener("pointerdown", function (e) {
+    pointerIsDown = true;
     aimX = canvasX(e);
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  canvas.addEventListener("pointerup", function (e) {
+    pointerIsDown = false;
+    aimX = canvasX(e);
+    if (ignoreNextUp) { ignoreNextUp = false; return; } // 時間ぎれで落ちたあとの指はなしは無視
     dropAnimal();
   });
+  canvas.addEventListener("pointercancel", function () { pointerIsDown = false; ignoreNextUp = false; });
+  canvas.addEventListener("contextmenu", function (e) { e.preventDefault(); });
 
-  // デバッグフック
-  window.__ANIMAL = {
-    get animals() { return animals; },
-    get score() { return score; },
-    get state() { return state; },
-    set aim(x) { aimX = x; },
-    drop: dropAnimal,
-    forceTier: function (t) { currentTier = t; },
-    start: startGame,
+  // キーボード：←→でねらう、スペース／↓／Enterで落とす
+  const keyHeld = {};
+  document.addEventListener("keydown", function (e) {
+    if (state !== "play") return;
+    const k = e.key;
+    if (k === "ArrowLeft" || k === "a" || k === "A") { aimX = Math.max(WALL_L, aimX - (e.repeat ? 14 : 10)); e.preventDefault(); }
+    else if (k === "ArrowRight" || k === "d" || k === "D") { aimX = Math.min(WALL_R, aimX + (e.repeat ? 14 : 10)); e.preventDefault(); }
+    else if (k === " " || k === "ArrowDown" || k === "Enter") {
+      e.preventDefault();
+      if (!keyHeld[k]) dropAnimal();
+      keyHeld[k] = true;
+    }
+  });
+  document.addEventListener("keyup", function (e) { keyHeld[e.key] = false; });
+
+  // ボタン
+  document.querySelectorAll(".mode-btn").forEach(function (b) {
+    b.addEventListener("click", function () {
+      setMode(b.getAttribute("data-mode"));
+      beep(b.getAttribute("data-mode") === "doki" ? 880 : 520, 0.08, "sine", 0.06);
+    });
+  });
+  document.getElementById("start-btn").addEventListener("click", function () { startGame(mode); });
+  document.getElementById("retry-btn").addEventListener("click", function () { startGame(mode); });
+  document.getElementById("menu-btn").addEventListener("click", showTitle);
+
+  // テスト用フック
+  function snap() {
+    return {
+      screen: state,
+      mode: mode,
+      score: score,
+      hand: currentTier,
+      next: nextTier,
+      count: animals.length,
+      animals: animals.map(function (f) { return { tier: f.tier, x: Math.round(f.x), y: Math.round(f.y) }; }),
+      timer: Math.round(dropTimer * 100) / 100,
+      limit: dropLimit,
+      dropCd: Math.max(0, Math.round(dropCd * 100) / 100),
+      zukan: zukan.slice(),
+      complete: zukanComplete(),
+      newThisGame: newThisGame.slice(),
+      stamp: stampShow ? { tier: stampShow.tier, complete: stampShow.complete } : null,
+      stampQueue: stampQueue.length,
+      best: { doki: getBest("doki"), nonbiri: getBest("nonbiri") },
+      lineY: LINE_Y, floor: FLOOR, wallL: WALL_L, wallR: WALL_R,
+    };
+  }
+  window.__test = {
+    state: snap,
+    start: function (m) { startGame(m || mode); return snap(); },
+    setMode: function (m) { setMode(m); return snap(); },
+    hold: function (b) { testHold = b !== false; return testHold; },
+    aim: function (x) { aimX = x; },
+    hand: function (tier, next) { currentTier = tier; if (next !== undefined) nextTier = next; armTimer(); return snap(); },
+    drop: function (x) { if (x !== undefined) aimX = x; dropCd = 0; dropAnimal(); return snap(); },
+    place: function (list) {
+      animals = list.map(function (o) {
+        const r = ANIMALS[o.tier].r;
+        return { x: o.x, y: o.y === undefined ? FLOOR - r : o.y, vx: 0, vy: 0, r: r, tier: o.tier, grace: o.grace || 0, overT: 0, flash: 0, sndCd: 0.3 };
+      });
+      return snap();
+    },
+    step: function (ms) {
+      const n = Math.round(ms / (1000 / 60));
+      for (let i = 0; i < n; i++) { if (state !== "play") break; update(1 / 60); }
+      return snap();
+    },
+    skipStamps: function () { stampQueue = []; stampShow = null; return snap(); },
+    resetSave: function () {
+      [STORAGE_KEY, STORAGE_KEY_DOKI, STORAGE_KEY_ZUKAN, STORAGE_KEY_MODE].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+      zukan = loadZukan(); mode = "doki"; updateTitle(); return snap();
+    },
+    title: function () { showTitle(); return snap(); },
+    seed: function (n) {
+      let a = n >>> 0;
+      rng = function () { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    },
   };
 
+  updateMuteBtn();
+  updateTitle();
   requestAnimationFrame(function (t) { lastTime = t; requestAnimationFrame(loop); });
 })();
 </script>
