@@ -68,6 +68,41 @@
   .rank{font-size:15px;color:var(--ink)} .rank b{color:var(--violet);font-weight:400}
   .newrec{font-size:16px;color:var(--pink);animation:pulse .7s infinite alternate}
   @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.12)}}
+  /* ステージえらび */
+  .stg{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .stg-label{font-size:13px;color:var(--sub);min-height:18px;line-height:1.35}
+  .stg-label b{color:var(--violet);font-weight:400}
+  .stg-label.warn{color:var(--pink)}
+  .stg-row{display:flex;gap:5px;justify-content:center}
+  .stg-row button{font-family:inherit;width:48px;min-height:44px;padding:2px 0;border-radius:9px;border:1px solid var(--edge);background:rgba(28,28,51,.92);color:var(--ink);font-size:17px;line-height:1.1;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+  .stg-row button small{font-size:11px;color:var(--gold);letter-spacing:-1px;white-space:nowrap}
+  .stg-row button.on{border-color:var(--violet);box-shadow:0 0 12px rgba(160,107,255,.55);background:rgba(160,107,255,.18)}
+  .stg-row button.lock{color:var(--sub);opacity:.5;font-size:14px;cursor:default}
+  .stg-row button.lock small{color:var(--sub)}
+  .btn.long{font-size:17px;letter-spacing:1px;padding:10px 18px}
+  /* ウェーブクリアの ひとやすみ */
+  #overlay.clr{background:rgba(10,10,26,.5);justify-content:flex-start;padding-top:12px}
+  .clr-card{width:min(330px,100%);background:rgba(20,20,44,.95);border:2px solid var(--cyan);border-radius:14px;padding:9px 12px 11px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 0 22px rgba(83,224,216,.3);animation:cardIn .22s ease-out}
+  .clr-card.stage{border-color:var(--gold);box-shadow:0 0 26px rgba(255,209,102,.38)}
+  @keyframes cardIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+  .clr-sub{font-size:13px;color:var(--violet);line-height:1.3}
+  .clr-stage{font-size:16px;color:var(--gold);line-height:1.3}
+  .clr-stars{display:inline-block;font-size:21px;letter-spacing:2px;margin-left:4px;animation:starIn .5s ease-out}
+  @keyframes starIn{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+  .clr-title{font-size:22px;color:var(--gold);margin:0;font-weight:400;letter-spacing:1px;line-height:1.2;text-shadow:0 0 12px rgba(255,209,102,.55)}
+  .clr-rows{width:100%;display:flex;flex-direction:column;gap:2px;font-size:14px}
+  .clr-row{display:flex;justify-content:space-between;gap:8px;padding:2px 8px;border-radius:6px;background:rgba(44,44,77,.45);opacity:.4;transition:opacity .15s}
+  .clr-row.on{opacity:1}
+  .clr-row b{color:var(--gold);font-weight:400}
+  .clr-row.pink span{color:var(--pink)}
+  .clr-row.cyan span{color:var(--cyan)}
+  .clr-total{font-size:14px;color:var(--sub)}
+  .clr-total b{color:var(--gold);font-size:19px;font-weight:400}
+  .clr-next{font-size:13px;color:var(--sub);line-height:1.45}
+  .clr-next b{color:var(--ink);font-weight:400}
+  .clr-next i{display:block;color:var(--pink);font-style:normal}
+  .clr-card .btn{margin-top:0;min-width:180px}
   #help{font-size:13px;color:var(--sub);text-align:center;margin-top:6px;line-height:1.5}
   body.touch #help{display:none}
   #help b{color:var(--cyan);font-weight:400}
@@ -87,9 +122,9 @@
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="おちてくる りゅうせいの すこし先を タップして、ばくはつで まちを まもるシューティング。たまには かぎりがあり、まとめて けすと れんさで 高とくてん。ウェーブごとに われる・はやい・かたい りゅうせいが ふえるよ。やさしい／ふつうの2モード、ベスト記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="おちてくる りゅうせいの すこし先を タップして、ばくはつで まちを まもるシューティング。3ウェーブで1ステージ、ウェーブごとに ひとやすみできるよ。ひらいた ステージから つづきを あそべて、★と ベスト記録も のこる。やさしい／ふつうの2モード。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/088-city-guard/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"まもれ！ほしのまち","description":"おちてくる りゅうせいの すこし先を タップして、ばくはつで まちを まもるシューティング。たまには かぎりがあり、まとめて けすと れんさで 高とくてん。ウェーブごとに われる・はやい・かたい りゅうせいが ふえるよ。やさしい／ふつうの2モード、ベスト記録つき。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/088-city-guard/index.html","inLanguage":"ja","genre":"SHOOTING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"まもれ！ほしのまち","description":"おちてくる りゅうせいの すこし先を タップして、ばくはつで まちを まもるシューティング。3ウェーブで1ステージ、ウェーブごとに ひとやすみできるよ。ひらいた ステージから つづきを あそべて、★と ベスト記録も のこる。やさしい／ふつうの2モード。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/088-city-guard/index.html","inLanguage":"ja","genre":"SHOOTING","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="088"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -124,20 +159,28 @@ const KEY='ludot_city-guard_';
 const W=480, H=600, GROUND=540, TAU=Math.PI*2;
 const HOUSE_X=[112,176,240,304,368], TOWER_X=[46,434], TOWER_TOP=GROUND-30;
 const MSPEED=620, HOUSE_EVERY=8000;
+// r0＝ウェーブ1の たまの よゆう（りゅうせい1こあたり）、rmin＝おくのウェーブでも のこす よゆう
 const MODES={
-  easy:{name:'やさしい',spd:0.72,ammo:4,blast:56},
-  normal:{name:'ふつう',spd:1,ammo:0,blast:44}
+  easy:{name:'やさしい',spd:0.72,r0:3.5,rmin:1.15,blast:56},
+  normal:{name:'ふつう',spd:1,r0:2.5,rmin:0.8,blast:44}
 };
 const PTS={normal:100,fast:150,split:150,big:200,gold:500};
 const HOUSE_COL=[['#ff7fb4','#c93a7c'],['#6fe6df','#229a94'],['#ffd97d','#d99a25'],['#b58cff','#6a3fd0'],['#8fd0ff','#3a7fd0']];
+// ステージ＝3ウェーブ。あたらしい りゅうせいは ステージの はじめに 1しゅるいずつ
+const STAGE_LEN=3, STAGE_MAX=6;
+const INTRO={split:4,fast:7,big:10};
+const STAGES=['ゆうやけの そら','むらさきの よる','はやい ながれぼし','かたい いわぼし','りゅうせいの あめ','ぎんがの あらし'];
+const NEWS={4:'むらさき（とちゅうで われる）',7:'あおい（とても はやい）',10:'おおきい（2かい あてる）'};
 const TIPS={
   1:'りゅうせいの すこし先を ねらおう',
   2:'きんの ほしを うつと いいこと あるよ',
-  3:'むらさきは とちゅうで われるよ！',
-  4:'あおいのは はやい！',
-  5:'おおきいのは 2かい あてよう',
-  7:'まとめて けして たまを せつやく！'
+  3:'まとめて けして たまを せつやく！',
+  4:'むらさきは とちゅうで われるよ！',
+  7:'あおいのは はやい！ 先を ねらおう',
+  10:'おおきいのは 2かい あてよう'
 };
+function stageOf(w){ return Math.max(1,Math.ceil(w/STAGE_LEN)); }
+function stageStart(s){ return (s-1)*STAGE_LEN+1; }
 const FONT="'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif";
 const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
 const overlay=document.getElementById('overlay');
@@ -154,9 +197,24 @@ function loadBest(){
 }
 function clamp(v,a,b){ return v<a?a:v>b?b:v; }
 function rnd(n){ return Math.floor(Math.random()*n); }
+// ステージの きろく：{easy:{u:ひらいた ステージ, st:[ステージごとの ★]}, normal:{…}}
+function loadStages(){
+  const out={};
+  for(const k in MODES){ out[k]={u:1,st:[]}; for(let i=0;i<STAGE_MAX;i++) out[k].st.push(0); }
+  try{
+    const o=JSON.parse(load('stages','{}'))||{};
+    for(const k in out){ const v=o[k]; if(!v) continue;
+      out[k].u=clamp((v.u|0)||1,1,STAGE_MAX);
+      if(Array.isArray(v.st)) for(let i=0;i<STAGE_MAX;i++) out[k].st[i]=clamp((v.st[i]|0)||0,0,3); }
+  }catch(e){}
+  // まえの バージョンの ベスト（とどいた ウェーブ）からも ひらく
+  for(const k in out) out[k].u=Math.max(out[k].u,Math.min(STAGE_MAX,stageOf(best[k].w||1)));
+  return out;
+}
 
 /* ---------- じょうたい ---------- */
 const best=loadBest();
+const stg=loadStages();
 let mode=load('mode','normal'); if(!MODES[mode]) mode='normal';
 let muted=load('mute','0')==='1';
 let scene='title', paused=false, frozen=false, manual=false, bot=false, botT=0;
@@ -164,26 +222,39 @@ let wave=1, score=0, spec=null, nextHouse=HOUSE_EVERY;
 let houses=[], towers=[], meteors=[], missiles=[], blasts=[], sched=[];
 let parts=[], pops=[], rings=[], smoke=[];
 let waveT=0, overT=0, bannerT=0, bannerTip='', msg=null, tally=null;
-let shots=0, kills=0, maxChain=0, lostThisWave=0, lostTotal=0, newBest=false;
+let shots=0, kills=0, maxChain=0, lostThisWave=0, lostStage=0, lostTotal=0, newBest=false;
+let selStage=1, startStage=1, lastRun=null, stgWarn='';
 let uid=0, T=0, shake=0, lastTs=0;
 const cross={x:W/2,y:260,show:false};
 const keys={left:false,right:false,up:false,down:false};
 
-function waveSpec(w,md){
+// むずかしさ：ウェーブごとに すこしずつ。あたらしい りゅうせいが 出る ウェーブは ほかの のびを おさえる
+function rawSpec(w,md){
   const M=MODES[md]||MODES.normal;
+  let n=0; for(const k in INTRO) if(w>=INTRO[k]) n++;
+  const e=(w-1)-0.7*n;
   const spd=Math.min(1,M.spd+clamp((w-12)*0.02,0,0.3));   // やさしいも おくのウェーブでは だんだん はやく
-  return {
-    count:Math.min(6+w*2,30)+clamp(w-14,0,10),
-    speed:Math.round((w<=13?34+w*6:Math.min(112+(w-13)*4,172))*spd),
-    gap:Math.max(0.4,1.7-w*0.1),
-    split:w>=3?Math.min(0.12+(w-3)*0.03,0.3):0,
-    fast:w>=4?Math.min(0.1+(w-4)*0.03,0.25):0,
-    big:w>=5?Math.min(0.08+(w-5)*0.03,0.2):0,
+  const s={
+    count:Math.min(Math.round(8+1.8*e),28)+clamp(w-16,0,10),
+    speed:Math.round((e<=12?40+e*6:Math.min(112+(e-12)*4,172))*spd),
+    gap:Math.max(0.42,1.6*Math.pow(0.915,e)),
+    pair:Math.min(0.28,0.07*(w-1)),
+    split:w>=INTRO.split?Math.min(0.1+(w-INTRO.split)*0.025,0.28):0,
+    fast:w>=INTRO.fast?Math.min(0.1+(w-INTRO.fast)*0.025,0.24):0,
+    big:w>=INTRO.big?Math.min(0.08+(w-INTRO.big)*0.02,0.2):0,
     gold:w>=2?1:0,
-    ammo:Math.min(10+Math.floor(w/3),15)+M.ammo,
     blast:M.blast,
     mult:Math.min(1+Math.floor((w-1)/2),6)
   };
+  // たま：りゅうせい（われる・かたいも かぞえる）に たいして よゆうを だんだん へらす
+  const eff=s.count*(1+2*s.split+s.big);
+  s.ammo=Math.min(Math.ceil(Math.max(M.rmin,M.r0*Math.pow(0.87,w-1))*eff/2),30);
+  return s;
+}
+function waveSpec(w,md){
+  const s=rawSpec(w,md);
+  for(let i=1;i<w;i++) s.ammo=Math.max(s.ammo,rawSpec(i,md).ammo);   // たまは へらない
+  return s;
 }
 
 /* ---------- おと ---------- */
@@ -259,16 +330,23 @@ function resetField(){
   towers=TOWER_X.map(x=>({x,alive:true,ammo:0,aim:-Math.PI/2,kick:0}));
   meteors=[]; missiles=[]; blasts=[]; sched=[]; parts=[]; pops=[]; rings=[]; smoke=[];
 }
-function startGame(md){
+function startGame(md,st){
   if(MODES[md]) mode=md;
   save('mode',mode);
+  startStage=clamp(st|0||1,1,stg[mode].u);   // ひらいた ステージからだけ はじめられる
   resetField();
-  score=0; wave=0; nextHouse=HOUSE_EVERY; shots=0; kills=0; maxChain=0; lostTotal=0; newBest=false;
+  score=0; wave=0; nextHouse=HOUSE_EVERY; shots=0; kills=0; maxChain=0; lostTotal=0; lostStage=0; newBest=false; lastRun=null;
   overT=0; paused=false; manual=false; msg=null; tally=null; shake=0;
-  scene='play'; hideOverlay(); beginWave(1);
+  scene='play'; hideOverlay(); beginWave(stageStart(startStage));
+}
+function unlockStage(s){
+  const r=stg[mode]; s=Math.min(s,STAGE_MAX);
+  if(s>r.u){ r.u=s; save('stages',JSON.stringify(stg)); }
 }
 function beginWave(n){
   wave=n; spec=waveSpec(wave,mode);
+  if((wave-1)%STAGE_LEN===0) lostStage=0;
+  unlockStage(stageOf(wave));
   for(const t of towers){ t.alive=true; t.ammo=spec.ammo; }
   meteors=[]; missiles=[]; blasts=[];
   lostThisWave=0; waveT=0; overT=0; tally=null; scene='play';
@@ -282,7 +360,7 @@ function buildSchedule(){
     const r=Math.random(); let type='normal';
     if(r<spec.split) type='split'; else if(r<spec.split+spec.fast) type='fast'; else if(r<spec.split+spec.fast+spec.big) type='big';
     sched.push({t,type});
-    t+=(wave>=2&&Math.random()<0.28)?0.12+Math.random()*0.2:spec.gap*(0.6+Math.random()*0.8);
+    t+=(Math.random()<spec.pair)?0.12+Math.random()*0.2:spec.gap*(0.6+Math.random()*0.8);
   }
   if(spec.gold) sched.push({t:2+Math.random()*t*0.7,type:'gold'});
   sched.sort((a,b)=>a.t-b.t);
@@ -388,7 +466,7 @@ function impact(m){
   burst(m.x,GROUND-6,['#ff8c42','#ffd166','#9d99c0'],14,150);
   let hit=false;
   for(const h of houses){
-    if(h.alive&&Math.abs(h.x-m.x)<24){ h.alive=false; hit=true; lostThisWave++; lostTotal++; shake=0.5;
+    if(h.alive&&Math.abs(h.x-m.x)<24){ h.alive=false; hit=true; lostThisWave++; lostStage++; lostTotal++; shake=0.5;
       burst(h.x,GROUND-14,['#ff5fa2','#ffd166','#ffffff','#ff8c42'],36,230); pops.push({x:h.x,y:GROUND-50,text:'ああっ！',col:'#ff5fa2',t:0,size:17}); }
   }
   for(const t of towers){
@@ -405,43 +483,84 @@ function burst(x,y,cols,n,sp){
 }
 
 /* ---------- ウェーブのおわり ---------- */
+// ウェーブを クリアしたら：ボーナスを かぞえて、「つぎへ」を おすまで まつ
 function startTally(){
-  scene='tally';
+  scene='tally'; paused=false;
   const m=spec.mult, alive=houses.filter(h=>h.alive), ammo=totalAmmo();
-  tally={t:0,items:[],i:0,end:0,fast:false,houseN:0,housePts:0,ammoN:ammo,ammoPts:-1,perfect:-1,wave};
-  let at=0.7;
-  for(const h of alive){ tally.items.push({at,pts:100*m,kind:'house',h}); at+=0.2; }
-  at+=0.25;
-  if(ammo>0){ tally.items.push({at,pts:ammo*5*m,kind:'ammo'}); at+=0.45; }
-  if(lostThisWave===0){ tally.items.push({at,pts:500*m,kind:'perfect'}); at+=0.5; }
-  tally.end=at+1.4;
+  const stageClear=wave%STAGE_LEN===0, st=stageOf(wave);
+  tally={t:0,age:0,items:[],i:0,fast:false,done:false,houseN:0,housePts:0,houseMax:alive.length,ammoN:ammo,ammoPts:-1,
+    perfect:-1,revive:0,wave,stage:st,stageClear,stars:0,first:false};
+  let at=0.35;
+  for(const h of alive){ tally.items.push({at,pts:100*m,kind:'house',h}); at+=0.13; }
+  at+=0.12;
+  if(ammo>0){ tally.items.push({at,pts:ammo*5*m,kind:'ammo'}); at+=0.3; }
+  if(lostThisWave===0){ tally.items.push({at,pts:500*m,kind:'perfect'}); at+=0.35; }
+  if(stageClear){
+    tally.stars=lostStage===0?3:lostStage<=2?2:1;
+    if(st<=STAGE_MAX){
+      const r=stg[mode]; tally.first=r.st[st-1]===0;
+      if(tally.stars>r.st[st-1]) r.st[st-1]=tally.stars;
+      save('stages',JSON.stringify(stg));
+      unlockStage(st+1);
+    }
+    if(houses.some(h=>!h.alive)) tally.items.push({at,pts:0,kind:'revive'});   // ステージクリアで まちが 1つ もどる
+  }
   meteors=meteors.filter(q=>q.type!=='gold');
-  SFX.clear();
+  SFX.clear(); if(stageClear) SFX.record();
+  showClear();
+}
+function applyTallyItem(it){
+  const ta=tally;
+  if(it.kind==='house'){ ta.houseN++; ta.housePts+=it.pts; it.h.pop=0.6; SFX.tick(ta.houseN); addScore(it.pts,it.h.x,GROUND-52,'#ffd166'); }
+  else if(it.kind==='ammo'){ ta.ammoPts=it.pts; SFX.tick(6); addScore(it.pts); }
+  else if(it.kind==='perfect'){ ta.perfect=it.pts; SFX.bonus(); addScore(it.pts); burst(W/2,420,['#ffd166','#ff5fa2','#53e0d8','#ffffff'],40,260); }
+  else { const dead=houses.filter(h=>!h.alive); if(dead.length){ reviveHouse(dead[rnd(dead.length)]); ta.revive=1; } }
+  updateHud();
 }
 function updateTally(dt){
-  const ta=tally; ta.t+=dt*(ta.fast?4:1);
-  while(ta.i<ta.items.length&&ta.t>=ta.items[ta.i].at){
-    const it=ta.items[ta.i++];
-    if(it.kind==='house'){ ta.houseN++; ta.housePts+=it.pts; it.h.pop=0.6; SFX.tick(ta.houseN); addScore(it.pts,it.h.x,GROUND-52,'#ffd166'); }
-    else if(it.kind==='ammo'){ ta.ammoPts=it.pts; SFX.tick(6); addScore(it.pts); }
-    else { ta.perfect=it.pts; SFX.bonus(); addScore(it.pts); burst(W/2,300,['#ffd166','#ff5fa2','#53e0d8','#ffffff'],40,260); }
-    updateHud();
-  }
-  if(ta.t>=ta.end) beginWave(wave+1);
+  const ta=tally; ta.age+=dt; ta.t+=dt*(ta.fast?4:1);
+  let ch=false;
+  while(ta.i<ta.items.length&&ta.t>=ta.items[ta.i].at){ applyTallyItem(ta.items[ta.i++]); ch=true; }
+  if(!ta.done&&ta.i>=ta.items.length){ ta.done=true; ch=true; }
+  if(ch) renderClear();
 }
-function gameOver(){
-  scene='over'; overT=0;
+function finishTally(){
+  if(!tally) return;
+  while(tally.i<tally.items.length) applyTallyItem(tally.items[tally.i++]);
+  tally.done=true;
+}
+// つぎへ（force＝テスト用。ふつうは 出てすぐの 0.4びょうは うけつけない＝れんだの まちがい おし ふせぎ）
+function nextWave(force){
+  if(scene!=='tally'||!tally) return false;
+  if(!force&&tally.age<0.4) return false;
+  finishTally(); hideOverlay(); beginWave(wave+1);
+  return true;
+}
+function recordBest(){
   const b=best[mode];
   newBest=score>b.s&&score>0;
   if(score>b.s) b.s=score;
   if(wave>b.w) b.w=wave;
   save('best',JSON.stringify(best));
+}
+// とちゅうで やめる：ここまでを きろくして タイトルへ
+function quitRun(){
+  if(scene==='tally') finishTally();
+  recordBest();
+  lastRun={score,wave,newBest};
+  if(newBest) SFX.record();
+  showTitle();
+}
+function gameOver(){
+  scene='over'; overT=0;
+  recordBest();
   SFX.over(); if(newBest) SFX.record();
   updateHud(); showResult();
 }
 function rankName(w){ return w>=12?'でんせつの ヒーロー':w>=8?'ぎんがの まもりて':w>=5?'ほしの ガードマン':w>=3?'まちの みはりばん':'みならい たいいん'; }
+function stars(n){ return '★★★'.slice(0,n)+'☆☆☆'.slice(0,3-n); }
 function setPaused(p){
-  if(scene!=='play'&&scene!=='tally') return;
+  if(scene!=='play') return;
   if(p===paused) return;
   paused=p;
   if(paused) showPause(); else hideOverlay();
@@ -636,30 +755,6 @@ function drawHint(){
   ctx.lineWidth=4; ctx.strokeStyle='#131322'; ctx.strokeText('ここを タップ！',tx,ty);
   ctx.fillStyle='#ffd166'; ctx.fillText('ここを タップ！',tx,ty);
 }
-function drawTally(){
-  const ta=tally; if(!ta) return;
-  const a=clamp(ta.t/0.3,0,1);
-  ctx.globalAlpha=a;
-  rrect(60,150,360,236,14); ctx.fillStyle='rgba(18,18,40,.93)'; ctx.fill(); ctx.strokeStyle='#53e0d8'; ctx.lineWidth=2; ctx.stroke();
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  font(25); ctx.fillStyle='#ffd166'; ctx.shadowColor='#ffd166'; ctx.shadowBlur=10*RS; ctx.fillText('ウェーブ '+ta.wave+' クリア！',W/2,186); ctx.shadowBlur=0;
-  font(17);
-  ctx.textAlign='left'; ctx.fillStyle='#eeecfa'; ctx.fillText('のこった まち  🏠×'+ta.houseN,88,232);
-  ctx.textAlign='right'; ctx.fillStyle='#ffd166'; ctx.fillText('+'+ta.housePts,392,232);
-  if(ta.ammoPts>=0){
-    ctx.textAlign='left'; ctx.fillStyle='#eeecfa'; ctx.fillText('のこった たま  ×'+ta.ammoN,88,266);
-    ctx.textAlign='right'; ctx.fillStyle='#ffd166'; ctx.fillText('+'+ta.ammoPts,392,266);
-  }
-  if(ta.perfect>=0){
-    ctx.textAlign='left'; ctx.fillStyle='#ff5fa2'; ctx.fillText('ノーミス ボーナス！',88,300);
-    ctx.textAlign='right'; ctx.fillStyle='#ffd166'; ctx.fillText('+'+ta.perfect,392,300);
-  }
-  ctx.textAlign='center'; font(15); ctx.fillStyle='#9d99c0';
-  const nm=waveSpec(ta.wave+1,mode).mult;
-  ctx.fillText('つぎは ウェーブ '+(ta.wave+1)+'（とくてん ×'+nm+'）',W/2,340);
-  if(Math.sin(T*6)>-0.3) ctx.fillText('タップで はやおくり',W/2,366);
-  ctx.globalAlpha=1;
-}
 function draw(){
   ctx.setTransform(RS,0,0,RS,0,0);
   ctx.drawImage(bg,0,0,W,H);
@@ -693,6 +788,7 @@ function draw(){
     const a=clamp(Math.min(bannerT/0.4,(2.6-bannerT)/0.25),0,1);
     ctx.globalAlpha=a; font(34); ctx.fillStyle='#53e0d8'; ctx.shadowColor='#53e0d8'; ctx.shadowBlur=14*RS;
     ctx.fillText('ウェーブ '+wave,W/2,190); ctx.shadowBlur=0;
+    { const st=stageOf(wave); font(16); ctx.fillStyle='#a06bff'; ctx.fillText(st<=STAGE_MAX?'ステージ '+st+'「'+STAGES[st-1]+'」 '+((wave-1)%STAGE_LEN+1)+'/'+STAGE_LEN:'エクストラ ステージ',W/2,154); }
     if(spec&&spec.mult>1){ font(16); ctx.fillStyle='#ffd166'; ctx.fillText('とくてん ×'+spec.mult,W/2,224); }
     if(bannerTip){ font(16); ctx.lineWidth=4; ctx.strokeStyle='rgba(12,10,30,.85)'; ctx.strokeText(bannerTip,W/2,252); ctx.fillStyle='#eeecfa'; ctx.fillText(bannerTip,W/2,252); }
     ctx.globalAlpha=1;
@@ -700,7 +796,6 @@ function draw(){
   if(msg&&scene==='play'){
     ctx.globalAlpha=clamp(msg.t/0.3,0,1); font(17); ctx.lineWidth=4; ctx.strokeStyle='rgba(12,10,30,.9)'; ctx.strokeText(msg.text,W/2,GROUND-78); ctx.fillStyle=msg.col; ctx.fillText(msg.text,W/2,GROUND-78); ctx.globalAlpha=1;
   }
-  if(scene==='tally') drawTally();
   if(cross.show&&scene==='play'&&!paused){
     ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=1.5; const x=cross.x,y=cross.y;
     ctx.beginPath(); ctx.arc(x,y,9,0,TAU); ctx.moveTo(x-15,y); ctx.lineTo(x-4,y); ctx.moveTo(x+4,y); ctx.lineTo(x+15,y); ctx.moveTo(x,y-15); ctx.lineTo(x,y-4); ctx.moveTo(x,y+4); ctx.lineTo(x,y+15); ctx.stroke();
@@ -716,44 +811,100 @@ function updateHud(){
   elScore.textContent=String(score); elWave.textContent=String(wave||1);
   elTown.textContent='🏠×'+n; elBest.textContent=String(Math.max(best[mode].s,score));
 }
-function hideOverlay(){ overlay.hidden=true; overlay.innerHTML=''; }
+function hideOverlay(){ overlay.hidden=true; overlay.innerHTML=''; overlay.className=''; }
 function bestLine(){
+  if(lastRun) return 'こんかい <b>'+lastRun.score+'</b>てん（ウェーブ'+lastRun.wave+'まで）を きろくしたよ'+(lastRun.newBest?' 🏆':'');
   const b=best[mode];
   return b.s>0?MODES[mode].name+'の ベスト <b>'+b.s+'</b>てん（ウェーブ'+b.w+'）':'まだ きろくが ないよ。さいしょの 1かいを あそぼう';
 }
 function showTitle(){
   scene='title'; paused=false; resetField(); tally=null; msg=null;
-  for(const t of towers) t.ammo=waveSpec(1,mode).ammo;
-  overlay.hidden=false;
+  selStage=stg[mode].u; stgWarn='';   // さいごに ひらいた ステージ＝つづきから
+  overlay.hidden=false; overlay.className='';
   overlay.innerHTML='<div class="ov-ico">🌠</div>'
     +'<h2 class="logo">まもれ！<span>ほしのまち</span></h2>'
     +'<ul class="how"><li>おちてくる <b>りゅうせい</b>の <i>すこし先</i>を タップ！</li><li><i>ばくはつ</i>に まきこんで まちを まもろう</li><li>たまには かぎりが あるよ。まとめて けそう</li></ul>'
     +'<div class="modes"><button type="button" data-m="easy">やさしい<small>ゆっくり・たま多め</small></button><button type="button" data-m="normal">ふつう<small>うでだめし</small></button></div>'
+    +'<div class="stg"><div class="stg-label" id="stgLabel"></div><div class="stg-row" id="stgRow"></div></div>'
     +'<p class="bestline" id="bestLine"></p>'
     +'<button type="button" class="btn" id="mainBtn">はじめる</button>';
-  syncModes(); hudKey=''; updateHud();
+  syncModes();
 }
 function syncModes(){
   overlay.querySelectorAll('.modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));
+  const r=stg[mode];
+  selStage=clamp(selStage,1,r.u);
+  const row=document.getElementById('stgRow');
+  if(row){
+    let h='';
+    for(let i=1;i<=STAGE_MAX;i++){
+      const lock=i>r.u;
+      h+='<button type="button" data-s="'+i+'" class="'+(lock?'lock':i===selStage?'on':'')+'" aria-label="ステージ'+i+(lock?'（まだ ひらいていない）':'')+'">'
+        +(lock?'🔒':i)+'<small>'+(lock?String(i):stars(r.st[i-1]))+'</small></button>';
+    }
+    row.innerHTML=h;
+  }
+  const lab=document.getElementById('stgLabel');
+  if(lab){
+    lab.classList.toggle('warn',!!stgWarn);
+    lab.innerHTML=stgWarn||('ステージ<b>'+selStage+'「'+STAGES[selStage-1]+'」</b> ウェーブ'+stageStart(selStage)+'から');
+  }
+  const mb=document.getElementById('mainBtn');
+  if(mb&&scene==='title'){ mb.textContent=selStage>1?'ステージ'+selStage+'から はじめる':'はじめる'; mb.classList.toggle('long',selStage>1); }
   const bl=document.getElementById('bestLine'); if(bl) bl.innerHTML=bestLine();
+  if(scene==='title'){ wave=stageStart(selStage); for(const t of towers) t.ammo=waveSpec(wave,mode).ammo; }
   hudKey=''; updateHud();
 }
+function pickStage(s){
+  if(s>stg[mode].u){ SFX.deny(); stgWarn='ステージ'+(s-1)+'を クリアすると ひらくよ'; syncModes(); return; }
+  stgWarn=''; selStage=s; syncModes();
+}
 function showPause(){
-  overlay.hidden=false;
+  overlay.hidden=false; overlay.className='';
   overlay.innerHTML='<div class="ov-ico">☕</div><h2 class="res-title" style="color:var(--cyan)">ひとやすみ</h2>'
     +'<button type="button" class="btn" id="mainBtn">つづける</button>'
-    +'<button type="button" class="btn2" id="subBtn">タイトルへ</button>';
+    +'<button type="button" class="btn2" id="subBtn">タイトルへ（ここまでを きろく）</button>';
 }
+function showClear(){
+  const ta=tally, nx=ta.wave+1, ns=stageOf(nx);
+  let next='つぎは <b>ウェーブ '+nx+'</b>（とくてん ×'+waveSpec(nx,mode).mult+'）';
+  if(ta.stageClear) next='つぎは <b>'+(ns<=STAGE_MAX?'ステージ'+ns+'「'+STAGES[ns-1]+'」':'エクストラ ステージ')+'</b>';
+  if(NEWS[nx]) next+='<i>あたらしい：'+NEWS[nx]+'</i>';
+  overlay.hidden=false; overlay.className='clr';
+  overlay.innerHTML='<div class="clr-card'+(ta.stageClear?' stage':'')+'">'
+    +(ta.stageClear
+      ?'<div class="clr-stage">'+(ta.stage<=STAGE_MAX?'ステージ'+ta.stage:'エクストラ')+' クリア！<span class="clr-stars">'+stars(ta.stars)+'</span></div>'
+      :'<div class="clr-sub">ステージ'+ta.stage+' ・ '+((ta.wave-1)%STAGE_LEN+1)+'/'+STAGE_LEN+'</div>')
+    +'<h2 class="clr-title">ウェーブ '+ta.wave+' クリア！</h2>'
+    +'<div class="clr-rows" id="clrRows"></div>'
+    +'<div class="clr-next">'+next+'</div>'
+    +'<button type="button" class="btn" id="mainBtn">つぎへ ▶</button>'
+    +'<button type="button" class="btn2" id="subBtn">タイトルへ（ここまでを きろく）</button>'
+    +'</div>';
+  renderClear();
+}
+function renderClear(){
+  const ta=tally, el=document.getElementById('clrRows'); if(!ta||!el) return;
+  const has=k=>ta.items.some(it=>it.kind===k);
+  const row=(on,cls,label,val)=>'<div class="clr-row '+cls+(on?' on':'')+'"><span>'+label+'</span><b>'+val+'</b></div>';
+  let h=row(ta.houseN>0||ta.houseMax===0,'','のこった まち 🏠×'+ta.houseN,'+'+ta.housePts);
+  h+=row(ta.ammoPts>=0||ta.ammoN===0,'','のこった たま ×'+ta.ammoN,'+'+Math.max(0,ta.ammoPts));
+  if(has('perfect')) h+=row(ta.perfect>=0,'pink','ノーミス ボーナス！',ta.perfect>=0?'+'+ta.perfect:'…');
+  if(has('revive')) h+=row(ta.revive>0,'cyan','ステージ クリアで まちが 1つ もどった','🏠');
+  h+='<div class="clr-total">とくてん <b>'+score+'</b></div>';
+  el.innerHTML=h;
+}
+function retryStage(){ return clamp(Math.min(stageOf(wave),STAGE_MAX),1,stg[mode].u); }
 function showResult(){
-  const b=best[mode];
-  overlay.hidden=false;
+  const b=best[mode], rs=retryStage();
+  overlay.hidden=false; overlay.className='';
   overlay.innerHTML='<h2 class="res-title">まちが…！ ゲームオーバー</h2>'
     +'<div class="res-score">'+score+'<small>てん</small></div>'
     +(newBest?'<div class="newrec">🏆 しんきろく！</div>':'')
     +'<div class="res-grid"><div>ウェーブ <b>'+wave+'</b></div><div>けした かず <b>'+kills+'</b></div><div>さいだい れんさ <b>'+Math.max(1,maxChain)+'</b></div></div>'
     +'<div class="rank">しょうごう：<b>'+rankName(wave)+'</b></div>'
     +'<p class="bestline">'+MODES[mode].name+'の ベスト <b>'+b.s+'</b>てん（ウェーブ'+b.w+'）</p>'
-    +'<button type="button" class="btn" id="mainBtn">もういちど</button>'
+    +'<button type="button" class="btn'+(rs>1?' long':'')+'" id="mainBtn">'+(rs>1?'ステージ'+rs+'から もういちど':'もういちど')+'</button>'
     +'<button type="button" class="btn2" id="subBtn">タイトルへ</button>';
 }
 function drawMute(){ muteBtn.textContent=muted?'🔇':'🔊'; }
@@ -763,7 +914,6 @@ function toLocal(e){ const r=cv.getBoundingClientRect(); return {x:(e.clientX-r.
 function onDown(e){
   e.preventDefault(); audio();
   const p=toLocal(e);
-  if(scene==='tally'&&!paused){ if(tally) tally.fast=true; return; }
   if(scene!=='play'||paused) return;
   if(e.pointerType==='mouse'){ cross.x=p.x; cross.y=clamp(p.y,24,GROUND-46); cross.show=true; } else cross.show=false;
   fire(p.x,p.y);
@@ -773,13 +923,21 @@ function onMove(e){
   const p=toLocal(e); cross.x=clamp(p.x,8,W-8); cross.y=clamp(p.y,24,GROUND-46); cross.show=true;
 }
 function onOverlayClick(e){
-  const b=e.target.closest('button'); if(!b) return;
-  audio(); SFX.click();
-  if(b.dataset.m){ mode=b.dataset.m; save('mode',mode); for(const t of towers) t.ammo=waveSpec(1,mode).ammo; syncModes(); return; }
+  const b=e.target.closest('button');
+  if(!b){ if(scene==='tally'&&tally) tally.fast=true; return; }   // まわりを タップ＝ボーナスを はやおくり
+  audio();
+  if(b.dataset.s){ const s=+b.dataset.s; if(s<=stg[mode].u) SFX.click(); pickStage(s); return; }
+  SFX.click();
+  if(b.dataset.m){ mode=b.dataset.m; save('mode',mode); lastRun=null; stgWarn=''; selStage=stg[mode].u; syncModes(); return; }
   if(b.id==='mainBtn'){
     b.blur();
-    if(paused) setPaused(false); else startGame(mode);
-  } else if(b.id==='subBtn'){ showTitle(); }
+    if(scene==='tally') nextWave(false);
+    else if(paused) setPaused(false);
+    else if(scene==='over') startGame(mode,retryStage());
+    else startGame(mode,selStage);
+  } else if(b.id==='subBtn'){
+    if(scene==='tally'||paused) quitRun(); else showTitle();
+  }
 }
 const KEYMAP={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',a:'left',d:'right',w:'up',s:'down'};
 function onKeyDown(e){
@@ -789,12 +947,12 @@ function onKeyDown(e){
   if(!overlay.hidden){
     if(fireKey){ e.preventDefault(); if(!e.repeat){ const m=document.getElementById('mainBtn'); if(m) m.click(); } }
     else if(k==='p'&&paused){ setPaused(false); }
+    else if(scene==='title'&&(k==='ArrowLeft'||k==='ArrowRight')){ e.preventDefault(); const s=selStage+(k==='ArrowLeft'?-1:1); if(s>=1&&s<=STAGE_MAX){ audio(); SFX.click(); pickStage(s); } }
     return;
   }
   if(KEYMAP[k]){ keys[KEYMAP[k]]=true; e.preventDefault(); return; }
   if(fireKey){
     e.preventDefault(); if(e.repeat) return; audio();
-    if(scene==='tally'){ if(tally) tally.fast=true; return; }
     cross.show=true; fire(cross.x,cross.y);
   } else if(k==='p'||k==='Escape'){ setPaused(true); }
 }
@@ -816,9 +974,16 @@ window.__test={
       meteors:meteors.map(m=>({id:m.id,type:m.type,x:Math.round(m.x),y:Math.round(m.y),hp:m.hp})),
       missiles:missiles.length,blasts:blasts.length,pending:sched.length,shots,kills,maxChain,
       best:best[mode].s,bestWave:best[mode].w,newBest,muted,frozen,manual,
-      cross:{x:Math.round(cross.x),y:Math.round(cross.y)},tally:!!tally&&scene==='tally',W,H,GROUND};
+      cross:{x:Math.round(cross.x),y:Math.round(cross.y)},tally:!!tally&&scene==='tally',W,H,GROUND,
+      stage:stageOf(wave),startStage,sel:selStage,unlocked:stg[mode].u,stars:stg[mode].st.slice(),
+      clear:tally&&scene==='tally'?{done:tally.done,stageClear:tally.stageClear,stars:tally.stars,revive:tally.revive}:null,
+      lastRun:lastRun?Object.assign({},lastRun):null};
   },
-  start(md){ startGame(md||mode); },
+  start(md,st){ startGame(md||mode,st||1); },
+  next(){ return nextWave(true); },
+  quit(){ quitRun(); },
+  pickStage(s){ pickStage(s); return selStage; },
+  stageOf(w){ return stageOf(w); },
   freeze(b){ frozen=!!b; },
   manual(b){ manual=!!b; if(manual) sched=[]; },
   bot(b){ bot=!!b; botT=0; },
@@ -850,11 +1015,11 @@ cv.addEventListener('pointerleave',e=>{ if(e.pointerType==='mouse') cross.show=f
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 overlay.addEventListener('click',onOverlayClick);
 muteBtn.addEventListener('click',()=>{ muted=!muted; save('mute',muted?'1':'0'); drawMute(); if(!muted){ audio(); SFX.click(); } muteBtn.blur(); });
-pauseBtn.addEventListener('click',()=>{ audio(); pauseBtn.blur(); if(scene==='play'||scene==='tally') setPaused(!paused); });
+pauseBtn.addEventListener('click',()=>{ audio(); pauseBtn.blur(); if(scene==='play') setPaused(!paused); });
 window.addEventListener('keydown',onKeyDown);
 window.addEventListener('keyup',onKeyUp);
 window.addEventListener('blur',()=>{ keys.left=keys.right=keys.up=keys.down=false; });
-document.addEventListener('visibilitychange',()=>{ if(document.hidden&&(scene==='play'||scene==='tally')&&!paused&&!frozen) setPaused(true); });
+document.addEventListener('visibilitychange',()=>{ if(document.hidden&&scene==='play'&&!paused&&!frozen) setPaused(true); });
 requestAnimationFrame(frame);
 })();
 </script>
