@@ -95,6 +95,20 @@
   #rerollBtn{font-family:inherit;font-size:13px;background:none;color:var(--cyan);border:1px solid rgba(83,224,216,.5);border-radius:999px;padding:8px 16px;cursor:pointer;min-height:40px}
   #rerollBtn:disabled{opacity:.35}
 
+  #pickSub .tutHint{display:inline-block;font-size:13px;color:#2a1c00;background:var(--gold);border-radius:999px;padding:3px 12px;box-shadow:0 0 14px rgba(255,209,102,.55);animation:tutPulse 1.1s ease-in-out infinite alternate}
+  #pickList.tutGlow .opt{border-color:rgba(255,209,102,.75)}
+  .opt .nm small.pinch{background:#ff8fbd;color:#2a0a18}
+  @keyframes tutPulse{from{transform:scale(1)}to{transform:scale(1.05)}}
+
+  /* はじめての あんない（下の カード） */
+  #tut{position:absolute;left:3%;right:3%;bottom:8%;display:none;align-items:center;gap:8px;padding:7px 7px 7px 12px;background:rgba(20,16,48,.9);border:1px solid rgba(255,209,102,.6);border-radius:12px;z-index:1;pointer-events:none;box-shadow:0 0 16px rgba(255,209,102,.22);animation:slide .3s both}
+  #tut.show{display:flex}
+  #tut .tx{flex:1;min-width:0;font-size:13px;line-height:1.45;color:var(--ink)}
+  #tut .tx b{display:block;font-weight:400;font-size:14px;color:var(--gold)}
+  #tut .tx .st{color:var(--sub);font-size:11px;margin-left:6px}
+  #tutSkip{pointer-events:auto;flex:none;min-width:66px;min-height:40px;font-family:inherit;font-size:12px;color:var(--sub);background:rgba(28,28,51,.95);border:1px solid #5a568c;border-radius:10px;cursor:pointer;padding:0 8px}
+  #tutSkip[hidden]{display:none}
+
   .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
   .help b{color:var(--ink);font-weight:400}
   .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)}
@@ -105,6 +119,7 @@
     .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
     .opt:hover{border-color:var(--gold);box-shadow:0 0 14px rgba(255,209,102,.35)}
     #rerollBtn:hover:not(:disabled){background:rgba(83,224,216,.12)}
+    #tutSkip:hover{color:var(--gold);border-color:var(--gold)}
   }
   @media (max-width:420px){
     h1{font-size:18px}
@@ -113,9 +128,9 @@
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="うごくだけで こうげきは じどう！ やみもやを けして⭐をあつめ、レベルアップのたびに3つのパワーから1つえらぶ。ぶきは6しゅるいから4つまで。おおやみを たおすと たからばこ。5分にげきれば よあけでクリア。むずかしさ3だんかい、★とベストを記録。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="うごくだけで こうげきは じどう！ やみもやを けして⭐をあつめ、レベルアップのたびに3つのパワーから1つえらぶ。ぶきは6しゅるいから4つまで。ピンチのときは ハートが出やすい。はじめては やりながら おぼえる あんないつき。5分にげきれば よあけでクリア。★とベストを記録。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/094-neon-survivor/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ほしぞらサバイバー","description":"うごくだけで こうげきは じどう！ やみもやを けして⭐をあつめ、レベルアップのたびに3つのパワーから1つえらぶ。ぶきは6しゅるいから4つまで。おおやみを たおすと たからばこ。5分にげきれば よあけでクリア。むずかしさ3だんかい、★とベストを記録。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/094-neon-survivor/index.html","inLanguage":"ja","genre":"ACTION","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ほしぞらサバイバー","description":"うごくだけで こうげきは じどう！ やみもやを けして⭐をあつめ、レベルアップのたびに3つのパワーから1つえらぶ。ぶきは6しゅるいから4つまで。ピンチのときは ハートが出やすい。はじめては やりながら おぼえる あんないつき。5分にげきれば よあけでクリア。★とベストを記録。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/094-neon-survivor/index.html","inLanguage":"ja","genre":"ACTION","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="094"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -131,6 +146,7 @@
 
 <div id="wrap">
   <canvas id="cv" width="720" height="960"></canvas>
+  <div id="tut" aria-live="polite"><div class="tx" id="tutTx"></div><button id="tutSkip">スキップ</button></div>
   <div id="pick">
     <div id="pickTitle"></div>
     <div id="pickSub"></div>
@@ -155,8 +171,9 @@
 
 <div class="help">
   <b>あそびかた</b><br>
-  ・<span class="c1">うごかす</span>：画面を ゆびで なぞる（マウスは おしたまま うごかす）／ キーボードは やじるし か WASD<br>
+  ・<span class="c1">うごかす</span>：キーボードは やじるし か WASD ／ マウスは いきたい方を おしたまま（その方へ あるく）／ スマホは 画面を ゆびで なぞる<br>
   ・<span class="c3">こうげき</span>は じどう。やみもやを けすと 出る ⭐ を ひろうと けいけんちが たまる<br>
+  ・<span class="c2">❤️</span>：たいりょくが へっているほど ハートが 出やすい。ピンチの レベルアップでは「ひとやすみ」が えらべる<br>
   ・<span class="c2">レベルアップ</span>で 3つの パワーから 1つ えらぶ（キーは 1・2・3）。ぶきは 6しゅるい の中から 4つまで<br>
   ・90びょうごとに 大きな「おおやみ」が 出る。たおすと たからばこ！<br>
   ・5分 にげきれば よあけが きて クリア。P か Esc で ひとやすみ
@@ -308,7 +325,13 @@ function bgm(dt){
 let mode='title';        // title | pick | play | pause | ending | over | clear
 let G=null;              // 1回ぶんのプレイ
 let animT=0,pickAt=0,noSpawn=false,frozen=false;
-const inp={x:0,y:0},keys={},joy={on:false,id:-1,ox:0,oy:0,x:0,y:0};
+const inp={x:0,y:0},keys={},joy={on:false,id:-1,ox:0,oy:0,x:0,y:0,aim:false},hov={on:false,x:0,y:0};
+/* そうさガイド・はじめての あんない */
+const GUIDE_MOVE=40,GUIDE_T=10,TUT_MOVE=60;
+let dev='pc';            // pc | touch（ガイドの 見せかたを かえる）
+let tutDone=lsGet('tut')==='1';
+/* かいふく */
+const HEART_MAX=4,PITY=60,LOW_HP=.5;
 let testIn=null;
 const bgStars=[];
 for(let i=0;i<70;i++)bgStars.push({x:Math.random()*W,y:Math.random()*H,f:[.15,.3,.5][i%3],s:i%3===2?1.6:1,p:Math.random()*TAU});
@@ -321,8 +344,24 @@ function newGame(){
     enemies:[],shots:[],ebul:[],gems:[],parts:[],pops:[],mets:[],rings:[],bolts:[],beams:[],
     weapons:[],pass:{speed:0,heart:0,magnet:0,haste:0,power:0},
     spawnAcc:0,evI:0,bossN:0,rerolls:2,choices:[],queue:[],pickKind:'',
-    banner:'',bannerT:0,vign:0,flash:0,gemCombo:0,gemT:0,endT:0,endKind:'',stars:0,isNew:false,score:0};
+    banner:'',bannerT:0,vign:0,flash:0,gemCombo:0,gemT:0,endT:0,endKind:'',stars:0,isNew:false,score:0,
+    heartPity:0,hearts:0,tut:tutDone?0:1,tutMsgT:0};
 }
+function hpRate(){return G.p.hp/G.p.max}
+function guideOn(){return !!G&&mode==='play'&&G.p.moved<GUIDE_MOVE&&(G.tut===1||G.t<GUIDE_T)}
+/* ハートの 出やすさ：たいりょくが へっているほど 出やすい */
+function heartChance(type){
+  const lost=Math.max(0,1-hpRate());
+  return (.012+.028*Math.pow(lost,1.5))*(type==='deka'||type==='pun'?2:1);
+}
+function heartRoll(type){
+  if(hpRate()<LOW_HP)G.heartPity++;
+  let n=0;for(const g of G.gems)if(g.kind==='heart')n++;
+  if(n>=HEART_MAX)return false;
+  if(rng()<heartChance(type)||G.heartPity>=PITY){G.heartPity=0;return true}
+  return false;
+}
+function dropHeart(x,y){G.gems.push({x:x,y:y,v:0,kind:'heart',t:0})}
 function findW(id){return G.weapons.find(w=>w.id===id)}
 function dmgMul(){return 1+.12*G.pass.power}
 function cdMul(){return 1-.08*G.pass.haste}
@@ -399,11 +438,13 @@ function killE(e){
   burst(e.x,e.y,ECOL[e.type],e.type==='boss'?36:e.type==='deka'?12:6,e.type==='boss'?150:80);
   if(e.type==='boss'){
     G.gems.push({x:e.x,y:e.y,v:0,kind:'chest',t:0});
+    // おおやみは ハートも おとす
+    dropHeart(e.x,e.y+18);
     G.rings.push({x:e.x,y:e.y,r:10,to:90,life:.5,max:.5,col:'#ffd166'});
     sfx('boom');G.flash=.25;
   }else{
     G.gems.push({x:e.x,y:e.y,v:e.xp,kind:'gem',t:0});
-    if(rng()<.014)G.gems.push({x:e.x+8,y:e.y,v:0,kind:'heart',t:0});
+    if(heartRoll(e.type))dropHeart(e.x+8,e.y);
     sfx('pop');
   }
   if(G.gems.length>260){ // 古い⭐は まとめる
@@ -504,7 +545,10 @@ function weapons(dt){
 function readInput(){
   let x=0,y=0;
   if(testIn){x=testIn.x;y=testIn.y}
-  else if(joy.on){
+  else if(joy.on&&joy.aim){ // マウス：おしている 場所へ むかって あるく（ほしのこは いつも まんなか）
+    const dx=joy.x-W/2,dy=joy.y-H/2,l=Math.hypot(dx,dy);
+    if(l>8){const m=Math.min(1,Math.max(.3,(l-8)/36));x=dx/l*m;y=dy/l*m}
+  }else if(joy.on){
     const dx=joy.x-joy.ox,dy=joy.y-joy.oy,l=Math.hypot(dx,dy);
     if(l>5){const m=Math.min(1,Math.max(.45,l/30));x=dx/l*m;y=dy/l*m}
   }else{
@@ -544,6 +588,8 @@ function update(dt){
   p.x+=inp.x*sp*dt;p.y+=inp.y*sp*dt;
   const il=Math.hypot(inp.x,inp.y);
   if(il>.1){p.fx=inp.x/il;p.fy=inp.y/il;p.moved+=sp*il*dt}
+  if(G.tut===1&&p.moved>=TUT_MOVE){G.tut=2;sfx('pick');pop(p.x,p.y-24,'OK！','#53e0d8');G.rings.push({x:p.x,y:p.y,r:8,to:46,life:.4,max:.4,col:'#53e0d8'})}
+  if(G.tutMsgT>0)G.tutMsgT-=dt;
   if(p.inv>0)p.inv-=dt;
   spawner(dt);
   for(const e of G.enemies)e.slow=false;
@@ -620,8 +666,8 @@ function update(dt){
     if(d<p.r+7){
       g.got=true;
       if(g.kind==='gem'){G.xp+=g.v;G.gemCombo++;G.gemT=.5;sfx('gem',G.gemCombo)}
-      else if(g.kind==='heart'){p.hp=Math.min(p.max,p.hp+20);pop(p.x,p.y-16,'+20','#ff8fbd');sfx('heal')}
-      else{p.hp=Math.min(p.max,p.hp+25);G.queue.push('chest');sfx('chest');burst(p.x,p.y,'#ffd166',20,130)}
+      else if(g.kind==='heart'){p.hp=Math.min(p.max,p.hp+20);G.hearts++;pop(p.x,p.y-16,'+20','#ff8fbd');sfx('heal');burst(p.x,p.y,'#ff8fbd',6,60)}
+      else{p.hp=Math.min(p.max,p.hp+30);G.queue.push('chest');sfx('chest');burst(p.x,p.y,'#ffd166',20,130);pop(p.x,p.y-16,'+30','#ff8fbd')}
     }
   }
   G.gems=G.gems.filter(g=>!g.got);
@@ -645,7 +691,8 @@ function genChoices(kind){
     if(w){if(w.lv<WMAX)opts.push({k:'w',id:id,lv:w.lv+1,wt:3})}
     else if(G.weapons.length<SLOTS)opts.push({k:'w',id:id,lv:1,wt:G.weapons.length<2?3:1.8});
   }
-  for(const id of PIDS)if(G.pass[id]<PMAX)opts.push({k:'p',id:id,lv:G.pass[id]+1,wt:1.5});
+  const low=hpRate()<LOW_HP;
+  for(const id of PIDS)if(G.pass[id]<PMAX)opts.push({k:'p',id:id,lv:G.pass[id]+1,wt:id==='heart'&&low?4:1.5});
   while(out.length<3&&opts.length){
     let s=0;for(const o of opts)s+=o.wt;
     let r=rng()*s,i=0;
@@ -653,24 +700,30 @@ function genChoices(kind){
     const o=opts.splice(i,1)[0];out.push({k:o.k,id:o.id,lv:o.lv});
   }
   if(out.length<3)out.push({k:'heal'});
+  // ピンチの ときは「ひとやすみ（かいふく）」を かならず 入れる
+  else if(low&&!out.some(c=>c.k==='p'&&c.id==='heart'))out[2]={k:'heal',pinch:true};
   return out;
 }
 function openPick(kind){
   mode='pick';G.pickKind=kind;G.choices=genChoices(kind);
   joy.on=false;pickAt=performance.now();
+  if(kind==='lvl'&&G.tut&&G.tut<3)G.tut=3;
   if(kind==='lvl'){sfx('lvl');G.flash=.2}
   renderPick();$('pick').classList.add('show');syncUI();
 }
 function renderPick(){
   const k=G.pickKind;
   $('pickTitle').textContent=k==='start'?'さいしょの ぶきを えらぼう':k==='chest'?'🎁 たからばこ！':'⬆ レベルアップ！ Lv'+G.lvl;
-  $('pickSub').textContent=k==='start'?'こうげきは じどうで 出るよ':'すきな パワーを 1つ えらぼう';
+  const tutPick=k==='lvl'&&G.tut===3;
+  if(tutPick)$('pickSub').innerHTML='<span class="tutHint">③ すきな パワーを おして えらぼう'+(dev==='pc'?'（1・2・3キーでも）':'')+'</span>';
+  else $('pickSub').textContent=k==='start'?'こうげきは じどうで 出るよ':'すきな パワーを 1つ えらぼう';
+  $('pickList').classList.toggle('tutGlow',tutPick);
   let h='';
   G.choices.forEach((c,i)=>{
     let ic,nm,ds,tag,col;
     if(c.k==='w'){const d=WEAPONS[c.id];ic=d.icon;nm=d.name;ds=d.d[c.lv-1];col=d.col;tag=c.lv===1?'<small class="new">あたらしい ぶき</small>':'<small>Lv'+c.lv+(c.lv===WMAX?' さいだい':'')+'</small>'}
     else if(c.k==='p'){const d=PASS[c.id];ic=d.icon;nm=d.name;ds=d.d;col=d.col;tag='<small>Lv'+c.lv+(c.lv===PMAX?' さいだい':'')+'</small>'}
-    else{ic='🍎';nm='ひとやすみ';ds='たいりょくが 30 かいふく';col='#ff8fbd';tag=''}
+    else{ic='🍎';nm='ひとやすみ';ds='たいりょくが 30 かいふく';col='#ff8fbd';tag=c.pinch?'<small class="pinch">ピンチ！</small>':''}
     h+='<button class="opt" data-i="'+i+'" style="--c:'+col+'"><span class="ic">'+ic+'</span><span class="tx"><span class="nm">'+nm+tag+'</span><span class="ds">'+ds+'</span></span><span class="ky">'+(i+1)+'</span></button>';
   });
   $('pickList').innerHTML=h;
@@ -691,10 +744,33 @@ function choose(i){
     if(c.id==='heart'){p.max+=20;p.hp=Math.min(p.max,p.hp+30)}
   }else p.hp=Math.min(p.max,p.hp+30);
   sfx('pick');
+  if(G.pickKind==='lvl'&&G.tut===3)tutFinish(false);
   if(G.pickKind!=='start')G.queue.shift();
   if(G.queue.length){openPick(G.queue[0]);return true}
   mode='play';$('pick').classList.remove('show');syncUI();
   return true;
+}
+/* はじめての あんない：おわり（skip=スキップ） */
+function tutFinish(skip){
+  if(!G||!G.tut)return false;
+  G.tut=0;G.tutMsgT=skip?0:3.2;tutDone=true;lsSet('tut','1');
+  if(skip)sfx('ui');
+  tutUI();return true;
+}
+let tutKey='';
+function tutUI(){
+  let h='',skip=false;
+  if(G&&mode==='play'){
+    if(G.tut===1){h='<b>① うごいてみよう<span class="st">1/3</span></b>'+(dev==='touch'?'がめんを ゆびで なぞると うごくよ':'やじるしキー・WASD か、マウスを おしたまま');skip=true}
+    else if(G.tut===2){h='<b>② ⭐を ひろおう<span class="st">2/3</span></b>こうげきは じどう。⭐で 上の ゲージが たまる';skip=true}
+    else if(G.tutMsgT>0)h='<b>じゅんび OK！</b>あとは 5分 にげきろう。⭐で どんどん つよくなる';
+  }
+  const key=h+skip;
+  if(key===tutKey)return;
+  tutKey=key;
+  $('tut').classList.toggle('show',!!h);
+  $('tutTx').innerHTML=h;
+  $('tutSkip').hidden=!skip;
 }
 function reroll(){
   if(mode!=='pick'||G.pickKind==='start'||G.rerolls<=0)return false;
@@ -756,7 +832,7 @@ function showTitle(){
   mode='title';G=null;
   const big=$('ovBig');big.className='';big.innerHTML='ほしぞら<br>サバイバー';
   $('ovStars').style.display='none';$('ovStats').style.display='none';$('ovBuild').style.display='none';
-  $('ovNote').innerHTML='ゆびで なぞると <b>ほしのこ</b>が うごく<br>こうげきは <span class="c">じどう</span>！ ⭐を あつめて レベルアップ<br><b>5分</b> にげきれば よあけで クリア！';
+  $('ovNote').innerHTML=(dev==='touch'?'ゆびで なぞると <b>ほしのこ</b>が うごく':'やじるしキー か マウスで <b>ほしのこ</b>が うごく')+'<br>こうげきは <span class="c">じどう</span>！ ⭐を あつめて レベルアップ<br><b>5分</b> にげきれば よあけで クリア！';
   renderDiffs();$('diffs').style.display='flex';
   showOnly(['startBtn']);
   $('pick').classList.remove('show');$('overlay').classList.add('show','title');syncUI();
@@ -1002,12 +1078,85 @@ function draw(){
   if(G.vign>0){const g=ctx.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.7);g.addColorStop(0,'rgba(255,60,120,0)');g.addColorStop(1,'rgba(255,60,120,'+(G.vign*1.1).toFixed(2)+')');ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
   if(G.flash>0){ctx.fillStyle='rgba(255,240,200,'+Math.min(.35,G.flash).toFixed(2)+')';ctx.fillRect(0,0,W,H)}
   drawHud();
-  // そうさの丸
-  if(joy.on&&mode==='play'){
+  // そうさの丸（マウス：おしている 場所に 目じるし ／ ゆび：スティック）
+  if(joy.on&&joy.aim&&mode==='play')drawAim(joy.x,joy.y,1);
+  else if(!joy.on&&hov.on&&dev==='pc'&&guideOn())drawAim(hov.x,hov.y,0);
+  else if(joy.on&&mode==='play'){
     ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(joy.ox,joy.oy,30,0,TAU);ctx.stroke();
     const dx=joy.x-joy.ox,dy=joy.y-joy.oy,l=Math.hypot(dx,dy)||1,m=Math.min(30,l);
     ctx.fillStyle='rgba(255,209,102,.5)';ctx.beginPath();ctx.arc(joy.ox+dx/l*m,joy.oy+dy/l*m,13,0,TAU);ctx.fill();
   }
+}
+function rrect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function tri(x,y,a,s){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.beginPath();ctx.moveTo(s,0);ctx.lineTo(-s*.6,-s);ctx.lineTo(-s*.6,s);ctx.closePath();ctx.fill();ctx.restore()}
+function keycap(x,y,s,lab,on){
+  ctx.fillStyle=on?'#ffd166':'rgba(44,40,88,.96)';rrect(x-s/2,y-s/2,s,s,4);ctx.fill();
+  ctx.strokeStyle=on?'#fff3c4':'#7a72c4';ctx.lineWidth=1.2;ctx.stroke();
+  text(lab,x,y+.5,Math.round(s*.62),on?'#2a1c00':'#eeecfa','center');
+}
+/* マウスの 目じるし：pressed=1 で おしている（その方へ あるく） */
+function drawAim(x,y,pressed){
+  const dx=x-W/2,dy=y-H/2,l=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
+  if(pressed){
+    if(l>26){
+      ctx.fillStyle='#ffd166';
+      for(let i=0;i<3;i++){const k=((animT*2.2+i/3)%1),d=22+(l-34)*k;ctx.globalAlpha=Math.sin(k*Math.PI)*.85;tri(W/2+Math.cos(a)*d,H/2+Math.sin(a)*d,a,4.5)}
+      ctx.globalAlpha=1;
+    }
+    const r=9+Math.sin(animT*10)*1.5;
+    ctx.strokeStyle='#ffd166';ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.stroke();
+    ctx.fillStyle='rgba(255,209,102,.35)';ctx.beginPath();ctx.arc(x,y,r-3,0,TAU);ctx.fill();
+  }else{
+    ctx.globalAlpha=.6+.3*Math.sin(animT*5);
+    ctx.strokeStyle='#ffd166';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(x,y,10,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    const rt=x>W/2;
+    text('おしたまま → ここへ あるく',rt?x-12:x+12,y-15,11,'#ffd166',rt?'right':'left',true);
+    ctx.globalAlpha=1;
+  }
+}
+/* うごかしかたの ガイド（ほしのこの 下に 出る。うごいたら きえる） */
+function drawGuide(){
+  const p=G.p,fade=Math.max(0,Math.min(1,(GUIDE_MOVE-p.moved)/18,G.tut===1?1:(GUIDE_T-G.t)/1.2));
+  ctx.globalAlpha=fade;
+  // ほしのこの まわりに 4つの やじるし
+  const k=(animT*1.4)%1;ctx.fillStyle='#ffd166';
+  for(let i=0;i<4;i++){const a=i*Math.PI/2-Math.PI/2,d=27+k*9;ctx.globalAlpha=fade*(1-k)*.9;tri(W/2+Math.cos(a)*d,H/2+Math.sin(a)*d,a,5)}
+  ctx.globalAlpha=fade;
+  const cx=W/2,cy=H/2+(dev==='touch'?76:82),pw=dev==='touch'?236:300,ph=dev==='touch'?56:72;
+  ctx.fillStyle='rgba(16,13,40,.88)';rrect(cx-pw/2,cy-ph/2,pw,ph,12);ctx.fill();
+  ctx.strokeStyle='rgba(255,209,102,.7)';ctx.lineWidth=1.5;ctx.stroke();
+  if(dev==='touch'){
+    // ゆびで なぞる アニメ
+    const bx=cx-pw/2+32,by=cy,ox=Math.sin(animT*2.6)*9,oy=Math.cos(animT*2.6*.5)*4;
+    ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,15,0,TAU);ctx.stroke();
+    ctx.fillStyle='rgba(255,209,102,.6)';ctx.beginPath();ctx.arc(bx+ox,by+oy,7,0,TAU);ctx.fill();
+    text('👆',bx+ox+5,by+oy+10,17,'#fff','center');
+    text('がめんを なぞって うごく',cx-pw/2+58,cy-9,14,'#ffd166','left');
+    text('ゆびを はなすと とまる',cx-pw/2+58,cy+12,12,'#cfcbea','left');
+  }else{
+    const on=Math.floor(animT*2.5)%4,x0=cx-pw/2+20,y1=cy-17,y2=cy+17,s=18;
+    ['↑','←','↓','→'].forEach((c,i)=>keycap(x0+i*21,y1,s,c,i===on));
+    text('／',x0+83,y1,12,'#9d99c0','center');
+    ['W','A','S','D'].forEach((c,i)=>keycap(x0+103+i*21,y1,s,c,i===on));
+    text('で うごく',x0+180,y1,13,'#eeecfa','left');
+    // マウス
+    const mx=x0+6,blink=Math.floor(animT*3)%2===0;
+    ctx.fillStyle='rgba(44,40,88,.96)';rrect(mx-7,y2-10,14,20,7);ctx.fill();ctx.strokeStyle='#7a72c4';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.fillStyle=blink?'#ffd166':'rgba(255,209,102,.25)';rrect(mx-6,y2-9,6,8,3);ctx.fill();
+    text('マウスは いきたい方を おしたまま',mx+14,y2,13,'#eeecfa','left');
+  }
+  ctx.globalAlpha=1;
+}
+/* はじめての あんない ②：いちばん近い ⭐の 上に やじるし */
+function drawTutGem(){
+  const p=G.p,cx=p.x-W/2,cy=p.y-H/2;
+  let best=null,bd=1e9;
+  for(const g of G.gems){if(g.kind!=='gem')continue;const x=g.x-cx,y=g.y-cy;if(x<10||x>W-10||y<50||y>H-40)continue;const d=Math.hypot(g.x-p.x,g.y-p.y);if(d<bd){bd=d;best=g}}
+  // けいけんち ゲージを ひからせる
+  ctx.strokeStyle='rgba(255,209,102,'+(.5+.4*Math.sin(animT*6)).toFixed(2)+')';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,8);
+  if(!best||bd<20)return;
+  const x=best.x-cx,y=best.y-cy-14-Math.abs(Math.sin(animT*5))*6;
+  ctx.fillStyle='#ffd166';tri(x,y,Math.PI/2,6);
 }
 function arrow(x,y,col){
   if(x>12&&x<W-12&&y>52&&y<H-34)return;
@@ -1045,10 +1194,8 @@ function drawHud(){
     ctx.fillStyle='rgba(60,10,40,.8)';ctx.fillRect(0,58,W,28);
     text(G.banner,W/2,72,14,'#ffb3cf','center');ctx.globalAlpha=1;
   }
-  if(mode==='play'&&p.moved<60&&G.t<12){
-    ctx.globalAlpha=.6+.4*Math.sin(animT*5);
-    text('👆 画面を なぞって うごこう',W/2,H-56,14,'#ffd166','center',true);ctx.globalAlpha=1;
-  }
+  if(guideOn())drawGuide();
+  if(G.tut===2&&mode==='play')drawTutGem();
   if(mode==='ending'&&G.endKind==='clear')text('🌅 よあけだ！',W/2,H*.36,26,'#ffd166','center',true);
 }
 
@@ -1058,6 +1205,7 @@ function frame(ts){
   const dt=Math.min(.05,Math.max(0,(ts-lastTs)/1000));lastTs=ts;
   animT+=dt;
   if(!frozen&&(mode==='play'||mode==='ending')){update(dt);if(mode==='play')bgm(dt)}
+  tutUI();
   draw();
   requestAnimationFrame(frame);
 }
@@ -1071,10 +1219,22 @@ window.__test={
         enemies:G.enemies.length,gems:G.gems.length,shots:G.shots.length,ebul:G.ebul.length,
         weapons:G.weapons.map(w=>({id:w.id,lv:w.lv})),pass:Object.assign({},G.pass),
         choices:G.choices.map(c=>Object.assign({},c)),pickKind:G.pickKind,queue:G.queue.slice(),rerolls:G.rerolls,
-        score:G.score,stars:G.stars,endKind:G.endKind,isNew:G.isNew});
+        score:G.score,stars:G.stars,endKind:G.endKind,isNew:G.isNew,
+        guide:guideOn(),tut:G.tut,tutMsg:G.tutMsgT>0,moved:G.p.moved,heartPity:G.heartPity,hearts:G.hearts});
     }
+    o.tutDone=tutDone;o.dev=dev;o.joyAim=joy.on&&joy.aim;
+    o.tutCard=$('tut').classList.contains('show')?$('tutTx').innerText:'';
     return o;
   },
+  heartChance:function(type){return heartChance(type||'moya')},
+  // てきを n ひき その場で たおす（ハートの 出かたを 数える）
+  killMany:function(n,type){let h=0;silent=true;for(let i=0;i<n;i++){const e=mk(type||'moya',G.p.x+200,G.p.y);const b=G.gems.length;killE(e);for(let j=b;j<G.gems.length;j++)if(G.gems[j].kind==='heart')h++;G.gems=G.gems.filter(g=>g.kind!=='heart'&&g.kind!=='gem');}G.enemies=G.enemies.filter(e=>!e.dead);silent=false;return h},
+  clearItems:function(){G.gems=[]},
+  setPity:function(n){G.heartPity=n},
+  setDev:function(d){dev=d},
+  tutReset:function(){tutDone=false;lsSet('tut','0')},
+  tutSkip:function(){return tutFinish(true)},
+  setMaxHp:function(n){G.p.max=n},
   seed:function(n){seedV=n>>>0},
   start:function(d,seed){const i=DIFFS.findIndex(x=>x.id===d);if(i>=0)diffIdx=i;if(seed!==undefined)seedV=seed>>>0;silent=true;startGame();silent=false;return mode},
   choose:function(i){silent=true;const r=choose(i);silent=false;return r},
@@ -1108,12 +1268,15 @@ cv.addEventListener('pointerdown',function(ev){
   ev.preventDefault();audio();
   if(mode!=='play')return;
   const q=cvPos(ev);joy.on=true;joy.id=ev.pointerId;joy.ox=joy.x=q[0];joy.oy=joy.y=q[1];
+  joy.aim=ev.pointerType==='mouse'; // マウスは おした 場所へ あるく。ゆびは なぞった 方へ
   try{cv.setPointerCapture(ev.pointerId)}catch(e){}
 });
 cv.addEventListener('pointermove',function(ev){
+  if(ev.pointerType==='mouse'&&!joy.on){const q=cvPos(ev);hov.on=true;hov.x=q[0];hov.y=q[1];return}
   if(!joy.on||ev.pointerId!==joy.id)return;
   ev.preventDefault();
   const q=cvPos(ev);joy.x=q[0];joy.y=q[1];
+  if(joy.aim)return;
   // ゆびに ついてくる（はしで つまらないように）
   const dx=joy.x-joy.ox,dy=joy.y-joy.oy,l=Math.hypot(dx,dy);
   if(l>44){joy.ox=joy.x-dx/l*44;joy.oy=joy.y-dy/l*44}
@@ -1121,11 +1284,15 @@ cv.addEventListener('pointermove',function(ev){
 function joyEnd(ev){if(ev.pointerId===joy.id)joy.on=false}
 cv.addEventListener('pointerup',joyEnd);
 cv.addEventListener('pointercancel',joyEnd);
+cv.addEventListener('pointerleave',function(){hov.on=false});
 cv.addEventListener('contextmenu',function(ev){ev.preventDefault()});
 $('wrap').addEventListener('touchmove',function(ev){if(mode==='play')ev.preventDefault()},{passive:false});
 
+// ガイドの 見せかたを 入力の しゅるいに あわせる
+document.addEventListener('pointerdown',function(ev){if(ev.pointerType==='touch'||ev.pointerType==='pen')dev='touch';else if(ev.pointerType==='mouse')dev='pc'},true);
 window.addEventListener('keydown',function(ev){
   if(!ev.key)return;
+  if(ev.key.indexOf('Arrow')===0||'wasd'.indexOf(ev.key.toLowerCase())>=0)dev='pc';
   const k=ev.key.length===1?ev.key.toLowerCase():ev.key;
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].indexOf(k)>=0&&mode!=='title')ev.preventDefault();
   keys[k]=true;
@@ -1156,7 +1323,9 @@ $('resumeBtn').addEventListener('click',resume);
 $('menuBtn').addEventListener('click',function(){audio();sfx('ui');showTitle()});
 $('pauseBtn').addEventListener('click',function(){audio();pause()});
 $('mute-btn').addEventListener('click',toggleMute);
+$('tutSkip').addEventListener('click',function(ev){ev.stopPropagation();audio();tutFinish(true)});
 
+try{dev=matchMedia('(hover:none) and (pointer:coarse)').matches?'touch':'pc'}catch(e){dev='pc'}
 fit();showTitle();
 requestAnimationFrame(function(ts){lastTs=ts;requestAnimationFrame(frame)});
 })();
