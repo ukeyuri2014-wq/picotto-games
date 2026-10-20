@@ -73,6 +73,27 @@
   .zukan{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;font-size:11px;color:var(--sub)}
   .zukan .k{padding:2px 7px;border-radius:999px;border:1px dashed var(--edge);color:#6f6b92}
   .zukan .k.got{border:1px solid var(--gold);color:var(--gold);background:rgba(255,209,102,.1)}
+  .modes button.keiko{background:rgba(83,224,216,.08);border:1px solid rgba(83,224,216,.7);color:var(--cyan);box-shadow:none;min-height:42px;padding:7px 18px;font-size:14px}
+  .modes button.keiko.rec{background:var(--cyan);color:#062a28;border-color:#bafff8;animation:recglow 1.2s ease-in-out infinite}
+  @keyframes recglow{0%,100%{box-shadow:0 0 0 0 rgba(83,224,216,.7),0 4px 0 rgba(0,0,0,.35)}50%{box-shadow:0 0 0 5px rgba(83,224,216,.25),0 0 22px rgba(83,224,216,.8),0 4px 0 rgba(0,0,0,.35)}}
+  /* けいこ（やりながら おぼえる れんしゅう） */
+  #keikoBar{position:absolute;left:0;right:0;top:0;z-index:4;display:none;flex-direction:column;gap:3px;padding:5px 8px 6px;background:rgba(14,12,30,.92);border:1px solid rgba(255,209,102,.5);border-radius:14px 14px 12px 12px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+  #keikoBar.show{display:flex}
+  #keikoBar .kh{display:flex;align-items:center;gap:6px}
+  #keikoBar .kstep{font-size:12px;color:#2a1d00;background:var(--gold);border-radius:999px;padding:2px 8px;white-space:nowrap}
+  #keikoBar .ktitle{flex:1;min-width:0;font-size:15px;color:var(--gold);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #keikoBar button{font-family:inherit;font-size:13px;min-height:38px;min-width:56px;padding:4px 10px;border-radius:999px;border:1px solid var(--edge);background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}
+  #keikoBar .ktext{font-size:13px;line-height:1.5;color:var(--ink);min-height:39px}
+  #keikoBar .ktext b{color:var(--gold);font-weight:400}
+  #keikoBar.ok{border-color:var(--cyan);box-shadow:0 0 18px rgba(83,224,216,.45)}
+  #keikoBar.ok .ktext,#keikoBar.ok .ktext b{color:var(--cyan)}
+  #keikoBar.fail{border-color:rgba(255,95,162,.8)}
+  #keikoBar.fail .ktext,#keikoBar.fail .ktext b{color:#ff8fbf}
+  #keikoBar.compact .ktext{display:none}
+  .glow{animation:padglow 1s ease-in-out infinite}
+  @keyframes padglow{0%,100%{box-shadow:0 0 0 2px rgba(255,209,102,.85),0 0 8px rgba(255,209,102,.4)}50%{box-shadow:0 0 0 3px #ffd166,0 0 26px rgba(255,209,102,.95)}}
+  .dash.now{background:linear-gradient(#ff8fbf,#c43a77);color:#fff;border-color:#ffd0e4}
+  .dash.now small{color:#fff3cf}
   .hide{display:none !important}
   .help{width:min(500px,100%);color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.75;background:rgba(13,13,28,.74);border:1px solid var(--edge);border-radius:12px;padding:10px 12px 6px}
   .help b{color:var(--ink);font-weight:400}
@@ -83,18 +104,21 @@
     .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
     .levels button:hover{border-color:var(--gold)}
     .modes button:hover{filter:brightness(1.1)}
+    #keikoBar button:hover{border-color:var(--gold);color:var(--gold)}
   }
   @media (max-width:420px){
     h1{font-size:17px}
     .side{height:100px}
     #overlay .big{font-size:23px}
     #overlay .note{font-size:13px;line-height:1.7}
+    #keikoBar .ktitle{font-size:14px;letter-spacing:0}
+    #keikoBar button{padding:4px 8px}
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="まるい どひょうで 1たい1の たいあたり。ながおしで ためて はなすと ぶちかまし、よけられると じぶんが とびだす。3ばんしょうぶで、CPUは 3だんかい、ふたり対戦も OK。かつと ばんづけが あがり、きまりて 5しゅるいの ずかんも のこるよ。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="まるい どひょうで 1たい1の たいあたり。ながおしで ためて はなすと ぶちかまし、よけられると じぶんが とびだす。はじめてでも「けいこ」で やりながら おぼえられるよ。3ばんしょうぶで CPUは 3だんかい、ふたり対戦も OK。ばんづけと きまりて ずかんも のこる。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/105-sumo-push/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"どすこい おしだしずもう","description":"まるい どひょうで 1たい1の たいあたり。ながおしで ためて はなすと ぶちかまし、よけられると じぶんが とびだす。3ばんしょうぶで、CPUは 3だんかい、ふたり対戦も OK。かつと ばんづけが あがり、きまりて 5しゅるいの ずかんも のこるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/105-sumo-push/index.html","inLanguage":"ja","genre":"VERSUS","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"どすこい おしだしずもう","description":"まるい どひょうで 1たい1の たいあたり。ながおしで ためて はなすと ぶちかまし、よけられると じぶんが とびだす。はじめてでも「けいこ」で やりながら おぼえられるよ。3ばんしょうぶで CPUは 3だんかい、ふたり対戦も OK。ばんづけと きまりて ずかんも のこる。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/105-sumo-push/index.html","inLanguage":"ja","genre":"VERSUS","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="105"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -109,6 +133,7 @@
 
 <div id="wrap">
   <canvas id="cv" width="480" height="440"></canvas>
+  <div id="keikoBar" aria-live="polite"><div class="kh"><span class="kstep" id="kStep">けいこ 1/4</span><span class="ktitle" id="kTitle">うごく</span><button id="kSkip">とばす ▶</button><button id="kQuit">やめる</button></div><div class="ktext" id="kText"></div></div>
   <div id="pad">
     <div class="side p0" id="side0"><div class="stick" id="st0"><span class="lbl" id="lb0">うごく</span><div class="knob"></div></div><button class="dash" id="dh0">ためる<small>はなすと ぶちかまし</small></button></div>
     <div class="side p1 hide" id="side1"><div class="stick" id="st1"><span class="lbl">P2 うごく</span><div class="knob"></div></div><button class="dash" id="dh1">ためる<small>P2</small></button></div>
@@ -123,6 +148,13 @@
     <div class="modes" id="ovStart">
       <button id="btnCpu">ひとりで はじめる</button>
       <button id="btn2p" class="alt">ふたりで はじめる</button>
+    </div>
+    <div class="modes" id="ovKeikoRow">
+      <button id="btnKeiko" class="keiko">🔰 けいこ（れんしゅう）</button>
+    </div>
+    <div class="modes hide" id="ovKeikoEnd">
+      <button id="btnKeikoGo">CPUと しょうぶ！</button>
+      <button id="btnKeikoTitle" class="ghost">タイトルへ</button>
     </div>
     <div class="modes hide" id="ovEnd">
       <button id="btnAgain">もういちど</button>
@@ -144,6 +176,7 @@
   <p><b>ルール</b>：まるい どひょうの 上で 1たい1。あいてを わ（たわら）の 外へ おしだしたら 1かち。<b>さきに 2かい かったほうが しょうぶの かち</b>（3ばんしょうぶ）。12びょう すぎると どひょうが だんだん せまくなるよ。</p>
   <p><b>ぶちかまし</b>：ボタンを ながおしすると 力が たまって、はなすと むいている方へ いきおいよく たいあたり。ためるほど つよい。でも <b>よけられると じぶんが とびだして しまう</b>ので、わの ちかくでは ちゅうい。ためている間は からだが おもくなるから、あいての ぶちかましを うけとめる「ふんばり」にも つかえるよ。</p>
   <p><b>コツ</b>：あいてと どひょうの まん中の あいだに まわりこんでから おすと、外へ おしだしやすい。「はっけよい」の間に ためておいて「のこった！」で はなすと、いきおいの ある たちあいに なる。</p>
+  <p><b>けいこ</b>：タイトルの「🔰 けいこ」で、うごく → ためて はなす → よける → 1ばん しょうぶ を、やりながら おぼえられるよ。とちゅうで とばしても OK。けいこは せいせきに はいらない。</p>
   <p><b>きまりて</b>：おしだし ／ つきだし ／ いなし ／ いさみあし ／ うっちゃり の 5しゅるい。ひとりで かつと ずかんに のこる。かつほど ばんづけが あがって、めざすは よこづな！</p>
   <p>📱 下の まるい所で うごく（ひとりのときは どひょうを さわった方へも あるく）・ためるボタンを ながおし。<br>⌨️ ひとり：← ↑ → ↓（W A S D）で うごく・スペース（Enter・J）を ながおし。ふたり：P1は W A S D ＋ スペース、P2は ← ↑ → ↓ ＋ Enter。Pキーで ひとやすみ。</p>
 </div>
@@ -170,7 +203,9 @@
     { react: 0.46, spd: 0.7, dodge: 0.06, err: 0.6, aggr: 0.22, chMin: 0.25, chMax: 0.55, edge: 0.3, tachi: 0.25 },
     { react: 0.34, spd: 0.75, dodge: 0.15, err: 0.45, aggr: 0.32, chMin: 0.3, chMax: 0.7, edge: 0.5, tachi: 0.3 },
     { react: 0.11, spd: 1.0, dodge: 0.72, err: 0.08, aggr: 0.62, chMin: 0.55, chMax: 1.0, edge: 1.0, tachi: 0.9 },
+    { react: 0.8, spd: 0.5, dodge: 0, err: 0.9, aggr: 0.08, chMin: 0.2, chMax: 0.35, edge: 0.1, tachi: 0 },   // 4：けいこの あいて（とても よわい）
   ];
+  const KEIKO_LV = 4, KEIKO_N = 4;
 
   // ---- 乱数（テスト用に たねを 決められる） ----
   let seed = (Date.now() ^ 0x5bd1e995) >>> 0;
@@ -178,9 +213,9 @@
 
   // ---- 保存 ----
   function freshStats() { return { lv: { 1: { w: 0, l: 0 }, 2: { w: 0, l: 0 }, 3: { w: 0, l: 0 } }, streak: 0, bestStreak: 0, pts: 0, kim: {}, matches: 0 }; }
-  let stats = freshStats(), muted = false, level = 1;
+  let stats = freshStats(), muted = false, level = 1, keikoFlag = '';
   function load() {
-    stats = freshStats(); muted = false; level = 1;
+    stats = freshStats(); muted = false; level = 1; keikoFlag = '';
     try {
       const s = JSON.parse(localStorage.getItem(KEY + 'stats') || 'null');
       if (s && typeof s === 'object') {
@@ -190,7 +225,13 @@
       }
       muted = localStorage.getItem(KEY + 'mute') === '1';
       const lv = +localStorage.getItem(KEY + 'level'); if (lv >= 1 && lv <= 3) level = lv;
+      const kf = localStorage.getItem(KEY + 'keiko'); if (kf === 'seen' || kf === 'done') keikoFlag = kf;
     } catch (e) {}
+  }
+  // けいこの あんない：'' = まだ（おすすめを 出す）／ 'seen' = いちど あそんだ ／ 'done' = けいこを さいごまで
+  function setKeikoFlag(v) {
+    if (v === 'seen' && keikoFlag) return;
+    keikoFlag = v; try { localStorage.setItem(KEY + 'keiko', v); } catch (e) {}
   }
   function save() { try { localStorage.setItem(KEY + 'stats', JSON.stringify(stats)); localStorage.setItem(KEY + 'level', String(level)); } catch (e) {} }
   function rankOf(p) { let r = 0; for (let i = 0; i < RANK_PTS.length; i++) if (p >= RANK_PTS[i]) r = i; return r; }
@@ -231,12 +272,14 @@
     win(d = 0) { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.15, 0.06, d + i * 0.1)); SFX.taiko(d + 0.55); },
     lose(d = 0) { tone('sawtooth', 330, 110, 0.55, 0.06, d); },
     tap() { tone('square', 700, 900, 0.04, 0.03); },
+    ok() { [659, 880, 1175].forEach((f, i) => tone('triangle', f, f, 0.14, 0.06, i * 0.08)); tone('square', 1568, 1568, 0.1, 0.03, 0.26); },
+    ding() { tone('triangle', 1046, 1318, 0.12, 0.06); tone('sine', 2093, 2093, 0.1, 0.02, 0.05); },
     rank(d = 0) { [784, 988, 1175, 1568].forEach((f, i) => tone('triangle', f, f, 0.18, 0.06, d + i * 0.09)); },
   };
 
   // ---- 状態 ----
   const G = { phase: 'title', mode: 'cpu', auto: [0, 1], score: [0, 0], bout: 1, t: 0, R: R0, ready: 0, pointT: 0, winner: -1, boutWin: -1, kim: '', slow: 0, paused: false, manual: false, sim: false, tally2p: [0, 0], lastResult: null, axis: 0, shake: 0, real: 0 };
-  function mkW(i) { return { i, x: 0, y: 0, vx: 0, vy: 0, f: 0, state: 'normal', st: 0, charge: 0, charging: false, pow: 0, hitDone: false, lastHitT: -9, lastDashT: -9, out: false, trail: [], walk: 0, cTick: 0, full: false, ai: { t: 0, inp: { x: 0, y: 0, c: false }, mode: 'move', chT: 0.6, err: 0, hold: 0 } }; }
+  function mkW(i) { return { i, x: 0, y: 0, vx: 0, vy: 0, f: 0, state: 'normal', st: 0, charge: 0, charging: false, pow: 0, hitDone: false, lastHitT: -9, lastDashT: -9, out: false, trail: [], walk: 0, cTick: 0, full: false, lockF: null, ai: { t: 0, inp: { x: 0, y: 0, c: false }, mode: 'move', chT: 0.6, err: 0, hold: 0 } }; }
   const ws = [mkW(0), mkW(1)];
   const inputs = [{ x: 0, y: 0, c: false }, { x: 0, y: 0, c: false }];
   const forced = [null, null];          // テスト用の入力
@@ -244,7 +287,8 @@
 
   const overlay = $('overlay');
   const dist = (w) => Math.hypot(w.x - CX, w.y - CY);
-  const nameOf = i => G.mode === 'cpu' ? (i === 0 ? 'あなた' : 'CPU') : 'P' + (i + 1);
+  const nameOf = i => G.mode === 'cpu' ? (i === 0 ? 'あなた' : 'CPU') : G.mode === 'keiko' ? (i === 0 ? 'あなた' : 'あいて') : 'P' + (i + 1);
+  const bestOf = () => G.mode === 'keiko' ? 1 : BEST;     // けいこの しあいは 1ばんだけ
   const spdOf = i => G.auto[i] > 0 ? AI[G.auto[i]].spd : 1;
   const massOf = w => w.charging ? 1.8 : w.state === 'dash' ? 1.25 : 1;
 
@@ -255,7 +299,7 @@
       const w = ws[i], s = i === 0 ? -1 : 1;
       w.x = CX + ca * 58 * s; w.y = CY + sa * 58 * s; w.vx = w.vy = 0;
       w.f = i === 0 ? a : a + Math.PI; w.state = 'normal'; w.st = 0; w.charge = 0; w.charging = false; w.pow = 0;
-      w.hitDone = false; w.lastHitT = w.lastDashT = -9; w.out = false; w.trail = []; w.full = false;
+      w.hitDone = false; w.lastHitT = w.lastDashT = -9; w.out = false; w.trail = []; w.full = false; w.lockF = null;
       w.ai = { t: 0, inp: { x: 0, y: 0, c: false }, mode: 'move', chT: 0.6, err: 0, hold: 0 };
     }
   }
@@ -274,6 +318,7 @@
     if (mode) G.mode = mode;
     G.auto = G.mode === 'cpu' ? [0, level] : [0, 0];
     G.score = [0, 0]; G.winner = -1; G.paused = false; G.lastResult = null;
+    setKeikoFlag('seen'); $('keikoBar').classList.remove('show');
     overlay.classList.remove('show'); layoutPad();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     startBout();
@@ -295,7 +340,7 @@
       pops = [];   // ドン！などは けして、きまりてを 見やすく
       pops.push({ x: CX, y: CY - 48, text: KIM[kim] + '！', t: 0, color: '#ffd166', size: 34, life: 1.6 });
     }
-    if (G.score[win] >= BEST) { G.winner = win; recordMatch(); }
+    if (G.score[win] >= bestOf()) { G.winner = win; recordMatch(); }
     else if (G.mode === 'cpu' && G.auto[1] > 0 && !G.sim) save();
   }
   function recordMatch() {
@@ -313,6 +358,7 @@
     G.lastResult = res;
   }
   function finishMatch() {
+    if (G.mode === 'keiko' && !G.sim) { keikoBoutEnd(); return; }
     G.phase = 'end';
     if (G.sim) return;
     const r = G.lastResult || {};
@@ -329,7 +375,7 @@
   function humanInput(i) {
     let x = 0, y = 0, c = false;
     const k = a => keys.has(a);
-    if (G.mode === 'cpu') {
+    if (G.mode !== '2p') {
       if (k('ArrowLeft') || k('KeyA')) x -= 1; if (k('ArrowRight') || k('KeyD')) x += 1;
       if (k('ArrowUp') || k('KeyW')) y -= 1; if (k('ArrowDown') || k('KeyS')) y += 1;
       c = k('Space') || k('Enter') || k('NumpadEnter') || k('KeyJ') || k('KeyZ');
@@ -341,7 +387,7 @@
       c = k('Enter') || k('NumpadEnter') || k('Numpad0');
     }
     if (stick[i].id !== null) { x += stick[i].x; y += stick[i].y; }
-    if (i === 0 && G.mode === 'cpu' && steer.id !== null) {
+    if (i === 0 && G.mode !== '2p' && steer.id !== null) {
       const w = ws[0], dx = steer.x - w.x, dy = steer.y - w.y, d = Math.hypot(dx, dy);
       if (d > 10) { x += dx / d * Math.min(1, d / 40); y += dy / d * Math.min(1, d / 40); }
     }
@@ -354,6 +400,7 @@
     const a = G.auto[i];
     if (a === 0) return humanInput(i);
     if (a === -1) return { x: 0, y: 0, c: false };
+    if (a === -4) return keikoBot(i, h);
     if (a === -2 || a === -3) return botInput(i, a);
     return aiInput(i, a, h);
   }
@@ -484,13 +531,13 @@
         const s = Math.min(1, m);
         w.vx += inp.x / m * ACC * ctrl * spdOf(i) * s * h; w.vy += inp.y / m * ACC * ctrl * spdOf(i) * s * h;
         if (w.state !== 'stun') turnTo(w, Math.atan2(inp.y, inp.x), w.charging ? 11 : 9, h);
-      } else if (w.charging) turnTo(w, Math.atan2(op.y - w.y, op.x - w.x), 3, h);
+      } else if (w.charging) { if (w.lockF !== null) w.f = w.lockF; else turnTo(w, Math.atan2(op.y - w.y, op.x - w.x), 3, h); }
       const k = w.state === 'dash' ? 0.9 : w.state === 'tired' ? 7 : w.state === 'stun' ? 4 : FRIC;
       const fr = Math.exp(-k * h); w.vx *= fr; w.vy *= fr;
       w.x += w.vx * h; w.y += w.vy * h;
     }
     if (G.phase === 'play' || G.phase === 'point') collide();
-    if (G.phase === 'play') {
+    if (G.phase === 'play' && !keikoDrill()) {        // けいこの 1〜3は keikoUpdate で みる
       let out = -1, worst = 0;
       for (let i = 0; i < 2; i++) { const e = dist(ws[i]) - G.R; if (e > 0 && e > worst) { worst = e; out = i; } }
       if (out >= 0) decideBout(1 - out, out);
@@ -552,7 +599,7 @@
       physics(h);
     } else if (G.phase === 'play') {
       G.t += h;
-      G.R = Math.max(RMIN, R0 - Math.max(0, G.t - SHRINK_AT) * SHRINK_V);
+      G.R = keikoDrill() ? R0 : Math.max(RMIN, R0 - Math.max(0, G.t - SHRINK_AT) * SHRINK_V);
       physics(h);
     } else if (G.phase === 'point') {
       physics(h);
@@ -560,11 +607,12 @@
   }
   function update(dt) {
     G.real += dt;
-    if (G.phase === 'title' || G.phase === 'end' || G.paused) { fxUpdate(dt); return; }
+    if (G.phase === 'title' || G.phase === 'end' || G.phase === 'keikoEnd' || G.paused) { fxUpdate(dt); return; }
     let h = dt; if (G.slow > 0) { G.slow -= dt; h = dt * 0.32; }
     const n = Math.max(1, Math.ceil(h / HSTEP)), s = h / n;
     for (let k = 0; k < n; k++) tick(s);
     if (G.phase === 'point') { G.pointT -= dt; if (G.pointT <= 0) { if (G.winner >= 0) finishMatch(); else startBout(); } }
+    if (G.mode === 'keiko' && (G.phase === 'play' || G.phase === 'ready' || G.phase === 'point')) keikoUpdate(dt);
     // ためる音・あしあと
     for (const w of ws) {
       if (w.charging) { w.cTick -= dt; if (w.cTick <= 0) { w.cTick = 0.13; if (!w.full) SFX.chargeTick(w.charge); } }
@@ -607,11 +655,15 @@
     $('levels').classList.toggle('hide', kind !== 'title');
     $('ovEnd').classList.toggle('hide', kind !== 'end');
     $('ovPause').classList.toggle('hide', kind !== 'pause');
+    $('ovKeikoRow').classList.toggle('hide', kind !== 'title');
+    $('ovKeikoEnd').classList.toggle('hide', kind !== 'keiko');
     $('ovScore').classList.toggle('hide', kind !== 'end');
     overlay.classList.add('show');
   }
   function showTitle() {
+    if (G.mode === 'keiko') { G.mode = 'cpu'; G.auto = [0, level]; }
     G.phase = 'title'; G.paused = false; G.winner = -1; G.score = [0, 0];
+    keikoBarUpdate(); renderKeikoBtn();
     keys.clear(); releaseAllPointers();
     placeWrestlers();
     $('ovBig').innerHTML = 'どすこい<br>おしだしずもう'; $('ovBig').className = 'big';
@@ -635,9 +687,9 @@
     renderStats(); showOverlay('end');
   }
   function pause(on) {
-    if (G.phase === 'title' || G.phase === 'end') return;
+    if (G.phase === 'title' || G.phase === 'end' || G.phase === 'keikoEnd') return;
     G.paused = on; keys.clear(); releaseAllPointers();
-    if (on) { $('ovBig').textContent = 'ひとやすみ'; $('ovBig').className = 'big'; $('ovNote').innerHTML = 'いまは ' + nameOf(0) + ' ' + G.score[0] + ' - ' + G.score[1] + ' ' + nameOf(1); $('ovStats').textContent = ''; $('zukan').innerHTML = ''; showOverlay('pause'); }
+    if (on) { $('ovBig').textContent = 'ひとやすみ'; $('ovBig').className = 'big'; $('ovNote').innerHTML = G.mode === 'keiko' ? 'いまは けいこ ' + K.step + '/' + KEIKO_N + '「' + KEIKO_TITLE[K.step] + '」' : 'いまは ' + nameOf(0) + ' ' + G.score[0] + ' - ' + G.score[1] + ' ' + nameOf(1); $('ovStats').textContent = ''; $('zukan').innerHTML = ''; showOverlay('pause'); }
     else overlay.classList.remove('show');
   }
   function releaseAllPointers() {
@@ -650,7 +702,15 @@
       k.style.transform = 'translate(' + (stick[i].x * rr).toFixed(1) + 'px,' + (stick[i].y * rr).toFixed(1) + 'px)';
       $('dh' + i).classList.toggle('on', dashHeld[i] !== null || (ws[i].charging && G.auto[i] === 0 && G.phase !== 'title'));
     }
+    // けいこ：おす場所を 光らせる・ゲージが いっぱいで「いま！」
+    const kk = G.mode === 'keiko' && G.phase !== 'title' && G.phase !== 'keikoEnd' && !G.paused, go = kk && K.st === 'go';
+    $('st0').classList.toggle('glow', go && (K.step === 1 || K.step === 3));
+    $('dh0').classList.toggle('glow', go && !ws[0].charging && (K.step === 2 || (K.step === 4 && G.phase === 'ready')));
+    const now = kk && G.phase === 'play' && ws[0].charging && ws[0].full;
+    if (now !== dashNow) { dashNow = now; $('dh0').classList.toggle('now', now); if (now) $('dh0').innerHTML = 'はなす！<small>いま！</small>'; else layoutPad(); }
+    if (kk) $('keikoBar').classList.toggle('compact', K.step === KEIKO_N && G.phase !== 'ready' && K.st === 'go');
   }
+  let dashNow = false;
 
   // ---- 描画 ----
   const cv = $('cv'), ctx = cv.getContext('2d');
@@ -789,6 +849,7 @@
     ctx.fillStyle = fill; ctx.fillText(s, x, y);
   }
   function drawHud() {
+    if (G.mode === 'keiko' && G.phase !== 'title') return;      // けいこ中は 上の あんないを 出す
     for (let i = 0; i < 2; i++) {
       const x = i === 0 ? 8 : W - 158, col = COL[i];
       ctx.fillStyle = 'rgba(16,14,32,.82)'; rrect(ctx, x, 6, 150, 38, 10); ctx.fill();
@@ -818,11 +879,13 @@
     const sh = G.shake;
     ctx.save(); if (sh > 0) ctx.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
     drawRingLive();
+    drawKeikoUnder();
     for (const p of parts) if (p.type === 'dust') { ctx.globalAlpha = Math.max(0, p.life / p.max) * 0.6; ctx.fillStyle = p.c + '1)'; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill(); }
     ctx.globalAlpha = 1;
     const order = ws.slice().sort((a, b) => a.y - b.y);
     for (const w of order) drawW(w);
     for (const w of ws) drawArrow(w);
+    drawKeikoOver();
     for (const r of rings) { ctx.strokeStyle = r.c + (1 - r.t / 0.45) + ')'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke(); }
     for (const p of parts) if (p.type !== 'dust') {
       ctx.globalAlpha = Math.max(0, Math.min(1, p.life / 0.4)); ctx.fillStyle = p.c + '1)';
@@ -861,6 +924,184 @@
       txt(lab, CX, CY + 8, 22, COL[G.boutWin], 'center', 5);
     }
   }
+  // ---- けいこ（やりながら おぼえる れんしゅう。せいせき・ばんづけ・ずかんには はいらない） ----
+  // 1 うごく：ひかる めじるし 2つまで あるく ／ 2 ためる→はなす：うごかない あいてを ぶちかましで 外へ
+  // 3 よける：あいての ぶちかましを よこへ よけて、あいてを とびださせる ／ 4 しあい：とても よわい あいてと 1ばん
+  const KEIKO_TITLE = ['', 'うごく', 'ためて はなす', 'よける', 'しあい'];
+  const MARKS = [[CX + 82, CY + 40], [CX - 74, CY - 50]];
+  const K = { step: 1, st: 'go', t: 0, sub: 0, target: null, fails: 0, sf: 0, skipped: 0, msg: '', hitSeen: -9, bot: { ph: 'wait', t: 0, chT: 1.4 } };
+  let touchUI = false;
+  const keikoDrill = () => G.mode === 'keiko' && K.step < KEIKO_N;
+  function keikoText() {
+    const tch = touchUI, s = K.step;
+    if (s === 1) return (tch ? 'したの <b>まるい所</b>を おして' : '<b>← ↑ → ↓</b> か <b>W A S D</b> で') + '、<br>ひかる <b>○</b> まで あるいてみよう';
+    if (s === 2) return (tch ? '<b>ためる</b>を ながおし' : '<b>スペース</b>を ながおし') + '。ゲージが いっぱいで「<b>いま！</b>」<br>そこで はなして、あいてを 外へ おしだそう';
+    if (s === 3) return 'あいてが ためるよ！ <b>赤い みち</b>から よこへ にげよう<br>' + (tch ? 'まるい所で うごく。' : 'やじるしキーで うごく。') + 'すこし よければ OK';
+    return 'さいごは よわい あいてと 1ばん しょうぶ！<br>はっけよいの間に ためて「のこった！」で はなそう';
+  }
+  function keikoBarUpdate() {
+    const bar = $('keikoBar');
+    if (G.mode !== 'keiko' || G.phase === 'title' || G.phase === 'keikoEnd') { bar.classList.remove('show', 'ok', 'fail', 'compact'); return; }
+    bar.classList.add('show');
+    $('kStep').textContent = 'けいこ ' + K.step + '/' + KEIKO_N;
+    $('kTitle').textContent = KEIKO_TITLE[K.step];
+    $('kText').innerHTML = K.msg || keikoText();
+    bar.classList.toggle('ok', K.st === 'ok'); bar.classList.toggle('fail', K.st === 'fail');
+    $('kSkip').textContent = K.step < KEIKO_N ? 'とばす ▶' : 'おわる ▶';
+  }
+  function renderKeikoBtn() {
+    const b = $('btnKeiko'), rec = !keikoFlag && stats.matches === 0;
+    b.classList.toggle('rec', rec);
+    b.textContent = rec ? '🔰 はじめてなら けいこが おすすめ' : keikoFlag === 'done' ? '🔰 けいこ（れんしゅう）✓' : '🔰 けいこ（れんしゅう）';
+  }
+  function putW(w, x, y, f) { w.x = x; w.y = y; w.vx = w.vy = 0; w.f = f; }
+  function keikoSetup(step) {
+    if (step !== K.step) K.sf = 0;
+    K.step = step; K.st = 'go'; K.t = 0; K.sub = 0; K.msg = ''; K.target = null; K.hitSeen = -9;
+    K.bot = { ph: 'wait', t: 0, chT: 1.4 + Math.min(2, K.sf) * 0.35 };    // しっぱいするほど ゆっくり
+    G.t = 0; G.R = R0; G.slow = 0; G.score = [0, 0]; G.winner = -1; G.boutWin = -1; G.kim = ''; G.paused = false;
+    if (!G.sim) { parts = []; pops = []; rings = []; }
+    if (step === KEIKO_N) { G.auto = [0, KEIKO_LV]; startBout(); }
+    else {
+      G.auto = [0, step === 3 ? -4 : -1]; G.axis = 0; placeWrestlers(); G.phase = 'play'; G.ready = 0;
+      const a = ws[0], b = ws[1];
+      if (step === 1) { putW(a, CX - 62, CY + 8, 0); putW(b, CX + 6, CY + 120, -Math.PI / 2); K.target = MARKS[0]; }
+      else if (step === 2) { putW(a, CX - 22, CY + 6, 0); putW(b, CX + 92, CY + 6, Math.PI); }
+      else { putW(a, CX + 88, CY + 8, Math.PI); putW(b, CX - 32, CY + 8, 0); }
+      if (!G.sim) SFX.clack();
+    }
+    keikoBarUpdate();
+  }
+  function keikoStart(step) {
+    setKeikoFlag('seen');
+    G.mode = 'keiko'; G.paused = false; G.lastResult = null; K.fails = 0; K.skipped = 0; K.step = 0;
+    keys.clear(); releaseAllPointers();
+    overlay.classList.remove('show'); layoutPad();
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    keikoSetup(step >= 1 && step <= KEIKO_N ? step : 1);
+  }
+  function keikoOk(msg) {
+    K.st = 'ok'; K.t = 1.5; K.msg = '🎉 ' + msg; K.sf = 0;
+    const me = ws[0];
+    if (!G.sim) {
+      SFX.ok(); burst(me.x, me.y, 'rgba(255,209,102,', 22, 200, 'star'); rings.push({ x: me.x, y: me.y, r: 12, t: 0, c: 'rgba(83,224,216,' });
+      pops.push({ x: me.x, y: me.y - 46, text: 'できた！', t: 0, color: '#53e0d8', size: 28, life: 1.3 });
+    }
+    keikoBarUpdate();
+  }
+  function keikoFail(msg) {
+    K.st = 'fail'; K.t = 1.2; K.msg = msg; K.fails++; K.sf++;
+    if (!G.sim) { SFX.matta(); pops.push({ x: ws[0].x, y: ws[0].y - 44, text: 'おしい！', t: 0, color: '#ff8fbf', size: 22, life: 1 }); }
+    keikoBarUpdate();
+  }
+  function keikoNext() { if (K.step < KEIKO_N) keikoSetup(K.step + 1); else keikoFinish(); }
+  function keikoSkip() { if (G.mode !== 'keiko' || G.phase === 'keikoEnd') return; K.skipped++; keikoNext(); }
+  function keikoFinish() {
+    G.phase = 'keikoEnd'; G.paused = false; setKeikoFlag('done');
+    keys.clear(); releaseAllPointers(); keikoBarUpdate();
+    $('ovBig').innerHTML = 'けいこ かんりょう！'; $('ovBig').className = 'big p0';
+    $('ovNote').innerHTML = (K.skipped ? 'おつかれさま！ とばした けいこも<br>タイトルの「けいこ」で いつでも できるよ' : 'うごく・ためて はなす・よける が できたね！') + '<br>つぎは CPUと しょうぶして <b>ばんづけ</b>を あげよう';
+    $('ovStats').textContent = 'けいこは せいせき・ばんづけ・ずかんに はいらないよ'; $('zukan').innerHTML = '';
+    if (!G.sim) { SFX.win(); if (!K.skipped) burst(CX, CY - 40, 'rgba(83,224,216,', 30, 240, 'star'); }
+    showOverlay('keiko');
+  }
+  function keikoBoutEnd() {
+    if (G.winner === 0) { keikoFinish(); return; }
+    K.fails++; K.sf++;
+    K.msg = 'おしい！ もういちど しょうぶ。<br>ためて はなすと、あいてを おしだしやすいよ';
+    G.score = [0, 0]; G.winner = -1; startBout(); keikoBarUpdate();
+  }
+  // けいこ3の あいて：すこし まってから ためて、ねらいを きめて ぶちかまし
+  function keikoBot(i, h) {
+    const me = ws[i], b = K.bot;
+    if (K.step !== 3 || K.st !== 'go' || G.phase !== 'play') { me.lockF = null; return { x: 0, y: 0, c: false }; }
+    b.t += h;
+    if (b.ph === 'wait') { if (b.t >= 0.7) { b.ph = 'charge'; b.t = 0; } return { x: 0, y: 0, c: false }; }
+    if (b.ph === 'charge') {
+      if (b.t >= 0.5 && me.lockF === null) { me.lockF = me.f; if (!G.sim) { SFX.brace(); pops.push({ x: me.x, y: me.y - 44, text: 'くるよ！', t: 0, color: '#ff8fbf', size: 18, life: 0.8 }); } }
+      if (b.t >= b.chT) { b.ph = 'done'; b.t = 0; me.lockF = null; return { x: 0, y: 0, c: false }; }    // はなす → ぶちかまし
+      return { x: 0, y: 0, c: true };
+    }
+    return { x: 0, y: 0, c: false };
+  }
+  function keikoUpdate(dt) {
+    const me = ws[0], op = ws[1];
+    if (K.st === 'ok') { K.t -= dt; if (K.t <= 0) keikoNext(); return; }
+    if (K.st === 'fail') { K.t -= dt; if (K.t <= 0) keikoSetup(K.step); return; }
+    if (K.step === KEIKO_N || G.phase !== 'play') return;
+    const out = w => dist(w) > G.R;
+    if (K.step === 1) {
+      if (out(me)) return keikoFail('わの 外に 出ちゃった。<br>わの 中で ひかる ○ へ あるこう');
+      const [tx, ty] = K.target;
+      if (Math.hypot(me.x - tx, me.y - ty) < 26) {
+        if (!G.sim) { burst(tx, ty, 'rgba(255,209,102,', 14, 150, 'star'); rings.push({ x: tx, y: ty, r: 10, t: 0, c: 'rgba(255,209,102,' }); }
+        if (K.sub === 0) {
+          K.sub = 1; K.target = MARKS[1]; K.msg = 'いいね！ つぎの ひかる <b>○</b> へ。<br>ななめにも あるけるよ';
+          if (!G.sim) { SFX.ding(); pops.push({ x: tx, y: ty - 34, text: 'OK！', t: 0, color: '#ffd166', size: 20, life: 0.8 }); }
+          keikoBarUpdate();
+        } else { K.target = null; keikoOk('できた！ じゆうに あるけるね'); }
+      }
+    } else if (K.step === 2) {
+      if (out(op)) {
+        if (G.t - op.lastHitT < 1.6) { op.out = true; G.slow = 0.45; keikoOk('ドーン！ おしだせた！<br>ためるほど つよく とばせるよ'); }
+        else keikoFail('ぶちかまし（ためて はなす）で おしだそう');
+      } else if (out(me)) keikoFail('おしい！ じぶんが とびだした。<br>あいての ほうを むいて はなそう');
+      else if (op.lastHitT > K.hitSeen && op.state === 'normal' && Math.hypot(op.vx, op.vy) < 12) {
+        K.hitSeen = op.lastHitT;
+        K.msg = 'あたった！ でも もっと ためよう。<br>ゲージが いっぱいの「<b>いま！</b>」で はなす'; keikoBarUpdate();
+      }
+    } else if (K.step === 3) {
+      const b = K.bot;
+      if (out(op)) {
+        if (b.ph === 'done' && !op.hitDone && G.t - op.lastHitT > 1) { op.out = true; G.slow = 0.45; keikoOk('よけた！ あいてが じぶんで とびだした<br>これが「いなし」だよ'); }
+        else keikoFail('いまは よける れんしゅう！<br>赤い みちから よこへ にげよう');
+      } else if (out(me)) keikoFail(op.hitDone ? 'あたっちゃった！ 赤い みちの<br>よこへ すこしだけ にげよう' : 'わの 外に 出ちゃった。<br>すこしだけ よこへ よけよう');
+      else if (b.ph === 'done' && op.state === 'normal' && Math.hypot(op.vx, op.vy) < 20) keikoFail(op.hitDone ? 'あたっちゃった！ 赤い みちの<br>よこへ にげよう' : 'もういちど！ 赤い みちから<br>よこへ にげよう');
+    }
+  }
+  // けいこの えがき（からだの 下）
+  function drawKeikoUnder() {
+    if (G.mode !== 'keiko' || G.phase === 'title' || G.phase === 'keikoEnd') return;
+    const me = ws[0], op = ws[1], pulse = 0.5 + 0.5 * Math.sin(G.real * 6);
+    if (K.step === 1 && K.target && K.st === 'go') {
+      const [tx, ty] = K.target;
+      ctx.save(); ctx.setLineDash([6, 9]); ctx.lineDashOffset = -G.real * 26; ctx.strokeStyle = 'rgba(255,209,102,.5)'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(me.x, me.y); ctx.lineTo(tx, ty); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16 + pulse * 14;
+      ctx.fillStyle = 'rgba(255,209,102,' + (0.16 + pulse * 0.16) + ')'; ctx.beginPath(); ctx.arc(tx, ty, 27, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(tx, ty, 19 + pulse * 7, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#fff3cf'; ctx.beginPath(); ctx.arc(tx, ty, 5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+    if (K.step === 2 && K.st === 'go' && !op.out) {
+      ctx.save(); ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = 12 + pulse * 10; ctx.strokeStyle = 'rgba(255,143,191,' + (0.5 + pulse * 0.4) + ')'; ctx.lineWidth = 3;
+      ctx.setLineDash([8, 6]); ctx.beginPath(); ctx.arc(op.x, op.y, PR + 14 + pulse * 3, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    }
+    if (K.step === 3 && K.st === 'go' && (K.bot.ph === 'charge' || op.state === 'dash')) {
+      const lock = op.lockF !== null || op.state === 'dash';
+      ctx.save(); ctx.translate(op.x, op.y); ctx.rotate(op.f);
+      ctx.fillStyle = 'rgba(255,60,110,' + (lock ? 0.26 + pulse * 0.14 : 0.13) + ')'; ctx.fillRect(PR, -PR - 4, 280, PR * 2 + 8);
+      ctx.strokeStyle = 'rgba(255,120,170,' + (lock ? 0.9 : 0.4) + ')'; ctx.lineWidth = 2; ctx.setLineDash([9, 7]); ctx.lineDashOffset = -G.real * 40;
+      ctx.beginPath(); ctx.moveTo(PR, -PR - 4); ctx.lineTo(PR + 280, -PR - 4); ctx.moveTo(PR, PR + 4); ctx.lineTo(PR + 280, PR + 4); ctx.stroke(); ctx.restore();
+    }
+  }
+  // けいこの えがき（からだの 上：「いま！」など）
+  function drawKeikoOver() {
+    if (G.mode !== 'keiko' || G.phase === 'title' || G.phase === 'keikoEnd') return;
+    const me = ws[0], op = ws[1];
+    if (K.step === 1 && K.target && K.st === 'go') txt('ここ', K.target[0], K.target[1] - 40, 16, '#ffd166', 'center', 4);
+    if (K.step === 2 && K.st === 'go' && !op.out && !me.charging && me.state === 'normal') txt('あいて', op.x, op.y - 46, 14, '#ff8fbf', 'center', 4);
+    if (me.charging && G.phase === 'play' && K.st === 'go' && (K.step === 2 || K.step === KEIKO_N)) {
+      if (me.full) { const sc = 1 + 0.12 * Math.sin(G.real * 14); ctx.save(); ctx.translate(me.x, me.y - 56); ctx.scale(sc, sc); txt('いま！ はなして！', 0, 0, 22, '#ff8fbf', 'center', 5); ctx.restore(); }
+      else if (K.step === 2) txt('ためて… ' + Math.round(me.charge * 100) + '%', me.x, me.y - 54, 16, '#ffd166', 'center', 4);
+    }
+    if (K.step === 3 && K.st === 'go' && K.bot.ph === 'charge') {
+      const f = op.f, lx = me.x - op.x, ly = me.y - op.y, ahead = lx * Math.cos(f) + ly * Math.sin(f), lat = Math.abs(-lx * Math.sin(f) + ly * Math.cos(f));
+      if (ahead > 0 && lat < PR * 2 + 4) {
+        const sc = 1 + 0.1 * Math.sin(G.real * 12);
+        ctx.save(); ctx.translate(me.x, me.y - 54); ctx.scale(sc, sc); txt(op.lockF !== null ? 'よこへ にげて！' : 'ねらわれてる！', 0, 0, 17, '#ff8fbf', 'center', 4); ctx.restore();
+      } else if (op.lockF !== null) txt('そこなら あたらない！', me.x, me.y - 54, 15, '#53e0d8', 'center', 4);
+    }
+  }
   let last = performance.now();
   function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; if (!G.manual) update(dt); draw(); drawPad(); requestAnimationFrame(loop); }
 
@@ -888,11 +1129,13 @@
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
   muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(KEY + 'mute', muted ? '1' : '0'); } catch (e) {} drawMute(); audio(); SFX.tap(); muteBtn.blur(); });
   const GAME_KEYS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Enter', 'NumpadEnter', 'Numpad0', 'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyJ', 'KeyZ', 'KeyF'];
+  function setTouchUI(v) { if (touchUI === v) return; touchUI = v; if (G.mode === 'keiko' && K.st === 'go' && !K.msg) keikoBarUpdate(); }
   document.addEventListener('keydown', e => {
+    if (GAME_KEYS.includes(e.code)) setTouchUI(false);
     if (overlay.classList.contains('show')) {
       if ((e.code === 'Enter' || e.code === 'Space') && !e.repeat) {
         e.preventDefault(); audio();
-        if (G.paused) pause(false); else if (G.phase === 'end') startMatch(); else if (G.phase === 'title') startMatch('cpu');
+        if (G.paused) pause(false); else if (G.phase === 'end') startMatch(); else if (G.phase === 'title' || G.phase === 'keikoEnd') startMatch('cpu');
       }
       return;
     }
@@ -915,7 +1158,8 @@
     z.addEventListener('contextmenu', e => e.preventDefault()); d.addEventListener('contextmenu', e => e.preventDefault());
   }
   function canvasPos(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height }; }
-  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (G.mode !== 'cpu' || G.phase === 'title') return; const p = canvasPos(e); steer = { id: e.pointerId, x: p.x, y: p.y }; });
+  window.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') setTouchUI(true); }, true);
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (G.mode === '2p' || G.phase === 'title') return; const p = canvasPos(e); steer = { id: e.pointerId, x: p.x, y: p.y }; });
   cv.addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('pointermove', e => {
     for (let i = 0; i < 2; i++) if (stick[i].id === e.pointerId) stickMove(i, e);
@@ -930,6 +1174,11 @@
   $('btn2p').addEventListener('click', () => { audio(); startMatch('2p'); });
   $('btnAgain').addEventListener('click', () => { audio(); startMatch(); });
   $('btnTitle').addEventListener('click', () => { audio(); SFX.tap(); showTitle(); });
+  $('btnKeiko').addEventListener('click', () => { audio(); keikoStart(1); });
+  $('btnKeikoGo').addEventListener('click', () => { audio(); startMatch('cpu'); });
+  $('btnKeikoTitle').addEventListener('click', () => { audio(); SFX.tap(); showTitle(); });
+  $('kSkip').addEventListener('click', () => { audio(); SFX.tap(); keikoSkip(); $('kSkip').blur(); });
+  $('kQuit').addEventListener('click', () => { audio(); SFX.tap(); showTitle(); });
   $('btnResume').addEventListener('click', () => { audio(); pause(false); });
   document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); SFX.tap(); setLevel(+b.dataset.l); }));
   $('pauseBtn').addEventListener('click', () => { audio(); if (G.paused) pause(false); else pause(true); $('pauseBtn').blur(); });
@@ -943,7 +1192,11 @@
       paused: G.paused, overlay: overlay.classList.contains('show'), muted,
       ws: ws.map(w => ({ x: w.x, y: w.y, vx: w.vx, vy: w.vy, f: w.f, state: w.state, charge: w.charge, charging: w.charging, out: w.out, d: dist(w) })),
       inputs: inputs.map(p => ({ x: p.x, y: p.y, c: p.c })), stats: JSON.parse(JSON.stringify(stats)), tally2p: G.tally2p.slice(), rank: RANKS[rankOf(stats.pts)],
+      keiko: G.mode === 'keiko' ? { step: K.step, st: K.st, sub: K.sub, target: K.target ? K.target.slice() : null, fails: K.fails, skipped: K.skipped, bot: K.bot.ph, lock: ws[1].lockF !== null, msg: K.msg } : null,
+      keikoFlag, touchUI,
     }),
+    keiko: n => keikoStart(n),
+    touchUI: v => setTouchUI(!!v),
     consts: () => ({ W, H, CX, CY, R0, RMIN, PR, SHRINK_AT, SHRINK_V, BEST, READY_T }),
     start: (m, lv) => { if (lv) setLevel(lv); startMatch(m || 'cpu'); },
     title: () => showTitle(),
@@ -959,10 +1212,11 @@
     seed: s => { seed = s >>> 0; },
     aiParams: (lv, o) => { if (o) Object.assign(AI[lv], o); return Object.assign({}, AI[lv]); },
     simMatch,
-    resetSave: () => { try { localStorage.removeItem(KEY + 'stats'); localStorage.removeItem(KEY + 'mute'); localStorage.removeItem(KEY + 'level'); } catch (e) {} load(); drawMute(); if (G.phase === 'title') showTitle(); },
+    resetSave: () => { try { localStorage.removeItem(KEY + 'stats'); localStorage.removeItem(KEY + 'mute'); localStorage.removeItem(KEY + 'level'); localStorage.removeItem(KEY + 'keiko'); } catch (e) {} load(); drawMute(); if (G.phase === 'title') showTitle(); },
     pause: v => pause(!!v),
   };
 
+  try { touchUI = navigator.maxTouchPoints > 0 || matchMedia('(pointer: coarse)').matches; } catch (e) {}
   drawMute(); showTitle(); requestAnimationFrame(loop);
 })();
 </script>
