@@ -88,9 +88,9 @@
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="おしているあいだ上へ、はなすと下へ。まいかい形がかわる どうくつを、かべにぶつからずに どこまでとべるか。すすむほど はやく せまくなり、クリスタルのはしらも出てくる。250mごとに けしきがかわり、★をあつめると ひこうきの色がふえる。2モードでベストきょりをきろく。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="おしているあいだ上へ、はなすと下へ。さいしょは かべに ふれても へいきな れんしゅうから はじまるので、はじめてでも あんしん。250mごとに けしきが かわり、ひこうきが だんだん かるく すばやくなって、クリスタルのはしらも出てくる。★で ひこうきの色がふえる。2モードでベストきょりをきろく。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/107-cave-flight/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"どうくつフライト","description":"おしているあいだ上へ、はなすと下へ。まいかい形がかわる どうくつを、かべにぶつからずに どこまでとべるか。すすむほど はやく せまくなり、クリスタルのはしらも出てくる。250mごとに けしきがかわり、★をあつめると ひこうきの色がふえる。2モードでベストきょりをきろく。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/107-cave-flight/index.html","inLanguage":"ja","genre":"ACTION","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"どうくつフライト","description":"おしているあいだ上へ、はなすと下へ。さいしょは かべに ふれても へいきな れんしゅうから はじまるので、はじめてでも あんしん。250mごとに けしきが かわり、ひこうきが だんだん かるく すばやくなって、クリスタルのはしらも出てくる。★で ひこうきの色がふえる。2モードでベストきょりをきろく。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/107-cave-flight/index.html","inLanguage":"ja","genre":"ACTION","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="107"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -139,7 +139,8 @@
 <div class="help">
   <b>あそびかた</b>：がめんを おしているあいだ ひこうきが 上へ、はなすと 下へ すすみます。<br>
   どうくつは まいかい ちがう形。すすむほど はやく、せまくなり、とちゅうから クリスタルの はしらも 出てきます。<br>
-  250mごとに どうくつの けしきが かわるよ。★を あつめて ひこうきの いろを ふやそう。<br>
+  さいしょの すこしは <b>れんしゅう</b>。かべに ふれても ぽよんと はねかえるので、おす かげんを ためしてね。<br>
+  250mごとに どうくつの けしきが かわり、ひこうきが すこしずつ かるく すばやく なるよ。★を あつめて ひこうきの いろを ふやそう。<br>
   <b>パソコン</b>：スペース・↑キー・マウスを おしているあいだ 上へ。
 </div>
 
@@ -148,13 +149,19 @@
   'use strict';
 
   // ===== きまり =====
-  const W = 360, H = 480, SEG = 8, SHIPSX = 96, R = 9;
-  const ACC_UP = -1250, ACC_DN = 900, VUP = 330, VDN = 380, FDT = 1 / 60;
+  const W = 360, H = 480, SEG = 8, SHIPSX = 96, R = 9, FDT = 1 / 60;
+  const PHYS2 = 1;
+  // ひこうきの うごき：SOFT＝はじめの ふわっと、HARD＝きびきび（すすむと だんだん こちらへ）
+  const SOFT = { up: -500, dn: 380, vup: 160, vdn: 185 };
+  const HARD = { up: -1250, dn: 900, vup: 330, vdn: 380 };
+  const TH_N = 6;               // おしはじめ／はなしはじめを なめらかにする だんかい
   const RAMP = 20000;           // 2000m で いちばん むずかしく なる
-  const ZONE_M = 250;
+  const ZONE_M = 250, ZONE_X = ZONE_M * 10;
+  const PRACTICE = 800;         // さいしょの 80m は まっすぐ ひろい れんしゅう区間
+  const PRACTICE_FIRST = 800, PRACTICE_SHORT = 300;  // ぶつかっても だいじょうぶな ながさ（はじめて／2かいめから）
   const MODES = {
-    easy:   { name: 'やさしい', gap0: 285, gapMin: 172, vx0: 135, vx1: 235, slope: 0.36, pil0: 1600, open0: 0.68, open1: 0.56 },
-    normal: { name: 'ふつう',   gap0: 245, gapMin: 136, vx0: 160, vx1: 290, slope: 0.46, pil0: 1100, open0: 0.62, open1: 0.5 },
+    easy:   { name: 'やさしい', gap0: 285, gapMin: 172, vx0: 135, vx1: 235, slope: 0.36, pil0: 3000, open0: 0.68, open1: 0.56, slow: 0.2, wide: 60, feel: [0, 0.35, 0.6, 0.85] },
+    normal: { name: 'ふつう',   gap0: 245, gapMin: 136, vx0: 160, vx1: 290, slope: 0.46, pil0: 2600, open0: 0.62, open1: 0.5, slow: 0.2, wide: 65, feel: [0, 0.45, 0.75, 1] },
   };
   const ZONES = [
     { n: 'あおい どうくつ',       w1: '#16465e', w2: '#0a1c30', g: '#53e0d8', b1: '#081322', b2: '#0f1d38' },
@@ -183,12 +190,26 @@
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
+  const smooth = t => t * t * (3 - 2 * t);
   function diffAt(x) { return clamp((x - 600) / RAMP, 0, 1); }
-  function vxAt(P, x) { return P.vx0 + (P.vx1 - P.vx0) * diffAt(x); }
+  // じょばん（〜200m）は ゆっくり・ひろめ。200m〜400m で ふつうに もどる
+  function introAt(x) { return x <= 2000 ? 1 : 1 - smooth(clamp((x - 2000) / 2000, 0, 1)); }
+  // ひこうきの きびきびさ：ゾーンごとに 1だんずつ（ゾーンの はじめ 30m で なめらかに かわる）
+  function feelLv(P, z) { return z < 0 ? 0 : P.feel[Math.min(z, P.feel.length - 1)]; }
+  function feelAt(P, x) {
+    const z = Math.floor(Math.max(0, x) / ZONE_X), into = Math.max(0, x) - z * ZONE_X;
+    const a = feelLv(P, z - 1), b = feelLv(P, z);
+    return a + (b - a) * smooth(clamp(into / 300, 0, 1));
+  }
+  function vxAt(P, x) { return (P.vx0 + (P.vx1 - P.vx0) * diffAt(x)) * (1 - P.slow * introAt(x)); }
+  function vupAt(P, x) { return SOFT.vup + (HARD.vup - SOFT.vup) * feelAt(P, x); }
   function gapAt(P, x) {
     const d = diffAt(x), e = d * (2 - d);
     let g = P.gap0 + (P.gapMin - P.gap0) * e;
     if (x < 600) g += 40 * (1 - Math.max(0, x) / 600);
+    g += P.wide * introAt(x);
+    // れんしゅう区間は かべが 見える くらいに ひろく（上下 55px ずつ）
+    if (x < PRACTICE) g = Math.max(g, g + (370 - g) * clamp((PRACTICE - x) / 300, 0, 1));
     return g;
   }
 
@@ -198,13 +219,13 @@
     const top = [], bot = [], pil = [], cen = [];
     const pillars = [], stars = [];
     const ph1 = rnd() * 6.28, ph2 = rnd() * 6.28, ph3 = rnd() * 6.28, ph4 = rnd() * 6.28;
-    let sx0 = 0, sx1 = 600, c0 = H / 2, c1 = H / 2;
+    let sx0 = 0, sx1 = PRACTICE, c0 = H / 2, c1 = H / 2;
     let nextP = P.pil0 + rnd() * 300, nextS = 420, pLeft = 0, pSide = 0, pOpen = 0;
     function gen(k) {
       const x = k * SEG, d = diffAt(x);
       if (x >= sx1) {
         const L = 220 + rnd() * 260;
-        const ms = (P.slope + 0.1 * d) * VUP / vxAt(P, x);
+        const ms = (P.slope + 0.1 * d) * vupAt(P, x) / vxAt(P, x);
         const md = ms * L * 2 / Math.PI;
         const g2 = gapAt(P, x + L), lo = g2 / 2 + 24, hi = H - g2 / 2 - 24;
         const dl = (rnd() * 2 - 1) * md * (0.55 + 0.45 * d);
@@ -267,10 +288,26 @@
   }
 
   // ===== うごき（ゲームと しらべる道具で 同じ式を つかう） =====
-  function phys(s, hold, vx) {
-    s.vy = clamp(s.vy + (hold ? ACC_UP : ACC_DN) * FDT, -VUP, VDN);
+  // s = { x, y, vy, th }。th は ふかしぐあい（0〜TH_N）で、はじめは ゆっくり 切りかわる
+  function physAt(P, x) {
+    const f = feelAt(P, x), L = (a, b) => a + (b - a) * f;
+    return { f, up: L(SOFT.up, HARD.up), dn: L(SOFT.dn, HARD.dn), vup: L(SOFT.vup, HARD.vup), vdn: L(SOFT.vdn, HARD.vdn), st: 1 + Math.round(5 * f) };
+  }
+  function phys(s, hold, P) {
+    const k = physAt(P, s.x);
+    const th = clamp((s.th || 0) + (hold ? k.st : -k.st), 0, TH_N);
+    s.th = th;
+    const acc = k.dn + (k.up - k.dn) * th / TH_N;
+    s.vy = clamp(s.vy + acc * FDT, -k.vup, k.vdn);
     s.y += s.vy * FDT;
-    s.x += vx * FDT;
+    s.x += vxAt(P, s.x) * FDT;
+  }
+  // れんしゅう区間：かべに ふれても ぽよんと はねかえる
+  function safeBounce(cave, s) {
+    let top = -1e9, bot = 1e9;
+    for (const ox of [-9, 0, 9]) { const q = cave.at(s.x + ox); top = Math.max(top, q.top); bot = Math.min(bot, q.bot); }
+    if (s.y - (top + bot) / 2 < 0) { s.y = top + R + 1.5; s.vy = Math.abs(s.vy) * 0.3 + 25; }
+    else { s.y = bot - R - 1.5; s.vy = -Math.abs(s.vy) * 0.3 - 25; }
   }
   function hitTest(cave, x, y) {
     const pts = [[0, R], [-9, 6], [9, 6]];
@@ -286,26 +323,26 @@
   const DEC = 4;
   function solve(seed, mode, toM, wantPlan) {
     const P = MODES[mode], cave = makeCave(seed, mode), target = toM * 10;
-    let layer = [{ y: H / 2, vy: 0, p: -1, a: 0 }];
+    let layer = [{ y: H / 2, vy: 0, th: 0, p: -1, a: 0 }];
     const layers = wantPlan ? [layer] : null;
     let cx = 0, maxStates = 0;
-    const xs = new Array(DEC), vs = new Array(DEC);
     while (cx < target) {
-      let xx = cx;
-      for (let f = 0; f < DEC; f++) { vs[f] = vxAt(P, xx); xx += vs[f] * FDT; xs[f] = xx; }
+      let nx = cx;
       const next = new Map();
       for (let i = 0; i < layer.length; i++) {
         const st = layer[i];
         for (let a = 1; a >= 0; a--) {
-          const s = { x: cx, y: st.y, vy: st.vy };
+          const s = { x: cx, y: st.y, vy: st.vy, th: st.th };
           let dead = false;
-          for (let f = 0; f < DEC; f++) { phys(s, a, vs[f]); if (hitTest(cave, s.x, s.y)) { dead = true; break; } }
+          for (let f = 0; f < DEC; f++) { phys(s, a, P); if (hitTest(cave, s.x, s.y)) { dead = true; break; } }
           if (dead) continue;
-          const key = Math.round(s.y / 3) * 64 + Math.round((s.vy + 400) / 30);
-          if (!next.has(key)) next.set(key, { y: s.y, vy: s.vy, p: i, a });
+          nx = s.x;
+          const key = (Math.round(s.y / 3) * 64 + Math.round((s.vy + 400) / 30)) * 8 + s.th;
+          if (!next.has(key)) next.set(key, { y: s.y, vy: s.vy, th: s.th, p: i, a });
         }
       }
-      cx = xs[DEC - 1];
+      if (nx === cx) { let xx = cx; for (let f = 0; f < DEC; f++) xx += vxAt(P, xx) * FDT; nx = xx; }
+      cx = nx;
       if (!next.size) return { ok: false, reached: Math.floor(cx / 10), maxStates };
       layer = [...next.values()];
       maxStates = Math.max(maxStates, layer.length);
@@ -320,17 +357,39 @@
     }
     return res;
   }
-  // かんたんな うごかし方で どこまで いけるか（れんだ・おしっぱなし など）
-  function botRun(seed, mode, kind, maxM) {
+  // かんたんな うごかし方で どこまで いけるか（れんだ・おしっぱなし・はじめての人・なれた人）
+  // novice＝見てから 0.3びょう おくれて 反応し、おしすぎる人。expert＝すばやく 先を よむ人
+  // ねらう高さは 0.1〜0.7びょう先で いちばん せまい ところの まん中（はしらの すきまも ねらう）
+  const BOTS = {
+    novice: { delay: 0.30, db: 14, hMin: 0.24, hExtra: 0.14, rMin: 0.14, pred: 0 },
+    expert: { delay: 0.10, db: 4, hMin: 0, hExtra: 0, rMin: 0, pred: 0.18 },
+  };
+  function botAim(cave, P, x) {
+    let g = 1e9, m = H / 2;
+    const vx = vxAt(P, x);
+    for (let k = 1; k <= 7; k++) { const q = cave.at(x + vx * 0.1 * k); if (q.bot - q.top < g - 1) { g = q.bot - q.top; m = (q.top + q.bot) / 2; } }
+    return m;
+  }
+  function botRun(seed, mode, kind, maxM, safeX) {
     const P = MODES[mode], cave = makeCave(seed, mode), rnd = mulberry32(seed * 31 + 7);
-    const s = { x: 0, y: H / 2, vy: 0 };
+    const s = { x: 0, y: H / 2, vy: 0, th: 0 }, B = BOTS[kind], hist = [];
+    const dN = B ? Math.round(B.delay / FDT * (0.85 + rnd() * 0.3)) : 0;
     let hold = 0, tLeft = 0;
-    for (let f = 0; f < 60 * 600; f++) {
+    for (let f = 0; f < 60 * 900; f++) {
       if (kind === 'hold') hold = 1;
       else if (kind === 'none') hold = 0;
-      else { tLeft -= FDT; if (tLeft <= 0) { hold = hold ? 0 : 1; tLeft = 0.06 + rnd() * 0.3; } }
-      phys(s, hold, vxAt(P, s.x));
-      if (hitTest(cave, s.x, s.y)) break;
+      else if (B) {
+        hist.push(s.y + s.vy * B.pred - botAim(cave, P, s.x));
+        const e = hist[Math.max(0, hist.length - 1 - dN)];
+        tLeft -= FDT;
+        if (tLeft <= 0) {
+          if (!hold && e > B.db) { hold = 1; tLeft = B.hMin + rnd() * B.hExtra; }
+          else if (hold && e < -B.db * 0.5) { hold = 0; tLeft = B.rMin + rnd() * B.hExtra * 0.5; }
+        }
+      } else { tLeft -= FDT; if (tLeft <= 0) { hold = hold ? 0 : 1; tLeft = 0.06 + rnd() * 0.3; } }
+      phys(s, hold, P);
+      const h = hitTest(cave, s.x, s.y);
+      if (h) { if (s.x < (safeX || 0) && h !== 'pillar') safeBounce(cave, s); else break; }
       if (s.x >= maxM * 10) break;
     }
     return Math.floor(s.x / 10);
@@ -404,6 +463,8 @@
     record() { [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.18, 'square', 0.06, 0, i * 0.09)); },
     crash() { noise(0.45, 0.32, 700); tone(220, 0.4, 'sawtooth', 0.09, 50); },
     buzz() { tone(150, 0.15, 'square', 0.06); },
+    boing() { tone(330, 0.16, 'sine', 0.1, 520); tone(660, 0.1, 'triangle', 0.04, 0, 0.05); },
+    ready() { tone(784, 0.1, 'triangle', 0.08); tone(1175, 0.18, 'triangle', 0.08, 0, 0.09); },
     unlock() { [659, 880, 1109, 1319, 1760].forEach((f, i) => tone(f, 0.2, 'triangle', 0.08, 0, i * 0.1)); },
   };
   function engineUpdate() {
@@ -422,21 +483,29 @@
     phase: 'title', mode: 'normal', seed: 1, cave: null,
     x: 0, y: H / 2, vy: 0, hold: false, t: 0, playT: 0,
     runStars: 0, crashT: 0, cause: '', zone: 0, newBest: false, bestShown: false,
-    banner: '', bannerT: 0, auto: true, shake: 0, flash: 0, lastResult: null, hint: false,
+    banner: '', banner2: '', bannerT: 0, auto: true, shake: 0, flash: 0, lastResult: null, hint: false,
+    th: 0, guide: '', safeX: 0, pracDone: false, bumps: 0, bumpT: 0,
   };
+  // ゾーンが かわった ときの ひとこと（2ばんめの ゾーンから）
+  const ZONE_TIPS = ['', 'クリスタルの はしらが 出てくるよ', 'ひこうきが また かるく なったよ', 'ひこうきが いちばん かるく なったよ'];
   let parts = [], pops = [];
 
   function startRun(mode, seed) {
     G.mode = mode; G.seed = (seed >>> 0) || 1;
     G.cave = makeCave(G.seed, mode);
-    G.x = 0; G.y = H / 2; G.vy = 0; G.hold = false; G.t = 0; G.playT = 0;
+    G.x = 0; G.y = H / 2; G.vy = 0; G.th = 0; G.hold = false; G.t = 0; G.playT = 0;
     G.runStars = 0; G.crashT = 0; G.cause = ''; G.zone = 0; G.newBest = false; G.bestShown = false;
-    G.banner = ''; G.bannerT = 0; G.shake = 0; G.flash = 0; G.hint = !save.seen;
+    G.banner = ''; G.banner2 = ''; G.bannerT = 0; G.shake = 0; G.flash = 0; G.hint = !save.seen;
+    // はじめての人は 大きな あそびかた＋ながい れんしゅう、2かいめからは みじかく
+    G.guide = save.seen ? 'short' : 'full';
+    G.safeX = save.seen ? PRACTICE_SHORT : PRACTICE_FIRST;
+    G.pracDone = false; G.bumps = 0; G.bumpT = 0;
     G.phase = 'ready';
     parts = []; pops = [];
     showOverlay(null);
   }
   function dist() { return Math.floor(G.x / 10); }
+  function setBanner(txt, sub, dur) { G.banner = txt; G.banner2 = sub; G.bannerT = dur; G.bannerT0 = dur; }
   function press(on) {
     if (on) {
       if (G.phase === 'ready') { G.phase = 'play'; SFX.start(); }
@@ -472,6 +541,7 @@
   function update(dt) {
     G.t += dt;
     if (G.bannerT > 0) G.bannerT -= dt;
+    if (G.bumpT > 0) G.bumpT -= dt;
     if (G.shake > 0) G.shake -= dt;
     if (G.flash > 0) G.flash -= dt;
     for (const p of parts) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.g || 0) * dt; }
@@ -481,9 +551,9 @@
     if (G.phase === 'play') {
       G.playT += dt;
       const P = MODES[G.mode];
-      const s = { x: G.x, y: G.y, vy: G.vy };
-      phys(s, G.hold, vxAt(P, G.x));
-      G.x = s.x; G.y = s.y; G.vy = s.vy;
+      const s = { x: G.x, y: G.y, vy: G.vy, th: G.th };
+      phys(s, G.hold, P);
+      G.x = s.x; G.y = s.y; G.vy = s.vy; G.th = s.th;
       // ★
       for (const st of G.cave.stars) {
         if (st.got || Math.abs(st.x - G.x) > 24) continue;
@@ -496,16 +566,28 @@
       // ゾーン
       const m = dist(), z = Math.floor(m / ZONE_M);
       if (z > G.zone) {
-        G.zone = z; G.banner = 'ゾーン' + (z + 1) + '　' + ZONES[z % ZONES.length].n; G.bannerT = 2.2; SFX.zone();
+        G.zone = z; setBanner('ゾーン' + (z + 1) + '　' + ZONES[z % ZONES.length].n, ZONE_TIPS[z] || '', ZONE_TIPS[z] ? 2.8 : 2.2); SFX.zone();
         for (let i = 0; i < 26; i++) parts.push({ x: G.x + 20 + Math.random() * 200, y: Math.random() * H, vx: -60, vy: -20 - Math.random() * 40, life: 1.2, max: 1.2, c: ZONES[z % ZONES.length].g, r: 2 });
       }
       const best = save.best[G.mode] || 0;
-      if (!G.bestShown && best > 0 && m > best) { G.bestShown = true; G.banner = 'しんきろく！'; G.bannerT = 1.8; SFX.record(); }
+      if (!G.bestShown && best > 0 && m > best) { G.bestShown = true; setBanner('しんきろく！', '', 1.8); SFX.record(); }
+      // れんしゅう区間の おわり
+      if (!G.pracDone && G.x >= G.safeX) {
+        G.pracDone = true; G.hint = false;
+        if (G.bannerT <= 0) setBanner('ここから ほんばん！', G.guide === 'full' ? 'かべに ぶつかると おわりだよ' : '', G.guide === 'full' ? 2.2 : 1.4);
+        SFX.ready();
+      }
       // けむり
       if (Math.random() < 0.7) parts.push({ x: G.x - 16, y: G.y + (Math.random() * 4 - 2), vx: -40 - Math.random() * 40, vy: (Math.random() * 2 - 1) * 15, life: 0.35, max: 0.35, c: G.hold ? '#ffd166' : shipColor(0), r: G.hold ? 2.4 : 1.6 });
       const h = hitTest(G.cave, G.x, G.y);
-      if (h) crash(h);
-      if (G.hint && G.playT > 6) G.hint = false;
+      if (h && h !== 'pillar' && G.x < G.safeX) {
+        // れんしゅう中は ぽよんと はねかえる
+        safeBounce(G.cave, s); G.y = s.y; G.vy = s.vy; G.bumps++;
+        if (G.bumpT <= 0) {
+          SFX.boing(); G.bumpT = 0.35;
+          pops.push({ x: G.x + 6, y: G.y + (G.vy > 0 ? -14 : 24), txt: 'ぽよん！', life: 0.8, c: '#53e0d8' });
+        }
+      } else if (h) crash(h);
     } else if (G.phase === 'crash') {
       G.crashT += dt;
       if (G.crashT >= 0.9) endRun();
@@ -545,13 +627,14 @@
     }
     ctx.closePath();
   }
-  function drawShip(x, y, ang, alpha) {
+  function drawShip(x, y, ang, alpha, flame) {
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.translate(x, y); ctx.rotate(ang);
     const c = shipColor(0), d = shipColor(1);
-    if (G.hold && G.phase === 'play') {
-      const fl = 10 + Math.random() * 8;
+    const fk = flame !== undefined ? flame : (G.phase === 'play' ? G.th / TH_N : 0);
+    if (fk > 0.05) {
+      const fl = (10 + Math.random() * 8) * (0.4 + 0.6 * fk);
       const fg = ctx.createLinearGradient(-15, 0, -15 - fl, 0);
       fg.addColorStop(0, '#fff6c8'); fg.addColorStop(0.5, '#ffd166'); fg.addColorStop(1, 'rgba(255,95,162,0)');
       ctx.fillStyle = fg;
@@ -661,6 +744,20 @@
         ctx.restore();
       }
     }
+    // れんしゅう区間の おわりの せん
+    if (playing && G.safeX > 0) {
+      const lx = G.safeX - cam;
+      if (lx > -10 && lx < W + 10) {
+        const q = cave.at(G.safeX);
+        ctx.save();
+        ctx.setLineDash([3, 6]); ctx.strokeStyle = 'rgba(83,224,216,.75)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(lx, q.top); ctx.lineTo(lx, q.bot); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#53e0d8'; ctx.font = '13px DotGothic16, monospace'; ctx.textAlign = 'center';
+        ctx.fillText('ここから', lx, q.bot - 30); ctx.fillText('ほんばん', lx, q.bot - 14);
+        ctx.restore();
+      }
+    }
     // ★
     for (const s of cave.stars) {
       if (s.got || s.x < cam - 20 || s.x > cam + W + 20) continue;
@@ -726,19 +823,22 @@
       ctx.fillText('ゾーン' + (Math.floor(m / ZONE_M) + 1), 10, 52);
     }
     if (G.bannerT > 0) {
-      const a = clamp(G.bannerT / 0.4, 0, 1), sc = 1 + Math.max(0, G.bannerT - 1.9) * 1.5;
+      const a = clamp(G.bannerT / 0.4, 0, 1), sc = 1 + Math.max(0, G.bannerT - (G.bannerT0 || 2.2) + 0.3) * 1.5;
       ctx.save();
       ctx.globalAlpha = a;
       ctx.translate(W / 2, 112); ctx.scale(sc, sc);
-      ctx.fillStyle = 'rgba(5,8,20,.65)';
-      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-150, -24, 300, 40, 12) : ctx.rect(-150, -24, 300, 40); ctx.fill();
+      const bh = G.banner2 ? 62 : 40;
+      ctx.fillStyle = 'rgba(5,8,20,.7)';
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-152, -24, 304, bh, 12) : ctx.rect(-152, -24, 304, bh); ctx.fill();
       ctx.textAlign = 'center'; ctx.font = '19px DotGothic16, monospace';
-      ctx.fillStyle = G.banner === 'しんきろく！' ? '#ffd166' : pal.g;
+      ctx.fillStyle = G.banner === 'しんきろく！' ? '#ffd166' : G.banner === 'ここから ほんばん！' ? '#53e0d8' : pal.g;
       ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12;
       ctx.fillText(G.banner, 0, 3);
+      if (G.banner2) { ctx.shadowBlur = 0; ctx.font = '14px DotGothic16, monospace'; ctx.fillStyle = '#eeecfa'; ctx.fillText(G.banner2, 0, 27); }
       ctx.restore();
     }
-    if (G.phase === 'ready') {
+    if (G.phase === 'ready' && G.guide === 'full') drawGuide();
+    else if (G.phase === 'ready') {
       ctx.save();
       const BY = G.y < H / 2 + 20 ? G.y + 34 : G.y - 126;
       ctx.fillStyle = 'rgba(5,8,20,.78)';
@@ -751,13 +851,94 @@
       ctx.fillStyle = '#eeecfa'; ctx.fillText(G.playT > 0 ? 'おすと つづきから' : 'おして スタート！', W / 2, BY + 78);
       ctx.restore();
     } else if (G.phase === 'play' && G.hint) {
+      // れんしゅう中：ひこうきの そばに ↑↓、下に いまの そうさ
       ctx.save();
-      ctx.globalAlpha = clamp((6 - G.playT) / 1.5, 0, 1);
-      ctx.textAlign = 'center'; ctx.font = '14px DotGothic16, monospace';
-      ctx.fillStyle = 'rgba(5,8,20,.6)'; ctx.fillRect(W / 2 - 120, H - 44, 240, 28);
-      ctx.fillStyle = '#eeecfa'; ctx.fillText(G.hold ? 'おしている → 上がる！' : 'はなしている → 下がる', W / 2, H - 25);
+      const up = G.th > TH_N / 2, wob = Math.sin(G.t * 10) * 2;
+      ctx.textAlign = 'center'; ctx.font = '20px DotGothic16, monospace';
+      ctx.fillStyle = up ? '#ffd166' : '#53e0d8'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10;
+      ctx.fillText(up ? '↑' : '↓', SHIPSX, up ? G.y - 22 + wob : G.y + 36 - wob);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(5,8,20,.72)';
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(W / 2 - 140, H - 66, 280, 54, 12) : ctx.rect(W / 2 - 140, H - 66, 280, 54); ctx.fill();
+      ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0';
+      ctx.fillText('れんしゅう中：かべに ふれても だいじょうぶ', W / 2, H - 46);
+      ctx.font = '16px DotGothic16, monospace'; ctx.fillStyle = up ? '#ffd166' : '#eeecfa';
+      ctx.fillText(G.hold ? 'おしている → 上がる！' : 'はなしている → 下がる', W / 2, H - 22);
       ctx.restore();
     }
+  }
+  // はじめての人むけ：うごく あそびかた（おす→上へ／はなす→下へ を くりかえし 見せる）
+  const GUIDE_T = 2.8;
+  function guideY(t) {
+    const p = (t % GUIDE_T) / GUIDE_T;
+    return p < 0.5 ? -smooth(p / 0.5) : -1 + smooth((p - 0.5) / 0.5);
+  }
+  // おす ボタンの 絵（おしていると しずんで ひかる）
+  function drawPushButton(x, y, on) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = '#2a2a48';
+    ctx.beginPath(); ctx.ellipse(0, 8, 26, 11, 0, 0, Math.PI * 2); ctx.fill();
+    const lift = on ? 2 : 9;
+    ctx.fillStyle = on ? '#b8862a' : '#1d8f89';
+    ctx.fillRect(-20, 8 - lift, 40, lift);
+    ctx.beginPath(); ctx.ellipse(0, 8, 20, 8, 0, 0, Math.PI); ctx.fill();
+    const cg = ctx.createRadialGradient(-6, 4 - lift, 2, 0, 8 - lift, 22);
+    cg.addColorStop(0, '#ffffff'); cg.addColorStop(0.4, on ? '#ffd166' : '#53e0d8'); cg.addColorStop(1, on ? '#b8862a' : '#1d8f89');
+    ctx.fillStyle = cg;
+    if (on) { ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16; }
+    ctx.beginPath(); ctx.ellipse(0, 8 - lift, 20, 8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawGuide() {
+    const p = (G.t % GUIDE_T) / GUIDE_T, on = p < 0.5;
+    const X = 22, Y = 262, PW = W - 44, PH = 208;
+    ctx.save();
+    ctx.fillStyle = 'rgba(5,8,20,.94)';
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(X, Y, PW, PH, 16) : ctx.rect(X, Y, PW, PH); ctx.fill();
+    ctx.strokeStyle = on ? 'rgba(255,209,102,.7)' : 'rgba(83,224,216,.7)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0';
+    ctx.fillText('あそびかた', W / 2, Y + 22);
+    ctx.font = '19px DotGothic16, monospace';
+    ctx.fillStyle = on ? '#ffd166' : '#53e0d8'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10;
+    ctx.fillText(on ? 'おしているあいだ ↑ 上へ' : 'はなすと ↓ 下へ', W / 2, Y + 48);
+    ctx.shadowBlur = 0;
+    // ひだり：がめんを おす ゆび
+    const fx = X + 70, fy = Y + 100;
+    ctx.fillStyle = on ? 'rgba(255,209,102,.18)' : 'rgba(255,255,255,.05)';
+    ctx.strokeStyle = on ? '#ffd166' : 'rgba(157,153,192,.6)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(fx - 40, fy - 32, 80, 64, 12) : ctx.rect(fx - 40, fy - 32, 80, 64); ctx.fill(); ctx.stroke();
+    if (on) {
+      const k = (p / 0.5 * 2) % 1;
+      ctx.strokeStyle = 'rgba(255,209,102,' + (1 - k).toFixed(2) + ')';
+      ctx.beginPath(); ctx.ellipse(fx, fy + 6, 20 + k * 17, 8 + k * 9, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+    drawPushButton(fx, fy, on);
+    ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = on ? '#ffd166' : '#9d99c0';
+    ctx.fillText(on ? 'おしている' : 'はなした', fx, fy + 48);
+    // みぎ：ちいさな ひこうきが 上がったり 下がったり（すぎた みちを 点で）
+    const bx0 = X + 150, bx1 = X + PW - 18, by = Y + 124, amp = 48;
+    ctx.fillStyle = 'rgba(255,255,255,.04)';
+    ctx.fillRect(bx0, Y + 62, bx1 - bx0, 90);
+    for (let i = 14; i >= 1; i--) {
+      const tt = G.t - i * 0.07;
+      ctx.globalAlpha = 0.5 * (1 - i / 15);
+      ctx.fillStyle = ((tt % GUIDE_T) + GUIDE_T) % GUIDE_T < GUIDE_T / 2 ? '#ffd166' : '#53e0d8';
+      ctx.beginPath(); ctx.arc(bx0 + 70 - i * 6, by + guideY(tt) * amp, 2.2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    const gy = by + guideY(G.t) * amp, gang = on ? -0.3 : 0.3;
+    ctx.save(); ctx.translate(bx0 + 72, gy); ctx.scale(0.8, 0.8); drawShip(0, 0, gang, 1, on ? 1 : 0); ctx.restore();
+    ctx.font = '20px DotGothic16, monospace'; ctx.fillStyle = on ? '#ffd166' : '#53e0d8';
+    ctx.fillText(on ? '↑' : '↓', bx0 + 108, gy + 7);
+    // した：スタートの あんない
+    ctx.font = '13px DotGothic16, monospace'; ctx.fillStyle = '#9d99c0';
+    ctx.fillText('さいしょは れんしゅう。ぶつかっても へいき', W / 2, Y + 174);
+    ctx.globalAlpha = 0.6 + Math.sin(G.t * 6) * 0.4;
+    ctx.font = '17px DotGothic16, monospace'; ctx.fillStyle = '#eeecfa';
+    ctx.fillText(G.playT > 0 ? 'おすと つづきから' : 'おして スタート！', W / 2, Y + PH - 12);
+    ctx.restore();
   }
   const titleCave = makeCave(20261014, 'easy');
 
@@ -845,6 +1026,10 @@
         speed: G.cave ? vxAt(MODES[G.mode], G.x) : 0, overlay: overlay.classList.contains('show'),
         best: { easy: save.best.easy, normal: save.best.normal }, totalStars: save.stars, color: save.color,
         selMode: save.mode, seen: save.seen, muted, newBest: G.newBest, result: G.lastResult,
+        th: G.th, guide: G.phase === 'ready' ? G.guide : '', guideType: G.guide, hint: G.phase === 'play' && G.hint,
+        safeX: G.safeX, practice: !!G.cave && G.x < G.safeX, bumps: G.bumps,
+        feel: G.cave ? physAt(MODES[G.mode], G.x).f : 0, vup: G.cave ? physAt(MODES[G.mode], G.x).vup : 0,
+        banner2: G.bannerT > 0 ? G.banner2 : '',
       };
     },
     clearSave() { try { localStorage.removeItem(SKEY); localStorage.removeItem(MKEY); } catch (e) { /* むし */ } loadSave(); setMuted(false); return this.state(); },
@@ -854,6 +1039,8 @@
     step(ms) { const n = Math.round(ms / (1000 * FDT)); for (let i = 0; i < n; i++) update(FDT); return this.state(); },
     flat(gap) { G.cave = makeFlat(gap || 240); return this.state(); },
     setShip(y, vy) { G.y = y; G.vy = vy || 0; return this.state(); },
+    safe(px) { G.safeX = px; G.pracDone = px <= G.x; if (G.pracDone) G.hint = false; return this.state(); },
+    physAt(mode, m) { return physAt(MODES[mode], m * 10); },
     setDist(m) { G.x = m * 10; G.zone = Math.floor(m / ZONE_M); return this.state(); },
     addStar(dx, dy) { G.cave.stars.push({ x: G.x + dx, y: G.y + dy, got: false }); return G.cave.stars.length; },
     addPillar(dx, side, open) { G.cave.pillars.push({ x0: G.x + dx, x1: G.x + dx + 2 * SEG, side, open }); return G.cave.pillars.length; },
@@ -865,7 +1052,7 @@
     sig(seed, mode) { const c = makeCave(seed, mode); const a = []; for (let x = 800; x < 8000; x += 400) a.push(Math.round(c.center(x))); return a.join(','); },
     caveInfo(seed, mode, toM) { const c = makeCave(seed, mode); c.ensureX(toM * 10); let minGap = 1e9; for (let x = 0; x < toM * 10; x += SEG) { const q = c.at(x); minGap = Math.min(minGap, q.bot - q.top); } return { pillars: c.pillars.filter(p => p.x0 < toM * 10).length, stars: c.stars.filter(s => s.x < toM * 10).length, minGap }; },
     solve(seed, mode, toM) { const r = solve(seed, mode, toM, false); return { ok: r.ok, reached: r.reached, maxStates: r.maxStates }; },
-    bot(seed, mode, kind, maxM) { return botRun(seed, mode, kind, maxM); },
+    bot(seed, mode, kind, maxM, safeX) { return botRun(seed, mode, kind, maxM, safeX); },
     playPlan(seed, mode, toM) {
       const r = solve(seed, mode, toM, true);
       if (!r.ok) return { err: 'no plan', reached: r.reached };
@@ -916,7 +1103,7 @@
   });
   window.addEventListener('blur', () => { downs.clear(); press(false); });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { downs.clear(); G.hold = false; if (G.phase === 'play') { G.phase = 'ready'; G.vy = 0; } }
+    if (document.hidden) { downs.clear(); G.hold = false; if (G.phase === 'play') { G.phase = 'ready'; G.vy = 0; G.th = 0; } }
     last = 0;
   });
   document.getElementById('modes').addEventListener('click', e => {
