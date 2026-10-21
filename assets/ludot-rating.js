@@ -33,10 +33,18 @@
   // 評価の受付サービスに つながった時だけ true。つながらない間は評価ボタンを出さない
   // （押しても「送れませんでした」になるだけの飾りを見せないため）
   let apiOk = false;
-  async function loadSummaries() {
+  // つながらなかった時は5分間よびなおさない（ページ移動のたびに失敗を重ねないため）
+  const DOWN = 'ludot-ratings-down-v1';
+  let inflight = null;
+  function loadSummaries() {
+    if (!inflight) inflight = fetchSummaries().finally(() => { inflight = null; });
+    return inflight;
+  }
+  async function fetchSummaries() {
     try {
       const c = JSON.parse(sessionStorage.getItem(CACHE) || 'null');
       if (c && Date.now() - c.at < 60000 && c.ratings) { summaries = c.ratings; apiOk = true; return summaries; }
+      if (Date.now() - Number(sessionStorage.getItem(DOWN) || 0) < 300000) return summaries;
     } catch (_) {}
     const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 5000);
     try {
@@ -45,11 +53,12 @@
         const data = await res.json();
         if (data && data.ratings && typeof data.ratings === 'object') {
           summaries = data.ratings; apiOk = true;
-          try { sessionStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), ratings: summaries })); } catch (_) {}
+          try { sessionStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), ratings: summaries })); sessionStorage.removeItem(DOWN); } catch (_) {}
         }
       }
     } catch (_) { /* 評価が読めなくてもゲームはそのまま遊べる */ }
     finally { clearTimeout(t); }
+    if (!apiOk) { try { sessionStorage.setItem(DOWN, String(Date.now())); } catch (_) {} }
     return summaries;
   }
   async function sendVote(id, stars) {
