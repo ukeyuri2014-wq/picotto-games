@@ -802,8 +802,8 @@
       linear-gradient(180deg, rgba(242,250,255,.54) 0%, rgba(255,253,246,.52) 56%, rgba(255,248,235,.58) 100%);
     background-size: 28px 28px, auto;
   }
-  .showcase::before,
-  body > .wrap::before {
+  /* 背景は body に1枚だけ置く（2026-10-21：下の一覧部分の固定背景が上の「PICK UP」枠に重なって隠していたため） */
+  body::before {
     content: "";
     position: fixed;
     z-index: -1;
@@ -814,8 +814,7 @@
       url("assets/picotto-pop-play-hero-v3.jpg") 68% center / cover no-repeat;
     filter: saturate(.82) contrast(.96);
   }
-  .showcase::after,
-  body > .wrap::after {
+  body::after {
     content: "";
     position: fixed;
     z-index: -1;
@@ -843,8 +842,7 @@
   }
 
   @media (max-width: 720px) {
-    .showcase::before,
-    body > .wrap::before {
+    body::before {
       background:
         linear-gradient(180deg, rgba(255,250,235,.86), rgba(244,251,252,.78)),
         url("assets/picotto-pop-play-hero-v3.jpg") 73% center / auto 100% no-repeat;
