@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>たねまきマンカラ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#1f1a3d 0%,#131322 60%) fixed,var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:10px 10px 28px; overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:#c9c5e6;text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:15px;padding:5px 14px;cursor:pointer;font-family:inherit;min-width:48px;min-height:34px}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 8px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:4px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%)}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:1px solid rgba(83,224,216,.28);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.55);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .row{display:flex;gap:6px;margin-top:7px;width:min(480px,100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;min-height:42px;padding:8px 0;border-radius:10px;border:1px solid var(--edge);background:linear-gradient(#24244a,#1a1a33);color:var(--ink);cursor:pointer;letter-spacing:1px;box-shadow:0 4px 14px rgba(0,0,0,.35);touch-action:manipulation}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.tgl{font-size:13px;color:var(--sub)}
+  .btn.tgl.on{border-color:rgba(83,224,216,.55);color:var(--cyan);background:rgba(83,224,216,.07)}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;
+    background:radial-gradient(120% 90% at 50% 30%,rgba(36,28,70,.95),rgba(16,14,32,.96));
+    border-radius:14px;text-align:center;padding:10px;overflow:auto;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:28px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6);line-height:1.2}
+  #overlay .big.p2{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.6)}
+  #overlay .big.dr{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.6}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .c1{color:var(--cyan)} #overlay .note .c2{color:var(--pink)}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--cyan);color:#062a28;border:none;border-radius:8px;padding:10px 14px;min-height:44px;cursor:pointer;letter-spacing:1px;touch-action:manipulation}
+  .modes button.alt{background:var(--pink);color:#2b0014}
+  .levels,.rules{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .levels button,.rules button{font-family:inherit;font-size:13px;background:rgba(0,0,0,.2);border:1px solid var(--edge);color:var(--sub);border-radius:999px;padding:6px 12px;min-height:36px;min-width:64px;cursor:pointer;touch-action:manipulation}
+  .levels button.on{border-color:var(--gold);color:var(--gold)}
+  .rules button.on{border-color:rgba(83,224,216,.6);color:var(--cyan)}
+  .rules .lb{font-size:12px;color:var(--sub);align-self:center}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.5}
+  .help{width:min(480px,100%);color:#b9b5d8;font-size:13px;margin-top:10px;line-height:1.7;background:rgba(13,13,28,.74);border:1px solid var(--edge);border-radius:12px;padding:10px 12px 6px}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .g{color:var(--gold)}
+  @media (max-width:420px){
+    h1{font-size:20px}
+    #overlay{gap:6px;padding:8px}
+    #overlay .big{font-size:24px}
+    #overlay .note{font-size:12.5px;line-height:1.5}
+    .modes button{font-size:14px;padding:9px 12px}
+    .levels button,.rules button{padding:5px 10px;min-width:58px}
+  }
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+    .modes button:hover{filter:brightness(1.12)}
+    .levels button:hover,.rules button:hover{color:var(--ink);border-color:var(--sub)}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="くぼみの たねを 1つずつ まいて、じぶんのゴールに 多く あつめた方の かち。ぴったりで もう1回、からっぽで よこどり！ おしている間 さいごの1つの 行き先が光る。CPU3だんかい／ふたり、ルールと たねの数を えらべて、せいせきも のこるよ。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/110-seed-sowing/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"たねまきマンカラ","description":"くぼみの たねを 1つずつ まいて、じぶんのゴールに 多く あつめた方の かち。ぴったりで もう1回、からっぽで よこどり！ おしている間 さいごの1つの 行き先が光る。CPU3だんかい／ふたり、ルールと たねの数を えらべて、せいせきも のこるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/110-seed-sowing/index.html","inLanguage":"ja","genre":"BOARD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="110"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>たねまきマンカラ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / CPU・ふたり</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="460"></canvas>
+  <div id="overlay" class="show">
+    <div class="big" id="ovBig">たねまきマンカラ</div>
+    <div class="note" id="ovNote">
+      くぼみを えらぶと たねを <b>1つずつ</b> となりへ まくよ。<br>
+      さいごの たねが <b>じぶんのゴール</b>に 入ったら <b>もう1回</b>！<br>
+      からっぽの くぼみで おわると むかいを <b>よこどり</b>！<br>
+      ゴールの たねが 多いほうの かち。
+    </div>
+    <div class="modes">
+      <button id="btnCpu">ひとりで はじめる</button>
+      <button id="btn2p" class="alt">ふたりで はじめる</button>
+    </div>
+    <div class="levels" id="levels">
+      <button data-l="1">よわい</button><button data-l="2" class="on">ふつう</button><button data-l="3">つよい</button>
+    </div>
+    <div class="rules">
+      <button id="ruleExtra" class="on">もう1回 ON</button><button id="ruleCap" class="on">よこどり ON</button><button id="ruleSeeds">たね 4こ</button>
+    </div>
+    <div class="rule" id="ovStats"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="undoBtn">1手もどす</button>
+  <button class="btn" id="menuBtn">メニュー</button>
+</div>
+<div class="row">
+  <button class="btn tgl on" id="hintBtn">ヒント：ON</button>
+  <button class="btn tgl" id="fastBtn">はやさ：ふつう</button>
+</div>
+
+<div class="help">
+  <p><b>あそびかた</b>：<span class="c1">下の6つ</span>が あなたの くぼみ、<span class="c1">右はし</span>が あなたの ゴール。くぼみを タップすると、中の たねを ぜんぶ もって、やじるしの むき（左→右→上の だんへ）に 1つずつ まいていくよ。あいての ゴールには まかない。</p>
+  <p><span class="g">もう1回</span>：さいごの 1つが じぶんの ゴールに 入ったら、もう1回 じぶんの ばん。<br><span class="c2">よこどり</span>：さいごの 1つが じぶんの がわの からっぽの くぼみに 入ったら、そのたねと むかいがわの たねを ぜんぶ ゴールへ！</p>
+  <p>どちらかの がわの くぼみが ぜんぶ からっぽに なったら おしまい。のこりの たねは それぞれの ゴールへ。ゴールの たねが 多いほうの かち。CPUの つよさごとの せいせきは のこるよ（かつと ★）。</p>
+  <p>📱 くぼみを おしている あいだ、さいごの たねが どこに 入るか 光るよ。はなすと まく。<br>⌨️ ←→ で えらんで Enter ／ Z＝もどす ／ H＝ヒント</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = 480, H = 460, DPR = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * DPR; cv.height = H * DPR;
+  const KEY = 'ludot_seed-sowing_';
+  const MUTE_KEY = KEY + 'mute', STAT_KEY = KEY + 'stats', OPT_KEY = KEY + 'opts', TUT_KEY = KEY + 'tut';
+  const STORE = [6, 13];
+  const PCOL = ['#53e0d8', '#ff5fa2'], PGLOW = ['rgba(83,224,216,', 'rgba(255,95,162,'];
+  const LEVEL_NAME = ['', 'よわい', 'ふつう', 'つよい'];
+  const SEEDC = ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff', '#7be495', '#ff9f5a'];
+  const FONT = '"DotGothic16","Hiragino Kaku Gothic ProN",sans-serif';
+  const F = px => px + 'px ' + FONT;
+
+  // ---- layout ---------------------------------------------------------------
+  const BX = 6, BY = 62, BW = 468, BH = 318;
+  const ST_W = 58, SY = BY + 40, SH = BH - 80;
+  const ST_X = [BX + BW - 12 - ST_W, BX + 12];          // [P1 store(右), P2 store(左)]
+  const PX0 = BX + 12 + ST_W + 8, PX1 = ST_X[0] - 8, CW = (PX1 - PX0) / 6;
+  const TOP_Y = BY + 92, BOT_Y = BY + BH - 92, PIT_R = 24;
+  const colX = c => PX0 + CW * (c + 0.5);
+  function pos(i) {
+    if (i < 6) return [colX(i), BOT_Y];
+    if (i === 6) return [ST_X[0] + ST_W / 2, SY + SH / 2];
+    if (i < 13) return [colX(12 - i), TOP_Y];
+    return [ST_X[1] + ST_W / 2, SY + SH / 2];
+  }
+  const SPIR = [];
+  for (let k = 0; k < 80; k++) { const a = k * 2.39996 + 0.4, r = Math.min(PIT_R - 7, 4.7 * Math.sqrt(k + 0.25)); SPIR.push([Math.cos(a) * r, Math.sin(a) * r]); }
+  const STP = [];
+  for (let k = 0; k < 80; k++) { const row = (k / 4) | 0, col = k % 4; STP.push([(col - 1.5) * 11.5 + (row & 1 ? 2.5 : -2.5) + ((k * 37) % 5 - 2) * 0.5, SY + SH - 13 - row * 10]); }
+  const seedColor = (pit, k) => SEEDC[(k * 5 + pit * 3) % 6];
+
+  // ---- sound ----------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted || !ac) return;
+    const a = ac, o = a.createOscillator(), g = a.createGain(), t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SCALE = [523, 587, 659, 784, 880, 1046, 1175, 1318, 1568, 1760];
+  const SFX = {
+    pick() { tone('triangle', 520, 260, 0.12, 0.07); tone('sine', 180, 120, 0.1, 0.06); },
+    drop(n) { const f = SCALE[n % SCALE.length]; tone('triangle', f, f * 0.98, 0.07, 0.055); tone('sine', f * 2, f * 2, 0.03, 0.015); },
+    store() { tone('sine', 1320, 1320, 0.12, 0.05); tone('triangle', 1760, 1760, 0.16, 0.04, 0.04); },
+    extra() { [784, 988, 1175, 1568].forEach((f, i) => tone('square', f, f, 0.09, 0.04, i * 0.06)); },
+    cap() { tone('sawtooth', 220, 880, 0.25, 0.05); [988, 1318].forEach((f, i) => tone('triangle', f, f, 0.14, 0.06, 0.22 + i * 0.08)); },
+    sweep() { tone('triangle', 300, 900, 0.4, 0.05); },
+    bad() { tone('square', 200, 120, 0.08, 0.04); },
+    undo() { tone('triangle', 520, 240, 0.16, 0.05); },
+    toggle() { tone('square', 700, 950, 0.05, 0.03); },
+    hover() { tone('sine', 1100, 1100, 0.025, 0.02); },
+    win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.06, i * 0.1)); },
+    lose() { tone('sawtooth', 300, 80, 0.5, 0.06); },
+    draw() { tone('triangle', 440, 440, 0.15, 0.06); tone('triangle', 440, 440, 0.15, 0.06, 0.2); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ----------------------------------------------------------------
+  let board = new Array(14).fill(0), disp = board.slice();
+  let turn = 0, mode = 'cpu', level = 2, phase = 'title', over = false, winner = null, again = false;
+  let rules = { extra: true, cap: true, seeds: 4 };
+  let showHint = true, fast = false, autoCpu = true, tutOn = true;
+  let history = [], evq = [], cur = null, handN = 0, lastLand = -1;
+  let particles = [], pops = [], animT = 0, cpuWait = 0, endT = 0, endSfx = false, resultShown = false;
+  let hover = -1, press = -1, kbCol = 2, kb = false, STRONG_MS = 550, lastScores = [];
+  const tallies = { cpu: { 0: 0, 1: 0, d: 0 }, '2p': { 0: 0, 1: 0, d: 0 } }, firsts = { cpu: 0, '2p': 0 };
+  let tally = tallies.cpu, first = 0;
+  let stats = { 1: { w: 0, l: 0, d: 0, best: 0 }, 2: { w: 0, l: 0, d: 0, best: 0 }, 3: { w: 0, l: 0, d: 0, best: 0 } };
+  try { const s = JSON.parse(localStorage.getItem(STAT_KEY) || 'null'); if (s) for (const k of [1, 2, 3]) if (s[k]) stats[k] = Object.assign(stats[k], s[k]); } catch (e) {}
+  try {
+    const o = JSON.parse(localStorage.getItem(OPT_KEY) || 'null');
+    if (o) { rules.extra = o.extra !== false; rules.cap = o.cap !== false; if ([3, 4, 5].includes(o.seeds)) rules.seeds = o.seeds; showHint = o.hint !== false; fast = !!o.fast; if ([1, 2, 3].includes(o.level)) level = o.level; }
+  } catch (e) {}
+  try { tutOn = localStorage.getItem(TUT_KEY) !== '1'; } catch (e) {}
+  const overlay = document.getElementById('overlay');
+  const undoBtn = document.getElementById('undoBtn'), hintBtn = document.getElementById('hintBtn'), fastBtn = document.getElementById('fastBtn');
+  function saveOpts() { try { localStorage.setItem(OPT_KEY, JSON.stringify({ extra: rules.extra, cap: rules.cap, seeds: rules.seeds, hint: showHint, fast, level })); } catch (e) {} }
+  const seatName = p => (mode === 'cpu' ? (p === 0 ? 'あなた' : 'CPU') : 'P' + (p + 1));
+
+  // ---- rules ----------------------------------------------------------------
+  const isOwn = (p, j) => (p === 0 ? j >= 0 && j < 6 : j >= 7 && j < 13);
+  function legal(b, p) { const m = []; for (let k = 0; k < 6; k++) { const i = p === 0 ? k : 7 + k; if (b[i] > 0) m.push(i); } return m; }
+  function sow(b, p, i, R) {
+    const nb = b.slice(); let n = nb[i]; nb[i] = 0;
+    const path = [], skip = STORE[1 - p]; let j = i;
+    while (n > 0) { j = (j + 1) % 14; if (j === skip) continue; nb[j]++; n--; path.push(j); }
+    const extraHit = R.extra && j === STORE[p];
+    let cap = 0, capOpp = -1;
+    if (R.cap && isOwn(p, j) && nb[j] === 1 && nb[12 - j] > 0) { capOpp = 12 - j; cap = nb[capOpp] + 1; nb[STORE[p]] += cap; nb[capOpp] = 0; nb[j] = 0; }
+    let s0 = 0, s1 = 0; for (let k = 0; k < 6; k++) { s0 += nb[k]; s1 += nb[7 + k]; }
+    let end = false, sweep = null;
+    if (s0 === 0 || s1 === 0) { end = true; sweep = [s0, s1]; for (let k = 0; k < 6; k++) { nb[k] = 0; nb[7 + k] = 0; } nb[6] += s0; nb[13] += s1; }
+    return { b: nb, path, last: j, extraHit, cap, capOpp, end, sweep, next: end ? -1 : extraHit ? p : 1 - p };
+  }
+
+  // ---- CPU (minimax + alpha-beta, もう1回は同じ手番で続けて読む) -------------
+  const ABORT = { abort: true };
+  let deadline = 0, nodes = 0;
+  function evalB(b, p) { let sm = 0, so = 0; for (let k = 0; k < 6; k++) { sm += b[p ? 7 + k : k]; so += b[p ? k : 7 + k]; } return (b[STORE[p]] - b[STORE[1 - p]]) + 0.25 * (sm - so); }
+  function termV(b, p) { const d = b[STORE[p]] - b[STORE[1 - p]]; return d > 0 ? 1000 + d : d < 0 ? -1000 + d : 0; }
+  function orderMoves(b, p) {
+    const ms = legal(b, p);
+    const pr = i => (b[i] === STORE[p] - i ? 3 : (b[i] < STORE[p] - i && b[i + b[i]] === 0 && isOwn(p, i + b[i]) ? 2 : 0));
+    return ms.sort((x, y) => pr(y) - pr(x) || x - y);
+  }
+  function search(b, p, depth, alpha, beta) {
+    if (((++nodes) & 1023) === 0 && performance.now() > deadline) throw ABORT;
+    if (depth <= 0) return evalB(b, p);
+    const ms = orderMoves(b, p); if (!ms.length) return evalB(b, p);
+    let best = -Infinity;
+    for (const i of ms) {
+      const r = sow(b, p, i, rules); let v;
+      if (r.end) v = termV(r.b, p);
+      else if (r.next === p) v = search(r.b, p, depth - 1, alpha, beta);
+      else v = -search(r.b, 1 - p, depth - 1, -beta, -alpha);
+      if (v > best) { best = v; if (v > alpha) { alpha = v; if (alpha >= beta) break; } }
+    }
+    return best;
+  }
+  function aiMove(lv) {
+    const p = turn, ms = orderMoves(board, p);
+    if (!ms.length) return -1;
+    if (ms.length === 1) return ms[0];
+    if (lv === 1) {
+      if (Math.random() < 0.45) { const ex = ms.filter(i => sow(board, p, i, rules).extraHit); if (ex.length) return ex[0]; }
+      return ms[Math.floor(Math.random() * ms.length)];
+    }
+    const maxD = lv === 2 ? 4 : 30, tms = lv === 2 ? 300 : STRONG_MS, noise = lv === 2 ? 3 : 0;
+    deadline = performance.now() + tms; nodes = 0;
+    let order = ms.slice(), best = ms[0];
+    for (let d = 1; d <= maxD; d++) {
+      try {
+        const sc = []; let alpha = -Infinity;
+        for (const i of order) {
+          const r = sow(board, p, i, rules); let v;
+          const a = lv === 2 ? -Infinity : alpha;
+          if (r.end) v = termV(r.b, p);
+          else if (r.next === p) v = search(r.b, p, d - 1, a, Infinity);
+          else v = -search(r.b, 1 - p, d - 1, -Infinity, -a);
+          if (v > alpha) alpha = v;
+          sc.push({ i, v, vn: v + (noise ? (Math.random() - 0.5) * noise : 0) });
+        }
+        sc.sort((x, y) => y.vn - x.vn);
+        order = sc.map(s => s.i); best = order[0];
+        lastScores = sc.map(s => [s.i, Math.round(s.v * 10) / 10, d]);
+        if (Math.abs(sc[0].v) >= 1000) break;
+      } catch (e) { if (e !== ABORT) throw e; break; }
+    }
+    return best;
+  }
+
+  // ---- game flow --------------------------------------------------------------
+  const busy = () => !!cur || evq.length > 0;
+  const humanTurn = () => phase === 'play' && !over && !busy() && !(mode === 'cpu' && turn !== 0);
+  function canUndo() {
+    if (phase !== 'play' || over || !history.length) return false;
+    if (mode === 'cpu') return history.some(h => h.turn === 0);
+    return true;
+  }
+  function updateButtons() {
+    undoBtn.disabled = !canUndo();
+    hintBtn.textContent = 'ヒント：' + (showHint ? 'ON' : 'OFF'); hintBtn.classList.toggle('on', showHint);
+    fastBtn.textContent = 'はやさ：' + (fast ? 'はやい' : 'ふつう'); fastBtn.classList.toggle('on', fast);
+    const re = document.getElementById('ruleExtra'), rc = document.getElementById('ruleCap'), rs = document.getElementById('ruleSeeds');
+    re.textContent = 'もう1回 ' + (rules.extra ? 'ON' : 'OFF'); re.classList.toggle('on', rules.extra);
+    rc.textContent = 'よこどり ' + (rules.cap ? 'ON' : 'OFF'); rc.classList.toggle('on', rules.cap);
+    rs.textContent = 'たね ' + rules.seeds + 'こ';
+    document.querySelectorAll('#levels button').forEach(x => {
+      const l = +x.dataset.l, s = stats[l];
+      x.classList.toggle('on', l === level);
+      x.textContent = LEVEL_NAME[l] + (s.w > 0 ? (l === 3 ? ' 🏆' : ' ★') : '');
+    });
+  }
+  function initBoard() { board = new Array(14).fill(0); for (let k = 0; k < 6; k++) { board[k] = rules.seeds; board[7 + k] = rules.seeds; } disp = board.slice(); }
+  function startGame(m) {
+    if (m) mode = m;
+    tally = tallies[mode]; first = firsts[mode];
+    initBoard();
+    turn = tutOn ? 0 : first; history = []; over = false; winner = null; again = false;
+    evq = []; cur = null; handN = 0; particles = []; pops = []; lastLand = -1;
+    cpuWait = 0; endT = 0; endSfx = false; resultShown = false; hover = -1; press = -1;
+    phase = 'play'; overlay.classList.remove('show');
+    updateButtons();
+  }
+  function doMove(i) {
+    if (phase !== 'play' || over) return false;
+    if (!legal(board, turn).includes(i)) return false;
+    const p = turn, n = board[i];
+    history.push({ board: board.slice(), turn: p, again });
+    const r = sow(board, p, i, rules);
+    const sp = fast ? 0.5 : 1, dd = (r.path.length > 12 ? 0.1 : 0.15) * sp;
+    evq.push({ k: 'pick', i, n, p, dur: 0.16 * sp });
+    let prev = i;
+    r.path.forEach((j, idx) => { evq.push({ k: 'drop', j, from: prev, idx, p, dur: dd }); prev = j; });
+    if (r.cap) evq.push({ k: 'cap', j: r.last, o: r.capOpp, s: STORE[p], n: r.cap, p, dur: 0.66 * sp });
+    if (r.extraHit && !r.end) evq.push({ k: 'extra', p, dur: 0.42 * sp });
+    if (r.end) evq.push({ k: 'sweep', sw: r.sweep, dur: 0.9 * sp });
+    evq.push({ k: 'sync', dur: 0 });
+    board = r.b; lastLand = r.last; hover = -1; press = -1;
+    again = !r.end && r.next === p;
+    if (tutOn && (mode !== 'cpu' || p === 0)) { tutOn = false; try { localStorage.setItem(TUT_KEY, '1'); } catch (e) {} }
+    if (r.end) finish(); else turn = r.next;
+    updateButtons();
+    return true;
+  }
+  function finish() {
+    over = true; phase = 'over';
+    const s0 = board[6], s1 = board[13];
+    winner = s0 > s1 ? 0 : s1 > s0 ? 1 : -1;
+    if (winner >= 0) tally[winner]++; else tally.d++;
+    if (mode === 'cpu') {
+      const s = stats[level];
+      if (winner === 0) { s.w++; s.best = Math.max(s.best, s0 - s1); } else if (winner === 1) s.l++; else s.d++;
+      try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {}
+    }
+    first = 1 - first; firsts[mode] = first;
+    endT = 0; endSfx = false; resultShown = false;
+  }
+  function showResult() {
+    resultShown = true;
+    const big = document.getElementById('ovBig'), note = document.getElementById('ovNote');
+    if (winner === 0) { big.textContent = mode === 'cpu' ? 'あなたの かち！' : 'P1 の かち！'; big.className = 'big'; }
+    else if (winner === 1) { big.textContent = mode === 'cpu' ? 'CPU の かち…' : 'P2 の かち！'; big.className = 'big p2'; }
+    else { big.textContent = 'ひきわけ'; big.className = 'big dr'; }
+    note.innerHTML = '<span class="c1">' + seatName(0) + ' <b>' + board[6] + '</b></span> - <span class="c2"><b>' + board[13] + '</b> ' + seatName(1) + '</span>' +
+      (winner === 0 && mode === 'cpu' && board[6] - board[13] >= stats[level].best ? '　<b>さいだいの さ！</b>' : '') +
+      '<br>こんかいの せいせき：<span class="c1">' + seatName(0) + ' ' + tally[0] + '</span> - <span class="c2">' + seatName(1) + ' ' + tally[1] + '</span>（ひきわけ ' + tally.d + '）' +
+      '<br>つぎの せんては <span class="' + (first === 0 ? 'c1' : 'c2') + '">' + seatName(first) + '</span>';
+    document.getElementById('btnCpu').textContent = mode === 'cpu' ? 'もういちど はじめる' : 'ひとりで はじめる';
+    document.getElementById('btn2p').textContent = mode === '2p' ? 'もういちど はじめる' : 'ふたりで はじめる';
+    renderStats(); updateButtons(); overlay.classList.add('show');
+  }
+  function renderStats() {
+    const s = stats[level];
+    document.getElementById('ovStats').textContent = 'CPU' + LEVEL_NAME[level] + '：' + s.w + 'しょう ' + s.l + 'はい ' + s.d + 'わけ' + (s.w ? ' ／ さいだいの さ +' + s.best : '');
+  }
+  function goMenu() {
+    phase = 'title'; evq = []; cur = null; disp = board.slice();
+    document.getElementById('ovBig').textContent = 'たねまきマンカラ'; document.getElementById('ovBig').className = 'big';
+    const t2 = tallies['2p'], tc = tallies.cpu;
+    document.getElementById('ovNote').innerHTML = 'モードと ルールを えらんでね。<br>CPU：<span class="c1">あなた ' + tc[0] + '</span> - <span class="c2">CPU ' + tc[1] + '</span>（ひきわけ ' + tc.d + '）' +
+      '<br>ふたり：<span class="c1">P1 ' + t2[0] + '</span> - <span class="c2">P2 ' + t2[1] + '</span>（ひきわけ ' + t2.d + '）';
+    document.getElementById('btnCpu').textContent = 'ひとりで はじめる'; document.getElementById('btn2p').textContent = 'ふたりで はじめる';
+    renderStats(); updateButtons(); overlay.classList.add('show');
+  }
+  function undo(force) {
+    if (!canUndo()) return false;
+    if (!force && busy()) return false;
+    let e;
+    if (mode === 'cpu') { do { e = history.pop(); } while (e.turn !== 0); }
+    else e = history.pop();
+    board = e.board.slice(); disp = board.slice(); turn = e.turn; again = e.again;
+    evq = []; cur = null; handN = 0; pops = []; cpuWait = 0; lastLand = -1;
+    updateButtons(); SFX.undo();
+    return true;
+  }
+  function cpuPlay() {
+    if (phase !== 'play' || over || mode !== 'cpu' || turn !== 1 || busy()) return false;
+    const m = aiMove(level);
+    return m >= 0 ? doMove(m) : false;
+  }
+  function tryHuman(i) {
+    if (!humanTurn()) return false;
+    if (doMove(i)) return true;
+    const [x, y] = pos(i);
+    pops.push({ x, y: y - 4, text: '✕', t: 0, color: '#ff5fa2', size: 20 }); SFX.bad();
+    if (i >= 0 && i < 14 && !isOwn(turn, i)) pops.push({ x: W / 2, y: (TOP_Y + BOT_Y) / 2 + 8, text: turn === 0 ? 'したの くぼみを えらんでね' : 'うえの くぼみを えらんでね', t: 0, color: '#ffd166', size: 15 });
+    else if (board[i] === 0) pops.push({ x, y: y + (turn === 0 ? 42 : -42), text: 'からっぽ', t: 0, color: '#ffd166', size: 14 });
+    return false;
+  }
+  function burst(x, y, glow, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c: glow, s: 2 + Math.random() * 3 }); } }
+
+  // ---- events (たねが 1つずつ うごく演出) -----------------------------------
+  function beginEv(e) {
+    if (e.k === 'pick') { disp[e.i] = 0; handN = e.n; const [x, y] = pos(e.i); SFX.pick(); burst(x, y, PGLOW[e.p], 6, 60); }
+    else if (e.k === 'drop') { e.col = seedColor(e.j, disp[e.j]); }
+    else if (e.k === 'cap') { e.cnt = [disp[e.j], disp[e.o]]; disp[e.j] = 0; disp[e.o] = 0; SFX.cap(); const [x, y] = pos(e.o); burst(x, y, 'rgba(255,95,162,', 14, 120); }
+    else if (e.k === 'extra') { const [x, y] = pos(STORE[e.p]); pops.push({ x: x + (e.p === 0 ? -34 : 34), y: y - 70, text: 'もう1回！', t: 0, color: '#ffd166', size: 22 }); SFX.extra(); burst(x, y - 40, 'rgba(255,209,102,', 18, 140); }
+    else if (e.k === 'sweep') { e.cnt = disp.slice(); for (let k = 0; k < 6; k++) { disp[k] = 0; disp[7 + k] = 0; } SFX.sweep(); }
+    else if (e.k === 'sync') { disp = board.slice(); handN = 0; }
+  }
+  function endEv(e) {
+    if (e.k === 'drop') {
+      disp[e.j]++; handN = Math.max(0, handN - 1);
+      const [x, y] = pos(e.j);
+      if (e.j === 6 || e.j === 13) { SFX.store(); burst(x, y - 20, PGLOW[e.j === 6 ? 0 : 1], 8, 90); pops.push({ x, y: SY - 6, text: '+1', t: 0, color: PCOL[e.j === 6 ? 0 : 1], size: 16 }); }
+      else { SFX.drop(e.idx); burst(x, y, 'rgba(255,240,200,', 3, 40); }
+    } else if (e.k === 'cap') {
+      disp[e.s] += e.n; const [x, y] = pos(e.s);
+      burst(x, y, 'rgba(255,209,102,', 22, 160);
+      pops.push({ x: W / 2, y: (TOP_Y + BOT_Y) / 2, text: 'よこどり +' + e.n + '！', t: 0, color: '#ff5fa2', size: 24 });
+    } else if (e.k === 'sweep') {
+      disp[6] += e.sw[0]; disp[13] += e.sw[1];
+      for (const s of [6, 13]) { const [x, y] = pos(s); burst(x, y, PGLOW[s === 6 ? 0 : 1], 16, 130); }
+    }
+  }
+
+  // ---- drawing ----------------------------------------------------------------
+  function rrOn(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  const SEED_SPR = SEEDC.map(c => {
+    const S = 16, q = 3, cc = document.createElement('canvas'); cc.width = cc.height = S * q; const g = cc.getContext('2d'); g.scale(q, q);
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(8.6, 9.6, 6, 5.4, 0, 0, Math.PI * 2); g.fill();
+    const gr = g.createRadialGradient(6.2, 5.6, 0.6, 8, 8, 6.4);
+    gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.28, c); gr.addColorStop(1, shade(c, -0.45));
+    g.fillStyle = gr; g.beginPath(); g.ellipse(8, 8, 6.2, 5.6, -0.5, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.75)'; g.beginPath(); g.ellipse(6, 5.6, 1.8, 1.1, -0.6, 0, Math.PI * 2); g.fill();
+    return cc;
+  });
+  function shade(hex, k) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; const f = v => Math.max(0, Math.min(255, Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k))); return 'rgb(' + f(r) + ',' + f(g) + ',' + f(b) + ')'; }
+  function seedAt(x, y, col, s = 1) { const sp = SEED_SPR[SEEDC.indexOf(col)] || SEED_SPR[0]; ctx.drawImage(sp, x - 8 * s, y - 8 * s, 16 * s, 16 * s); }
+
+  let layer = null;
+  function buildLayer() {
+    const c = document.createElement('canvas'); c.width = W * DPR; c.height = H * DPR; const g = c.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#16142c'); bg.addColorStop(1, '#0d0c1c'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 70; i++) { const x = (i * 97.3) % W, y = (i * 53.7 + (i % 7) * 31) % H, a = 0.12 + (i % 5) * 0.06; g.fillStyle = 'rgba(220,215,255,' + a + ')'; g.fillRect(x, y, i % 9 === 0 ? 2 : 1, i % 9 === 0 ? 2 : 1); }
+    // 盤
+    g.save(); g.shadowColor = 'rgba(0,0,0,.7)'; g.shadowBlur = 18 * DPR; g.shadowOffsetY = 8 * DPR;
+    const bd = g.createLinearGradient(0, BY, 0, BY + BH); bd.addColorStop(0, '#34295e'); bd.addColorStop(0.5, '#271f4a'); bd.addColorStop(1, '#1c1636');
+    g.fillStyle = bd; rrOn(g, BX, BY, BW, BH, 30); g.fill(); g.restore();
+    const sheen = g.createLinearGradient(0, BY, 0, BY + 40); sheen.addColorStop(0, 'rgba(255,255,255,.10)'); sheen.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = sheen; rrOn(g, BX + 2, BY + 2, BW - 4, 40, 28); g.fill();
+    g.strokeStyle = 'rgba(255,209,102,.32)'; g.lineWidth = 1.5; rrOn(g, BX + 4, BY + 4, BW - 8, BH - 8, 26); g.stroke();
+    // 木目のような細い線
+    g.save(); rrOn(g, BX, BY, BW, BH, 30); g.clip(); g.strokeStyle = 'rgba(160,107,255,.07)'; g.lineWidth = 1;
+    for (let i = 0; i < 14; i++) { g.beginPath(); const y = BY + 12 + i * 22; g.moveTo(BX, y); g.bezierCurveTo(BX + 150, y + 8, BX + 300, y - 8, BX + BW, y + 4); g.stroke(); }
+    g.restore();
+    // ゴール
+    for (const p of [0, 1]) {
+      const x = ST_X[p];
+      const sg = g.createLinearGradient(x, 0, x + ST_W, 0); sg.addColorStop(0, '#0b0a18'); sg.addColorStop(0.5, '#141126'); sg.addColorStop(1, '#0b0a18');
+      g.fillStyle = sg; rrOn(g, x, SY, ST_W, SH, 26); g.fill();
+      const ins = g.createLinearGradient(0, SY, 0, SY + 30); ins.addColorStop(0, 'rgba(0,0,0,.55)'); ins.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = ins; rrOn(g, x, SY, ST_W, 40, 26); g.fill();
+      g.strokeStyle = PGLOW[p] + '.45)'; g.lineWidth = 2; rrOn(g, x, SY, ST_W, SH, 26); g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,.08)'; g.lineWidth = 1; rrOn(g, x + 3, SY + 3, ST_W - 6, SH - 6, 23); g.stroke();
+    }
+    // くぼみ
+    for (let i = 0; i < 14; i++) {
+      if (i === 6 || i === 13) continue;
+      const [x, y] = pos(i), r = PIT_R;
+      g.fillStyle = 'rgba(255,255,255,.06)'; g.beginPath(); g.arc(x, y + 2, r + 3, 0, Math.PI * 2); g.fill();
+      const pg = g.createRadialGradient(x, y - r * 0.45, r * 0.15, x, y, r);
+      pg.addColorStop(0, '#050412'); pg.addColorStop(0.7, '#110e24'); pg.addColorStop(1, '#2b2452');
+      g.fillStyle = pg; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = 'rgba(190,170,255,.32)'; g.lineWidth = 1.5; g.beginPath(); g.arc(x, y, r, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
+      g.strokeStyle = 'rgba(0,0,0,.5)'; g.lineWidth = 2; g.beginPath(); g.arc(x, y, r - 1, Math.PI * 1.15, Math.PI * 1.85); g.stroke();
+    }
+    // まく むき（やじるし）
+    const my = (TOP_Y + BOT_Y) / 2;
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    for (const [y, dir, col] of [[my + 16, 1, 'rgba(83,224,216,.30)'], [my - 16, -1, 'rgba(255,95,162,.30)']]) {
+      g.strokeStyle = col; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(PX0 + 16, y); g.lineTo(PX1 - 16, y); g.stroke();
+      for (let k = 0; k < 3; k++) {
+        const x = PX0 + 70 + k * 92;
+        g.beginPath(); g.moveTo(x - 5 * dir, y - 6); g.lineTo(x + 3 * dir, y); g.lineTo(x - 5 * dir, y + 6); g.stroke();
+      }
+    }
+    // 角をまわる やじるし（下の だん → 右のゴール、上の だん → 左のゴール）
+    g.strokeStyle = 'rgba(83,224,216,.28)'; g.beginPath(); g.moveTo(PX1 - 10, BOT_Y + 34); g.quadraticCurveTo(PX1 + 4, BOT_Y + 34, PX1 + 4, BOT_Y + 18); g.stroke();
+    g.strokeStyle = 'rgba(255,95,162,.28)'; g.beginPath(); g.moveTo(PX0 + 10, TOP_Y - 34); g.quadraticCurveTo(PX0 - 4, TOP_Y - 34, PX0 - 4, TOP_Y - 18); g.stroke();
+    layer = c;
+  }
+
+  function label(str, x, y, fill, font, sw = 3) {
+    ctx.font = font; ctx.lineJoin = 'round';
+    if (sw) { ctx.lineWidth = sw; ctx.strokeStyle = 'rgba(8,6,18,.9)'; ctx.strokeText(str, x, y); }
+    ctx.fillStyle = fill; ctx.fillText(str, x, y);
+  }
+  function pill(x, y, w, h, fill, stroke) { ctx.fillStyle = fill; rrOn(ctx, x, y, w, h, h / 2); ctx.fill(); if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); } }
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+
+  let hintCache = { key: '', v: null };
+  function hintsFor() {
+    const k = board.join(',') + '|' + turn + rules.extra + rules.cap;
+    if (hintCache.key !== k) { const v = {}; for (const i of legal(board, turn)) v[i] = sow(board, turn, i, rules); hintCache = { key: k, v }; }
+    return hintCache.v;
+  }
+  function tutTarget() {
+    const h = hintsFor(); const ms = legal(board, turn);
+    for (const i of ms) if (h[i].extraHit) return i;
+    return ms[0];
+  }
+  function previewPit() {
+    if (!humanTurn()) return -1;
+    const i = press >= 0 ? press : kb ? (turn === 0 ? kbCol : 12 - kbCol) : hover;
+    return i >= 0 && isOwn(turn, i) && board[i] > 0 ? i : -1;
+  }
+
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    if (!layer) buildLayer();
+    ctx.drawImage(layer, 0, 0, W, H);
+    const playing = phase === 'play' && !over;
+    const pulse = 0.5 + 0.5 * Math.sin(animT * 4.5);
+    // 手番の ゴールを 光らせる
+    if (playing && turn >= 0) {
+      const x = ST_X[turn];
+      ctx.save(); ctx.shadowColor = PCOL[turn]; ctx.shadowBlur = (10 + pulse * 8) * DPR; ctx.strokeStyle = PGLOW[turn] + (0.55 + pulse * 0.35) + ')'; ctx.lineWidth = 2.5;
+      rrOn(ctx, x, SY, ST_W, SH, 26); ctx.stroke(); ctx.restore();
+    }
+    const hum = humanTurn();
+    const pv = previewPit();
+    const pr = pv >= 0 ? hintsFor()[pv] : null;
+    // えらべる くぼみ
+    if (hum) {
+      const h = showHint ? hintsFor() : null;
+      for (const i of legal(board, turn)) {
+        const [x, y] = pos(i);
+        const sel = i === pv;
+        ctx.save(); ctx.shadowColor = PCOL[turn]; ctx.shadowBlur = (sel ? 16 : 6) * DPR;
+        ctx.strokeStyle = PGLOW[turn] + (sel ? 0.95 : 0.35 + pulse * 0.2) + ')'; ctx.lineWidth = sel ? 3 : 2;
+        ctx.beginPath(); ctx.arc(x, y, PIT_R + 2, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+        if (h && h[i]) {
+          const r = h[i], by = y + (turn === 0 ? -PIT_R - 2 : PIT_R + 2);
+          const bx = x + PIT_R - 4;
+          if (r.extraHit && !r.end) { pill(bx - 13, by - 11, 26, 22, 'rgba(255,209,102,.95)', 'rgba(40,24,0,.6)'); ctx.textAlign = 'center'; label('↻', bx, by + 6, '#2a1a00', F(18), 0); }
+          else if (r.cap) { const t = '+' + r.cap; ctx.font = F(13); const w = ctx.measureText(t).width + 10; pill(bx - w / 2, by - 9, w, 18, 'rgba(255,95,162,.92)'); ctx.textAlign = 'center'; label(t, bx, by + 5, '#2b0014', F(13), 0); }
+        }
+      }
+    }
+    // よそう（さいごの たねが 入る ところ）
+    if (pr) {
+      const seen = new Map(); pr.path.forEach((j, k) => seen.set(j, (seen.get(j) || 0) + 1));
+      for (const [j, n] of seen) {
+        const [x, y] = pos(j);
+        if (j === 6 || j === 13) continue;
+        ctx.fillStyle = PGLOW[turn] + '.16)'; ctx.beginPath(); ctx.arc(x, y, PIT_R - 2, 0, Math.PI * 2); ctx.fill();
+        if (n > 1) { ctx.textAlign = 'center'; label('+' + n, x + PIT_R - 2, y + PIT_R + 2, '#eeecfa', F(12), 3); }
+      }
+      const L = pr.last, [lx, ly] = pos(L);
+      ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 16 * DPR; ctx.strokeStyle = 'rgba(255,209,102,' + (0.7 + pulse * 0.3) + ')'; ctx.lineWidth = 3; ctx.setLineDash([6, 5]); ctx.lineDashOffset = -animT * 20;
+      if (L === 6 || L === 13) { rrOn(ctx, ST_X[L === 6 ? 0 : 1] - 3, SY - 3, ST_W + 6, SH + 6, 28); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.arc(lx, ly, PIT_R + 5, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.restore();
+      if (pr.cap) { const [ox, oy] = pos(pr.capOpp); ctx.strokeStyle = 'rgba(255,95,162,' + (0.6 + pulse * 0.4) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(ox, oy, PIT_R + 5, 0, Math.PI * 2); ctx.stroke(); }
+    }
+    // チュートリアル
+    if (tutOn && hum && (mode !== 'cpu' || turn === 0)) {
+      const ti = tutTarget(), [x, y] = pos(ti);
+      ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 20 * DPR; ctx.strokeStyle = 'rgba(255,209,102,' + (0.5 + pulse * 0.5) + ')'; ctx.lineWidth = 3.5;
+      ctx.beginPath(); ctx.arc(x, y, PIT_R + 6 + pulse * 4, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      ctx.font = F(26); ctx.textAlign = 'center'; ctx.fillText('👆', x + 4, y + PIT_R + 44 + Math.sin(animT * 6) * 4);
+    }
+    // たね（くぼみ）
+    for (let i = 0; i < 14; i++) {
+      const n = disp[i]; if (!n) continue;
+      if (i === 6 || i === 13) {
+        const cx = ST_X[i === 6 ? 0 : 1] + ST_W / 2;
+        for (let k = 0; k < Math.min(n, STP.length); k++) seedAt(cx + STP[k][0], STP[k][1], seedColor(i, k), 0.92);
+      } else {
+        const [x, y] = pos(i);
+        for (let k = 0; k < Math.min(n, SPIR.length); k++) seedAt(x + SPIR[k][0], y + SPIR[k][1], seedColor(i, k));
+      }
+    }
+    // かず
+    ctx.textAlign = 'center';
+    for (let i = 0; i < 14; i++) {
+      if (i === 6 || i === 13) continue;
+      const [x, y] = pos(i), top = i > 6, by = top ? y - PIT_R - 16 : y + PIT_R + 16;
+      const own = isOwn(top ? 1 : 0, i);
+      pill(x - 15, by - 10, 30, 20, 'rgba(10,8,22,.82)', own ? PGLOW[top ? 1 : 0] + '.35)' : null);
+      label(String(disp[i]), x, by + 6, disp[i] ? '#eeecfa' : '#6d6990', F(16), 0);
+    }
+    for (const p of [0, 1]) {
+      const s = STORE[p], cx = ST_X[p] + ST_W / 2;
+      label(String(disp[s]), cx, SY + 30, PCOL[p], F(24), 4);
+      ctx.save(); ctx.globalAlpha = 0.9; label(seatName(p), cx, p === 0 ? SY + SH + 26 : SY - 12, PCOL[p], F(14), 3); ctx.restore();
+    }
+    // 運んでいる たね
+    if (cur && cur.k === 'drop') {
+      const u = easeOut(Math.min(1, cur.t / cur.dur));
+      const [x0, y0] = pos(cur.from), [x1, y1] = pos(cur.j);
+      const dist = Math.hypot(x1 - x0, y1 - y0), hgt = 14 + dist * 0.18;
+      const x = x0 + (x1 - x0) * u, y = y0 + (y1 - y0) * u - Math.sin(u * Math.PI) * hgt;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,240,200,.25)'; ctx.beginPath(); ctx.arc(x, y, 11, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      seedAt(x, y, cur.col, 1.35);
+      if (handN > 1) { pill(x + 8, y - 30, 34, 20, 'rgba(10,8,22,.86)', PGLOW[cur.p] + '.7)'); label('×' + (handN - 1), x + 25, y - 15, '#eeecfa', F(13), 0); }
+    }
+    if (cur && (cur.k === 'cap' || cur.k === 'sweep')) {
+      const u = easeOut(Math.min(1, cur.t / cur.dur));
+      const flights = [];
+      if (cur.k === 'cap') { flights.push([cur.j, cur.s, cur.cnt[0]], [cur.o, cur.s, cur.cnt[1]]); }
+      else for (let k = 0; k < 6; k++) { if (cur.cnt[k]) flights.push([k, 6, cur.cnt[k]]); if (cur.cnt[7 + k]) flights.push([7 + k, 13, cur.cnt[7 + k]]); }
+      for (const [a, b, n] of flights) {
+        const [x0, y0] = pos(a), [x1, y1] = pos(b);
+        for (let k = 0; k < Math.min(n, 12); k++) {
+          const uu = Math.max(0, Math.min(1, u * 1.25 - k * 0.025));
+          const x = x0 + (x1 - x0) * uu + SPIR[k][0] * (1 - uu), y = y0 + (y1 - y0) * uu - Math.sin(uu * Math.PI) * 40 + SPIR[k][1] * (1 - uu);
+          seedAt(x, y, seedColor(a, k), 1.1);
+        }
+      }
+    }
+    // パーティクル・ポップ
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for (const s of particles) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.6)); ctx.fillStyle = s.c + '1)'; ctx.beginPath(); ctx.arc(s.x, s.y, s.s * 0.6, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore(); ctx.globalAlpha = 1;
+    ctx.textAlign = 'center';
+    for (const p of pops) {
+      const u = p.t / 1.0, sc = p.t < 0.18 ? easeOutBack(p.t / 0.18) : 1;
+      ctx.save(); ctx.globalAlpha = u < 0.7 ? 1 : Math.max(0, 1 - (u - 0.7) / 0.3);
+      ctx.translate(p.x, p.y - u * 26); ctx.scale(sc, sc);
+      ctx.shadowColor = p.color; ctx.shadowBlur = 10 * DPR; label(p.text, 0, 0, p.color, F(p.size), 4); ctx.restore();
+    }
+    // 上の 帯：いまの ばん
+    let main = '', sub = '', col = '#eeecfa';
+    if (phase === 'title') { main = 'たねまきマンカラ'; col = '#53e0d8'; }
+    else if (over) { main = 'おしまい！'; col = '#ffd166'; sub = 'ゴールの たねを くらべるよ'; }
+    else if (busy()) { main = 'たねを まいているよ…'; col = PCOL[history.length ? history[history.length - 1].turn : turn]; }
+    else if (mode === 'cpu' && turn === 1) { main = (again ? 'もう1回！ ' : '') + 'CPU が かんがえ中…'; col = PCOL[1]; }
+    else {
+      main = (again ? 'もう1回！ ' : '▶ ') + seatName(turn) + ' の ばん' + (mode === '2p' ? (turn === 0 ? '（下）' : '（上）') : '');
+      col = again ? '#ffd166' : PCOL[turn];
+      if (tutOn && (mode !== 'cpu' || turn === 0)) sub = '光る くぼみを タップ！ ゴールで ぴったり おわると もう1回';
+      else if (pr) sub = pr.end ? 'これで おしまいに なるよ' : pr.cap ? 'よこどりで +' + pr.cap + '！' : pr.extraHit ? 'ゴールで ぴったり → もう1回！' : 'さいごの たねは ここに 入るよ';
+      else sub = mode === 'cpu' ? '下の くぼみを えらんでね' : (turn === 0 ? '下の くぼみを えらんでね' : '上の くぼみを えらんでね');
+    }
+    ctx.textAlign = 'center';
+    pill(W / 2 - 200, 8, 400, 46, 'rgba(20,18,40,.88)', col === '#eeecfa' ? 'rgba(255,255,255,.15)' : col);
+    label(main, W / 2, sub ? 29 : 37, col, F(18), 3);
+    if (sub) label(sub, W / 2, 47, '#c9c5e6', F(13), 2);
+    // 下の 帯
+    const by0 = BY + BH + 30;
+    ctx.font = F(15);
+    const t1 = seatName(0) + ' ' + tally[0], mid = ' - ', t2 = seatName(1) + ' ' + tally[1], tail = '（ひきわけ ' + tally.d + '）';
+    const w1 = ctx.measureText(t1).width, wm = ctx.measureText(mid).width, w2 = ctx.measureText(t2).width, wt = ctx.measureText(tail).width;
+    let x0 = W / 2 - (w1 + wm + w2 + wt) / 2; ctx.textAlign = 'left';
+    label(t1, x0, by0 + 16, PCOL[0], F(15)); x0 += w1; label(mid, x0, by0 + 16, '#c9c5e6', F(15)); x0 += wm;
+    label(t2, x0, by0 + 16, PCOL[1], F(15)); x0 += w2; label(tail, x0, by0 + 16, '#c9c5e6', F(15));
+    ctx.textAlign = 'center';
+    const rl = (rules.extra ? 'もう1回' : '') + (rules.extra && rules.cap ? '・' : '') + (rules.cap ? 'よこどり' : '') + (!rules.extra && !rules.cap ? 'シンプル' : '');
+    label((mode === 'cpu' ? 'CPU ' + LEVEL_NAME[level] : 'ふたりモード') + ' ／ ' + rl + ' ／ たね' + rules.seeds + 'こ', W / 2, by0 + 40, '#9d99c0', F(13), 2);
+    // おわりの バナー
+    if (over && !busy() && !resultShown) {
+      const k = endT < 0.3 ? easeOutBack(Math.max(0.01, endT / 0.3)) : 1;
+      const c2 = winner === 0 ? PCOL[0] : winner === 1 ? PCOL[1] : '#ffd166';
+      ctx.save(); ctx.translate(W / 2, (TOP_Y + BOT_Y) / 2); ctx.scale(k, k);
+      ctx.fillStyle = 'rgba(19,14,30,.95)'; ctx.strokeStyle = c2; ctx.lineWidth = 3; ctx.shadowColor = c2; ctx.shadowBlur = 24 * DPR; rrOn(ctx, -150, -56, 300, 112, 18); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.textAlign = 'center';
+      label(winner === 0 ? (mode === 'cpu' ? 'あなたの かち！' : 'P1 の かち！') : winner === 1 ? (mode === 'cpu' ? 'CPU の かち…' : 'P2 の かち！') : 'ひきわけ', 0, -6, c2, F(30), 0);
+      label(board[6] + '  -  ' + board[13], 0, 36, '#f4efe0', F(24), 0);
+      ctx.restore();
+    }
+  }
+
+  function update(dt) {
+    animT += dt;
+    if (cur) { cur.t += dt; if (cur.t >= cur.dur) { endEv(cur); cur = null; } }
+    while (!cur && evq.length) { cur = evq.shift(); cur.t = 0; beginEv(cur); if (cur.dur <= 0) { endEv(cur); cur = null; } }
+    for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 1.0);
+    particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 240 * dt; s.life -= dt; return s.life > 0; });
+    if (!busy()) {
+      if (over && phase === 'over' && !resultShown) {
+        endT += dt;
+        if (!endSfx) { endSfx = true; if (winner === 0 || (winner === 1 && mode === '2p')) SFX.win(); else if (winner === 1) SFX.lose(); else SFX.draw(); }
+        if (winner >= 0 && Math.random() < 0.35) { const [x, y] = pos(STORE[winner]); burst(x + (Math.random() - 0.5) * 40, y + (Math.random() - 0.5) * 160, PGLOW[winner], 5, 110); }
+        if (endT > 1.7) showResult();
+      } else if (phase === 'play' && !over && mode === 'cpu' && turn === 1 && autoCpu) {
+        cpuWait += dt; if (cpuWait > (again ? 0.55 : 0.45)) { cpuWait = 0; cpuPlay(); }
+      } else cpuWait = 0;
+    }
+  }
+  function flush() { let g = 0; while (busy() && g++ < 2000) update(0.2); }
+  let last = performance.now(), hidden = false;
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; if (!hidden) update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- input -----------------------------------------------------------------
+  function pitAt(e) {
+    const rc = cv.getBoundingClientRect(); const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    if (x < PX0 || x >= PX1) return -1;
+    const c = Math.floor((x - PX0) / CW);
+    if (Math.abs(y - BOT_Y) <= 46) return c;
+    if (Math.abs(y - TOP_Y) <= 46) return 12 - c;
+    return -1;
+  }
+  function setLevel(lv) { level = lv; saveOpts(); renderStats(); updateButtons(); }
+
+  // ---- wiring (kept at the end) -------------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  cv.addEventListener('pointermove', e => {
+    const i = pitAt(e);
+    if (e.pointerType === 'touch' || e.buttons) { if (press >= 0 && i !== press) press = -1; return; }
+    if (i !== hover) { hover = i; kb = false; if (i >= 0 && humanTurn() && isOwn(turn, i) && board[i] > 0) SFX.hover(); }
+  });
+  cv.addEventListener('pointerleave', () => { hover = -1; });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); kb = false; const i = pitAt(e); press = i; if (e.pointerType !== 'touch') hover = i; });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); const i = pitAt(e); if (i >= 0 && i === press) tryHuman(i); press = -1; if (e.pointerType === 'touch') hover = -1; });
+  cv.addEventListener('pointercancel', () => { press = -1; });
+  document.addEventListener('keydown', e => {
+    if (overlay.classList.contains('show')) { if (e.key === 'Enter') { e.preventDefault(); audio(); startGame(); } return; }
+    const k = e.key;
+    if (k === 'ArrowLeft' || k === 'ArrowRight') { e.preventDefault(); kb = true; kbCol = Math.max(0, Math.min(5, kbCol + (k === 'ArrowLeft' ? -1 : 1))); SFX.hover(); return; }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); if (!kb) { kb = true; return; } tryHuman(turn === 0 ? kbCol : 12 - kbCol); return; }
+    if (k === 'z' || k === 'Z' || k === 'Backspace') { e.preventDefault(); undo(false); return; }
+    if (k === 'h' || k === 'H') { showHint = !showHint; saveOpts(); updateButtons(); SFX.toggle(); }
+  });
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startGame('cpu'); });
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
+  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); SFX.toggle(); setLevel(+b.dataset.l); }));
+  document.getElementById('ruleExtra').addEventListener('click', () => { audio(); rules.extra = !rules.extra; saveOpts(); updateButtons(); SFX.toggle(); });
+  document.getElementById('ruleCap').addEventListener('click', () => { audio(); rules.cap = !rules.cap; saveOpts(); updateButtons(); SFX.toggle(); });
+  document.getElementById('ruleSeeds').addEventListener('click', () => { audio(); rules.seeds = rules.seeds >= 5 ? 3 : rules.seeds + 1; saveOpts(); initBoard(); updateButtons(); SFX.toggle(); });
+  undoBtn.addEventListener('click', () => { audio(); undo(false); });
+  document.getElementById('menuBtn').addEventListener('click', () => { audio(); goMenu(); });
+  hintBtn.addEventListener('click', () => { audio(); showHint = !showHint; saveOpts(); updateButtons(); SFX.toggle(); });
+  fastBtn.addEventListener('click', () => { audio(); fast = !fast; saveOpts(); updateButtons(); SFX.toggle(); });
+  document.addEventListener('visibilitychange', () => { hidden = document.hidden; last = performance.now(); });
+
+  window.__test = {
+    state: () => ({
+      board: board.slice(), disp: disp.slice(), turn, mode, level, phase, over, winner, again,
+      rules: Object.assign({}, rules), legal: phase === 'play' && !over ? legal(board, turn) : [],
+      busy: busy(), overlay: overlay.classList.contains('show'), resultShown,
+      stats: JSON.parse(JSON.stringify(stats)), tally: Object.assign({}, tally), history: history.length,
+      tut: tutOn, hint: showHint, fast, first, total: board.reduce((a, b) => a + b, 0),
+    }),
+    start: (m, lv) => { if (lv) setLevel(lv); startGame(m); },
+    setRules: o => { Object.assign(rules, o); saveOpts(); updateButtons(); },
+    setBoard: (arr, t) => { board = arr.slice(); disp = board.slice(); if (t !== undefined) turn = t; over = false; phase = 'play'; winner = null; again = false; history = []; evq = []; cur = null; resultShown = false; overlay.classList.remove('show'); updateButtons(); },
+    sow: (b, p, i) => sow(b, p, i, rules),
+    move: i => doMove(i),
+    ai: lv => aiMove(lv || level),
+    aiScores: lv => { aiMove(lv || level); return lastScores; },
+    setTime: ms => { STRONG_MS = ms; },
+    point: i => { const rc = cv.getBoundingClientRect(), [x, y] = pos(i); return [rc.left + x * rc.width / W, rc.top + y * rc.height / H]; },
+    flush, step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    setAuto: v => { autoCpu = !!v; cpuWait = 0; },
+    skipCpu: () => { flush(); return cpuPlay(); },
+    undo: () => undo(true),
+    menu: goMenu,
+    setFirst: f => { first = f; firsts[mode] = f; },
+  };
+
+  initBoard(); drawMute(); renderStats(); updateButtons(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
