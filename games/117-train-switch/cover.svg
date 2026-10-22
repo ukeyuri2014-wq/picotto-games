@@ -1,0 +1,110 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c117bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1d3e"/>
+      <stop offset="1" stop-color="#0e0e1d"/>
+    </linearGradient>
+    <radialGradient id="c117glow" cx="0.5" cy="0.55" r="0.6">
+      <stop offset="0" stop-color="#2a3560" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#131322" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c117pink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffa6c9"/>
+      <stop offset="0.5" stop-color="#ff5fa2"/>
+      <stop offset="1" stop-color="#9c2f61"/>
+    </linearGradient>
+    <linearGradient id="c117cyan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9f2ee"/>
+      <stop offset="0.5" stop-color="#53e0d8"/>
+      <stop offset="1" stop-color="#23807b"/>
+    </linearGradient>
+    <linearGradient id="c117gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe7a8"/>
+      <stop offset="1" stop-color="#c8952e"/>
+    </linearGradient>
+    <filter id="c117blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c117bg)"/>
+  <rect width="400" height="225" fill="url(#c117glow)"/>
+  <g fill="#ffffff" opacity="0.55">
+    <circle cx="30" cy="22" r="1.2"/><circle cx="92" cy="14" r="1"/><circle cx="160" cy="28" r="1.4"/>
+    <circle cx="250" cy="12" r="1"/><circle cx="318" cy="30" r="1.3"/><circle cx="372" cy="16" r="1"/>
+  </g>
+  <g fill="#1d4a45">
+    <circle cx="40" cy="190" r="14"/><circle cx="62" cy="200" r="11"/><circle cx="356" cy="196" r="13"/>
+    <circle cx="200" cy="205" r="10"/><circle cx="214" cy="198" r="8"/>
+  </g>
+  <!-- ballast -->
+  <g fill="none" stroke="#2a2a4c" stroke-width="26" stroke-linecap="round">
+    <path d="M -10 120 H 170"/>
+    <path d="M 170 120 C 220 120 240 70 300 70 H 410"/>
+    <path d="M 170 120 C 220 120 240 170 300 170 H 410"/>
+  </g>
+  <!-- sleepers -->
+  <g stroke="#5b4c6c" stroke-width="5">
+    <path d="M 10 108 V 132 M 34 108 V 132 M 58 108 V 132 M 82 108 V 132 M 106 108 V 132 M 130 108 V 132 M 154 108 V 132"/>
+    <path d="M 318 58 V 82 M 342 58 V 82 M 366 58 V 82 M 390 58 V 82"/>
+    <path d="M 318 158 V 182 M 342 158 V 182 M 366 158 V 182 M 390 158 V 182"/>
+  </g>
+  <!-- rails -->
+  <g fill="none" stroke="#c9c7e4" stroke-width="2.6">
+    <path d="M -10 113 H 170 M -10 127 H 170"/>
+  </g>
+  <g fill="none" stroke="#77759a" stroke-width="2.4" opacity="0.5">
+    <path d="M 170 113 C 220 113 240 163 300 163 H 410 M 170 127 C 220 127 240 177 300 177 H 410"/>
+  </g>
+  <g fill="none" stroke="#fff3c4" stroke-width="3" filter="url(#c117blur)" opacity="0.8">
+    <path d="M 170 113 C 220 113 240 63 300 63 H 410 M 170 127 C 220 127 240 77 300 77 H 410"/>
+  </g>
+  <g fill="none" stroke="#fff3c4" stroke-width="2.8">
+    <path d="M 170 113 C 220 113 240 63 300 63 H 410 M 170 127 C 220 127 240 77 300 77 H 410"/>
+  </g>
+  <!-- switch knob -->
+  <circle cx="178" cy="120" r="22" fill="#ffd166" opacity="0.35" filter="url(#c117blur)"/>
+  <circle cx="178" cy="120" r="15" fill="#1b1b36" stroke="#ffd166" stroke-width="4"/>
+  <path d="M 190 113 L 179 108 L 180 112 L 170 116 L 172 121 L 182 117 L 183 121 Z" fill="#fff3c4"/>
+  <!-- stations -->
+  <g transform="translate(352 70)">
+    <rect x="-24" y="-16" width="48" height="38" rx="7" fill="#7d2d55"/>
+    <path d="M -30 -12 L 0 -32 L 30 -12 Z" fill="#ff5fa2"/>
+    <path d="M -22 -14 L 0 -28 L 5 -25 L -15 -13 Z" fill="#ffffff" opacity="0.35"/>
+    <path d="M 0 5 C -10 -2 -6 -12 0 -6 C 6 -12 10 -2 0 5 Z" fill="#ffffff"/>
+  </g>
+  <g transform="translate(352 170)">
+    <rect x="-24" y="-16" width="48" height="38" rx="7" fill="#1f6662"/>
+    <path d="M -30 -12 L 0 -32 L 30 -12 Z" fill="#53e0d8"/>
+    <path d="M -22 -14 L 0 -28 L 5 -25 L -15 -13 Z" fill="#ffffff" opacity="0.35"/>
+    <circle cx="0" cy="-1" r="6.5" fill="#ffffff"/>
+  </g>
+  <!-- pink train on the bright branch -->
+  <g transform="translate(250 86) rotate(-38)">
+    <rect x="-30" y="-12" width="60" height="26" rx="10" fill="#000000" opacity="0.35"/>
+    <rect x="-32" y="-14" width="60" height="26" rx="10" fill="url(#c117pink)" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.5"/>
+    <rect x="12" y="-9" width="9" height="16" rx="3" fill="#10102a" opacity="0.85"/>
+    <rect x="-26" y="-11" width="34" height="4" rx="2" fill="#ffffff" opacity="0.35"/>
+    <circle cx="27" cy="-7" r="2.6" fill="#fff6c8"/><circle cx="27" cy="5" r="2.6" fill="#fff6c8"/>
+    <path d="M -6 4 C -14 -2 -10 -10 -6 -5 C -2 -10 2 -2 -6 4 Z" fill="#ffffff"/>
+  </g>
+  <!-- cyan express from the tunnel -->
+  <g transform="translate(80 120)">
+    <path d="M -46 -6 H -62 M -46 2 H -66 M -46 10 H -60" stroke="#ffd166" stroke-width="2.5" opacity="0.7"/>
+    <rect x="-36" y="-11" width="66" height="26" rx="10" fill="#000000" opacity="0.35"/>
+    <rect x="-38" y="-13" width="66" height="26" rx="10" fill="url(#c117cyan)" stroke="#ffd166" stroke-width="3"/>
+    <rect x="13" y="-8" width="9" height="16" rx="3" fill="#10102a" opacity="0.85"/>
+    <rect x="-32" y="-10" width="38" height="4" rx="2" fill="#ffffff" opacity="0.35"/>
+    <circle cx="27" cy="-6" r="2.6" fill="#fff6c8"/><circle cx="27" cy="6" r="2.6" fill="#fff6c8"/>
+    <circle cx="-6" cy="0" r="6" fill="#ffffff"/>
+  </g>
+  <!-- tunnel -->
+  <path d="M -4 84 H 14 A 36 36 0 0 1 14 156 H -4 Z" fill="url(#c117gold)" opacity="0.25"/>
+  <path d="M -4 90 H 10 A 30 30 0 0 1 10 150 H -4 Z" fill="#05050c"/>
+  <circle cx="20" cy="76" r="5" fill="#53e0d8"/>
+  <circle cx="20" cy="76" r="10" fill="#53e0d8" opacity="0.3" filter="url(#c117blur)"/>
+  <!-- sparkles -->
+  <g fill="#ffd166">
+    <path d="M 300 40 l 3 7 l 7 3 l -7 3 l -3 7 l -3 -7 l -7 -3 l 7 -3 z"/>
+    <path d="M 214 92 l 2 5 l 5 2 l -5 2 l -2 5 l -2 -5 l -5 -2 l 5 -2 z" opacity="0.8"/>
+  </g>
+</svg>
