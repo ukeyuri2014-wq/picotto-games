@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>たからほりアイランド｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --w:480px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 60% at 50% 0%,#1f2147 0%,var(--bg) 60%) fixed,var(--bg); color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:10px 10px 30px; overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+  .backbar,header,#wrap,.row,.help{width:min(var(--w),100%)}
+  .backbar{margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:#c9c5e6;text-decoration:none;padding:4px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:13px;padding:3px 12px;cursor:pointer;font-family:inherit;min-height:30px}
+  header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 2px 6px}
+  .age-badge .sm{display:none}
+  @media (max-width:420px){h1{font-size:19px;letter-spacing:1px}header{gap:6px}.age-badge{padding:2px 8px}.age-badge .lg{display:none}.age-badge .sm{display:inline}}
+  h1{font-size:21px;margin:0;letter-spacing:2px;color:var(--gold);text-shadow:0 0 12px rgba(255,209,102,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid #6b5a2e;border-radius:14px;background:#0b1430;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 22px rgba(255,209,102,.16)}
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;background:linear-gradient(180deg,rgba(74,58,30,.96),rgba(40,30,22,.96));border-bottom:2px solid #1a130c;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+  .isle{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+  .isle small{font-size:11px;color:#d9c9a0}
+  .isle b{font-weight:400;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lcd{font-weight:400;font-size:19px;letter-spacing:1px;padding:2px 8px;border:1px solid rgba(255,209,102,.45);border-radius:10px;background:linear-gradient(180deg,#0b0906,#1d160e);box-shadow:inset 0 2px 6px rgba(0,0,0,.8);text-align:center;line-height:1.3;white-space:nowrap;font-variant-numeric:tabular-nums;min-width:84px}
+  .lcd.gold{color:var(--gold);text-shadow:0 0 8px rgba(255,209,102,.8)}
+  .lcd.cyan{color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.8)}
+  .lcd.low{color:var(--pink);text-shadow:0 0 8px rgba(255,95,162,.9);border-color:rgba(255,95,162,.6)}
+  .lcd.bump{animation:bump .35s}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+  #msg{box-sizing:border-box;height:48px;padding:3px 10px;overflow:hidden;color:#e9e4ff;background:rgba(10,14,36,.92);border-bottom:1px solid rgba(83,224,216,.18);display:flex;align-items:center;justify-content:center}
+  #msg>span{display:block;width:100%;max-height:100%;text-align:center;font-size:13px;line-height:1.4;word-break:keep-all;overflow-wrap:anywhere;line-break:strict}
+  #msg.sm>span{font-size:12px;line-height:1.3}
+  #msg.xs>span{font-size:11px;line-height:1.25}
+  #msg b{color:var(--gold);font-weight:400}
+  #msg i{font-style:normal;color:var(--cyan)}
+  canvas{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+
+  .row{display:flex;gap:6px;margin-top:7px}
+  .btn{flex:1;font-family:inherit;font-size:14px;padding:9px 0;min-height:44px;border-radius:12px;border:2px solid #6b5a2e;background:linear-gradient(180deg,#4a3b22,#2c2216 60%,#22190f);color:var(--ink);cursor:pointer;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 3px 0 #120c06;transition:transform .08s}
+  .btn:active{transform:translateY(2px)}
+  .btn:disabled{opacity:.38;cursor:default}
+  .btn.on{border-color:var(--cyan);color:var(--cyan);background:linear-gradient(180deg,#1f5f6c,#143a4e 60%,#102c40);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 #091a26,0 0 14px rgba(83,224,216,.5)}
+  .btn.tool .ct{color:var(--gold)}
+  .btn.sm{font-size:13px}
+
+  #overlay{position:absolute;inset:0;display:none;flex-direction:column;gap:9px;align-items:center;justify-content:center;background:rgba(12,14,34,.94);text-align:center;padding:10px;overflow:auto;z-index:2}
+  #overlay.show{display:flex}
+  #overlay .big{font-size:27px;letter-spacing:2px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.7);line-height:1.2}
+  #overlay .big.lose{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.7)}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.7}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note i{font-style:normal;color:var(--cyan)}
+  #overlay .stars{font-size:34px;letter-spacing:6px;color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.8);line-height:1}
+  #overlay .stars span{display:inline-block;animation:starIn .5s both}
+  #overlay .stars span.off{color:#3b3756;text-shadow:none}
+  @keyframes starIn{0%{transform:scale(0) rotate(-40deg);opacity:0}70%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
+  .finds{font-size:26px;letter-spacing:4px;min-height:30px}
+  .isles{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:min(400px,100%)}
+  .isles button{font-family:inherit;background:rgba(255,255,255,.04);border:1px solid var(--edge);color:var(--ink);border-radius:10px;padding:4px 0 3px;min-height:52px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15}
+  .isles button .e{font-size:19px}
+  .isles button small{font-size:11px;color:var(--sub)}
+  .isles button em{font-style:normal;font-size:11px;color:var(--gold);letter-spacing:0}
+  .isles button.on{border-color:var(--gold);background:rgba(255,209,102,.12);box-shadow:0 0 10px rgba(255,209,102,.4)}
+  .isles button.lock{opacity:.45}
+  .iinfo{font-size:13px;color:#e8dcb6;min-height:38px;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .modes button{font-family:inherit;font-size:15px;background:var(--gold);color:#2b1d00;border:none;border-radius:8px;padding:10px 20px;min-height:44px;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(255,209,102,.45)}
+  .modes button.alt{background:none;color:var(--ink);border:1px solid #5d5888;box-shadow:none;font-size:14px}
+  #overlay .rule{font-size:12px;color:var(--sub)}
+  .zgrid{display:grid;grid-template-columns:repeat(6,46px);gap:4px;justify-content:center}
+  .zgrid button{width:46px;height:46px;border-radius:10px;border:1px solid #39557a;background:rgba(83,224,216,.06);font-size:22px;padding:0;cursor:pointer;font-family:inherit;color:#5c5a7c;position:relative}
+  .zgrid button.r{border-color:#7a52c9;background:rgba(160,107,255,.08)}
+  .zgrid button.s{border-color:#a8873a;background:rgba(255,209,102,.08)}
+  .zgrid button.got{color:var(--ink)}
+  .zgrid button.sel{outline:2px solid var(--gold)}
+  .zdet{font-size:13px;min-height:40px;line-height:1.5;color:#e9e4ff}
+  .zdet b{color:var(--gold);font-weight:400}
+
+  .help{color:#bcb8d9;font-size:13px;margin-top:10px;line-height:1.7;background:rgba(13,11,32,.7);border:1px solid rgba(107,90,46,.6);border-radius:12px;padding:10px 12px}
+  .help b{color:var(--gold);font-weight:400}
+  .help i{font-style:normal;color:var(--cyan)}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+    .isles button:hover:not(.lock){border-color:var(--gold)}
+    .modes button.alt:hover{color:var(--gold);border-color:var(--gold)}
+    .zgrid button:hover{border-color:var(--gold)}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="スコップの数は かぎられている。ほると出る すうじは いちばん近い たからまでの 歩数。すうじを くみあわせて たからを ぜんぶ ほりあてよう。10の島・コンパスや十字にほる どうぐ・30しゅるいの たからずかん、少ない回数で ★3なら 島の ひほうが もらえる。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/108-treasure-dig/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"たからほりアイランド","description":"スコップの数は かぎられている。ほると出る すうじは いちばん近い たからまでの 歩数。すうじを くみあわせて たからを ぜんぶ ほりあてよう。10の島・コンパスや十字にほる どうぐ・30しゅるいの たからずかん、少ない回数で ★3なら 島の ひほうが もらえる。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/108-treasure-dig/index.html","inLanguage":"ja","genre":"ADVENTURE","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="108"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>たからほりアイランド</h1>
+  <div class="age-badge"><span class="lg">対象年齢の目安：</span><span class="sm">めやす </span>6歳〜</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div class="isle"><small id="hudNo">島 1 / 10</small><b id="hudName">🏝️ はじまりの島</b></div>
+    <div class="lcd gold" id="hudShovel">🪏 7</div>
+    <div class="lcd cyan" id="hudFound">💎 0/1</div>
+  </div>
+  <div id="msg"><span>すなを タップして ほろう！</span></div>
+  <canvas id="cv" width="480" height="480"></canvas>
+  <div id="overlay" class="show"></div>
+</div>
+<div class="row">
+  <button class="btn on" id="digBtn">🪏 ほる</button>
+  <button class="btn tool" id="compassBtn">🧭 コンパス <span class="ct" id="compassCt">×0</span></button>
+  <button class="btn tool" id="wideBtn">💥 ひろく <span class="ct" id="wideCt">×0</span></button>
+</div>
+<div class="row">
+  <button class="btn sm" id="retryBtn">🔄 やりなおし</button>
+  <button class="btn sm" id="menuBtn">🗺️ 島をえらぶ</button>
+  <button class="btn sm" id="bookBtn">📖 ずかん</button>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：すなを タップすると スコップで ほるよ。出てきた <b>すうじ</b> は、いちばん近い たからまでの <b>歩数</b>（たて＋よこに 何マス）。すうじが小さいほど 近い！ スコップが なくなる前に たからを ぜんぶ 見つけたら クリア。<br>
+  🔍 ほった すうじを タップすると、その歩数の マスが 光るよ。いくつかの すうじが 重なる ところが あやしい！<br>
+  🧭 <i>コンパス</i>：しらべたい マスを タップすると、いちばん近い たからの 向きを やじるしで 教えてくれる（スコップは へらない）。💥 <i>ひろく</i>：十字の 5マスを スコップ1本で いっきに ほる。🧰 どうぐばこを ほりあてると スコップ＋2。<br>
+  ★：少ない スコップで クリアするほど ★が ふえる。★3で その島だけの「ひほう」が ずかんに のるよ。たからは 毎回 ちがう場所に うまっていて、出てくる たからも いろいろ。<br>
+  ⌨️ 矢印キーで えらぶ／Enter・スペースで ほる／Cで コンパス／Wで ひろく／Rで やりなおし／Escで 島をえらぶ。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d'), overlay = $('overlay');
+  const RS = Math.min(2, window.devicePixelRatio || 1);
+  const W = 480, H = 480;
+  const KEY = 'ludot_treasure-dig_';
+  const EMOJI = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  const NUMF = '"Arial Rounded MT Bold","Hiragino Maru Gothic ProN","Hiragino Sans",system-ui,sans-serif';
+
+  // ---- 島（. うみ / o すな / # いわ） ------------------------------------------
+  const ISLANDS = [
+    { name: 'はじまりの島', e: '🏝️', K: 1, budget: 7, s3: 4, s2: 5, compass: 0, wide: 0, kits: 0, pal: ['#d8b06c', '#a97c45', '#6fcf7a'],
+      map: ['.oooo.', 'oooooo', 'oooooo', 'oooooo', 'oooooo', '.oooo.'] },
+    { name: 'やしの木の島', e: '🌴', K: 1, budget: 6, s3: 4, s2: 5, compass: 0, wide: 0, kits: 0, pal: ['#d6b878', '#a3803f', '#46c46a'],
+      map: ['..ooo..', '.ooooo.', 'ooooooo', 'ooo#ooo', 'ooooooo', '.ooooo.', '..ooo..'] },
+    { name: 'みかづき島', e: '🌙', K: 1, budget: 6, s3: 4, s2: 5, compass: 1, wide: 0, kits: 1, pal: ['#cfc6a6', '#8f8668', '#9fd8c8'],
+      map: ['..oooo..', '.oooooo.', 'oooo..oo', 'ooo.....', 'ooo.....', 'oooo..oo', '.oooooo.', '..oooo..'] },
+    { name: 'きのこ島', e: '🍄', K: 2, budget: 9, s3: 6, s2: 8, compass: 1, wide: 0, kits: 1, pal: ['#d39a74', '#9a5e44', '#ff8fa8'],
+      map: ['.oooooo.', 'oooooooo', 'oooooooo', 'oooooooo', '.oooooo.', '...oo...', '..oooo..', '.oooooo.'] },
+    { name: 'ひのやま島', e: '🌋', K: 2, budget: 9, s3: 6, s2: 8, compass: 1, wide: 1, kits: 1, pal: ['#b98a6a', '#7a5040', '#ff9a52'],
+      map: ['..oooo..', '.oooooo.', 'ooo##ooo', 'oo#..#oo', 'oo#..#oo', 'ooo##ooo', '.oooooo.', '..oooo..'] },
+    { name: 'ふたご島', e: '🏖️', K: 2, budget: 8, s3: 6, s2: 7, compass: 1, wide: 1, kits: 1, pal: ['#e0c088', '#a8844c', '#64d39a'],
+      map: ['ooo......', 'ooooo....', 'ooooo....', '.oooo....', '..ooooo..', '....oooo.', '....ooooo', '....ooooo', '......ooo'] },
+    { name: 'こおりの島', e: '🧊', K: 2, budget: 8, s3: 6, s2: 7, compass: 1, wide: 1, kits: 1, pal: ['#bfe3f2', '#7fa9c4', '#ffffff'],
+      map: ['....o....', '...ooo...', '..ooooo..', '.ooo#ooo.', 'ooo#.#ooo', '.ooo#ooo.', '..ooooo..', '...ooo...', '....o....'] },
+    { name: 'さんごの島', e: '🐠', K: 3, budget: 11, s3: 6, s2: 8, compass: 2, wide: 1, kits: 1, pal: ['#efc0a8', '#b57b6c', '#ff7fa8'],
+      map: ['..oooooo..', '.oooooooo.', 'oooooooooo', 'ooo....ooo', 'oo......oo', 'oo......oo', 'ooo....ooo', 'oooooooooo', '.oooooooo.', '..oooooo..'] },
+    { name: 'ながれぼし島', e: '⭐', K: 3, budget: 11, s3: 6, s2: 8, compass: 2, wide: 1, kits: 1, pal: ['#d8c27a', '#9a8240', '#ffe27a'],
+      map: ['....oo....', '....oo....', '...oooo...', 'oooooooooo', '.oooooooo.', '..oooooo..', '..oooooo..', '.ooo..ooo.', '.oo....oo.', 'oo......oo'] },
+    { name: 'りゅうの島', e: '🐉', K: 3, budget: 11, s3: 6, s2: 8, compass: 2, wide: 2, kits: 1, pal: ['#b79ac8', '#6f5488', '#c9a0ff'],
+      map: ['.oooooooo.', 'oooo#ooooo', 'ooooooo#oo', 'o#oooooooo', 'ooooo##ooo', 'oooo##oooo', 'oooooooo#o', 'oo#ooooooo', 'ooooo#oooo', '.oooooooo.'] },
+  ];
+  // ---- ずかん（ふつう12・レア8・島のひほう10） ---------------------------------
+  const ITEMS = [
+    ['c0', '🪙', 'ふるい きんか', 'c'], ['c1', '🐚', 'まきがい', 'c'], ['c2', '🦴', 'きょうりゅうの ほね', 'c'], ['c3', '🏺', 'むかしの つぼ', 'c'],
+    ['c4', '🗝️', 'ふしぎな かぎ', 'c'], ['c5', '📿', 'くびかざり', 'c'], ['c6', '⚓', 'ふねの いかり', 'c'], ['c7', '🔔', 'ちいさな かね', 'c'],
+    ['c8', '🪶', 'にじいろの はね', 'c'], ['c9', '🎐', 'ガラスの ふうりん', 'c'], ['c10', '🪔', 'まほうの ランプ', 'c'], ['c11', '🥄', 'ぎんの スプーン', 'c'],
+    ['r0', '💍', 'ひかる ゆびわ', 'r'], ['r1', '💎', 'おおきな ダイヤ', 'r'], ['r2', '🔮', 'すいしょうだま', 'r'], ['r3', '⏳', 'すなどけい', 'r'],
+    ['r4', '📜', 'たからの まきもの', 'r'], ['r5', '🧿', 'あおい おまもり', 'r'], ['r6', '🏆', 'きんの トロフィー', 'r'], ['r7', '🥚', 'なぞの たまご', 'r'],
+    ['s0', '🌟', 'ほしの かけら', 's'], ['s1', '🥥', 'きんの やしのみ', 's'], ['s2', '🌙', 'つきの しずく', 's'], ['s3', '🍄', 'にじいろ きのこ', 's'],
+    ['s4', '🔥', 'ほのおの いし', 's'], ['s5', '🪞', 'ふたごの かがみ', 's'], ['s6', '❄️', 'こおりの はな', 's'], ['s7', '💠', 'うみの ほうせき', 's'],
+    ['s8', '🌠', 'ながれぼしの つえ', 's'], ['s9', '👑', 'りゅうの かんむり', 's'],
+  ].map(([id, e, n, tier]) => ({ id, e, n, tier }));
+  const ITEM = Object.fromEntries(ITEMS.map(x => [x.id, x]));
+  const HEAT = ['#ffffff', '#ff4d6d', '#ff8c42', '#ffd166', '#b6f06a', '#53e0d8', '#7fb2ff'];
+  const heatCol = v => HEAT[Math.min(6, Math.max(0, v))];
+
+  // ---- 乱数（テストで固定できる） ---------------------------------------------
+  let fixedSeed = null, rs = 1;
+  function rnd() { if (fixedSeed == null) return Math.random(); rs = rs + 0x6D2B79F5 | 0; let t = Math.imul(rs ^ rs >>> 15, 1 | rs); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+
+  // ---- 保存 -------------------------------------------------------------------
+  let save = { stars: new Array(10).fill(0), zukan: {}, tut: 0, dug: 0, sel: 0, clears: 0 };
+  function loadSave() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY + 'save') || 'null');
+      if (s && typeof s === 'object') {
+        if (Array.isArray(s.stars)) save.stars = ISLANDS.map((_, i) => Math.max(0, Math.min(3, s.stars[i] | 0)));
+        if (s.zukan && typeof s.zukan === 'object') save.zukan = s.zukan;
+        save.tut = s.tut ? 1 : 0; save.dug = s.dug | 0; save.clears = s.clears | 0; save.sel = Math.max(0, Math.min(9, s.sel | 0));
+      }
+    } catch (e) {}
+  }
+  function persist() { try { localStorage.setItem(KEY + 'save', JSON.stringify(save)); } catch (e) {} }
+  const unlocked = i => i === 0 || save.stars[i - 1] > 0;
+  const zukanCount = () => ITEMS.filter(x => save.zukan[x.id] > 0).length;
+  const starTotal = () => save.stars.reduce((a, b) => a + b, 0);
+
+  // ---- おと -------------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted || !ac) return; const a = ac;
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function noise(dur, vol, f0, f1, delay = 0) {
+    if (muted || !ac) return; const a = ac;
+    const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+    const s = a.createBufferSource(), g = a.createGain(), f = a.createBiquadFilter(), t = a.currentTime + delay;
+    s.buffer = buf; f.type = 'lowpass'; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(a.destination); s.start(t); s.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    dig() { noise(0.22, 0.32, 1800, 160); tone('triangle', 180, 90, 0.12, 0.12); },
+    num(v) { const f = 1100 - Math.min(6, v) * 110; tone('square', f, f, 0.07, 0.045, 0.12); tone('triangle', f * 1.5, f * 1.5, 0.08, 0.03, 0.19); },
+    treasure() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone('square', f, f, 0.16, 0.06, 0.1 + i * 0.07)); tone('triangle', 1568, 2093, 0.4, 0.05, 0.48); },
+    kit() { [660, 880, 1100].forEach((f, i) => tone('triangle', f, f * 1.05, 0.1, 0.07, 0.12 + i * 0.06)); },
+    compass() { tone('sine', 880, 1320, 0.18, 0.08); tone('sine', 1320, 1760, 0.2, 0.05, 0.12); },
+    wide() { noise(0.45, 0.4, 2400, 120); tone('sawtooth', 160, 60, 0.3, 0.08); },
+    change() { tone('sine', 520, 780, 0.14, 0.05, 0.5); },
+    deny() { tone('square', 200, 140, 0.1, 0.05); },
+    click() { tone('square', 900, 900, 0.03, 0.03); },
+    ring() { tone('sine', 700, 980, 0.12, 0.04); },
+    clear() { [523, 659, 784, 659, 784, 1046].forEach((f, i) => tone('square', f, f, 0.15, 0.06, i * 0.11)); [1046, 1318, 1568].forEach((f, i) => tone('triangle', f, f, 0.5, 0.05, 0.7 + i * 0.04)); },
+    fail() { [392, 330, 262, 196].forEach((f, i) => tone('triangle', f, f * 0.97, 0.22, 0.07, i * 0.16)); },
+    star(i) { tone('triangle', 880 + i * 220, 1320 + i * 220, 0.18, 0.06); },
+    secret() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.25, 0.07, i * 0.09)); },
+  };
+  const muteBtn = $('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- じょうたい ---------------------------------------------------------------
+  let phase = 'title';           // title | play | clear | fail | end | zukan
+  let isl = 0, n = 6, cell = 70, BX = 30, BY = 30, grid = [];
+  let treasures = [], shovels = 0, used = 0, tools = { compass: 0, wide: 0 }, mode = 'dig';
+  let arrows = [], ring = null, cursor = { r: 0, c: 0 }, kb = false, hover = null, guide = null;
+  let T = 0, endAt = Infinity, result = null, lastFinds = [], zukanFrom = 'title', zSel = null, firstDigDone = false;
+  let particles = [], pops = [], swings = [], rays = [], landDirty = true, paused = false;
+  const inb = (r, c) => r >= 0 && c >= 0 && r < n && c < n;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  const mdist = (a, b, c, d) => Math.abs(a - c) + Math.abs(b - d);
+  function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+  function buildIsland(i) {
+    isl = i; const L = ISLANDS[i]; n = L.map.length;
+    cell = Math.floor(440 / n); BX = Math.floor((W - n * cell) / 2); BY = Math.floor((H - n * cell) / 2);
+    grid = L.map.map((row, r) => [...row].map((ch, c) => ({ land: ch !== '.', rock: ch === '#', dug: false, dt: -1, v: -1, vt: -1, tre: -1, kit: false, var: (r * 7 + c * 13 + i * 5) % 4 })));
+    sprites.clear(); landDirty = true;
+  }
+  const diggable = (r, c) => inb(r, c) && grid[r][c].land && !grid[r][c].rock;
+  function landCells() { const out = []; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (diggable(r, c)) out.push([r, c]); return out; }
+  function place() {
+    const L = ISLANDS[isl], pool = landCells();
+    treasures = [];
+    for (let k = 0; k < L.K; k++) { const j = Math.floor(rnd() * pool.length); const [r, c] = pool.splice(j, 1)[0]; treasures.push({ r, c, found: false, item: null, ft: -1 }); grid[r][c].tre = k; }
+    for (let k = 0; k < L.kits; k++) { const j = Math.floor(rnd() * pool.length); const [r, c] = pool.splice(j, 1)[0]; grid[r][c].kit = true; }
+  }
+  function startIsland(i) {
+    if (!ISLANDS[i]) return;
+    if (fixedSeed != null) rs = fixedSeed * 7919 + i * 104729;
+    buildIsland(i); place();
+    const L = ISLANDS[i];
+    shovels = L.budget; used = 0; tools = { compass: L.compass, wide: L.wide }; mode = 'dig';
+    arrows = []; ring = null; particles = []; pops = []; swings = []; rays = []; result = null; lastFinds = []; endAt = Infinity; firstDigDone = false;
+    const lc = landCells(); let best = lc[0], bd = 1e9; for (const [r, c] of lc) { const d = Math.abs(r - (n - 1) / 2) + Math.abs(c - (n - 1) / 2); if (d < bd) { bd = d; best = [r, c]; } }
+    cursor = { r: best[0], c: best[1] }; kb = false;
+    guide = (!save.tut && i === 0) ? { r: best[0], c: best[1] } : null;
+    save.sel = i; persist();
+    phase = 'play'; overlay.classList.remove('show');
+    setMsg(guide ? '👆 ひかっている すなを タップして ほってみよう！' : `${L.e} たから <b>${L.K}こ</b>・スコップ <b>${L.budget}本</b>（★3は <b>${L.s3}本</b>いか）<br>` + (L.compass && i === 2 ? '🧭 コンパスが つかえるよ' : L.wide && i === 4 ? '💥「ひろく」で 十字に いっきに ほれる！' : 'すなを タップして ほろう！'));
+    updateHud(); updateTools();
+  }
+  const remaining = () => treasures.filter(t => !t.found);
+  function valueAt(r, c) { const rem = remaining(); if (!rem.length) return -1; let m = 1e9; for (const t of rem) m = Math.min(m, mdist(r, c, t.r, t.c)); return m; }
+  function refreshValues() {
+    let changed = 0;
+    if (!remaining().length) return 0;
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      const g = grid[r][c]; if (!g.dug || g.tre >= 0) continue;
+      const v = valueAt(r, c); if (v !== g.v) { g.pv = g.v; g.v = v; g.vt = T + 450; changed++; }
+    }
+    return changed;
+  }
+  function pickItem() {
+    const rare = rnd() < 0.1 + 0.05 * isl;
+    const pool = ITEMS.filter(x => x.tier === (rare ? 'r' : 'c'));
+    let it = pool[Math.floor(rnd() * pool.length)];
+    if (save.zukan[it.id] > 0) it = pool[Math.floor(rnd() * pool.length)];
+    return it.id;
+  }
+  // 1マス ほる（スコップの へりは よびだし側）
+  function digCell(r, c) {
+    const g = grid[r][c]; g.dug = true; g.dt = T; landDirty = true; save.dug++;
+    const x = BX + c * cell + cell / 2, y = BY + r * cell + cell / 2;
+    burst(x, y, ['#7a5230', '#a87a48', '#5a3a20', '#d8b06c'], 16, 0.9);
+    let out = { kind: 'empty' };
+    if (g.tre >= 0) {
+      const t = treasures[g.tre]; t.found = true; t.ft = T; t.item = pickItem();
+      const isNew = !(save.zukan[t.item] > 0); save.zukan[t.item] = (save.zukan[t.item] || 0) + 1;
+      lastFinds.push(t.item);
+      rays.push({ x, y, t: T });
+      burst(x, y, ['#ffd166', '#fff3b0', '#ffffff', '#ff5fa2', '#53e0d8'], 46, 1.4);
+      pops.push({ x, y: y - cell * 0.6, t: T + 200, text: isNew ? 'NEW!' : 'たから！', col: isNew ? '#53e0d8' : '#ffd166', size: 22 });
+      out = { kind: 'treasure', item: t.item, isNew };
+    } else {
+      g.v = valueAt(r, c);
+      if (g.kit) { shovels += 2; pops.push({ x, y: y - cell * 0.5, t: T + 150, text: '🪏+2', col: '#53e0d8', size: 20 }); burst(x, y, ['#53e0d8', '#ffffff'], 20, 1); out = { kind: 'kit', v: g.v }; }
+      else out = { kind: 'empty', v: g.v };
+    }
+    return out;
+  }
+  function spend() { shovels--; used++; bumpHud(); }
+  function canAct() { return phase === 'play'; }
+  function dig(r, c) {
+    if (!canAct() || !inb(r, c)) return false;
+    const g = grid[r][c];
+    if (!g.land) { return false; }
+    if (g.rock) { SFX.deny(); setMsg('🪨 いわは かたくて ほれないよ'); return false; }
+    if (g.dug) { showRing(r, c); return false; }
+    spend(); swings.push({ r, c, t: T });
+    const res = digCell(r, c);
+    guide = null; firstDigDone = true;
+    SFX.dig();
+    after([res]);
+    return true;
+  }
+  function wideDig(r, c) {
+    if (!canAct() || !inb(r, c) || tools.wide <= 0) return false;
+    const cells = [[r, c], [r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]].filter(([a, b]) => diggable(a, b) && !grid[a][b].dug);
+    cells.sort((p, q) => (grid[p[0]][p[1]].tre >= 0) - (grid[q[0]][q[1]].tre >= 0));   // たからは さいごに（ほかの すうじを 先に きめる）
+    if (!grid[r][c].land || !cells.length) { SFX.deny(); setMsg('💥 ほれる すなが ある ところを えらんでね'); return false; }
+    tools.wide--; spend(); mode = 'dig';
+    const res = cells.map(([a, b]) => { swings.push({ r: a, c: b, t: T }); return digCell(a, b); });
+    guide = null; firstDigDone = true;
+    SFX.wide(); updateTools();
+    after(res);
+    return true;
+  }
+  function compass(r, c) {
+    if (!canAct() || !inb(r, c) || tools.compass <= 0 || !grid[r][c].land) return false;
+    const rem = remaining(); if (!rem.length) return false;
+    let best = null, bd = 1e9; for (const t of rem) { const d = mdist(r, c, t.r, t.c); if (d < bd) { bd = d; best = t; } }
+    let dir;
+    if (bd === 0) dir = -1;
+    else { const a = Math.atan2(best.r - r, best.c - c); dir = ((Math.round(a / (Math.PI / 4)) % 8) + 8) % 8; }
+    tools.compass--; mode = 'dig';
+    arrows = arrows.filter(a => !(a.r === r && a.c === c)); arrows.push({ r, c, dir, t: T });
+    SFX.compass(); updateTools();
+    setMsg(dir < 0 ? '🧭 はりが ぐるぐる…！ <b>この真下に たからが ある！</b>' : '🧭 いちばん近い たからは <b>' + ['みぎ', 'みぎした', 'した', 'ひだりした', 'ひだり', 'ひだりうえ', 'うえ', 'みぎうえ'][dir] + '</b> の ほう！<br>（スコップは へっていないよ）');
+    return { dir };
+  }
+  function showRing(r, c) {
+    const g = grid[r][c]; if (!g.dug || g.tre >= 0 || g.v < 0) return;
+    if (ring && ring.r === r && ring.c === c && T - ring.t < 2200) { ring = null; return; }
+    ring = { r, c, d: g.v, t: T }; SFX.ring();
+    setMsg(`🔍 「${g.v}」から ちょうど <b>${g.v}歩</b> の マスが 光ったよ。<br>光った どこかに たからが ある！`);
+  }
+  function after(res) {
+    const tr = res.filter(x => x.kind === 'treasure');
+    if (tr.length) {
+      SFX.treasure();
+      const changed = refreshValues();
+      if (changed) SFX.change();
+      ring = null;
+      const it = ITEM[tr[tr.length - 1].item], left = remaining().length;
+      setMsg(`${it.e} <b>${it.n}</b> を 見つけた！` + (left ? ` あと <b>${left}こ</b>。` + (changed ? '<br>すうじが <i>のこりの たから</i>までの 歩数に かわったよ' : '') : ''));
+    } else {
+      const k = res.find(x => x.kind === 'kit');
+      const vs = res.map(x => x.v).filter(v => v >= 0); const v = vs.length ? Math.min(...vs) : -1;
+      if (v >= 0) SFX.num(v);
+      if (k) SFX.kit();
+      let m = '';
+      if (!save.tut && isl === 0 && used === 1) m = `「<b>${v}</b>」は たからまで <b>${v}歩</b>（たて＋よこ）。<br>すうじを タップすると ${v}歩の マスが 光るよ`;
+      else if (k) m = '🧰 どうぐばこ！ スコップが <b>2本</b> ふえた！';
+      else m = v === 1 ? '🔥 <b>あつい！</b> となりに たからが ある！' : v === 2 ? '🔥 あつい！ かなり 近いよ' : v === 3 ? '♨️ あったかい…' : v <= 5 ? '🌤 ちょっと とおい' : '❄️ つめたい… とおくだね';
+      if (shovels === 1 && remaining().length) m += '<br>スコップ のこり <b>1本</b>！ よく かんがえて';
+      setMsg(m);
+    }
+    updateHud();
+    if (!remaining().length) return finish(true);
+    if (shovels <= 0) return finish(false);
+  }
+  function starsFor(i, u) { const L = ISLANDS[i]; return u <= L.s3 ? 3 : u <= L.s2 ? 2 : 1; }
+  function finish(win) {
+    if (win) {
+      const st = starsFor(isl, used), prev = save.stars[isl];
+      let secret = null, secretNew = false;
+      if (st === 3) { secret = 's' + isl; secretNew = !(save.zukan[secret] > 0); save.zukan[secret] = (save.zukan[secret] || 0) + 1; }
+      save.stars[isl] = Math.max(prev, st); save.clears++;
+      if (isl === 0) save.tut = 1;
+      result = { win: true, stars: st, used, best: st > prev, secret, secretNew, unlockedNext: isl < 9 && prev === 0 };
+      phase = 'clear'; SFX.clear(); endAt = T + 1900;
+      confetti();
+    } else {
+      result = { win: false, stars: 0, used };
+      phase = 'fail'; SFX.fail(); endAt = T + 1900;
+      if (isl === 0) save.tut = 1;
+      for (const t of remaining()) { t.reveal = T + 300; }
+      setMsg('スコップが なくなっちゃった…<br>たからは <i>ピンクの わく</i> の ところ！');
+    }
+    persist(); updateHud(); updateTools();
+    return true;
+  }
+  function confetti() { for (let k = 0; k < 5; k++) burstAt(T + k * 220, 60 + rnd2() * 360, 70 + rnd2() * 220); }
+
+  // ---- がめん（DOM） -------------------------------------------------------------
+  function setMsg(h) {
+    // 1つの だんらくとして おりかえす。高さは 固定で、はみ出す時だけ 文字を 少し 小さく
+    const m = $('msg'); m.classList.remove('sm', 'xs'); m.innerHTML = '<span>' + h + '</span>';
+    const sp = m.firstChild, over = () => sp.scrollHeight > m.clientHeight - 6 + 1;
+    if (over()) { m.classList.add('sm'); if (over()) { m.classList.remove('sm'); m.classList.add('xs'); } }
+  }
+  let lastShovelTxt = '';
+  function updateHud() {
+    const L = ISLANDS[isl];
+    $('hudNo').textContent = '島 ' + (isl + 1) + ' / 10';
+    $('hudName').textContent = L.e + ' ' + L.name;
+    const s = $('hudShovel'), txt = '🪏 ' + Math.max(0, shovels);
+    if (txt !== lastShovelTxt) { s.textContent = txt; lastShovelTxt = txt; }
+    s.classList.toggle('low', phase === 'play' && shovels <= 2);
+    $('hudFound').textContent = '💎 ' + treasures.filter(t => t.found).length + '/' + L.K;
+  }
+  function bumpHud() { const s = $('hudShovel'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump'); }
+  function updateTools() {
+    $('compassCt').textContent = '×' + tools.compass; $('wideCt').textContent = '×' + tools.wide;
+    $('compassBtn').disabled = tools.compass <= 0 || phase !== 'play';
+    $('wideBtn').disabled = tools.wide <= 0 || phase !== 'play';
+    const live = phase === 'play';   // おわった画面では どのボタンも 光らせない
+    $('digBtn').disabled = !live;
+    $('digBtn').classList.toggle('on', live && mode === 'dig'); $('compassBtn').classList.toggle('on', live && mode === 'compass'); $('wideBtn').classList.toggle('on', live && mode === 'wide');
+  }
+  function setMode(m) {
+    if (phase !== 'play') return;
+    if (m === 'compass' && tools.compass <= 0) m = 'dig';
+    if (m === 'wide' && tools.wide <= 0) m = 'dig';
+    if (mode === m && m !== 'dig') m = 'dig';
+    mode = m; SFX.click(); updateTools();
+    if (m === 'compass') setMsg('🧭 しらべたい マスを タップしてね（スコップは へらない）');
+    else if (m === 'wide') setMsg('💥 まんなかに する マスを タップ → 十字の 5マスを いっきに ほる');
+    else setMsg('🪏 すなを タップして ほろう');
+  }
+  const starStr = k => '★'.repeat(k) + '☆'.repeat(3 - k);
+  function titleView() {
+    phase = 'title'; mode = 'dig'; updateTools();
+    const sel = unlocked(save.sel) ? save.sel : 0, L = ISLANDS[sel];
+    overlay.innerHTML =
+      '<div class="big">たからほり<br>アイランド</div>' +
+      '<div class="note">すなを ほると <b>すうじ</b> が 出るよ。<br>すうじは いちばん近い たからまでの <b>歩数</b>。<br>スコップが なくなる前に ぜんぶ 見つけよう！</div>' +
+      '<div class="isles">' + ISLANDS.map((x, i) => `<button data-act="isl" data-i="${i}" class="${i === sel ? 'on' : ''} ${unlocked(i) ? '' : 'lock'}" aria-label="${x.name}"><span class="e">${unlocked(i) ? x.e : '🔒'}</span><small>${i + 1}</small><em>${unlocked(i) ? starStr(save.stars[i]) : '　'}</em></button>`).join('') + '</div>' +
+      `<div class="iinfo" id="iinfo">${L.e} ${L.name}<br>たから ${L.K}こ・スコップ ${L.budget}本（★3は ${L.s3}本いか）</div>` +
+      '<div class="modes"><button id="startBtn" data-act="start">▶ はじめる</button><button class="alt" id="zukanBtn" data-act="zukan">📖 ずかん ' + zukanCount() + '/30</button></div>' +
+      `<div class="rule">★ ${starTotal()}/30 ・ ほった回数 ${save.dug}</div>`;
+    save.sel = sel; overlay.classList.add('show');
+    if (!grid.length || isl !== sel) { buildIsland(sel); treasures = []; shovels = ISLANDS[sel].budget; tools = { compass: 0, wide: 0 }; }
+    setMsg('島を えらんで「はじめる」を おしてね');
+    updateHud(); updateTools();
+  }
+  function selectIsland(i) {
+    if (!ISLANDS[i]) return false;
+    if (!unlocked(i)) { SFX.deny(); const el = $('iinfo'); if (el) el.textContent = '🔒 まえの島を クリアすると ひらくよ'; return false; }
+    save.sel = i; persist(); SFX.click();
+    overlay.querySelectorAll('.isles button').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+    const L = ISLANDS[i]; $('iinfo').innerHTML = `${L.e} ${L.name}<br>たから ${L.K}こ・スコップ ${L.budget}本（★3は ${L.s3}本いか）`;
+    buildIsland(i); treasures = []; shovels = L.budget; updateHud();
+    return true;
+  }
+  function endView() {
+    phase = 'end'; updateTools();
+    const L = ISLANDS[isl], R = result;
+    let h = '';
+    if (R.win) {
+      h += '<div class="big">クリア！</div>';
+      h += '<div class="stars">' + [0, 1, 2].map(k => `<span class="${k < R.stars ? '' : 'off'}" style="animation-delay:${k * 0.18}s">★</span>`).join('') + '</div>';
+      h += '<div class="finds">' + lastFinds.map(id => ITEM[id].e).join('') + '</div>';
+      h += `<div class="note">スコップ <b>${R.used}本</b> で たから ${L.K}こ！` + (R.best ? '　<i>ベスト こうしん！</i>' : '') + '<br>';
+      if (R.secret) h += `${ITEM[R.secret].e} 島の ひほう「<b>${ITEM[R.secret].n}</b>」` + (R.secretNew ? ' を ゲット！ <i>NEW!</i>' : ' を もういちど 見つけた！');
+      else h += `★3（スコップ${L.s3}本いか）で 島の ひほうが もらえるよ`;
+      if (R.unlockedNext) h += `<br>${ISLANDS[isl + 1].e} つぎの島「${ISLANDS[isl + 1].name}」が ひらいた！`;
+      h += '</div><div class="modes">' + (isl < 9 ? '<button id="nextBtn" data-act="next">▶ つぎの島へ</button>' : '') + '<button class="alt" id="againBtn" data-act="again">もういちど</button><button class="alt" id="titleBtn" data-act="title">島をえらぶ</button></div>';
+      if (isl === 9 && starTotal() >= 30) h += '<div class="rule">ぜんぶの島で ★3！ たからほり名人だ！</div>';
+    } else {
+      h += '<div class="big lose">ざんねん…</div>';
+      h += `<div class="note">スコップが なくなっちゃった。<br>見つけた たから ${treasures.filter(t => t.found).length} / ${L.K}こ</div>`;
+      h += '<div class="finds">' + lastFinds.map(id => ITEM[id].e).join('') + '</div>';
+      h += '<div class="note"><i>ヒント</i>：すうじを タップすると マスが 光る。<br>光る マスが 重なる ところを ねらおう！</div>';
+      h += '<div class="modes"><button id="againBtn" data-act="again">もういちど</button><button class="alt" id="titleBtn" data-act="title">島をえらぶ</button></div>';
+    }
+    overlay.innerHTML = h; overlay.classList.add('show');
+    if (R.win) { [0, 1, 2].forEach(k => { if (k < R.stars) setTimeout(() => SFX.star(k), 180 * k + 120); }); if (R.secretNew) setTimeout(() => SFX.secret(), 750); }
+  }
+  function zukanView(from) {
+    if (phase !== 'zukan') zukanFrom = from || (phase === 'play' ? 'play' : phase === 'end' ? 'end' : 'title');
+    phase = 'zukan'; updateTools();
+    overlay.innerHTML = `<div class="big" style="font-size:22px">📖 たからずかん ${zukanCount()}/30</div>` +
+      '<div class="zgrid">' + ITEMS.map(x => `<button data-act="item" data-id="${x.id}" class="${x.tier} ${save.zukan[x.id] > 0 ? 'got' : ''} ${zSel === x.id ? 'sel' : ''}" aria-label="${save.zukan[x.id] > 0 ? x.n : 'まだ'}">${save.zukan[x.id] > 0 ? x.e : '？'}</button>`).join('') + '</div>' +
+      '<div class="zdet" id="zdet">' + zDetail(zSel) + '</div>' +
+      '<div class="modes"><button id="closeBtn" data-act="close">とじる</button></div>';
+    overlay.classList.add('show');
+  }
+  function zDetail(id) {
+    if (!id) return 'わく：<i style="color:#53e0d8">あお</i>＝ふつう・<i style="color:#a06bff">むらさき</i>＝レア・<i style="color:#ffd166">きん</i>＝島の ひほう<br>マスを タップすると しょうさい';
+    const x = ITEM[id], k = save.zukan[id] | 0, tn = { c: 'ふつう', r: 'レア', s: '島の ひほう' }[x.tier];
+    if (k > 0) return `${x.e} <b>${x.n}</b>（${tn}）<br>見つけた かず：${k}`;
+    if (x.tier === 's') { const i = +id.slice(1); return `？？？（島の ひほう）<br>${ISLANDS[i].e}「${ISLANDS[i].name}」を ★3で クリアすると もらえる`; }
+    return `？？？（${tn}）<br>まだ 見つけていない。` + (x.tier === 'r' ? 'あとの島ほど 出やすいよ' : 'いろんな島を ほってみよう');
+  }
+  function closeZukan() { SFX.click(); if (zukanFrom === 'play') { phase = 'play'; overlay.classList.remove('show'); updateTools(); } else if (zukanFrom === 'end' && result) endView(); else titleView(); }
+
+  // ---- こうか -----------------------------------------------------------------
+  function burst(x, y, cols, k, sc) {
+    if (particles.length > 900) return;
+    for (let i = 0; i < k; i++) { const a = rnd2() * Math.PI * 2, sp = (40 + rnd2() * 170) * (sc || 1); particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 70, life: 0.45 + rnd2() * 0.5, max: 0.95, col: cols[i % cols.length], s: 1.6 + rnd2() * 2.2, g: 380 }); }
+  }
+  // こうか用の乱数は 盤面の乱数と わける（テストの再現性のため）
+  function rnd2() { return Math.random(); }
+  let pendingBursts = [];
+  function burstAt(t, x, y) { pendingBursts.push({ t, x, y }); }
+
+  function update(dt) {
+    if (paused) return;
+    T += dt * 1000;
+    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.vx *= 1 - 1.5 * dt; p.life -= dt; }
+    particles = particles.filter(p => p.life > 0);
+    pops = pops.filter(p => T - p.t < 1100);
+    swings = swings.filter(s => T - s.t < 420);
+    rays = rays.filter(s => T - s.t < 1400);
+    while (pendingBursts.length && pendingBursts[0].t <= T) { const b = pendingBursts.shift(); burst(b.x, b.y, ['#ffd166', '#ff5fa2', '#53e0d8', '#a06bff', '#ffffff'], 40, 1.3); }
+    if (ring && T - ring.t > 2600) ring = null;
+    if ((phase === 'clear' || phase === 'fail') && T >= endAt) endView();
+  }
+
+  // ---- え（canvas） --------------------------------------------------------------
+  const sprites = new Map();
+  function sprite(key, fn) {
+    let s = sprites.get(key);
+    if (!s) { s = document.createElement('canvas'); s.width = Math.ceil(cell * RS); s.height = Math.ceil(cell * RS); const c = s.getContext('2d'); c.scale(RS, RS); fn(c, cell); sprites.set(key, s); }
+    return s;
+  }
+  function sandTile(c, s, v) {
+    const P = ISLANDS[isl].pal, ice = isl === 6;
+    const g = c.createLinearGradient(0, 0, 0, s); g.addColorStop(0, P[0]); g.addColorStop(1, P[1]);
+    c.fillStyle = g; rr(c, 1, 1, s - 2, s - 2, s * 0.16); c.fill();
+    c.fillStyle = 'rgba(20,14,40,.28)'; rr(c, 1, 1, s - 2, s - 2, s * 0.16); c.fill();   // よるの いろ
+    c.strokeStyle = 'rgba(255,255,255,.22)'; c.lineWidth = Math.max(1, s * 0.035); c.beginPath(); c.moveTo(s * 0.14, s * 0.8); c.lineTo(s * 0.14, s * 0.2); c.quadraticCurveTo(s * 0.14, s * 0.12, s * 0.24, s * 0.12); c.lineTo(s * 0.8, s * 0.12); c.stroke();
+    c.strokeStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.moveTo(s * 0.88, s * 0.24); c.lineTo(s * 0.88, s * 0.82); c.quadraticCurveTo(s * 0.88, s * 0.88, s * 0.8, s * 0.88); c.lineTo(s * 0.2, s * 0.88); c.stroke();
+    // もよう
+    const seed = [[.3, .35], [.62, .6], [.7, .3], [.35, .7]];
+    c.fillStyle = ice ? 'rgba(255,255,255,.35)' : 'rgba(80,50,25,.35)';
+    for (let k = 0; k < 3; k++) { const [px, py] = seed[(v + k) % 4]; c.beginPath(); c.arc(s * px, s * py, s * (0.03 + 0.012 * k), 0, Math.PI * 2); c.fill(); }
+    if (v % 2 === 0) {
+      c.strokeStyle = P[2]; c.globalAlpha = 0.75; c.lineWidth = Math.max(1, s * 0.035); c.lineCap = 'round';
+      const bx = s * (v === 0 ? 0.3 : 0.62), by = s * (v === 0 ? 0.62 : 0.4);
+      c.beginPath();
+      if (ice) { for (let k = 0; k < 3; k++) { const a = k * Math.PI / 3; c.moveTo(bx - Math.cos(a) * s * 0.07, by - Math.sin(a) * s * 0.07); c.lineTo(bx + Math.cos(a) * s * 0.07, by + Math.sin(a) * s * 0.07); } }
+      else { c.moveTo(bx, by); c.lineTo(bx - s * 0.05, by - s * 0.1); c.moveTo(bx, by); c.lineTo(bx, by - s * 0.12); c.moveTo(bx, by); c.lineTo(bx + s * 0.05, by - s * 0.1); }
+      c.stroke(); c.globalAlpha = 1;
+    }
+  }
+  function rockTile(c, s) {
+    sandTile(c, s, 1);
+    const g = c.createRadialGradient(s * 0.42, s * 0.38, s * 0.05, s * 0.5, s * 0.52, s * 0.42); g.addColorStop(0, '#9a97b2'); g.addColorStop(1, '#3d3a52');
+    c.fillStyle = g; c.beginPath(); c.moveTo(s * 0.16, s * 0.74); c.quadraticCurveTo(s * 0.12, s * 0.4, s * 0.38, s * 0.2); c.quadraticCurveTo(s * 0.7, s * 0.14, s * 0.84, s * 0.46); c.quadraticCurveTo(s * 0.92, s * 0.78, s * 0.62, s * 0.84); c.quadraticCurveTo(s * 0.3, s * 0.88, s * 0.16, s * 0.74); c.fill();
+    c.strokeStyle = 'rgba(20,18,36,.6)'; c.lineWidth = Math.max(1, s * 0.03); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.35)'; c.beginPath(); c.ellipse(s * 0.38, s * 0.34, s * 0.1, s * 0.05, -0.5, 0, Math.PI * 2); c.fill();
+  }
+  function holeTile(c, s) {
+    const P = ISLANDS[isl].pal;
+    c.fillStyle = P[1]; rr(c, 1, 1, s - 2, s - 2, s * 0.16); c.fill();
+    c.fillStyle = 'rgba(20,14,40,.45)'; rr(c, 1, 1, s - 2, s - 2, s * 0.16); c.fill();
+    const g = c.createRadialGradient(s / 2, s * 0.56, s * 0.05, s / 2, s / 2, s * 0.44); g.addColorStop(0, '#120a08'); g.addColorStop(0.75, '#2c1a12'); g.addColorStop(1, '#4a3020');
+    c.fillStyle = g; c.beginPath(); c.ellipse(s / 2, s / 2, s * 0.4, s * 0.38, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = 'rgba(255,230,190,.25)'; c.lineWidth = Math.max(1, s * 0.03); c.beginPath(); c.ellipse(s / 2, s / 2, s * 0.4, s * 0.38, 0, Math.PI * 0.1, Math.PI * 0.9); c.stroke();
+  }
+  // うみと しまの 下地は 盤が かわった時だけ 描きなおす
+  let landLayer = null;
+  function buildLand() {
+    if (!landLayer) { landLayer = document.createElement('canvas'); }
+    landLayer.width = W * RS; landLayer.height = H * RS;
+    const c = landLayer.getContext('2d'); c.setTransform(RS, 0, 0, RS, 0, 0); c.clearRect(0, 0, W, H);
+    // なみうちぎわ
+    c.save(); c.shadowColor = 'rgba(83,224,216,.85)'; c.shadowBlur = 14 * RS; c.fillStyle = 'rgba(160,240,232,.55)';
+    for (let r = 0; r < n; r++) for (let q = 0; q < n; q++) if (grid[r][q].land) { rr(c, BX + q * cell - 3, BY + r * cell - 3, cell + 6, cell + 6, cell * 0.3); c.fill(); }
+    c.restore();
+    for (let r = 0; r < n; r++) for (let q = 0; q < n; q++) {
+      const g = grid[r][q]; if (!g.land) continue;
+      const x = BX + q * cell, y = BY + r * cell;
+      let key = g.rock ? 'rock' : g.dug ? 'hole' : 'sand' + g.var;
+      const sp = sprite(key, (cc, s) => g.rock ? rockTile(cc, s) : g.dug ? holeTile(cc, s) : sandTile(cc, s, g.var));
+      c.drawImage(sp, x, y, cell, cell);
+    }
+    landDirty = false;
+  }
+  function drawSea() {
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0d1e44'); g.addColorStop(1, '#071029');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const m = ctx.createRadialGradient(410, 50, 4, 410, 50, 120); m.addColorStop(0, 'rgba(255,240,200,.22)'); m.addColorStop(1, 'rgba(255,240,200,0)');
+    ctx.fillStyle = m; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(83,224,216,.13)'; ctx.lineWidth = 1.5;
+    for (let k = 0; k < 11; k++) {
+      const y0 = 22 + k * 44, ph = T / 900 + k * 1.7;
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 16) { const y = y0 + Math.sin(x / 38 + ph) * 3.5; if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+      ctx.stroke();
+    }
+  }
+  function drawShovel(x, y, s, ang) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+    ctx.lineCap = 'round'; ctx.strokeStyle = '#8a5a2b'; ctx.lineWidth = s * 0.08; ctx.beginPath(); ctx.moveTo(0, -s * 0.55); ctx.lineTo(0, s * 0.05); ctx.stroke();
+    ctx.strokeStyle = '#c99a5a'; ctx.lineWidth = s * 0.07; ctx.beginPath(); ctx.moveTo(-s * 0.12, -s * 0.58); ctx.lineTo(s * 0.12, -s * 0.58); ctx.stroke();
+    const g = ctx.createLinearGradient(-s * 0.15, 0, s * 0.15, 0); g.addColorStop(0, '#9fb0c8'); g.addColorStop(0.5, '#eef4ff'); g.addColorStop(1, '#7d8aa6');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-s * 0.16, s * 0.02); ctx.lineTo(s * 0.16, s * 0.02); ctx.lineTo(s * 0.14, s * 0.3); ctx.quadraticCurveTo(0, s * 0.46, -s * 0.14, s * 0.3); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(20,20,40,.6)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.restore();
+  }
+  function drawArrow(x, y, s, dir, t) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = 'rgba(10,30,50,.7)'; ctx.beginPath(); ctx.arc(0, 0, s * 0.42, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 2; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 10 * RS; ctx.stroke();
+    if (dir < 0) { ctx.rotate(t / 120); }
+    else { const p = clamp((T - t) / 500, 0, 1); ctx.rotate(dir * Math.PI / 4 + (1 - easeOutBack(p)) * Math.PI * 2); }
+    ctx.fillStyle = '#eaffff'; ctx.beginPath(); ctx.moveTo(s * 0.34, 0); ctx.lineTo(-s * 0.06, -s * 0.17); ctx.lineTo(0, 0); ctx.lineTo(-s * 0.06, s * 0.17); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ff5fa2'; ctx.beginPath(); ctx.moveTo(-s * 0.3, 0); ctx.lineTo(-s * 0.04, -s * 0.1); ctx.lineTo(-s * 0.04, s * 0.1); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawChest(x, y, s, open) {
+    const w = s * 0.62, h = s * 0.36;
+    ctx.save(); ctx.translate(x, y);
+    const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2); g.addColorStop(0, '#b0702c'); g.addColorStop(1, '#6a3d16');
+    ctx.fillStyle = g; rr(ctx, -w / 2, -h * 0.1, w, h * 0.75, 3); ctx.fill();
+    ctx.fillStyle = '#ffd166'; ctx.fillRect(-w / 2, h * 0.12, w, h * 0.08); ctx.fillRect(-w * 0.06, -h * 0.1, w * 0.12, h * 0.4);
+    ctx.fillStyle = '#8a5222';
+    if (open) { ctx.beginPath(); ctx.moveTo(-w / 2, -h * 0.1); ctx.lineTo(-w * 0.42, -h * 0.75); ctx.lineTo(w * 0.42, -h * 0.75); ctx.lineTo(w / 2, -h * 0.1); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2; ctx.stroke(); }
+    else { rr(ctx, -w / 2, -h * 0.45, w, h * 0.38, 4); ctx.fill(); }
+    ctx.restore();
+  }
+  function cellXY(r, c) { return [BX + c * cell + cell / 2, BY + r * cell + cell / 2]; }
+  function draw() {
+    ctx.setTransform(RS, 0, 0, RS, 0, 0);
+    drawSea();
+    if (landDirty) buildLand();
+    ctx.drawImage(landLayer, 0, 0, W, H);
+    // ほりたての あな：すなが ちぢんで 消える
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      const g = grid[r][c]; if (!g.dug || g.dt < 0) continue;
+      const p = clamp((T - g.dt) / 220, 0, 1); if (p >= 1) continue;
+      const x = BX + c * cell, y = BY + r * cell, k = 1 - p, d = cell * k;
+      ctx.drawImage(sprite('sand' + g.var, (cc, s) => sandTile(cc, s, g.var)), x + (cell - d) / 2, y + (cell - d) / 2, d, d);
+    }
+    // 光る リング（すうじの 歩数）
+    if (ring) {
+      const a = clamp(1 - (T - ring.t - 1800) / 800, 0, 1) * (0.55 + 0.25 * Math.sin(T / 120));
+      ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(255,209,102,.38)'; ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10 * RS;
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+        if (!diggable(r, c) || grid[r][c].dug || mdist(r, c, ring.r, ring.c) !== ring.d) continue;
+        const x = BX + c * cell, y = BY + r * cell; rr(ctx, x + 3, y + 3, cell - 6, cell - 6, cell * 0.16); ctx.fill(); ctx.stroke();
+      }
+      const [sx, sy] = cellXY(ring.r, ring.c); ctx.strokeStyle = '#fff3c4'; ctx.lineWidth = 3; rr(ctx, sx - cell / 2 + 2, sy - cell / 2 + 2, cell - 4, cell - 4, cell * 0.16); ctx.stroke();
+      ctx.restore();
+    }
+    // すうじ・たから
+    const fs = Math.round(cell * 0.56);
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      const g = grid[r][c]; if (!g.dug) continue;
+      const [x, y] = cellXY(r, c);
+      if (g.tre >= 0) {
+        const t = treasures[g.tre], p = clamp((T - t.ft) / 700, 0, 1);
+        const glow = ctx.createRadialGradient(x, y, 2, x, y, cell * 0.55); glow.addColorStop(0, 'rgba(255,220,120,.75)'); glow.addColorStop(1, 'rgba(255,209,102,0)');
+        ctx.fillStyle = glow; ctx.fillRect(x - cell / 2, y - cell / 2, cell, cell);
+        drawChest(x, y + cell * 0.16, cell, p > 0.1);
+        const it = ITEM[t.item]; const k = 0.3 + 0.7 * easeOutBack(p), rise = (1 - p) * 0 + Math.sin(p * Math.PI) * cell * 0.5;
+        ctx.save(); ctx.font = Math.round(cell * 0.5 * k) + 'px ' + EMOJI; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 12 * RS; ctx.fillText(it.e, x, y - cell * 0.12 - rise); ctx.restore();
+        continue;
+      }
+      if (g.kit) { ctx.save(); ctx.font = Math.round(cell * 0.28) + 'px ' + EMOJI; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🧰', x + cell * 0.28, y + cell * 0.28); ctx.restore(); }
+      if (g.v < 0) continue;
+      const t0 = Math.max(g.dt + 140, g.vt), p = clamp((T - t0) / 260, 0, 1);
+      let v = g.v; if (g.vt > T && g.pv >= 0) v = g.pv;
+      const k = T < t0 ? (g.vt > T && g.pv >= 0 ? 1 : 0) : 0.4 + 0.6 * easeOutBack(p);
+      if (k <= 0) continue;
+      if (g.vt >= 0 && T >= g.vt && T - g.vt < 500) { const q = (T - g.vt) / 500; ctx.strokeStyle = 'rgba(83,224,216,' + (1 - q) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, cell * (0.25 + q * 0.45), 0, Math.PI * 2); ctx.stroke(); }
+      const col = heatCol(v);
+      ctx.save(); ctx.translate(x, y + cell * 0.03); ctx.scale(k, k);
+      ctx.font = '900 ' + fs + 'px ' + NUMF; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = 'rgba(8,4,14,.9)'; ctx.lineWidth = Math.max(3, fs * 0.16); ctx.strokeText(String(v), 0, 0);
+      ctx.shadowColor = col; ctx.shadowBlur = 12 * RS; ctx.fillStyle = col; ctx.fillText(String(v), 0, 0);
+      ctx.restore();
+    }
+    // コンパスの やじるし
+    for (const a of arrows) { const [x, y] = cellXY(a.r, a.c); drawArrow(x, y, cell, a.dir, a.t); }
+    // しっぱい：たからの 場所を 見せる
+    if (phase === 'fail' || (phase === 'end' && result && !result.win)) {
+      for (const t of treasures) {
+        if (t.found || t.reveal == null || T < t.reveal) continue;
+        const [x, y] = cellXY(t.r, t.c), p = clamp((T - t.reveal) / 400, 0, 1);
+        ctx.save(); ctx.globalAlpha = p; ctx.strokeStyle = '#ff5fa2'; ctx.lineWidth = 3; ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = 12 * RS;
+        rr(ctx, x - cell / 2 + 3, y - cell / 2 + 3, cell - 6, cell - 6, cell * 0.16); ctx.stroke(); ctx.shadowBlur = 0;
+        drawChest(x, y + cell * 0.08, cell * (0.6 + 0.4 * easeOutBack(p)), false); ctx.restore();
+      }
+    }
+    // ガイド・カーソル
+    if (phase === 'play') {
+      if (guide) {
+        const [x, y] = cellXY(guide.r, guide.c), pulse = 0.5 + 0.5 * Math.sin(T / 180);
+        ctx.save(); ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 3 + pulse * 2; ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = (10 + pulse * 14) * RS;
+        rr(ctx, x - cell / 2 + 2, y - cell / 2 + 2, cell - 4, cell - 4, cell * 0.18); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.font = Math.round(cell * 0.42) + 'px ' + EMOJI; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('👆', x + cell * 0.12, y + cell * 0.32 + pulse * 6); ctx.restore();
+      }
+      const cur = kb ? cursor : hover;
+      if (cur && inb(cur.r, cur.c) && grid[cur.r][cur.c].land) {
+        const [x, y] = cellXY(cur.r, cur.c), col = mode === 'compass' ? '#53e0d8' : mode === 'wide' ? '#ff5fa2' : '#ffd166';
+        ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.shadowColor = col; ctx.shadowBlur = 10 * RS;
+        const cs = mode === 'wide' ? [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]] : [[0, 0]];
+        for (const [dr, dc] of cs) { if (!inb(cur.r + dr, cur.c + dc) || !grid[cur.r + dr][cur.c + dc].land) continue; rr(ctx, x + dc * cell - cell / 2 + 2, y + dr * cell - cell / 2 + 2, cell - 4, cell - 4, cell * 0.18); ctx.stroke(); }
+        ctx.restore();
+      }
+    }
+    // スコップの ひとふり
+    for (const s of swings) { const [x, y] = cellXY(s.r, s.c), p = (T - s.t) / 420; drawShovel(x + cell * 0.25, y - cell * 0.2 - Math.sin(p * Math.PI) * cell * 0.15, cell * 0.95, -0.9 + p * 1.3); }
+    // ひかりの すじ
+    for (const s of rays) {
+      const p = (T - s.t) / 1400; ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(T / 900); ctx.globalAlpha = Math.sin(p * Math.PI) * 0.55; ctx.fillStyle = '#ffe9a8';
+      for (let k = 0; k < 10; k++) { ctx.rotate(Math.PI / 5); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(cell * 1.6, -cell * 0.12); ctx.lineTo(cell * 1.6, cell * 0.12); ctx.closePath(); ctx.fill(); }
+      ctx.restore();
+    }
+    // つぶ
+    if (particles.length) {
+      ctx.globalCompositeOperation = 'lighter';
+      for (const p of particles) { ctx.globalAlpha = clamp(p.life / 0.4, 0, 1); ctx.fillStyle = p.col; ctx.fillRect(p.x - p.s, p.y - p.s, p.s * 2, p.s * 2); }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+    // ポップ文字
+    for (const p of pops) {
+      if (T < p.t) continue; const q = (T - p.t) / 1100;
+      ctx.save(); ctx.globalAlpha = 1 - q * q; ctx.translate(p.x, p.y - q * 34); const k = 0.6 + 0.4 * easeOutBack(Math.min(1, q * 4)); ctx.scale(k, k);
+      ctx.font = '900 ' + p.size + 'px ' + NUMF + ',' + EMOJI; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(8,4,20,.85)'; ctx.strokeText(p.text, 0, 0);
+      ctx.fillStyle = p.col; ctx.shadowColor = p.col; ctx.shadowBlur = 10 * RS; ctx.fillText(p.text, 0, 0); ctx.restore();
+    }
+    if (phase === 'clear') {
+      const p = clamp((T - (endAt - 1900)) / 500, 0, 1);
+      ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(0.5 + 0.5 * easeOutBack(p), 0.5 + 0.5 * easeOutBack(p)); ctx.globalAlpha = p;
+      ctx.fillStyle = 'rgba(10,10,28,.75)'; rr(ctx, -130, -38, 260, 76, 16); ctx.fill();
+      ctx.font = '900 40px ' + NUMF; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 20 * RS; ctx.fillText('CLEAR!', 0, 2);
+      ctx.restore();
+    }
+  }
+
+  // ---- そうさ -------------------------------------------------------------------
+  function cellAt(e) {
+    const rc = cv.getBoundingClientRect(); if (!rc.width) return null;
+    const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    const c = Math.floor((x - BX) / cell), r = Math.floor((y - BY) / cell);
+    return inb(r, c) ? { r, c } : null;
+  }
+  function act(r, c) {
+    if (phase !== 'play' || !inb(r, c)) return;
+    if (!grid[r][c].land) return;
+    if (mode === 'compass') { if (!compass(r, c)) SFX.deny(); }
+    else if (mode === 'wide') wideDig(r, c);
+    else dig(r, c);
+  }
+  let press = null;
+  function onDown(e) {
+    audio();
+    if (phase !== 'play') return;
+    const cl = cellAt(e); if (!cl) return;
+    press = { cl, x: e.clientX, y: e.clientY };
+    if (e.pointerType === 'mouse') kb = false;
+  }
+  function onMove(e) {
+    if (e.pointerType === 'mouse') { hover = cellAt(e); if (hover) kb = false; }
+    if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 14) press = null;
+  }
+  function onUp(e) {
+    if (!press) return; const p = press; press = null;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const cl = cellAt(e); if (!cl || cl.r !== p.cl.r || cl.c !== p.cl.c) return;
+    if (e.pointerType !== 'mouse') { cursor = { r: cl.r, c: cl.c }; }
+    act(cl.r, cl.c);
+  }
+  function onOverlayClick(e) {
+    const b = e.target.closest('button'); if (!b || !overlay.contains(b)) return;
+    audio();
+    const a = b.dataset.act;
+    if (a === 'isl') selectIsland(+b.dataset.i);
+    else if (a === 'start') startIsland(save.sel);
+    else if (a === 'zukan') { SFX.click(); zukanView('title'); }
+    else if (a === 'next') startIsland(Math.min(9, isl + 1));
+    else if (a === 'again') startIsland(isl);
+    else if (a === 'title') { SFX.click(); titleView(); }
+    else if (a === 'close') closeZukan();
+    else if (a === 'item') { zSel = b.dataset.id; overlay.querySelectorAll('.zgrid button').forEach(x => x.classList.toggle('sel', x === b)); $('zdet').innerHTML = zDetail(zSel); SFX.click(); }
+  }
+  function onKey(e) {
+    if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    const k = e.key;
+    if (phase === 'title') {
+      if (k === 'ArrowRight' || k === 'ArrowLeft') { e.preventDefault(); let i = save.sel + (k === 'ArrowRight' ? 1 : -1); i = clamp(i, 0, 9); if (unlocked(i)) selectIsland(i); else SFX.deny(); }
+      else if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); startIsland(save.sel); }
+      else if (k === 'z' || k === 'Z') zukanView('title');
+      return;
+    }
+    if (phase === 'zukan') { if (k === 'Escape' || k === 'Enter' || k === ' ') { e.preventDefault(); closeZukan(); } return; }
+    if (phase === 'end') {
+      if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); startIsland(result && result.win && isl < 9 ? isl + 1 : isl); }
+      else if (k === 'r' || k === 'R') startIsland(isl);
+      else if (k === 'Escape') titleView();
+      return;
+    }
+    if (phase !== 'play') return;
+    if (k.startsWith('Arrow')) {
+      e.preventDefault(); kb = true; hover = null;
+      if (k === 'ArrowLeft') cursor.c = Math.max(0, cursor.c - 1);
+      if (k === 'ArrowRight') cursor.c = Math.min(n - 1, cursor.c + 1);
+      if (k === 'ArrowUp') cursor.r = Math.max(0, cursor.r - 1);
+      if (k === 'ArrowDown') cursor.r = Math.min(n - 1, cursor.r + 1);
+      return;
+    }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); kb = true; audio(); act(cursor.r, cursor.c); }
+    else if (k === 'c' || k === 'C') { audio(); setMode('compass'); }
+    else if (k === 'w' || k === 'W') { audio(); setMode('wide'); }
+    else if (k === 'r' || k === 'R') { audio(); startIsland(isl); }
+    else if (k === 'Escape') titleView();
+  }
+
+  // ---- ループ ---------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- はじめる（さいごに） --------------------------------------------------------
+  loadSave(); drawMute();
+  cv.width = W * RS; cv.height = H * RS;
+  buildIsland(unlocked(save.sel) ? save.sel : 0);
+  titleView();
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(KEY + 'mute', muted ? '1' : '0'); } catch (e) {} drawMute(); muteBtn.blur(); });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  cv.addEventListener('pointerdown', onDown);
+  cv.addEventListener('pointermove', onMove);
+  cv.addEventListener('pointerup', onUp);
+  cv.addEventListener('pointercancel', () => { press = null; });
+  cv.addEventListener('pointerleave', () => { hover = null; });
+  overlay.addEventListener('click', onOverlayClick);
+  document.addEventListener('keydown', onKey);
+  $('digBtn').addEventListener('click', () => { audio(); setMode('dig'); $('digBtn').blur(); });
+  $('compassBtn').addEventListener('click', () => { audio(); setMode('compass'); $('compassBtn').blur(); });
+  $('wideBtn').addEventListener('click', () => { audio(); setMode('wide'); $('wideBtn').blur(); });
+  $('retryBtn').addEventListener('click', () => { audio(); SFX.click(); startIsland(phase === 'title' ? save.sel : isl); $('retryBtn').blur(); });
+  $('menuBtn').addEventListener('click', () => { audio(); SFX.click(); titleView(); $('menuBtn').blur(); });
+  $('bookBtn').addEventListener('click', () => { audio(); SFX.click(); if (phase === 'zukan') closeZukan(); else if (phase === 'play' || phase === 'title' || phase === 'end') zukanView(); $('bookBtn').blur(); });
+  document.addEventListener('visibilitychange', () => { paused = document.hidden; last = performance.now(); });
+  requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      phase, overlay: overlay.classList.contains('show'), island: isl, sel: save.sel, n, cell, bx: BX, by: BY,
+      shovels, used, budget: ISLANDS[isl].budget, K: ISLANDS[isl].K, found: treasures.filter(t => t.found).length,
+      tools: Object.assign({}, tools), mode, guide: !!guide, ring: ring ? { r: ring.r, c: ring.c, d: ring.d } : null,
+      arrows: arrows.map(a => ({ r: a.r, c: a.c, dir: a.dir })), muted, result: result ? Object.assign({}, result) : null,
+      unlocked: ISLANDS.map((_, i) => unlocked(i)), zukanCount: zukanCount(), lastFinds: lastFinds.slice(),
+      save: JSON.parse(JSON.stringify(save)), msg: $('msg').textContent,
+      grid: grid.map(row => row.map(g => g.land ? (g.rock ? '#' : g.dug ? (g.tre >= 0 ? 'T' : String(g.v)) : 'o') : '.')),
+    }),
+    // こたえ（テスト用）
+    treasures: () => treasures.map(t => ({ r: t.r, c: t.c, found: t.found })),
+    kits: () => { const o = []; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (grid[r][c].kit) o.push([r, c]); return o; },
+    islands: () => ISLANDS.map(x => ({ name: x.name, K: x.K, budget: x.budget, s3: x.s3, s2: x.s2, compass: x.compass, wide: x.wide, kits: x.kits, map: x.map.slice() })),
+    items: () => ITEMS.map(x => Object.assign({}, x)),
+    seed: s => { fixedSeed = (s == null ? null : s | 0); },
+    start: i => startIsland(i),
+    setTreasures: (list, kitList) => {
+      for (const row of grid) for (const g of row) { g.tre = -1; g.kit = false; }
+      treasures = list.map(([r, c], k) => { grid[r][c].tre = k; return { r, c, found: false, item: null, ft: -1 }; });
+      for (const [r, c] of (kitList || [])) grid[r][c].kit = true;
+      updateHud();
+    },
+    dig, wide: wideDig, compass, setMode, select: selectIsland,
+    value: (r, c) => valueAt(r, c),
+    cellCenter: (r, c) => { const rc = cv.getBoundingClientRect(), k = rc.width / W; return { x: rc.left + (BX + c * cell + cell / 2) * k, y: rc.top + (BY + r * cell + cell / 2) * k }; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    toTitle: titleView, zukan: () => zukanView(), starsFor,
+    setMuted: v => { muted = !!v; drawMute(); },
+  };
+})();
+</script>
+</body>
+</html>
