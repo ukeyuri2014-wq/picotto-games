@@ -119,9 +119,9 @@
   }
 </style>
 <!-- LUDOT-SEO-START -->
-<meta name="description" content="おんがくに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが ◎に きたら タップ、きいろは おしたまま。はじめてでも ゆっくりの れんしゅうで やりながら おぼえられるよ。ミスで ♥が へり、0に なると しっぱい。3きょくを さいごまで かんそうして ★3つを めざそう。 無料・ダウンロード不要。ルドットで遊べます。">
+<meta name="description" content="うたに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが ◎に きたら タップ、きいろは おしたまま。はじめてでも ゆっくりの れんしゅうで やりながら おぼえられるよ。ミスで ♥が へり、0に なると しっぱい。うたつきの 3きょくを さいごまで かんそうして ★3つを めざそう。 無料・ダウンロード不要。ルドットで遊べます。">
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/087-beat-jump/index.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ビートジャンプ","description":"おんがくに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが ◎に きたら タップ、きいろは おしたまま。はじめてでも ゆっくりの れんしゅうで やりながら おぼえられるよ。ミスで ♥が へり、0に なると しっぱい。3きょくを さいごまで かんそうして ★3つを めざそう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/087-beat-jump/index.html","inLanguage":"ja","genre":"RHYTHM","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ビートジャンプ","description":"うたに あわせて タップで ジャンプする リズムゲーム。ひかるパッドが ◎に きたら タップ、きいろは おしたまま。はじめてでも ゆっくりの れんしゅうで やりながら おぼえられるよ。ミスで ♥が へり、0に なると しっぱい。うたつきの 3きょくを さいごまで かんそうして ★3つを めざそう。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/087-beat-jump/index.html","inLanguage":"ja","genre":"RHYTHM","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
 <script defer src="../../assets/ludot-library.js" data-current-game="087"></script>
 <!-- LUDOT-SEO-END -->
 </head>
@@ -190,22 +190,30 @@
 
   // ---------- きょく ----------
   // bars: 小節ごとの むずかしさ（0〜4）。'a' 'b' は ながおし入り、'F' は さいごの1音。
+  // music：SUNOで つくった うた（同じ フォルダの mp3）。beats＝はくの 時こく（ミリ秒・譜面の 0小節めの あたまが 0）、
+  //        intro＝その 0 が mp3の なん秒めか。はくは きょくから じっさいに はかった もの（テンポの ゆれごと あわせる）
   const SONGS = [
-    { name: 'ほしぞらさんぽ', sub: 'ゆったり ★', bpm: 96, speed: 205, color: '#53e0d8', lead: 'bell',
+    { name: 'ほしぞらさんぽ', sub: 'ゆったり ★', bpm: 102.3, speed: 205, color: '#53e0d8', lead: 'bell',
       scale: [0, 2, 4, 7, 9],
       chords: [{ r: 48, t: [0, 4, 7] }, { r: 45, t: [9, 0, 4] }, { r: 41, t: [5, 9, 0] }, { r: 43, t: [7, 11, 2] }],
       kick: [0, 4], snare: [2, 6], hat: [0, 2, 4, 6], bass: [0, null, null, null, 0, null, 7, null], arp: null,
-      bars: [0, 0, 1, 1, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 2, 1, 2, 3, 2, 2, 2, 3, 2, 'F'] },
-    { name: 'ネオンドライブ', sub: 'のりのり ★★', bpm: 116, speed: 250, color: '#ff5fa2', lead: 'square',
-      scale: [9, 0, 2, 4, 7],
-      chords: [{ r: 45, t: [9, 0, 4] }, { r: 41, t: [5, 9, 0] }, { r: 48, t: [0, 4, 7] }, { r: 43, t: [7, 11, 2] }],
+      bars: [0, 0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 3, 2, 2, 2, 2, 3, 2, 'F'],
+      music: { src: 'song1.mp3', intro: 2.509, beats: [0,587,1174,1761,2349,2935,3523,4110,4698,5285,5872,6459,7047,7634,8223,8810,9398,9986,10574,11162,11750,12338,12926,13513,14101,14689,15277,15865,16453,17040,17628,18215,18802,19389,19977,20564,21151,21738,22326,22913,23500,24087,24674,25261,25849,26435,27023,27609,28196,28783,29370,29956,30543,31130,31717,32303,32890,33476,34063,34649,35236,35822,36409,36995,37582,38167,38753,39339,39926,40512,41099,41685,42272,42859,43446,44033,44619,45205,45791,46377,46963,47550,48137,48724,49310,49896,50481,51067,51653,52238,52824,53409,53995,54580,55166,55751,56336,56921,57505,58090,58675,59259,59844,60428,61012,61597,62181,62765,63349,63933,64517,65101,65684,66269,66854,67438,68022,68606,69190,69774] },
+    },
+    { name: 'ネオンドライブ', sub: 'のりのり ★★', bpm: 120, speed: 250, color: '#ff5fa2', lead: 'square',
+      scale: [5, 7, 9, 0, 2],
+      chords: [{ r: 41, t: [5, 9, 0] }, { r: 38, t: [2, 5, 9] }, { r: 46, t: [10, 2, 5] }, { r: 48, t: [0, 4, 7] }],
       kick: [0, 3, 4], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], bass: [0, null, 12, 0, null, 0, 12, null], arp: [0, 1, 2, 1, 0, 1, 2, 1],
-      bars: [1, 1, 2, 1, 2, 2, 'a', 2, 2, 3, 'a', 2, 3, 2, 3, 'a', 3, 3, 'a', 3, 3, 'b', 3, 3, 'b', 3, 3, 'F'] },
-    { name: 'はやてロケット', sub: 'はやい ★★★', bpm: 138, speed: 300, color: '#a06bff', lead: 'saw',
-      scale: [4, 7, 9, 11, 2],
-      chords: [{ r: 40, t: [4, 7, 11] }, { r: 36, t: [0, 4, 7] }, { r: 43, t: [7, 11, 2] }, { r: 38, t: [2, 6, 9] }],
+      bars: [1, 1, 1, 1, 1, 1, 2, 2, 'a', 2, 2, 2, 3, 'a', 2, 1, 2, 2, 3, 'a', 'a', 3, 3, 'a', 3, 3, 3, 'b', 3, 3, 3, 'b', 3, 3, 'F'],
+      music: { src: 'song2.mp3', intro: 3.633, beats: [0,503,1005,1508,2011,2513,3015,3518,4019,4521,5021,5522,6023,6524,7024,7524,8024,8525,9026,9525,10025,10525,11025,11524,12024,12524,13023,13523,14023,14522,15021,15522,16021,16521,17020,17520,18020,18519,19019,19519,20018,20517,21018,21519,22019,22519,23019,23520,24020,24520,25021,25521,26020,26520,27021,27520,28020,28519,29019,29518,30018,30517,31017,31516,32015,32515,33014,33514,34014,34514,35014,35513,36014,36514,37014,37514,38014,38514,39014,39514,40014,40514,41014,41515,42015,42514,43014,43514,44013,44513,45013,45513,46012,46511,47011,47510,48010,48510,49010,49510,50010,50509,51010,51510,52009,52510,53010,53509,54010,54510,55011,55511,56011,56511,57011,57511,58011,58511,59011,59511,60011,60510,61010,61510,62010,62510,63009,63509,64009,64509,65008,65507,66003,66496,66993,67489,67984,68479,68971,69462,69950,70435] },
+    },
+    { name: 'はやてロケット', sub: 'はやい ★★★', bpm: 141.9, speed: 300, color: '#a06bff', lead: 'saw',
+      scale: [0, 2, 4, 7, 9],
+      chords: [{ r: 36, t: [0, 4, 7] }, { r: 41, t: [5, 9, 0] }, { r: 43, t: [7, 11, 2] }, { r: 45, t: [9, 0, 4] }],
       kick: [0, 2, 4, 6], snare: [2, 6], hat: [1, 3, 5, 7], bass: [0, 12, 0, 12, 0, 12, 7, 12], arp: [0, 2, 1, 2, 0, 2, 1, 2],
-      bars: [2, 2, 3, 2, 3, 'a', 3, 3, 3, 4, 3, 'a', 4, 3, 'b', 3, 4, 4, 3, 'b', 4, 3, 4, 4, 'b', 4, 4, 3, 4, 'b', 4, 4, 4, 4, 4, 'F'] },
+      bars: [2, 2, 2, 3, 2, 3, 'a', 3, 3, 3, 3, 4, 3, 'a', 4, 3, 'b', 'b', 2, 3, 3, 3, 'b', 4, 3, 3, 4, 4, 'b', 4, 4, 3, 4, 4, 'b', 4, 4, 4, 4, 4, 'F'],
+      music: { src: 'song3.mp3', intro: 1.945, beats: [0,431,861,1291,1721,2152,2582,3011,3439,3867,4294,4722,5149,5576,6003,6430,6855,7281,7708,8135,8561,8987,9413,9838,10264,10690,11116,11542,11968,12394,12819,13245,13670,14096,14522,14947,15372,15796,16221,16647,17071,17496,17920,18345,18769,19193,19617,20041,20465,20889,21313,21737,22161,22585,23010,23433,23857,24282,24705,25129,25552,25976,26400,26823,27247,27671,28094,28517,28940,29363,29786,30209,30631,31054,31477,31899,32322,32745,33168,33591,34013,34436,34859,35281,35704,36127,36550,36972,37395,37818,38241,38663,39087,39509,39932,40354,40776,41198,41619,42041,42463,42884,43305,43726,44148,44569,44990,45410,45831,46251,46672,47092,47512,47932,48353,48774,49194,49614,50035,50455,50876,51295,51716,52136,52557,52978,53398,53817,54237,54657,55078,55497,55917,56338,56758,57178,57598,58018,58439,58859,59279,59699,60119,60539,60959,61379,61800,62220,62640,63060,63479,63898,64317,64737,65156,65575,65993,66412,66831,67249,67668,68086,68504,68922,69341] },
+    },
   ];
   // 1小節＝8こま。x＝タップ、h＝ながおしの はじめ、=＝おしたまま（さいごの = で はなす）
   const PATS = {
@@ -218,6 +226,71 @@
     b: ['h==.x.xx', 'h==.h==.', 'xxx.h==.', 'h====.x.', 'x.h==.xx'],
     F: ['x.......'],
   };
+
+  // ---------- うた（mp3） ----------
+  // あそぶ ときは mp3を ながし、ゲームの 時計を その さいせい位置に あわせる。
+  // うたが ながせない とき（よみこめない・テスト中など）は、いつもの でんしおんの きょくで あそぶ。
+  const MUSIC_VOL = 0.85;
+  let musicOn = false, musicEl = null, musicWait = 0, musicFade = 0;
+  const tracks = [];
+  function beatAt(s, pos) {          // 譜面の pos はくめ の 時こく（秒）
+    if (!musicOn || !s.music) return pos * 60 / s.bpm;
+    const B = s.music.beats, n = B.length;
+    if (pos <= 0) return pos * (B[1] - B[0]) / 1000;
+    const i = Math.floor(pos);
+    if (i >= n - 1) return (B[n - 1] + (pos - (n - 1)) * (B[n - 1] - B[n - 2])) / 1000;
+    return (B[i] + (pos - i) * (B[i + 1] - B[i])) / 1000;
+  }
+  function songEnd(s) { return beatAt(s, s.bars.length * 4); }
+  function track(i) {
+    const s = SONGS[i];
+    if (!s || !s.music) return null;
+    if (tracks[i] === undefined) {
+      try { const el = new Audio(); el.preload = 'auto'; el.src = s.music.src; el.volume = MUSIC_VOL; el.muted = muted; tracks[i] = el; }
+      catch (e) { tracks[i] = null; }
+    }
+    return tracks[i];
+  }
+  function startMusic(i) {
+    stopMusic();
+    if (manual) return false;
+    const el = track(i);
+    if (!el || el.error) return false;
+    musicEl = el; musicWait = 0; musicFade = 0;
+    try { el.pause(); el.currentTime = 0; } catch (e) {}
+    el.muted = muted; try { el.volume = MUSIC_VOL; } catch (e) {}
+    let p = null;
+    try { p = el.play(); } catch (e) { musicEl = null; return false; }
+    if (p && p.catch) p.catch(() => { if (musicEl === el) musicFail(); });
+    return true;
+  }
+  function stopMusic() {
+    if (musicEl) { try { musicEl.pause(); } catch (e) {} }
+    musicEl = null; musicFade = 0;
+  }
+  function musicFail() {
+    stopMusic();
+    if (phase !== 'play' || !musicOn || tut) return;
+    if (t < 0) {                     // はじまる 前なら でんしおんの きょくに きりかえて やりなおす
+      musicOn = false;
+      notes = buildChart(song); total = notes.reduce((a, n) => a + (n.type === 'hold' ? 2 : 1), 0);
+      endT = songEnd(song); t = -4 * beat; nextStep = -8;
+    }
+  }
+  function syncMusic(dt) {           // うたの さいせい位置に ゲームの 時計を あわせる
+    const el = musicEl, at = el.currentTime - song.music.intro;
+    const playing = !el.paused && !el.ended && el.readyState >= 3 && el.currentTime > 0;
+    if (el.ended) { t += dt; return; }
+    if (!playing) {                  // まだ ながれていない（よみこみ中）・とちゅうで つまった → 時計を とめて まつ
+      musicWait += dt;
+      if (musicWait > 8 && t < 0) musicFail();
+      return;
+    }
+    musicWait = 0;
+    t += dt;
+    const d = at - t;
+    t += Math.abs(d) > 0.1 ? d : d * 0.15;
+  }
 
   // ---------- れんしゅう ----------
   // ゆっくりの テンポで、やりながら おぼえる。♥は へらない・きろくにも のこらない
@@ -314,12 +387,12 @@
   function now() { return ac ? ac.currentTime : 0; }
   function leadNote(midi, dur, perfect) {
     if (!ac) return null;
-    const w = now(), f = mtof(midi), kind = song.lead;
+    const w = now(), f = mtof(midi), kind = song.lead, k = musicOn ? 0.55 : 1;   // うたの ときは ひかえめに
     let g;
-    if (kind === 'bell') { g = tone('triangle', f, w, Math.max(0.3, dur), 0.3); tone('sine', f * 2, w, 0.22, 0.12); }
-    else if (kind === 'square') { g = tone('square', f, w, Math.max(0.22, dur), 0.13, 0, 2600); tone('triangle', f, w, 0.2, 0.14); }
-    else { g = tone('sawtooth', f, w, Math.max(0.2, dur), 0.14, 0, 3000); tone('square', f * 0.5, w, 0.16, 0.06, 0, 1800); }
-    if (perfect) tone('sine', f * 4, w, 0.09, 0.05);
+    if (kind === 'bell') { g = tone('triangle', f, w, Math.max(0.3, dur), 0.3 * k); tone('sine', f * 2, w, 0.22, 0.12 * k); }
+    else if (kind === 'square') { g = tone('square', f, w, Math.max(0.22, dur), 0.13 * k, 0, 2600); tone('triangle', f, w, 0.2, 0.14 * k); }
+    else { g = tone('sawtooth', f, w, Math.max(0.2, dur), 0.14 * k, 0, 3000); tone('square', f * 0.5, w, 0.16, 0.06 * k, 0, 1800); }
+    if (perfect) tone('sine', f * 4, w, 0.09, 0.05 * k);
     return g;
   }
   function sfx(name) {
@@ -338,7 +411,7 @@
   }
   // バックの えんそうを 1こま ぶん よやくする
   function scheduleStep(s, when) {
-    if (!ac || muted || manual) return;
+    if (!ac || muted || manual || musicOn) return;
     if (s < 0) {
       if (s % 2 === 0) { const last = s >= -2; tone('square', last ? 1320 : 880, when, 0.06, 0.09, 0, 3000); noise(when, 0.03, 0.06, 6000); }
       return;
@@ -386,7 +459,7 @@
     const out = [];
     const pool = []; for (let m = 62; m <= 86; m++) if (s.scale.indexOf(m % 12) >= 0) pool.push(m);
     let pi = Math.floor(pool.length / 2), prevPat = '';
-    const bt = 60 / s.bpm, sd = bt / 2;
+    const bt = 60 / s.bpm;
     for (let b = 0; b < s.bars.length; b++) {
       const list = PATS[s.bars[b]];
       let pat = list[Math.floor(r() * list.length)];
@@ -405,8 +478,8 @@
           pi += [-2, -1, -1, 1, 1, 2][Math.floor(r() * 6)];
           if (pi < 1) pi = 2; if (pi > pool.length - 2) pi = pool.length - 3;
         }
-        const n = { t: (b * 8 + i) * sd, type: 'tap', end: 0, midi: pool[pi], j: 0, tj: 0, hop: 0.4, burst: false };
-        if (c === 'h') { let k = i; while (k + 1 < 8 && pat[k + 1] === '=') k++; n.type = 'hold'; n.end = (b * 8 + k) * sd; }
+        const n = { t: beatAt(s, (b * 8 + i) / 2), type: 'tap', end: 0, midi: pool[pi], j: 0, tj: 0, hop: 0.4, burst: false };
+        if (c === 'h') { let k = i; while (k + 1 < 8 && pat[k + 1] === '=') k++; n.type = 'hold'; n.end = beatAt(s, (b * 8 + k) / 2); }
         if (s.bars[b] === 'F') n.midi = 72 + ch.t[0] % 12;
         out.push(n);
       }
@@ -436,10 +509,11 @@
     songIdx = i; song = SONGS[i]; save('song', String(i));
     tut = null; hudEl.classList.remove('tut');
     setTempo(RULES[i]);
+    musicOn = startMusic(i);
     notes = buildChart(song);
     total = notes.reduce((a, n) => a + (n.type === 'hold' ? 2 : 1), 0);
-    endT = song.bars.length * barDur;
-    t = -4 * beat; nextStep = -8;
+    endT = songEnd(song);
+    t = musicOn ? -song.music.intro : -4 * beat; nextStep = -8;
     resetRun();
     phase = 'play'; overlay.classList.remove('show');
     audio(); sfx('start'); updateHud();
@@ -451,6 +525,7 @@
   function ceilBar(x) { return Math.ceil(x / barDur - 1e-9) * barDur; }
   function startTutorial(autoIntro) {
     if (autoIntro) { tutDone = true; save('tut', '1'); }    // じどうの あんないは さいしょの 1回だけ
+    stopMusic(); musicOn = false;
     song = TUT_SONG; setTempo(TUT_RULE);
     notes = []; total = 0; endT = Infinity;
     t = -2 * beat; nextStep = -4;
@@ -672,7 +747,7 @@
 
   // ---------- すすめる ----------
   function update(dt) {
-    t += dt;
+    if (musicOn && musicEl && !manual && !tut) syncMusic(dt); else t += dt;
     if (ac && !manual) {
       while (nextStep * stepDur < t - 0.05) nextStep++;      // コマ落ちで すぎた こまは ならさない（まとめて なると 音が われる）
       while (nextStep * stepDur < t + 0.13) { scheduleStep(nextStep, now() + Math.max(0, nextStep * stepDur - t)); nextStep++; }
@@ -704,6 +779,11 @@
     updateHud();
   }
   function tick(dt) {
+    if (musicFade > 0 && musicEl) {
+      musicFade -= dt;
+      try { musicEl.volume = Math.max(0, MUSIC_VOL * musicFade / 1.2); } catch (e) {}
+      if (musicFade <= 0) stopMusic();
+    }
     if (phase === 'play') update(dt);
     else if (phase === 'result' && pendingResult >= 0) {
       t += dt; pendingResult -= dt;
@@ -740,6 +820,7 @@
     result = { clear, stars, rate, fc, newRec, prevBest: prev.score, progress: Math.max(0, Math.min(1, t / endT)), judged,
       unlockedNext: clear && wasNextLocked, firstFinish: clear && prevFin === 0, finishN: finishCnt[songIdx] || 0, t0: t };
     phase = 'result'; pendingResult = clear ? 1.3 : 1.0;
+    if (musicEl) musicFade = 1.2;
     sfx(clear ? 'clear' : 'over');
     if (clear) for (let i = 0; i < 4; i++) burst(80 + i * 105, 120 + (i % 2) * 50, ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff'][i], 20, 220);
   }
@@ -747,6 +828,7 @@
   // ---------- がめん ----------
   function starText(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
   function renderSongs() {
+    track(songIdx);                  // えらんだ きょくの うたを さきに よみこんでおく
     songsEl.innerHTML = '';
     SONGS.forEach((s, i) => {
       const b = document.createElement('button');
@@ -771,11 +853,12 @@
   }
   function showTitle() {
     phase = 'title'; result = null; pendingResult = -1; overlay.classList.remove('guard');
-    if (tut || song === TUT_SONG) { tut = null; hudEl.classList.remove('tut'); song = SONGS[songIdx]; setTempo(RULES[songIdx]); endT = song.bars.length * barDur; t = 0; }
+    stopMusic(); musicOn = false;
+    if (tut || song === TUT_SONG) { tut = null; hudEl.classList.remove('tut'); song = SONGS[songIdx]; setTempo(RULES[songIdx]); endT = songEnd(song); t = 0; }
     ovBadge.style.display = 'none';
     ovBig.className = 'big'; ovBig.textContent = 'ビートジャンプ';
     ovStars.style.display = 'none';
-    ovNote.innerHTML = '♪ おんがくに あわせて ジャンプ！<br><i>ひかるパッド</i>が あしもとの <b>◎</b> に きたら タップ。<br><b>きいろ</b>は おしたまま。<u>♥</u> が 0に なると しっぱい！'
+    ovNote.innerHTML = '🎤 うたに あわせて ジャンプ！<br><i>ひかるパッド</i>が あしもとの <b>◎</b> に きたら タップ。<br><b>きいろ</b>は おしたまま。<u>♥</u> が 0に なると しっぱい！'
       + (needTut() ? '<br>🔰 はじめては まず <i>れんしゅう</i> から！' : '');
     songsEl.style.display = 'flex';
     startBtn.textContent = '▶ はじめる';
@@ -831,6 +914,7 @@
     if (hold) release();
     if (phase !== 'play') return;
     phase = 'pause'; downs = 0; keysDown = {}; ptrDown = {}; tapPad.classList.remove('down');
+    if (musicEl) { try { musicEl.pause(); } catch (e) {} }
     stopHoldVoice();
     songsEl.style.display = 'none'; ovStars.style.display = 'none'; ovBadge.style.display = 'none';
     ovBig.className = 'big'; ovBig.textContent = 'ひとやすみ';
@@ -841,14 +925,18 @@
     ovStats.textContent = '';
     overlay.classList.add('show');
   }
-  function resumeGame() { if (phase !== 'pause') return; phase = 'play'; overlay.classList.remove('show'); audio(); last = performance.now(); }
+  function resumeGame() {
+    if (phase !== 'pause') return;
+    phase = 'play'; overlay.classList.remove('show'); audio(); last = performance.now();
+    if (musicEl) { musicWait = 0; try { const p = musicEl.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+  }
   function updateHud() {
     hudScore.textContent = tut ? 'れんしゅう' : String(score).padStart(5, '0');
     lifeFill.style.width = Math.max(0, life) + '%';
     lifeFill.className = life <= 30 ? 'low' : '';
     lifeBox.classList.toggle('low', life <= 30 && phase === 'play');
   }
-  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; if (master && ac) master.gain.value = muted ? 0 : VOL; }
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; if (master && ac) master.gain.value = muted ? 0 : VOL; tracks.forEach(el => { if (el) el.muted = muted; }); }
 
   // ---------- え ----------
   const stars = [], layers = [[], []];
@@ -1155,7 +1243,7 @@
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.font = Math.round(74 * (0.8 + fr * 0.35)) + 'px DotGothic16, sans-serif';
       ctx.shadowColor = song.color; ctx.shadowBlur = 22; ctx.fillStyle = '#fff';
-      ctx.fillText(left >= 4 ? 'よーい' : String(left), W / 2, 190); ctx.shadowBlur = 0;
+      ctx.fillText(musicOn && musicWait > 0.4 ? 'よみこみ中…' : left >= 4 ? 'よーい' : String(left), W / 2, 190); ctx.shadowBlur = 0;
     } else if (t < beat * 0.9) {
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.globalAlpha = 1 - t / (beat * 0.9);
       ctx.font = '60px DotGothic16, sans-serif'; ctx.fillStyle = '#ffd166'; ctx.fillText('ゴー！', W / 2, 118); ctx.globalAlpha = 1;
@@ -1281,7 +1369,11 @@
     start(i) { return startSong(i === undefined ? songIdx : i); },
     notes() { return notes.map(n => ({ t: n.t, type: n.type, end: n.end, j: n.j, tj: n.tj, hop: n.hop, midi: n.midi })); },
     chart(i, seed) { const keep = fixedSeed; fixedSeed = seed; const c = buildChart(SONGS[i]); fixedSeed = keep; return c.map(n => ({ t: n.t, type: n.type, end: n.end, hop: n.hop })); },
-    songs() { return SONGS.map(s => ({ name: s.name, bpm: s.bpm, bars: s.bars.length })); },
+    songs() { return SONGS.map(s => ({ name: s.name, bpm: s.bpm, bars: s.bars.length, music: s.music ? s.music.src : null, intro: s.music ? s.music.intro : 0 })); },
+    musicFail() { musicFail(); return this.state(); },
+    music() { return { on: musicOn, wait: musicWait, el: musicEl ? { time: musicEl.currentTime, paused: musicEl.paused, ready: musicEl.readyState, muted: musicEl.muted } : null }; },
+    beatAt(i, pos, on) { const keep = musicOn; musicOn = !!on; const v = beatAt(SONGS[i], pos); musicOn = keep; return v; },
+    chartOn(i, seed) { const keep = musicOn, ks = fixedSeed; musicOn = true; fixedSeed = seed; const c = buildChart(SONGS[i]); musicOn = keep; fixedSeed = ks; return c.map(n => ({ t: n.t, type: n.type, end: n.end })); },
     step(ms) { let left = ms; while (left > 1e-9) { const d = Math.min(left, 10); tick(d / 1000); left -= d; } draw(); return this.state(); },
     seek(sec) { while (t < sec - 1e-9 && phase === 'play') tick(Math.min(0.01, sec - t)); draw(); return this.state(); },
     press() { inputDown('test'); return this.state(); },
@@ -1295,7 +1387,7 @@
 
   // ---------- しょきか（いちばん さいご） ----------
   load();
-  song = SONGS[songIdx]; rule = RULES[songIdx]; beat = 60 / song.bpm; stepDur = beat / 2; barDur = beat * 4; endT = song.bars.length * barDur; t = 0;
+  song = SONGS[songIdx]; rule = RULES[songIdx]; beat = 60 / song.bpm; stepDur = beat / 2; barDur = beat * 4; endT = songEnd(song); t = 0;
   buildScene(); setupCanvas(); drawMute(); showTitle();
   bindPress(cv); bindPress(tapPad);
   window.addEventListener('keydown', onKeyDown);
