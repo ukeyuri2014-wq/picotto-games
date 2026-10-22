@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>すうじタッチ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --maru:"Hiragino Maru Gothic ProN","Hiragino Sans","Arial Rounded MT Bold","Yu Gothic",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#1d2140 0%,var(--bg) 60%) fixed,var(--bg);
+    color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:10px 10px 30px;overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .backbar,header,#wrap,.row,.help{width:min(480px,100%)}
+  .backbar{margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:var(--sub);text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:15px;padding:4px 14px;cursor:pointer;font-family:inherit;min-height:32px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover{border-color:var(--cyan);color:var(--cyan)}
+    .pick button:hover{border-color:var(--cyan)}
+    .go:hover{filter:brightness(1.12)}
+    .alt:hover{color:var(--gold);border-color:var(--gold)}
+  }
+  header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 8px}
+  h1{font-size:23px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.65);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(255,209,102,.35);border-radius:999px;color:var(--gold);background:rgba(255,209,102,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+
+  #wrap{position:relative;border:2px solid #2f6f78;border-radius:14px;background:rgba(13,14,32,.9);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 22px rgba(83,224,216,.18)}
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 9px;background:linear-gradient(180deg,rgba(40,64,104,.95),rgba(24,30,64,.96));border-bottom:2px solid #10162e;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+  .lcd{font-family:var(--maru);font-weight:800;font-size:19px;padding:4px 8px;border:1px solid rgba(83,224,216,.45);border-radius:10px;background:linear-gradient(180deg,#05071a,#10142e);box-shadow:inset 0 2px 7px rgba(0,0,0,.8);min-width:104px;text-align:center;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--cyan);text-shadow:0 0 8px rgba(83,224,216,.75)}
+  .lcd.r{color:var(--pink);border-color:rgba(255,95,162,.45);text-shadow:0 0 8px rgba(255,95,162,.75)}
+  .lcd.warn{color:#ff6b6b;border-color:#ff6b6b;animation:blink .5s steps(2) infinite}
+  @keyframes blink{50%{opacity:.55}}
+  .nextbox{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
+  .nextbox small{font-size:11px;color:#c9c4ee;letter-spacing:1px}
+  #hudNext{font-family:var(--maru);font-weight:800;font-size:24px;line-height:1;min-width:52px;height:38px;padding:0 8px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:#1a1530;background:linear-gradient(180deg,#fff2c4,var(--gold));box-shadow:0 0 14px rgba(255,209,102,.6),inset 0 -3px 0 rgba(0,0,0,.2)}
+  #hudNext.bump{animation:bump .18s ease-out}
+  @keyframes bump{0%{transform:scale(1.25)}100%{transform:scale(1)}}
+  #hudInfo{font-size:11px;color:#c9c4ee;white-space:nowrap}
+  .bar{height:5px;background:#0a0c1e}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold));box-shadow:0 0 8px rgba(83,224,216,.8);transition:width .12s}
+  canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+
+  #overlay{position:absolute;inset:0;display:none;flex-direction:column;gap:8px;align-items:center;justify-content:center;background:rgba(14,15,34,.95);text-align:center;padding:10px 12px;overflow:auto;z-index:3}
+  #overlay.show{display:flex}
+  #ovBig{font-size:30px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.7);line-height:1.15}
+  #ovBig.win{color:var(--gold);text-shadow:0 0 18px rgba(255,209,102,.75)}
+  #ovBig.lose{color:var(--pink);text-shadow:0 0 18px rgba(255,95,162,.75)}
+  #ovNote{font-size:13px;line-height:1.65;color:var(--ink)}
+  #ovNote b{color:var(--gold);font-weight:400}
+  #ovNote .rec{color:var(--cyan)}
+  #ovNote .stars{font-size:26px;letter-spacing:4px;color:var(--gold);text-shadow:0 0 10px rgba(255,209,102,.7)}
+  #ovNote .stars s{text-decoration:none;color:#3b3a5e;text-shadow:none}
+  .opts{display:flex;flex-direction:column;gap:7px;width:100%;max-width:400px}
+  .pick{display:flex;gap:6px;justify-content:center}
+  .pick button{flex:1;font-family:inherit;font-size:13px;color:var(--ink);background:rgba(28,28,51,.9);border:1px solid var(--edge);border-radius:10px;min-height:42px;padding:4px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.2}
+  .pick button em{font-style:normal;font-size:11px;color:var(--gold)}
+  .pick button.on{border-color:var(--cyan);background:rgba(83,224,216,.14);box-shadow:0 0 10px rgba(83,224,216,.4);color:var(--cyan)}
+  .pick.tabs button{font-size:14px;min-height:44px}
+  .pick.tabs button.on{border-color:var(--gold);background:rgba(255,209,102,.12);color:var(--gold);box-shadow:0 0 10px rgba(255,209,102,.35)}
+  #chalInfo{font-size:13px;line-height:1.6;color:#c9c4ee;background:rgba(28,28,51,.7);border:1px solid var(--edge);border-radius:10px;padding:8px 10px}
+  #chalInfo b{color:var(--gold);font-weight:400}
+  .acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .go{font-family:inherit;font-size:17px;letter-spacing:2px;background:linear-gradient(180deg,#8ff3ec,var(--cyan));color:#0c1a26;border:none;border-radius:12px;min-height:46px;padding:8px 30px;cursor:pointer;box-shadow:0 0 16px rgba(83,224,216,.55),inset 0 -3px 0 rgba(0,0,0,.18)}
+  .alt{font-family:inherit;font-size:14px;background:none;color:var(--sub);border:1px solid var(--edge);border-radius:12px;min-height:46px;padding:8px 16px;cursor:pointer}
+  #ovRule{font-size:11px;color:var(--sub)}
+
+  .row{display:flex;gap:6px;margin-top:8px}
+  .btn{flex:1;font-family:inherit;font-size:14px;min-height:44px;border-radius:12px;border:2px solid #2f5a72;background:linear-gradient(180deg,#24406a,#172848 60%,#121e3a);color:var(--ink);cursor:pointer;letter-spacing:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 3px 0 #0a1124}
+  .btn:active{transform:translateY(2px)}
+  .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(47,111,120,.5);border-radius:12px;padding:10px 12px}
+  .help b{color:var(--ink);font-weight:400}
+  .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)}
+  @media (max-width:420px){
+    h1{font-size:21px}
+    .lcd{font-size:17px;min-width:92px;padding:3px 6px}
+    #ovBig{font-size:26px}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="ばらばらの すうじを 1から じゅんに すばやく タッチ！ タイムアタックは 3×3〜6×6 と すうじ・ぎゃく・ひらがな順を えらべて、ベストタイムと★を きろく。チャレンジは 12ステージで、まぜ順・いれかわる ばん・色のまどわしが 出てくるよ。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/111-touch-order/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"すうじタッチ","description":"ばらばらの すうじを 1から じゅんに すばやく タッチ！ タイムアタックは 3×3〜6×6 と すうじ・ぎゃく・ひらがな順を えらべて、ベストタイムと★を きろく。チャレンジは 12ステージで、まぜ順・いれかわる ばん・色のまどわしが 出てくるよ。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/111-touch-order/index.html","inLanguage":"ja","genre":"BRAIN","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="111"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>すうじタッチ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとり用</div>
+</header>
+
+<div id="wrap">
+  <div class="hud">
+    <div class="lcd" id="hudTime">⏱ 0.00</div>
+    <div class="nextbox"><small>つぎ</small><div id="hudNext">1</div><div id="hudInfo">3×3・すうじ</div></div>
+    <div class="lcd r" id="hudRight">ミス 0</div>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+  <canvas id="cv" width="480" height="480" aria-label="すうじのばん"></canvas>
+  <div id="overlay" class="show">
+    <div id="ovBig">すうじタッチ</div>
+    <div id="ovNote"></div>
+    <div class="opts" id="opts">
+      <div class="pick tabs" id="modeRow">
+        <button data-mode="ta">⏱ タイムアタック</button>
+        <button data-mode="chal">🏆 チャレンジ</button>
+      </div>
+      <div id="taOpts" class="opts">
+        <div class="pick" id="orderRow">
+          <button data-order="num">1→ すうじ</button>
+          <button data-order="rev">ぎゃく →1</button>
+          <button data-order="kana">あ→ ひらがな</button>
+        </div>
+        <div class="pick" id="sizeRow">
+          <button data-n="3">3×3<em>--</em></button>
+          <button data-n="4">4×4<em>--</em></button>
+          <button data-n="5">5×5<em>--</em></button>
+          <button data-n="6">6×6<em>--</em></button>
+        </div>
+      </div>
+      <div id="chalInfo"></div>
+    </div>
+    <div class="acts">
+      <button class="go" id="startBtn">スタート</button>
+      <button class="alt" id="toTitleBtn" style="display:none">メニュー</button>
+    </div>
+    <div id="ovRule"></div>
+  </div>
+</div>
+<div class="row">
+  <button class="btn" id="pauseBtn">⏸ ひとやすみ</button>
+  <button class="btn" id="retryBtn">🔄 やりなおし</button>
+  <button class="btn" id="menuBtn">🏠 メニュー</button>
+</div>
+
+<div class="help">
+  <b>あそびかた</b>：ばらばらに ならんだ すうじを、<b class="c3">1・2・3…</b>の じゅんばんに できるだけ はやく タッチしよう！ まちがえると <i class="c2">+1びょう</i>（チャレンジでは のこり時間が −1びょう）。上の「つぎ」に、つぎに おす もじが 出ているよ。<br>
+  ⏱ <b>タイムアタック</b>：3×3〜6×6 と「すうじ・ぎゃく・ひらがな」を えらんで、ベストタイムと★を ねらおう。<br>
+  🏆 <b>チャレンジ</b>：12ステージ。ばんが 大きくなり、ぎゃくじゅん・ひらがな・「1あ2い」まぜ・タッチするたび いれかわる ばん・色のまどわし が出てくるよ。じかんぎれで おしまい。<br>
+  🖱 クリック・📱 タッチで おす。⌨️ やじるしで えらんで Enter・スペースで おす、Pで ひとやすみ、Escで メニュー。<br>
+  <i class="c1">コツ</i>：いま おす もじだけでなく、その つぎの もじも 目で さがしておくと はやくなるよ。
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  const overlay = $('overlay');
+  const RS = Math.min(2, window.devicePixelRatio || 1);
+  const KEY = 'ludot_touch-order_';
+  const W = 480, H = 480, PAD = 12;
+  const COUNT_MS = 2100, RESULT_MS = 1400, STAGE_MS = 1700, PENALTY = 1;
+  const KANA = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや'.split('');
+  const ORDER_NAME = { num: 'すうじ', rev: 'ぎゃく', kana: 'ひらがな', mix: '1あ2い まぜ' };
+  const HUES = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#7cff7c', '#4db8ff', '#ff8c42'];
+  const LABEL_FONT = '"Hiragino Maru Gothic ProN","Hiragino Sans","Arial Rounded MT Bold","Yu Gothic",system-ui,sans-serif';
+  // チャレンジの12ステージ（k＝1マスあたりの秒数。小さいほどきびしい）
+  const STAGES = [
+    { n: 3, order: 'num', k: 1.7 },
+    { n: 4, order: 'num', k: 1.5 },
+    { n: 4, order: 'rev', k: 1.5 },
+    { n: 4, order: 'kana', k: 1.9 },
+    { n: 5, order: 'num', k: 1.35 },
+    { n: 5, order: 'num', k: 1.55, swap: true },
+    { n: 5, order: 'rev', k: 1.4, color: true },
+    { n: 5, order: 'mix', k: 1.75 },
+    { n: 6, order: 'num', k: 1.25 },
+    { n: 6, order: 'kana', k: 1.6, color: true },
+    { n: 6, order: 'rev', k: 1.4, swap: true },
+    { n: 6, order: 'mix', k: 1.7, swap: true, color: true },
+  ];
+  const STAGE_TAG = s => [s.n + '×' + s.n, ORDER_NAME[s.order], s.swap ? 'いれかわり' : '', s.color ? 'いろまどわし' : ''].filter(Boolean).join('・');
+  // ★のめやす（1マスあたりの秒）
+  const STAR3 = { num: 0.8, rev: 0.9, kana: 1.15 }, STAR2 = { num: 1.25, rev: 1.4, kana: 1.75 };
+
+  // ---- sound ----------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted || !ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(); const t = ac.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  const PENTA = [0, 2, 4, 7, 9];
+  const noteF = i => 440 * Math.pow(2, (PENTA[i % 5] + 12 * Math.floor(i / 5)) / 12);
+  const SFX = {
+    hit(i) { const f = noteF(Math.min(i, 17)); tone('triangle', f, f, 0.16, 0.12); tone('sine', f * 2, f * 2, 0.08, 0.04); },
+    miss() { tone('square', 220, 120, 0.18, 0.07); tone('sawtooth', 160, 90, 0.2, 0.04); },
+    done() { tone('sine', 300, 300, 0.05, 0.03); },
+    tick(hi) { tone('square', hi ? 1320 : 880, hi ? 1320 : 880, hi ? 0.22 : 0.09, 0.06); },
+    warn() { tone('square', 1500, 1500, 0.05, 0.035); },
+    swap() { tone('sine', 700, 1100, 0.12, 0.035); },
+    stage() { [659, 784, 988, 1319].forEach((f, i) => tone('triangle', f, f, 0.16, 0.08, i * 0.08)); },
+    win() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.18, 0.06, i * 0.09)); },
+    record() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone('triangle', f, f, 0.22, 0.07, 0.65 + i * 0.09)); },
+    over() { [392, 330, 262, 196].forEach((f, i) => tone('triangle', f, f * 0.98, 0.24, 0.08, i * 0.14)); },
+    pop() { tone('sine', 900, 260, 0.3, 0.035); },
+    click() { tone('square', 1000, 1000, 0.03, 0.03); },
+  };
+  const muteBtn = $('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- state ----------------------------------------------------------------
+  let mode = 'ta', order = 'num', size = 5;            // えらんでいるもの
+  let n = 3, cur = { n: 3, order: 'num' }, stage = 0;   // いまのばん
+  let phase = 'title';                                   // title | count | play | stageclear | done
+  let paused = false, won = false, overlayKind = 'title';
+  let tiles = [], posTile = [], seq = [], next = 0, total = 0;
+  let elapsed = 0, left = 0, limit = 0, misses = 0, stageMisses = 0, score = 0, combo = 0, maxCombo = 0;
+  let T = 0, phaseT = 0, lastHitT = 0, resultAt = Infinity, lastWarnSec = -1, lastCount = -1;
+  let finalTime = 0, stars = 0, newRecord = false, clearBonus = 0;
+  let cursor = 0, kb = false, firstGuide = false;
+  let particles = [], rings = [], pops = [], fwLeft = 0, fwNext = 0;
+  let best = {}, chalBest = { score: 0, stage: 0 }, seen = false;
+  try { const b = JSON.parse(localStorage.getItem(KEY + 'best') || 'null'); if (b && typeof b === 'object') best = b; } catch (e) {}
+  try { const c = JSON.parse(localStorage.getItem(KEY + 'chal') || 'null'); if (c && typeof c === 'object') chalBest = { score: +c.score || 0, stage: +c.stage || 0 }; } catch (e) {}
+  try { seen = localStorage.getItem(KEY + 'seen') === '1'; } catch (e) {}
+  function save(k, v) { try { localStorage.setItem(KEY + k, typeof v === 'string' ? v : JSON.stringify(v)); } catch (e) {} }
+
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+  const fmt = s => (Math.round(s * 100) / 100).toFixed(2);
+  function rrPath(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // じゅんばん（k番目におすもじ）
+  function makeSeq(ord, cnt) {
+    const out = [];
+    for (let k = 0; k < cnt; k++) {
+      if (ord === 'num') out.push(String(k + 1));
+      else if (ord === 'rev') out.push(String(cnt - k));
+      else if (ord === 'kana') out.push(KANA[k]);
+      else out.push(k % 2 === 0 ? String(k / 2 + 1) : KANA[(k - 1) / 2]);
+    }
+    return out;
+  }
+  const bestKey = (ord, sz) => ord + '-' + sz;
+
+  // ---- board ----------------------------------------------------------------
+  let cell = 0, BX = PAD, BY = PAD;
+  function buildBoard(cfg) {
+    cur = cfg; n = cfg.n; total = n * n; seq = makeSeq(cfg.order, total);
+    cell = (W - PAD * 2) / n; BX = PAD; BY = PAD;
+    const pos = shuffle([...Array(total).keys()]);
+    tiles = seq.map((label, k) => ({ k, label, pos: pos[k], from: pos[k], moveT: -1e9, done: false, popT: -1e9, wrongT: -1e9, hue: cfg.color ? HUES[Math.floor(Math.random() * HUES.length)] : null }));
+    posTile = new Array(total);
+    tiles.forEach(t => { posTile[t.pos] = t.k; });
+    next = 0; combo = 0; stageMisses = 0; cursor = Math.min(cursor, total - 1);
+    labelCache.clear();
+  }
+  function beginCount() { phase = 'count'; phaseT = T; lastCount = -1; paused = false; overlay.classList.remove('show'); overlayKind = 'none'; updateHud(); }
+  function startGame(opts) {
+    opts = opts || {};
+    if (opts.mode) mode = opts.mode;
+    if (opts.order) order = opts.order;
+    if (opts.n) size = opts.n;
+    particles = []; rings = []; pops = []; fwLeft = 0; won = false; resultAt = Infinity; newRecord = false;
+    misses = 0; score = 0; maxCombo = 0; elapsed = 0; lastWarnSec = -1;
+    firstGuide = !seen;
+    if (mode === 'ta') { stage = 0; buildBoard({ n: size, order }); }
+    else { stage = clamp(opts.stage ? opts.stage - 1 : 0, 0, STAGES.length - 1); setupStage(); }
+    save('sel', { mode, order, size });
+    beginCount();
+  }
+  function setupStage() {
+    const s = STAGES[stage];
+    buildBoard(s);
+    limit = Math.round(s.n * s.n * s.k + 3); left = limit; lastWarnSec = -1;
+  }
+  function moveTile(t, p) { t.from = t.pos; t.pos = p; t.moveT = T; posTile[p] = t.k; }
+  function swapTwo() {
+    const rest = tiles.filter(t => !t.done);
+    if (rest.length < 2) return;
+    shuffle(rest);
+    const a = rest[0], b = rest[1], pa = a.pos, pb = b.pos;
+    moveTile(a, pb); moveTile(b, pa);
+    SFX.swap();
+  }
+  const isCleared = () => tiles.length > 0 && tiles.every(t => t.done);
+
+  // ---- tap ------------------------------------------------------------------
+  function center(p) { const r = Math.floor(p / n), c = p % n; return { x: BX + c * cell + cell / 2, y: BY + r * cell + cell / 2 }; }
+  function tapPos(p) {
+    if (phase !== 'play' || paused || p < 0 || p >= total) return 'ignore';
+    const t = tiles[posTile[p]];
+    const { x, y } = center(p);
+    if (t.done) { SFX.done(); return 'done'; }
+    if (t.k === next) {
+      t.done = true; t.popT = T; next++;
+      combo = (T - lastHitT < 750 && next > 1) ? combo + 1 : 1; maxCombo = Math.max(maxCombo, combo); lastHitT = T;
+      if (firstGuide) { firstGuide = false; seen = true; save('seen', '1'); }
+      SFX.hit(next - 1);
+      burst(x, y, [t.hue || '#53e0d8', '#ffffff', '#ffd166'], 12, 0.7);
+      rings.push({ x, y, t: T, col: t.hue || '#53e0d8', r: Math.min(70, cell * 0.62) });
+      if (combo >= 5 && combo % 5 === 0) pops.push({ x, y: y - cell * 0.4, t: T, text: combo + 'れんぞく！', col: '#ffd166', size: 22 });
+      $('hudNext').classList.remove('bump'); void $('hudNext').offsetWidth; $('hudNext').classList.add('bump');
+      if (isCleared()) onClear();
+      else if (cur.swap) swapTwo();
+      updateHud();
+      return 'hit';
+    }
+    misses++; stageMisses++; combo = 0; t.wrongT = T;
+    if (mode === 'ta') elapsed += PENALTY; else left = Math.max(0, left - PENALTY);
+    pops.push({ x, y: y - cell * 0.3, t: T, text: mode === 'ta' ? '+1びょう' : '−1びょう', col: '#ff5fa2', size: 20 });
+    SFX.miss(); vibrate(30);
+    updateHud();
+    return 'miss';
+  }
+  function tapLabel(label) { const t = tiles.find(x => x.label === String(label)); return t ? tapPos(t.pos) : 'none'; }
+  function onClear() {
+    if (mode === 'ta') {
+      phase = 'done'; won = true; finalTime = Math.round(elapsed * 100) / 100;
+      const per = finalTime / total;
+      stars = per <= STAR3[cur.order] ? 3 : per <= STAR2[cur.order] ? 2 : 1;
+      const bk = bestKey(cur.order, n), b = best[bk];
+      if (!b || finalTime < b.t) { best[bk] = { t: finalTime, s: Math.max(stars, b ? b.s || 0 : 0) }; newRecord = true; }
+      else if (stars > (b.s || 0)) best[bk].s = stars;
+      save('best', best);
+      SFX.win(); if (newRecord) SFX.record();
+      fwLeft = 6 + stars * 2; fwNext = T + 120; resultAt = T + RESULT_MS;
+    } else {
+      clearBonus = Math.round(left * 10);
+      score += total * 10 + clearBonus + (stageMisses === 0 ? 100 : 0);
+      if (stage >= STAGES.length - 1) {
+        phase = 'done'; won = true; saveChal(stage + 1);
+        SFX.win(); SFX.record(); fwLeft = 14; fwNext = T + 120; resultAt = T + RESULT_MS + 300;
+      } else {
+        phase = 'stageclear'; phaseT = T; saveChal(stage + 1); SFX.stage();
+        fwLeft = 3; fwNext = T + 100;
+      }
+    }
+  }
+  function saveChal(cleared) {
+    let changed = false;
+    if (score > chalBest.score) { chalBest.score = score; changed = true; newRecord = true; }
+    if (cleared > chalBest.stage) { chalBest.stage = cleared; changed = true; }
+    if (changed) save('chal', chalBest);
+  }
+  function timeUp() {
+    phase = 'done'; won = false; left = 0; saveChal(stage);
+    SFX.over(); resultAt = T + RESULT_MS;
+    for (const t of tiles) if (t.k === next) rings.push({ x: center(t.pos).x, y: center(t.pos).y, t: T, col: '#ff5fa2', r: cell });
+  }
+  function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+  // ---- overlay ----------------------------------------------------------------
+  const TITLE_NOTE = 'ばらばらの すうじを <b>じゅんばんに</b> タッチ！<br>まちがえると +1びょう。はやさを きそおう。';
+  function toTitle() {
+    phase = 'title'; paused = false; overlayKind = 'title'; resultAt = Infinity; fwLeft = 0;
+    $('ovBig').textContent = 'すうじタッチ'; $('ovBig').className = '';
+    $('ovNote').innerHTML = TITLE_NOTE;
+    $('opts').style.display = ''; $('startBtn').textContent = 'スタート'; $('toTitleBtn').style.display = 'none';
+    syncPicks(); overlay.classList.add('show'); updateHud();
+  }
+  function syncPicks() {
+    document.querySelectorAll('#modeRow button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+    document.querySelectorAll('#orderRow button').forEach(b => b.classList.toggle('on', b.dataset.order === order));
+    document.querySelectorAll('#sizeRow button').forEach(b => {
+      const sz = +b.dataset.n, bb = best[bestKey(order, sz)];
+      b.classList.toggle('on', sz === size);
+      b.querySelector('em').textContent = bb ? '★'.repeat(bb.s || 1) + ' ' + fmt(bb.t) : '--';
+    });
+    $('taOpts').style.display = mode === 'ta' ? '' : 'none';
+    $('chalInfo').style.display = mode === 'chal' ? '' : 'none';
+    if (overlayKind === 'title') $('ovRule').textContent = mode === 'ta' ? 'まちがえずに はやく おすと ★3つ！' : 'じかんが のこるほど とくてんアップ・ノーミスで +100';
+    $('chalInfo').innerHTML = '12ステージを つぎつぎ クリア！ ばんが大きくなり、<br>ぎゃく・ひらがな・まぜ・いれかわり が出てくるよ。<br>ベスト：<b>ステージ ' + chalBest.stage + ' / 12</b>・<b>' + chalBest.score + 'てん</b>';
+  }
+  function starHtml(k) { let s = ''; for (let i = 0; i < 3; i++) s += i < k ? '★' : '<s>★</s>'; return '<span class="stars">' + s + '</span>'; }
+  function showResult() {
+    resultAt = Infinity; overlayKind = 'result';
+    const big = $('ovBig'), note = $('ovNote');
+    if (mode === 'ta') {
+      big.textContent = 'クリア！'; big.className = 'win';
+      const bb = best[bestKey(cur.order, n)];
+      note.innerHTML = starHtml(stars) + '<br>タイム <b>' + fmt(finalTime) + 'びょう</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '') +
+        '<br>ミス ' + misses + 'かい・さいだい ' + maxCombo + 'れんぞく<br>' + n + '×' + n + '・' + ORDER_NAME[cur.order] + ' のベスト：' + fmt(bb ? bb.t : finalTime) + 'びょう';
+      $('ovRule').textContent = stars < 3 ? 'つぎは ★' + (stars + 1) + ' を めざそう（1マス ' + (stars < 2 ? STAR2 : STAR3)[cur.order] + 'びょう いない）' : 'さいこうの ★3つ！ 大きい ばんにも ちょうせんしよう';
+    } else if (won) {
+      big.textContent = 'ぜんぶ クリア！'; big.className = 'win';
+      note.innerHTML = '12ステージ せいは！<br>とくてん <b>' + score + 'てん</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '') + '<br>ミス ' + misses + 'かい・さいだい ' + maxCombo + 'れんぞく<br>ベスト：' + chalBest.score + 'てん';
+      $('ovRule').textContent = 'すごい！ こんどは ミスを へらして 高とくてんを ねらおう';
+    } else {
+      big.textContent = 'じかんぎれ…'; big.className = 'lose';
+      note.innerHTML = 'ステージ <b>' + (stage + 1) + '</b>（' + STAGE_TAG(STAGES[stage]) + '）で おしまい<br>とくてん <b>' + score + 'てん</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '') + '<br>ベスト：ステージ ' + chalBest.stage + ' クリア・' + chalBest.score + 'てん';
+      $('ovRule').textContent = 'つぎに おす もじの 「その つぎ」も さがしておこう';
+    }
+    $('opts').style.display = 'none'; $('startBtn').textContent = 'もういちど'; $('toTitleBtn').style.display = '';
+    overlay.classList.add('show');
+  }
+  function pause() {
+    if (paused || (phase !== 'play' && phase !== 'count')) return;
+    paused = true; overlayKind = 'pause';
+    $('ovBig').textContent = 'ひとやすみ'; $('ovBig').className = '';
+    $('ovNote').innerHTML = 'タイマーは とまっているよ。<br>じゅんびが できたら つづけよう。';
+    $('opts').style.display = 'none'; $('startBtn').textContent = 'つづける'; $('toTitleBtn').style.display = ''; $('ovRule').textContent = '';
+    overlay.classList.add('show');
+  }
+  function resume() { if (!paused) return; paused = false; overlay.classList.remove('show'); overlayKind = 'none'; if (phase === 'play' || phase === 'count') { phase = 'count'; phaseT = T; lastCount = -1; } }
+  function onStartBtn() {
+    audio();
+    if (overlayKind === 'pause') { resume(); return; }
+    startGame();
+  }
+
+  // ---- hud --------------------------------------------------------------------
+  function updateHud() {
+    const tt = $('hudTime'), hr = $('hudRight');
+    if (mode === 'ta' || phase === 'title') { tt.textContent = '⏱ ' + fmt(elapsed); tt.classList.remove('warn'); hr.textContent = 'ミス ' + misses; }
+    else { tt.textContent = '⏳ ' + left.toFixed(1); tt.classList.toggle('warn', phase === 'play' && left <= 5); hr.textContent = '★ ' + (stage + 1) + '/12'; }
+    $('hudNext').textContent = phase === 'title' ? '1' : (seq[next] !== undefined ? seq[next] : '✓');
+    $('hudInfo').textContent = mode === 'chal' && phase !== 'title' ? score + 'てん' : (phase === 'title' ? (mode === 'ta' ? size + '×' + size + '・' + ORDER_NAME[order] : 'チャレンジ') : n + '×' + n + '・' + ORDER_NAME[cur.order]);
+    $('bar').style.width = (total ? Math.round(next / total * 100) : 0) + '%';
+  }
+
+  // ---- fx -----------------------------------------------------------------------
+  function burst(x, y, cols, cnt, scale) {
+    if (particles.length > 900) return;
+    for (let i = 0; i < cnt; i++) {
+      const a = Math.random() * Math.PI * 2, sp = (60 + Math.random() * 170) * (scale || 1);
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30, life: 0.4 + Math.random() * 0.45, max: 0.85, col: cols[i % cols.length], size: 2 + Math.random() * 2, g: 220 });
+    }
+  }
+  function firework() {
+    const x = 60 + Math.random() * (W - 120), y = 60 + Math.random() * (H * 0.55);
+    const col = HUES[Math.floor(Math.random() * HUES.length)];
+    burst(x, y, [col, '#ffffff', col], 40, 1.25); rings.push({ x, y, t: T, col, r: 70 }); SFX.pop();
+  }
+
+  // ---- update -------------------------------------------------------------------
+  function update(dt) {
+    T += dt * 1000;
+    if (!paused) {
+      if (phase === 'count') {
+        const k = Math.floor((T - phaseT) / (COUNT_MS / 3));
+        if (k !== lastCount && k < 3) { lastCount = k; SFX.tick(false); }
+        if (T - phaseT >= COUNT_MS) { phase = 'play'; phaseT = T; lastHitT = T; SFX.tick(true); }
+      } else if (phase === 'play') {
+        if (mode === 'ta') elapsed += dt;
+        else {
+          left -= dt;
+          const s = Math.ceil(left);
+          if (left <= 5 && s !== lastWarnSec && left > 0) { lastWarnSec = s; SFX.warn(); }
+          if (left <= 0) timeUp();
+        }
+      } else if (phase === 'stageclear') {
+        if (T - phaseT >= STAGE_MS) { stage++; setupStage(); beginCount(); }
+      }
+    }
+    if (fwLeft > 0 && T >= fwNext) { fwLeft--; fwNext = T + 150 + Math.random() * 120; firework(); }
+    particles = particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.vx *= (1 - 1.4 * dt); p.life -= dt; return p.life > 0; });
+    rings = rings.filter(r => T - r.t < 450);
+    pops = pops.filter(p => T - p.t < 800);
+    if (phase === 'done' && T >= resultAt) showResult();
+    if (phase === 'play' || phase === 'count') hudTick();
+  }
+  let hudLast = 0;
+  function hudTick() { if (T - hudLast > 50) { hudLast = T; updateHud(); } }
+
+  // ---- draw ---------------------------------------------------------------------
+  const labelCache = new Map();
+  function labelSprite(label, col) {
+    const key = label + '|' + col + '|' + Math.round(cell);
+    let s = labelCache.get(key);
+    if (!s) {
+      s = document.createElement('canvas'); s.width = Math.ceil(cell * RS); s.height = Math.ceil(cell * RS);
+      const c = s.getContext('2d'); c.scale(RS, RS);
+      const fs = Math.round(cell * (label.length >= 2 ? 0.46 : 0.54));
+      c.font = '800 ' + fs + 'px ' + LABEL_FONT; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.shadowColor = col; c.shadowBlur = cell * 0.12 * RS; c.fillStyle = col; c.fillText(label, cell / 2, cell / 2 + fs * 0.04);
+      c.shadowBlur = 0; c.fillStyle = '#ffffff'; c.globalAlpha = 0.92; c.fillText(label, cell / 2, cell / 2 + fs * 0.04);
+      c.globalAlpha = 1; c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 1; c.strokeText(label, cell / 2, cell / 2 + fs * 0.04);
+      labelCache.set(key, s);
+    }
+    return s;
+  }
+  function tileXY(t) {
+    let p = t.pos;
+    const a = center(p);
+    const mp = (T - t.moveT) / 260;
+    if (mp < 1) { const b = center(t.from), e = easeOutCubic(clamp(mp, 0, 1)); return { x: b.x + (a.x - b.x) * e, y: b.y + (a.y - b.y) * e, moving: true }; }
+    return { x: a.x, y: a.y, moving: false };
+  }
+  function drawBoardBg() {
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#141a36'); g.addColorStop(1, '#0d0f24');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(83,224,216,.06)'; ctx.lineWidth = 1;
+    for (let i = 0; i <= 12; i++) { const v = i * 40; ctx.beginPath(); ctx.moveTo(v, 0); ctx.lineTo(v, H); ctx.moveTo(0, v); ctx.lineTo(W, v); ctx.stroke(); }
+  }
+  function drawTile(t, covered) {
+    const { x, y, moving } = tileXY(t);
+    const g = cell * 0.07, s = cell - g * 2, rad = Math.max(6, cell * 0.16);
+    let sc = 1, dx = 0;
+    const pp = (T - t.popT) / 280; if (pp >= 0 && pp < 1) sc = 1 + 0.16 * (1 - easeOutCubic(pp));
+    const wp = (T - t.wrongT) / 320; if (wp >= 0 && wp < 1) dx = Math.sin(wp * Math.PI * 6) * 6 * (1 - wp);
+    if (moving) sc *= 1.06;
+    ctx.save(); ctx.translate(x + dx, y); ctx.scale(sc, sc);
+    const hx = -s / 2, hy = -s / 2;
+    if (t.done && !covered) {
+      ctx.fillStyle = 'rgba(20,22,44,.9)'; rrPath(ctx, hx, hy, s, s, rad); ctx.fill();
+      ctx.strokeStyle = 'rgba(83,224,216,.14)'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.globalAlpha = 0.22; ctx.drawImage(labelSprite(t.label, '#9d99c0'), -cell / 2, -cell / 2, cell, cell); ctx.globalAlpha = 1;
+      if (pp >= 0 && pp < 1) { ctx.globalAlpha = (1 - pp) * 0.85; ctx.fillStyle = '#ffffff'; rrPath(ctx, hx, hy, s, s, rad); ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.restore(); return;
+    }
+    const col = t.hue || '#53e0d8';
+    const bg = ctx.createLinearGradient(0, hy, 0, hy + s);
+    if (t.hue) { bg.addColorStop(0, '#2b2650'); bg.addColorStop(1, '#17142f'); } else { bg.addColorStop(0, '#26386a'); bg.addColorStop(1, '#151f42'); }
+    ctx.fillStyle = 'rgba(0,0,0,.45)'; rrPath(ctx, hx + 2, hy + 4, s, s, rad); ctx.fill();
+    ctx.fillStyle = bg; rrPath(ctx, hx, hy, s, s, rad); ctx.fill();
+    ctx.strokeStyle = covered ? 'rgba(83,224,216,.3)' : col; ctx.globalAlpha = covered ? 1 : 0.75; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(255,255,255,.07)'; rrPath(ctx, hx + 3, hy + 3, s - 6, s * 0.42, rad * 0.8); ctx.fill();
+    if (covered) {
+      ctx.fillStyle = 'rgba(83,224,216,.25)'; ctx.beginPath(); ctx.arc(0, 0, s * 0.07, 0, Math.PI * 2); ctx.fill();
+    } else {
+      ctx.drawImage(labelSprite(t.label, t.hue || '#53e0d8'), -cell / 2, -cell / 2, cell, cell);
+    }
+    if (wp >= 0 && wp < 1) { ctx.globalAlpha = (1 - wp) * 0.55; ctx.fillStyle = '#ff3b6b'; rrPath(ctx, hx, hy, s, s, rad); ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = '#ff5fa2'; ctx.lineWidth = 3; ctx.stroke(); }
+    ctx.restore();
+  }
+  function drawGlow(t, col, strength) {
+    const { x, y } = tileXY(t), s = cell - cell * 0.14, rad = Math.max(6, cell * 0.16);
+    ctx.save(); ctx.translate(x, y);
+    ctx.strokeStyle = col; ctx.lineWidth = 3 + strength * 2; ctx.shadowColor = col; ctx.shadowBlur = 16 * strength;
+    ctx.globalAlpha = 0.45 + 0.55 * strength; rrPath(ctx, -s / 2 - 3, -s / 2 - 3, s + 6, s + 6, rad + 3); ctx.stroke();
+    ctx.restore();
+  }
+  function bigText(text, y, size, col, sc) {
+    ctx.save(); ctx.translate(W / 2, y); ctx.scale(sc || 1, sc || 1);
+    ctx.font = '800 ' + size + 'px ' + LABEL_FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round'; ctx.strokeStyle = 'rgba(8,8,24,.92)'; ctx.lineWidth = size * 0.16; ctx.strokeText(text, 0, 0);
+    ctx.shadowColor = col; ctx.shadowBlur = 18; ctx.fillStyle = col; ctx.fillText(text, 0, 0);
+    ctx.restore();
+  }
+  function draw() {
+    ctx.setTransform(RS, 0, 0, RS, 0, 0);
+    drawBoardBg();
+    if (!tiles.length) { drawTitleDemo(); return; }
+    const covered = phase === 'count' || paused;
+    const order2 = tiles.slice().sort((a, b) => (a.moveT > T - 260 ? 1 : 0) - (b.moveT > T - 260 ? 1 : 0));
+    for (const t of order2) drawTile(t, covered);
+    if (phase === 'play' && !paused) {
+      const nt = tiles[next];
+      if (nt) {
+        const idle = T - lastHitT;
+        if (firstGuide) drawGlow(nt, '#ffd166', 0.6 + 0.4 * Math.sin(T / 160));
+        else if (idle > 4000) drawGlow(nt, '#ffd166', clamp((idle - 4000) / 1500, 0, 1) * (0.55 + 0.45 * Math.sin(T / 180)));
+      }
+      if (kb) { const c = center(cursor), s = cell - 4; ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3; rrPath(ctx, c.x - s / 2, c.y - s / 2, s, s, 10); ctx.stroke(); ctx.restore(); }
+    }
+    for (const r of rings) { const p = (T - r.t) / 450; ctx.globalAlpha = 1 - p; ctx.strokeStyle = r.col; ctx.lineWidth = 3 * (1 - p) + 1; ctx.beginPath(); ctx.arc(r.x, r.y, r.r * (0.4 + 0.8 * easeOutCubic(p)), 0, Math.PI * 2); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    for (const p of particles) { ctx.globalAlpha = clamp(p.life / 0.4, 0, 1); ctx.fillStyle = p.col; ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); }
+    ctx.globalAlpha = 1;
+    for (const p of pops) {
+      const k = (T - p.t) / 800; ctx.globalAlpha = 1 - k * k;
+      ctx.font = '800 ' + p.size + 'px ' + LABEL_FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const yy = p.y - 34 * easeOutCubic(k); ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(8,8,24,.9)'; ctx.strokeText(p.text, p.x, yy); ctx.fillStyle = p.col; ctx.fillText(p.text, p.x, yy);
+    }
+    ctx.globalAlpha = 1;
+    if (phase === 'count' && !paused) {
+      const e = T - phaseT, k = Math.min(2, Math.floor(e / (COUNT_MS / 3))), f = (e % (COUNT_MS / 3)) / (COUNT_MS / 3);
+      ctx.fillStyle = 'rgba(10,10,26,.35)'; ctx.fillRect(0, 0, W, H);
+      if (mode === 'chal') bigText('ステージ ' + (stage + 1), H / 2 - 92, 30, '#ffd166');
+      if (mode === 'chal') bigText(STAGE_TAG(cur), H / 2 - 56, 18, '#eeecfa');
+      bigText(String(3 - k), H / 2 + 10, 110, '#53e0d8', 1.4 - 0.4 * easeOutBack(clamp(f * 1.6, 0, 1)));
+    }
+    if (phase === 'play' && T - phaseT < 450) { const f = (T - phaseT) / 450; ctx.globalAlpha = 1 - f; bigText('スタート！', H / 2, 54, '#ffd166', 0.9 + 0.3 * f); ctx.globalAlpha = 1; }
+    if (phase === 'stageclear') {
+      const f = clamp((T - phaseT) / 300, 0, 1);
+      ctx.fillStyle = 'rgba(10,10,26,' + (0.68 * f) + ')'; ctx.fillRect(0, 0, W, H);
+      bigText('ステージ ' + (stage + 1) + ' クリア！', H / 2 - 30, 36, '#ffd166', easeOutBack(f));
+      bigText('のこり ' + left.toFixed(1) + 'びょう  +' + clearBonus + 'てん', H / 2 + 22, 20, '#53e0d8', f);
+      if (stageMisses === 0) bigText('ノーミス +100', H / 2 + 56, 20, '#ff5fa2', f);
+    }
+    if (phase === 'done' && won && mode === 'ta') bigText('クリア！  ' + fmt(finalTime) + 'びょう', H / 2, 34, '#ffd166', easeOutBack(clamp((T - (resultAt - RESULT_MS)) / 350, 0, 1)));
+    if (phase === 'done' && !won) { ctx.fillStyle = 'rgba(40,6,24,.35)'; ctx.fillRect(0, 0, W, H); bigText('じかんぎれ！', H / 2, 46, '#ff5fa2'); }
+  }
+  // タイトル中のうしろの絵（すうじがゆっくり光る）
+  function drawTitleDemo() {
+    const m = 5, c = (W - PAD * 2) / m;
+    for (let i = 0; i < m * m; i++) {
+      const r = Math.floor(i / m), q = i % m, x = PAD + q * c + c * 0.08, y = PAD + r * c + c * 0.08, s = c * 0.84;
+      const a = 0.25 + 0.2 * Math.sin(T / 600 + i * 1.7);
+      ctx.fillStyle = 'rgba(38,56,106,' + a + ')'; rrPath(ctx, x, y, s, s, 10); ctx.fill();
+    }
+  }
+
+  // ---- input ----------------------------------------------------------------------
+  function posAt(e) {
+    const rc = cv.getBoundingClientRect(); if (!rc.width) return -1;
+    const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
+    const c = Math.floor((x - BX) / cell), r = Math.floor((y - BY) / cell);
+    if (c < 0 || r < 0 || c >= n || r >= n) return -1;
+    // マスのすきまぎりぎりは、近いマスに入れる（はやおしでのとりこぼし防止）
+    return r * n + c;
+  }
+  function onPointerDown(e) {
+    e.preventDefault(); audio();
+    if (phase !== 'play' || paused) return;
+    if (e.pointerType === 'mouse') kb = false;
+    const p = posAt(e); if (p < 0) return;
+    tapPos(p);
+  }
+  function onKey(e) {
+    const k = e.key;
+    if (e.target && e.target.tagName === 'BUTTON' && (k === 'Enter' || k === ' ')) return;
+    if (overlay.classList.contains('show')) {
+      if (k === 'Enter' || k === ' ') { e.preventDefault(); onStartBtn(); }
+      else if (k === 'Escape' && overlayKind !== 'title') { paused = false; toTitle(); }
+      return;
+    }
+    if (k === 'p' || k === 'P') { pause(); return; }
+    if (k === 'Escape') { toTitle(); return; }
+    if (phase !== 'play') return;
+    if (k.startsWith('Arrow')) {
+      e.preventDefault(); kb = true; audio();
+      let r = Math.floor(cursor / n), c = cursor % n;
+      if (k === 'ArrowLeft') c = (c + n - 1) % n; if (k === 'ArrowRight') c = (c + 1) % n;
+      if (k === 'ArrowUp') r = (r + n - 1) % n; if (k === 'ArrowDown') r = (r + 1) % n;
+      cursor = r * n + c; return;
+    }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); kb = true; audio(); tapPos(cursor); }
+  }
+
+  // ---- loop -------------------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- init（いちばん最後） ---------------------------------------------------------
+  try { const s = JSON.parse(localStorage.getItem(KEY + 'sel') || 'null'); if (s) { if (s.mode === 'ta' || s.mode === 'chal') mode = s.mode; if (ORDER_NAME[s.order] && s.order !== 'mix') order = s.order; if ([3, 4, 5, 6].includes(+s.size)) size = +s.size; } } catch (e) {}
+  if (!seen) { size = 3; mode = 'ta'; order = 'num'; }
+  cv.width = Math.round(W * RS); cv.height = Math.round(H * RS);
+  drawMute(); toTitle();
+  muteBtn.addEventListener('click', () => { muted = !muted; save('mute', muted ? '1' : '0'); drawMute(); muteBtn.blur(); });
+  cv.addEventListener('pointerdown', onPointerDown);
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', onKey);
+  document.querySelectorAll('#modeRow button').forEach(b => b.addEventListener('click', () => { audio(); SFX.click(); mode = b.dataset.mode; syncPicks(); updateHud(); b.blur(); }));
+  document.querySelectorAll('#orderRow button').forEach(b => b.addEventListener('click', () => { audio(); SFX.click(); order = b.dataset.order; syncPicks(); updateHud(); b.blur(); }));
+  document.querySelectorAll('#sizeRow button').forEach(b => b.addEventListener('click', () => { audio(); SFX.click(); size = +b.dataset.n; syncPicks(); updateHud(); b.blur(); }));
+  $('startBtn').addEventListener('click', () => { onStartBtn(); $('startBtn').blur(); });
+  $('toTitleBtn').addEventListener('click', () => { audio(); paused = false; toTitle(); });
+  $('pauseBtn').addEventListener('click', () => { audio(); if (paused) resume(); else pause(); $('pauseBtn').blur(); });
+  $('retryBtn').addEventListener('click', () => { audio(); paused = false; startGame(mode === 'chal' ? { stage: 1 } : {}); $('retryBtn').blur(); });
+  $('menuBtn').addEventListener('click', () => { audio(); paused = false; toTitle(); $('menuBtn').blur(); });
+  document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) pause(); });
+  requestAnimationFrame(loop);
+
+  window.__test = {
+    state: () => ({
+      mode, order, size, n, curOrder: cur.order, swap: !!cur.swap, color: !!cur.color, stage: stage + 1, stages: STAGES.length,
+      phase, paused, won, overlay: overlay.classList.contains('show'), overlayKind,
+      next, total, nextLabel: seq[next] || null, seq: seq.slice(),
+      board: Array.from({ length: total }, (_, p) => tiles[posTile[p]] ? tiles[posTile[p]].label : null),
+      done: Array.from({ length: total }, (_, p) => tiles[posTile[p]] ? tiles[posTile[p]].done : null),
+      cleared: isCleared(), elapsed, left, limit, misses, score, combo, maxCombo, finalTime, stars, newRecord,
+      best: JSON.parse(JSON.stringify(best)), chalBest: Object.assign({}, chalBest), seen, cursor,
+    }),
+    start: opts => startGame(opts || {}),
+    skipCount: () => { if (phase === 'count') { phaseT = T - COUNT_MS; update(0.001); } },
+    tapPos, tapLabel,
+    tapNext: () => { const t = tiles[next]; return t ? tapPos(t.pos) : 'none'; },
+    tapWrong: () => { const t = tiles.find(x => !x.done && x.k !== next); return t ? tapPos(t.pos) : 'none'; },
+    cellXY: p => { const rc = cv.getBoundingClientRect(), c = center(p); return { x: rc.left + c.x * rc.width / W, y: rc.top + c.y * rc.height / H }; },
+    posOf: label => { const t = tiles.find(x => x.label === String(label)); return t ? t.pos : -1; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    pause, resume, toTitle,
+  };
+})();
+</script>
+</body>
+</html>

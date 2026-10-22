@@ -1,0 +1,104 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c111bg" cx="50%" cy="35%" r="80%">
+      <stop offset="0" stop-color="#22305e"/>
+      <stop offset="0.55" stop-color="#151a3a"/>
+      <stop offset="1" stop-color="#0c0d20"/>
+    </radialGradient>
+    <linearGradient id="c111tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4178"/>
+      <stop offset="1" stop-color="#162045"/>
+    </linearGradient>
+    <linearGradient id="c111dim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1e3a"/>
+      <stop offset="1" stop-color="#12142a"/>
+    </linearGradient>
+    <linearGradient id="c111hot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3c8"/>
+      <stop offset="1" stop-color="#ffd166"/>
+    </linearGradient>
+    <filter id="c111glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="c111halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffd166" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c111frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#53e0d8"/>
+      <stop offset="1" stop-color="#a06bff"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#c111bg)"/>
+  <g stroke="#53e0d8" stroke-opacity="0.07" stroke-width="1">
+    <path d="M0 45H400M0 90H400M0 135H400M0 180H400M50 0V225M100 0V225M150 0V225M200 0V225M250 0V225M300 0V225M350 0V225"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="36" cy="30" r="1.4"/><circle cx="352" cy="40" r="1.8"/><circle cx="372" cy="170" r="1.2"/>
+    <circle cx="24" cy="190" r="1.6"/><circle cx="330" cy="205" r="1.1"/><circle cx="70" cy="120" r="1"/>
+  </g>
+  <!-- board -->
+  <rect x="104" y="17" width="192" height="192" rx="16" fill="#0e1128" stroke="url(#c111frame)" stroke-width="3" filter="url(#c111glow)"/>
+  <g stroke="#53e0d8" stroke-width="1.6" fill="url(#c111tile)">
+    <rect x="112" y="25" width="40" height="40" rx="8"/><rect x="158" y="25" width="40" height="40" rx="8"/>
+    <rect x="204" y="25" width="40" height="40" rx="8"/><rect x="250" y="25" width="40" height="40" rx="8"/>
+    <rect x="112" y="71" width="40" height="40" rx="8"/>
+    <rect x="250" y="71" width="40" height="40" rx="8"/>
+    <rect x="112" y="117" width="40" height="40" rx="8"/><rect x="158" y="117" width="40" height="40" rx="8"/>
+    <rect x="250" y="117" width="40" height="40" rx="8"/>
+    <rect x="112" y="163" width="40" height="40" rx="8"/><rect x="158" y="163" width="40" height="40" rx="8"/>
+    <rect x="204" y="163" width="40" height="40" rx="8"/>
+  </g>
+  <!-- tapped (dim) tiles -->
+  <g fill="url(#c111dim)" stroke="#53e0d8" stroke-opacity="0.2" stroke-width="1.4">
+    <rect x="158" y="71" width="40" height="40" rx="8"/>
+    <rect x="250" y="163" width="40" height="40" rx="8"/>
+  </g>
+  <g fill="none" stroke="#9d99c0" stroke-opacity="0.35" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M178 79V103M173 84L178 79"/>
+    <path d="M262 175Q262 169 270 169Q278 169 278 175Q278 180 262 195H278"/>
+  </g>
+  <!-- glowing digits on live tiles -->
+  <g fill="none" stroke="#bff7f3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#c111glow)">
+    <path d="M124 33L124 49L138 49M134 37V57"/>
+    <path d="M178 33H166V43Q178 39 180 48Q180 57 166 56"/>
+    <path d="M266 33Q258 42 258 49Q258 57 270 57Q278 57 278 49Q278 42 268 43Q262 44 259 47"/>
+    <path d="M122 125H140L130 149"/>
+    <path d="M269 125Q262 125 262 131Q262 137 270 137Q279 137 279 143Q279 149 270 149Q261 149 261 143Q261 137 270 137Q278 137 278 131Q278 125 270 125"/>
+    <path d="M222 33Q213 33 213 40Q213 47 222 47Q231 47 231 40Q231 33 222 33M231 40V57"/>
+  </g>
+  <!-- hot tile being tapped -->
+  <circle cx="224" cy="91" r="44" fill="url(#c111halo)"/>
+  <rect x="200" y="67" width="48" height="48" rx="10" fill="url(#c111hot)" stroke="#ffffff" stroke-width="2" filter="url(#c111glow)"/>
+  <path d="M215 80Q224 73 232 80Q235 87 226 90Q235 92 233 100Q226 108 214 101" fill="none" stroke="#3a2a10" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="224" cy="91" r="34" fill="none" stroke="#ffd166" stroke-width="2.4" stroke-opacity="0.8"/>
+  <circle cx="224" cy="91" r="50" fill="none" stroke="#53e0d8" stroke-width="1.6" stroke-opacity="0.5"/>
+  <!-- sparkles -->
+  <g fill="#ffd166" filter="url(#c111glow)">
+    <path d="M190 62l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>
+    <path d="M258 60l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z"/>
+    <path d="M250 118l1.4 3.6 3.6 1.4-3.6 1.4-1.4 3.6-1.4-3.6-3.6-1.4 3.6-1.4z"/>
+  </g>
+  <!-- robot mascot (left) -->
+  <g transform="translate(52 128)">
+    <ellipse cx="0" cy="62" rx="30" ry="6" fill="#000" fill-opacity="0.35"/>
+    <line x1="0" y1="-38" x2="0" y2="-26" stroke="#53e0d8" stroke-width="3"/>
+    <circle cx="0" cy="-41" r="5" fill="#ffd166" filter="url(#c111glow)"/>
+    <rect x="-28" y="-26" width="56" height="44" rx="18" fill="#53e0d8" stroke="#bff7f3" stroke-width="2"/>
+    <rect x="-20" y="-17" width="40" height="24" rx="10" fill="#10203a"/>
+    <circle cx="-9" cy="-5" r="4.2" fill="#bff7f3"/><circle cx="9" cy="-5" r="4.2" fill="#bff7f3"/>
+    <path d="M-6 4Q0 8 6 4" stroke="#bff7f3" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="-20" y="20" width="40" height="30" rx="12" fill="#2a8f98" stroke="#53e0d8" stroke-width="2"/>
+    <path d="M18 28Q36 18 44 4" stroke="#53e0d8" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M-18 30Q-30 38 -32 48" stroke="#53e0d8" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <rect x="-16" y="48" width="10" height="12" rx="4" fill="#2a8f98"/><rect x="6" y="48" width="10" height="12" rx="4" fill="#2a8f98"/>
+  </g>
+  <!-- stopwatch (right) -->
+  <g transform="translate(346 112)" filter="url(#c111glow)">
+    <rect x="-6" y="-38" width="12" height="7" rx="2" fill="#ff5fa2"/>
+    <circle r="28" fill="#1c1c33" stroke="#ff5fa2" stroke-width="4"/>
+    <path d="M0 -20V0L13 8" stroke="#ffd166" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <circle r="3.5" fill="#ffd166"/>
+  </g>
+</svg>
