@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>いろまぜラボ｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+    --main:#ff5fa2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#24183a 0%,var(--bg) 60%) fixed,var(--bg);
+    color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:10px 10px 30px; overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .backbar{width:min(480px,100%);margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:#c9c5e6;text-decoration:none;padding:6px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:15px;padding:4px 14px;cursor:pointer;font-family:inherit;min-height:34px}
+  header{width:min(480px,100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 8px}
+  h1{font-size:23px;margin:0;letter-spacing:2px;color:var(--main);text-shadow:0 0 12px rgba(255,95,162,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(255,95,162,.4);border-radius:999px;color:#ffb3d2;background:rgba(255,95,162,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(480px,100%);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  canvas{display:block;width:100%;height:auto;background:#0e0e1c;border:1px solid rgba(255,95,162,.3);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.55);touch-action:none}
+  .paints{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px;touch-action:manipulation}
+  .paint{position:relative;font-family:inherit;font-size:13px;color:var(--ink);background:linear-gradient(#232340,#1a1a30);border:1px solid var(--edge);border-radius:12px;padding:6px 0 5px;min-height:56px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .08s}
+  .paint .blob{width:26px;height:26px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);box-shadow:inset -4px -5px 0 rgba(0,0,0,.22),inset 3px 3px 0 rgba(255,255,255,.35),0 0 12px var(--c)}
+  .paint .cnt{position:absolute;top:3px;right:5px;font-size:11px;color:var(--gold);min-width:16px}
+  .paint:active:not(:disabled){transform:scale(.93)}
+  .paint:disabled{opacity:.35;cursor:default}
+  .paint:disabled .blob{box-shadow:none;filter:grayscale(.7)}
+  .paint.new{animation:glow 1s ease-in-out infinite alternate}
+  @keyframes glow{from{border-color:var(--edge)}to{border-color:var(--gold);box-shadow:0 0 14px rgba(255,209,102,.5)}}
+  .acts{display:grid;grid-template-columns:1fr 1fr 1fr 1.4fr;gap:6px;margin-top:6px;touch-action:manipulation}
+  .btn{font-family:inherit;font-size:14px;padding:10px 0;min-height:44px;border-radius:10px;border:1px solid var(--edge);background:linear-gradient(#26264a,#1c1c33);color:var(--ink);cursor:pointer;letter-spacing:1px}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.go{background:linear-gradient(#ff7cb3,#e24486);border-color:#ff9cc6;color:#2b0016;font-size:15px}
+  .btn.go:disabled{background:linear-gradient(#5a3346,#3a2232);color:#c9a3b6}
+  .sub{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px}
+  .sub .btn{flex:0 0 auto;padding:8px 16px;font-size:13px;min-height:40px}
+  .sub .info{font-size:12px;color:var(--sub)}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .paint:hover:not(:disabled){border-color:var(--c)}
+    .btn:hover:not(:disabled){border-color:var(--gold)}
+    .btn.go:hover:not(:disabled){filter:brightness(1.08)}
+    .ov button:hover:not(:disabled){filter:brightness(1.12)}
+  }
+  #overlay{position:absolute;inset:0;display:none;background:rgba(19,19,34,.95);border-radius:14px;padding:12px;overflow-y:auto;z-index:5}
+  #overlay.show{display:block}
+  .ov{display:none;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;min-height:100%}
+  .ov.on{display:flex}
+  .big{font-size:32px;letter-spacing:3px;color:var(--main);text-shadow:0 0 16px rgba(255,95,162,.6);line-height:1.2}
+  .big .c1{color:#ff5a5f}.big .c2{color:#ffd23f}.big .c3{color:#4f8bff}
+  .note{font-size:13px;line-height:1.85;color:var(--ink)}
+  .note b{color:var(--gold);font-weight:400}
+  .small{font-size:12px;color:var(--sub)}
+  .ov .bigbtn{font-family:inherit;font-size:17px;padding:11px 24px;min-height:48px;border:none;border-radius:12px;background:linear-gradient(#ff7cb3,#e24486);color:#2b0016;cursor:pointer;letter-spacing:1px;box-shadow:0 6px 20px rgba(255,95,162,.35)}
+  .ov .row2{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .ov .row2 button{font-family:inherit;font-size:14px;padding:9px 14px;min-height:44px;border-radius:10px;border:1px solid var(--edge);background:#232342;color:var(--ink);cursor:pointer}
+  .ov .row2 button.cy{background:var(--cyan);color:#062a28;border-color:var(--cyan)}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;width:100%;max-width:400px}
+  .grid button{font-family:inherit;font-size:15px;min-height:46px;border-radius:9px;border:1px solid var(--edge);background:#202040;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:2px 0}
+  .grid button i{font-style:normal;font-size:11px;color:var(--gold);letter-spacing:-1px}
+  .grid button.cur{border-color:var(--main);box-shadow:0 0 10px rgba(255,95,162,.45)}
+  .grid button:disabled{opacity:.4;cursor:default}
+  .grid button.ch{border-top:3px solid var(--cc)}
+  .stars{font-size:38px;letter-spacing:6px;line-height:1}
+  .stars .on{color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.8)}
+  .stars .off{color:#3b3b5e}
+  .swatches{display:flex;gap:12px;align-items:center;justify-content:center}
+  .sw{width:58px;height:40px;border-radius:10px;border:2px solid rgba(255,255,255,.25);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  .recipe{font-size:13px;color:var(--ink)}
+  .recipe span{display:inline-block;margin:0 3px}
+  .zgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 4px;width:100%;max-width:420px}
+  .zc{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--ink);line-height:1.2;min-width:0}
+  .zc .d{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--sub)}
+  .zc.no{color:var(--sub)}
+  .zc.no .d{background:#232340;border-style:dashed}
+  .zc span{white-space:nowrap;letter-spacing:-1px}
+  .help{width:min(480px,100%);color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.75;background:rgba(13,13,28,.74);border:1px solid rgba(255,95,162,.14);border-radius:12px;padding:10px 12px 6px}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="あか・きいろ・あおの えのぐを 1てきずつ まぜて、おてほんと 同じ いろを つくろう。ちかさは%で出て、90%でクリア。しろ・くろも くわわる30もんは、すすむと ちかさの数字が かくれていく。じゆうにまぜる では いろずかん24しょくを あつめられる。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/114-color-mix/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"いろまぜラボ","description":"あか・きいろ・あおの えのぐを 1てきずつ まぜて、おてほんと 同じ いろを つくろう。ちかさは%で出て、90%でクリア。しろ・くろも くわわる30もんは、すすむと ちかさの数字が かくれていく。じゆうにまぜる では いろずかん24しょくを あつめられる。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/114-color-mix/index.html","inLanguage":"ja","genre":"KIDS","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="114"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>いろまぜラボ</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="330"></canvas>
+  <div class="paints" id="paints"></div>
+  <div class="acts">
+    <button class="btn" id="undoBtn">↶ もどす</button>
+    <button class="btn" id="emptyBtn">🗑 すてる</button>
+    <button class="btn" id="hintBtn">💡 ヒント</button>
+    <button class="btn go" id="okBtn">できた！</button>
+  </div>
+  <div class="sub">
+    <button class="btn" id="menuBtn">≡ メニュー</button>
+    <span class="info" id="subInfo"></span>
+  </div>
+
+  <div id="overlay" class="show">
+    <div class="ov on" id="pTitle">
+      <div class="big"><span class="c1">い</span><span class="c2">ろ</span><span class="c3">ま</span>ぜラボ</div>
+      <div class="note">
+        <b>あか・きいろ・あお</b> の えのぐを まぜて、<br>
+        <b>おてほんと おなじ いろ</b> を つくろう！<br>
+        ちかさが <b>90%</b> いじょうで クリア。ぜんぶで 30もん。
+      </div>
+      <button class="bigbtn" id="startBtn">はじめる</button>
+      <div class="row2">
+        <button id="selBtn">ステージを えらぶ</button>
+        <button id="freeBtn" class="cy">じゆうに まぜる</button>
+      </div>
+      <div class="small" id="titleStats"></div>
+    </div>
+
+    <div class="ov" id="pSelect">
+      <div class="note"><b>ステージを えらぶ</b>　<span class="small" id="selStats"></span></div>
+      <div class="grid" id="stageGrid"></div>
+      <div class="row2"><button id="selBack">もどる</button></div>
+    </div>
+
+    <div class="ov" id="pResult">
+      <div class="big" id="resBig">クリア！</div>
+      <div class="stars" id="resStars"></div>
+      <div class="swatches"><div><div class="sw" id="swT"></div><div class="small">おてほん</div></div><div class="note" id="resPct">98%</div><div><div class="sw" id="swM"></div><div class="small">あなた</div></div></div>
+      <div class="recipe" id="resRecipe"></div>
+      <div class="small" id="resNote"></div>
+      <div class="row2">
+        <button id="nextBtn" class="cy">つぎへ ▶</button>
+        <button id="againBtn">もういちど</button>
+        <button id="resSel">ステージ</button>
+      </div>
+    </div>
+
+    <div class="ov" id="pZukan">
+      <div class="note"><b>いろずかん</b>　<span class="small" id="zStats"></span></div>
+      <div class="zgrid" id="zGrid"></div>
+      <div class="small">じゆうに まぜる で、ちかさ 96% いじょうの いろを つくると のるよ。</div>
+      <div class="row2"><button id="zBack">とじる</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="help">
+  <p><b>あそびかた</b>：えのぐボタンを おすと、ビーカーに 1てき ずつ 入るよ。<b>あか＋きいろ＝オレンジ</b> のように、まぜる <b>りょう（てきの数）</b> で いろが かわる。おてほんと 同じに なったと おもったら「できた！」。</p>
+  <p><b>ちかさ</b>：90%で クリア、95%で ★2、98%で ★3。まちがえて「できた！」を おすと ★が 1つ へるよ。ヒントは つかう いろが わかるけど、★は 2つまで。</p>
+  <p>すすむと <b>しろ</b>（あかるく）と <b>くろ</b>（くらく）が つかえる。ステージ12からは ちかさの数字が かくれ、23からは メーターも かくれるよ。じゆうに まぜる で いろずかん 24しょくを あつめよう。<br>⌨️ 1〜5＝えのぐ ／ Z＝もどす ／ X＝すてる ／ H＝ヒント ／ Enter＝できた！</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  // ---- 定数 ------------------------------------------------------------------
+  const W = 480, H = 330, DPR = Math.min(2, window.devicePixelRatio || 1);
+  const KEY = 'ludot_color-mix_';
+  const SAVE_KEY = KEY + 'save', MUTE_KEY = KEY + 'mute';
+  const STAGES = 30, CAP = 12, CLEAR = 90, FIND = 96;
+  const PAINTS = [
+    { id: 'r', name: 'あか', key: '1' },
+    { id: 'y', name: 'きいろ', key: '2' },
+    { id: 'b', name: 'あお', key: '3' },
+    { id: 'w', name: 'しろ', key: '4' },
+    { id: 'k', name: 'くろ', key: '5' },
+  ];
+  const NEW_AT = { w: 6, k: 18 };
+  // 色ずかん（レシピで決める＝かならず作れる）
+  const NAMED = [
+    ['あか', [1, 0, 0, 0, 0]], ['きいろ', [0, 1, 0, 0, 0]], ['あお', [0, 0, 1, 0, 0]], ['しろ', [0, 0, 0, 1, 0]],
+    ['くろ', [0, 0, 0, 0, 1]], ['オレンジ', [1, 1, 0, 0, 0]], ['みどり', [0, 1, 1, 0, 0]], ['むらさき', [1, 0, 1, 0, 0]],
+    ['ピンク', [1, 0, 0, 1, 0]], ['みずいろ', [0, 0, 1, 2, 0]], ['クリーム', [0, 1, 0, 2, 0]], ['きみどり', [0, 2, 1, 0, 0]],
+    ['やまぶき', [1, 2, 0, 0, 0]], ['しゅいろ', [2, 1, 0, 0, 0]], ['ちゃいろ', [1, 1, 1, 0, 0]], ['はいいろ', [0, 0, 0, 1, 1]],
+    ['ラベンダー', [1, 0, 1, 2, 0]], ['ミント', [0, 1, 1, 2, 0]], ['こんいろ', [0, 0, 2, 0, 1]], ['あおみどり', [0, 1, 2, 0, 0]],
+    ['さくら', [1, 0, 0, 3, 0]], ['ぶどう', [1, 0, 2, 0, 0]], ['こげちゃ', [1, 1, 1, 0, 1]], ['ベージュ', [1, 1, 1, 3, 0]],
+  ];
+
+  // ---- いろの けいさん ----------------------------------------------------------
+  // あか・きいろ・あお の まざりかたを「立方体の8すみの色」の あいだで なめらかに つなぐ
+  const CORNER = {
+    w: [1, 1, 1], r: [0.92, 0.13, 0.16], y: [1, 0.85, 0.08], b: [0.14, 0.38, 0.86],
+    o: [1, 0.52, 0.06], p: [0.52, 0.2, 0.62], g: [0.1, 0.62, 0.26], k: [0.47, 0.29, 0.15],
+  };
+  const WHITE = [1, 1, 1], BLACK = [0.07, 0.07, 0.09];
+  function ryb(r, y, b) {
+    const C = CORNER, out = [0, 0, 0];
+    for (let i = 0; i < 3; i++) {
+      const x0 = C.w[i] * (1 - r) + C.r[i] * r, x1 = C.y[i] * (1 - r) + C.o[i] * r;
+      const x2 = C.b[i] * (1 - r) + C.p[i] * r, x3 = C.g[i] * (1 - r) + C.k[i] * r;
+      const y0 = x0 * (1 - y) + x1 * y, y1 = x2 * (1 - y) + x3 * y;
+      out[i] = y0 * (1 - b) + y1 * b;
+    }
+    return out;
+  }
+  function mixOf(d) {
+    const r = d[0], y = d[1], b = d[2], w = d[3], k = d[4];
+    const c = r + y + b, tot = c + w + k;
+    if (!tot) return null;
+    let hue = [0, 0, 0];
+    if (c) { const m = Math.max(r, y, b); hue = ryb(r / m, y / m, b / m); }
+    return [0, 1, 2].map(i => (hue[i] * c + WHITE[i] * w + BLACK[i] * k) / tot);
+  }
+  function lab(rgb) {
+    const lin = rgb.map(v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+    const f = t => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+    const X = f((lin[0] * 0.4124 + lin[1] * 0.3576 + lin[2] * 0.1805) / 0.95047);
+    const Y = f(lin[0] * 0.2126 + lin[1] * 0.7152 + lin[2] * 0.0722);
+    const Z = f((lin[0] * 0.0193 + lin[1] * 0.1192 + lin[2] * 0.9505) / 1.08883);
+    return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)];
+  }
+  function pctLab(A, B) { return Math.max(0, Math.min(100, 100 - Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]))); }
+  function pctOf(a, b) { const ma = mixOf(a), mb = mixOf(b); if (!ma || !mb) return 0; return pctLab(lab(ma), lab(mb)); }
+  const shown = p => Math.floor(p + 1e-9);   // 画面の%は切りすて（99.6 を 100 と見せない）
+  const css = rgb => rgb ? `rgb(${rgb.map(v => Math.round(Math.max(0, Math.min(1, v)) * 255)).join(',')})` : 'rgba(0,0,0,0)';
+  const PAINT_RGB = PAINTS.map((p, i) => { const d = [0, 0, 0, 0, 0]; d[i] = 1; return mixOf(d); });
+  const NAMED_LAB = NAMED.map(n => lab(mixOf(n[1])));
+  const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+  function reduce(d) { let g = 0; d.forEach(v => { if (v) g = gcd(g, v); }); return g > 1 ? d.map(v => v / g) : d.slice(); }
+  const sum = d => d.reduce((a, b) => a + b, 0);
+  function recipeText(d) { return d.map((v, i) => (v ? PAINTS[i].name + '×' + v : '')).filter(Boolean).join('　'); }
+
+  // ---- ステージ -------------------------------------------------------------------
+  function stageDef(n) {
+    if (n <= 2) return { cols: 'ryb', k: [2, 2], max: 1, meter: 'num' };
+    if (n <= 5) return { cols: 'ryb', k: [2, 2], max: 2, meter: 'num' };
+    if (n <= 8) return { cols: 'rybw', need: 'w', k: [2, 2], max: 3, meter: 'num' };
+    if (n <= 11) return { cols: 'rybw', need: 'w', k: [3, 3], max: 2, meter: 'num' };
+    if (n <= 14) return { cols: 'ryb', k: [2, 3], max: 3, meter: 'bar' };
+    if (n <= 17) return { cols: 'rybw', k: [2, 3], max: 3, meter: 'bar' };
+    if (n <= 20) return { cols: 'rybk', need: 'k', k: [2, 3], max: 2, meter: 'bar' };
+    if (n <= 22) return { cols: 'rybwk', k: [2, 3], max: 3, meter: 'bar' };
+    if (n <= 24) return { cols: 'rybwk', k: [2, 3], max: 3, meter: 'off' };
+    return { cols: 'rybwk', k: [3, 4], max: 3, meter: 'off' };
+  }
+  const allowedIdx = def => PAINTS.map((p, i) => i).filter(i => def.cols.includes(PAINTS[i].id));
+  function rng(seed) {
+    let a = seed >>> 0;
+    return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  // おてほんを つくる（ランダム。ただし「1色だけ」で クリアできてしまう色や、前回とそっくりな色は出さない）
+  function genTarget(n, seed, prev) {
+    const def = stageDef(n), R = rng(seed), allowed = allowedIdx(def);
+    const hues = allowed.filter(i => i < 3);
+    let fallback = null;
+    for (let tries = 0; tries < 400; tries++) {
+      const k = def.k[0] + Math.floor(R() * (def.k[1] - def.k[0] + 1));
+      const pick = new Set();
+      if (def.need) pick.add(PAINTS.findIndex(p => p.id === def.need));
+      pick.add(hues[Math.floor(R() * hues.length)]);   // かならず あか・きいろ・あお の どれかが入る
+      let guard = 0;
+      while (pick.size < k && guard++ < 50) pick.add(allowed[Math.floor(R() * allowed.length)]);
+      if (pick.size !== k) continue;
+      let d = [0, 0, 0, 0, 0];
+      pick.forEach(i => { d[i] = 1 + Math.floor(R() * def.max); });
+      d = reduce(d);
+      if (sum(d) > CAP) continue;
+      const L = lab(mixOf(d));
+      let bad = false;
+      for (const i of allowed) { const s = [0, 0, 0, 0, 0]; s[i] = 1; if (pctLab(L, lab(mixOf(s))) >= 86) { bad = true; break; } }
+      if (bad) continue;
+      if (!fallback) fallback = d;
+      if (prev && pctOf(prev, d) >= 85) continue;
+      return d;
+    }
+    return fallback || [1, 1, 0, 0, 0];
+  }
+
+  // ---- 音 --------------------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  const DROP_F = [520, 660, 440, 780, 330];
+  const SFX = {
+    tap(i) { tone('sine', DROP_F[i] * 1.6, DROP_F[i], 0.06, 0.05); },
+    plop(i) { tone('sine', DROP_F[i], DROP_F[i] * 0.55, 0.14, 0.11); tone('triangle', DROP_F[i] * 2, DROP_F[i] * 2.4, 0.05, 0.03, 0.02); },
+    undo() { tone('triangle', 640, 300, 0.14, 0.06); },
+    pour() { tone('sawtooth', 300, 90, 0.35, 0.035); tone('triangle', 900, 200, 0.3, 0.03, 0.05); },
+    full() { tone('square', 220, 200, 0.09, 0.04); tone('square', 220, 200, 0.09, 0.04, 0.12); },
+    check() { [600, 750, 900].forEach((f, i) => tone('triangle', f, f, 0.07, 0.04, i * 0.08)); },
+    miss() { tone('sawtooth', 330, 200, 0.22, 0.05); tone('sawtooth', 250, 150, 0.3, 0.05, 0.18); },
+    clear() { [523, 659, 784, 1046].forEach((f, i) => tone('square', f, f, 0.14, 0.05, 0.05 + i * 0.09)); },
+    star(i) { tone('triangle', 1046 + i * 262, 1568 + i * 262, 0.18, 0.06); },
+    find() { [784, 988, 1175, 1568].forEach((f, i) => tone('triangle', f, f, 0.16, 0.06, i * 0.07)); },
+    hint() { tone('sine', 880, 1320, 0.2, 0.05); },
+    ui() { tone('square', 700, 950, 0.05, 0.03); },
+    newc() { [660, 880, 1100].forEach((f, i) => tone('triangle', f, f * 1.01, 0.12, 0.05, i * 0.06)); },
+  };
+
+  // ---- ほぞん --------------------------------------------------------------------
+  function freshSave() { return { stars: new Array(STAGES).fill(0), best: new Array(STAGES).fill(0), unlocked: 1, found: [], seen: { w: false, k: false } }; }
+  let save = freshSave();
+  function loadSave() {
+    save = freshSave();
+    try {
+      const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (s && Array.isArray(s.stars)) {
+        for (let i = 0; i < STAGES; i++) { save.stars[i] = Math.max(0, Math.min(3, s.stars[i] | 0)); save.best[i] = Math.max(0, Math.min(100, +s.best[i] || 0)); }
+        save.unlocked = Math.max(1, Math.min(STAGES, s.unlocked | 0));
+        save.found = Array.isArray(s.found) ? s.found.filter(i => i >= 0 && i < NAMED.length) : [];
+        save.seen = Object.assign({ w: false, k: false }, s.seen || {});
+      }
+    } catch (e) {}
+  }
+  function writeSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+  const totalStars = () => save.stars.reduce((a, b) => a + b, 0);
+
+  // ---- じょうたい ----------------------------------------------------------------
+  let phase = 'title';       // title / play / clearing / free
+  let stage = 1, target = null, targetLab = null, drops = [0, 0, 0, 0, 0], order = [];
+  let misses = 0, hintUsed = false, lastPct = 0, result = null, prevTarget = {};
+  let freeNear = -1, freePct = 0, newlyFound = -1;
+  let seedOverride = null;
+  // 見た目
+  let liq = null, liqLevel = 0, falling = [], parts = [], pops = [], wave = 0, shakeT = 0, clearT = 0, banner = null, t0 = 0, gaugeShown = 0, gaugeFlash = 0, bubbleT = 0, autoRun = true;
+
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  cv.width = W * DPR; cv.height = H * DPR;
+  const overlay = document.getElementById('overlay');
+  const panels = ['pTitle', 'pSelect', 'pResult', 'pZukan'].map(id => document.getElementById(id));
+  const $ = id => document.getElementById(id);
+  const paintBtns = [];
+
+  function def() { return stageDef(stage); }
+  function allowedNow() { return phase === 'free' ? [0, 1, 2, 3, 4] : allowedIdx(def()); }
+  function curMix() { return mixOf(drops); }
+  function curPct() {
+    const m = curMix(); if (!m) return 0;
+    if (phase === 'free') return freePct;
+    return pctLab(lab(m), targetLab);
+  }
+  function showPanel(id) {
+    panels.forEach(p => p.classList.toggle('on', p.id === id));
+    overlay.classList.toggle('show', !!id);
+    overlay.scrollTop = 0;
+  }
+
+  // ---- ゲームの ながれ ---------------------------------------------------------------
+  function startStage(n, seed) {
+    stage = Math.max(1, Math.min(STAGES, n));
+    const sd = seed != null ? seed : (seedOverride != null ? seedOverride : (Math.random() * 1e9) | 0);
+    target = genTarget(stage, sd, prevTarget[stage]);
+    prevTarget[stage] = target;
+    targetLab = lab(mixOf(target));
+    drops = [0, 0, 0, 0, 0]; order = []; misses = 0; hintUsed = false; result = null; lastPct = 0;
+    falling = []; parts = []; pops = []; liqLevel = 0; liq = null; clearT = 0; gaugeShown = 0;
+    phase = 'play';
+    banner = { text: 'ステージ ' + stage, sub: meterNote(), t: 2.2 };
+    for (const c of ['w', 'k']) {
+      if (stage >= NEW_AT[c] && !save.seen[c] && def().cols.includes(c)) {
+        save.seen[c] = true; writeSave();
+        banner = { text: (c === 'w' ? 'しろ' : 'くろ') + ' が つかえる！', sub: c === 'w' ? 'しろで あかるく なるよ' : 'くろで くらく なるよ', t: 3, color: c === 'w' ? '#ffffff' : '#c9c5e6' };
+        setTimeout(SFX.newc, 120);
+      }
+    }
+    showPanel(null);
+    refreshUI();
+  }
+  function meterNote() {
+    const m = def().meter;
+    return m === 'num' ? 'ちかさが 数字で 見えるよ' : m === 'bar' ? 'ちかさは メーターだけ（数字なし）' : 'ちかさは 「できた！」まで ひみつ';
+  }
+  function startFree() {
+    phase = 'free';
+    drops = [0, 0, 0, 0, 0]; order = []; falling = []; parts = []; pops = []; liqLevel = 0; liq = null;
+    freeNear = -1; freePct = 0; newlyFound = -1; target = null;
+    banner = { text: 'じゆうに まぜる', sub: 'すきな いろを つくって ずかんに のせよう', t: 2.4 };
+    showPanel(null); refreshUI();
+  }
+  function addDrop(i) {
+    if (phase !== 'play' && phase !== 'free') return false;
+    if (!allowedNow().includes(i)) return false;
+    if (order.length >= CAP) { SFX.full(); shakeT = 0.35; flashMsg('ビーカーが いっぱい！', '#ff8f8f'); return false; }
+    drops[i]++; order.push(i);
+    falling.push({ i, x: 362 + (Math.random() - 0.5) * 30, y: 36, vy: 60 });
+    SFX.tap(i);
+    afterChange();
+    return true;
+  }
+  function undo() {
+    if ((phase !== 'play' && phase !== 'free') || !order.length) return false;
+    const i = order.pop(); drops[i]--; SFX.undo();
+    for (let k = falling.length - 1; k >= 0; k--) if (falling[k].i === i) { falling.splice(k, 1); break; }
+    for (let k = 0; k < 6; k++) parts.push({ x: 362, y: surfaceY(), vx: (Math.random() - 0.5) * 80, vy: -60 - Math.random() * 60, life: 0.5, max: 0.5, c: css(PAINT_RGB[i]), r: 3 });
+    afterChange();
+    return true;
+  }
+  function empty() {
+    if ((phase !== 'play' && phase !== 'free') || !order.length) return false;
+    drops = [0, 0, 0, 0, 0]; order = []; falling = []; SFX.pour(); wave = 1;
+    afterChange();
+    return true;
+  }
+  function afterChange() {
+    if (phase === 'free') {
+      const m = curMix();
+      if (!m) { freeNear = -1; freePct = 0; }
+      else {
+        const L = lab(m); let bi = 0, bp = -1;
+        NAMED_LAB.forEach((nl, i) => { const p = pctLab(L, nl); if (p > bp) { bp = p; bi = i; } });
+        freeNear = bi; freePct = bp;
+        if (bp >= FIND && !save.found.includes(bi)) {
+          save.found.push(bi); writeSave(); newlyFound = bi;
+          banner = { text: 'はっけん！ ' + NAMED[bi][0], sub: 'いろずかん ' + save.found.length + ' / ' + NAMED.length, t: 2.6, color: css(mixOf(NAMED[bi][1])) };
+          SFX.find(); burst(118, 190, css(mixOf(NAMED[bi][1])), 30);
+        }
+      }
+    }
+    refreshUI();
+  }
+  function hint() {
+    if (phase !== 'play' || hintUsed) return false;
+    hintUsed = true; SFX.hint();
+    banner = { text: 'ヒント', sub: 'つかう いろ：' + target.map((v, i) => (v ? PAINTS[i].name : '')).filter(Boolean).join('・'), t: 3 };
+    refreshUI();
+    return true;
+  }
+  function starsFor(p) { return p >= 98 ? 3 : p >= 95 ? 2 : 1; }
+  function submit() {
+    if (phase !== 'play' || !order.length) return null;
+    const p = curPct(); lastPct = p; gaugeFlash = 1;
+    if (p >= CLEAR) {
+      let st = starsFor(p) - misses; if (hintUsed) st = Math.min(st, 2); st = Math.max(1, st);
+      const prevStars = save.stars[stage - 1], prevBest = save.best[stage - 1];
+      save.stars[stage - 1] = Math.max(prevStars, st);
+      save.best[stage - 1] = Math.max(prevBest, Math.round(p * 10) / 10);
+      const unlockedNew = stage < STAGES && save.unlocked < stage + 1;
+      if (stage < STAGES) save.unlocked = Math.max(save.unlocked, stage + 1);
+      writeSave();
+      result = { pct: p, stars: st, base: starsFor(p), misses, hint: hintUsed, newBest: st > prevStars, unlockedNew, recipe: target.slice(), mine: drops.slice() };
+      phase = 'clearing'; clearT = 0;
+      SFX.check(); setTimeout(SFX.clear, 160);
+      burst(362, surfaceY(), css(curMix()), 40); burst(118, 170, css(mixOf(target)), 30);
+      pops.push({ x: 240, y: 120, text: shown(p) + '%', t: 1.2, c: '#ffd166', s: 30 });
+      refreshUI();
+      return result;
+    }
+    misses++;
+    SFX.miss(); shakeT = 0.4;
+    flashMsg('おしい！ ' + shown(p) + '%', '#ff8f8f', adviceText());
+    refreshUI();
+    return { pct: p, miss: misses };
+  }
+  // 「どっちに ずれているか」だけ言う（こたえは 言わない）
+  function adviceText() {
+    const L = lab(curMix()), T = targetLab;
+    const dL = T[0] - L[0];
+    if (dL > 8) return 'もうすこし あかるい いろ みたい';
+    if (dL < -8) return 'もうすこし くらい いろ みたい';
+    const cT = Math.hypot(T[1], T[2]), cM = Math.hypot(L[1], L[2]);
+    if (cT - cM > 12) return 'もっと あざやかな いろ みたい';
+    if (cM - cT > 12) return 'もうすこし おちついた いろ みたい';
+    return 'いろあいが すこし ちがうよ';
+  }
+  function flashMsg(text, color, sub) { banner = { text, sub: sub || '', t: 2.2, color }; }
+  function showResult() {
+    const r = result; if (!r) return;
+    $('resBig').textContent = stage === STAGES ? 'ぜんぶ クリア！' : 'クリア！';
+    $('resStars').innerHTML = [0, 1, 2].map(i => `<span class="${i < r.stars ? 'on' : 'off'}">★</span>`).join('');
+    $('swT').style.background = css(mixOf(r.recipe)); $('swM').style.background = css(mixOf(r.mine));
+    $('resPct').innerHTML = 'ちかさ<br><b>' + shown(r.pct) + '%</b>';
+    $('resRecipe').innerHTML = 'おてほんの レシピ： ' + r.recipe.map((v, i) => (v ? `<span style="color:${css(PAINT_RGB[i])}">●</span>${PAINTS[i].name}×${v}` : '')).filter(Boolean).join('　');
+    const notes = [];
+    if (r.newBest) notes.push('しんきろく！');
+    if (r.misses) notes.push('ミス ' + r.misses + '（★−' + r.misses + '）');
+    if (r.hint) notes.push('ヒント つかった（★2まで）');
+    if (r.unlockedNew) notes.push('ステージ ' + (stage + 1) + ' が あいた！');
+    notes.push('あつめた★ ' + totalStars() + ' / ' + STAGES * 3);
+    $('resNote').textContent = notes.join(' ・ ');
+    $('nextBtn').textContent = stage === STAGES ? 'じゆうに まぜる ▶' : 'つぎへ ▶';
+    showPanel('pResult');
+    r.stars && [0, 1, 2].slice(0, r.stars).forEach(i => setTimeout(() => SFX.star(i), 150 + i * 160));
+  }
+  function goTitle() {
+    phase = 'title'; falling = []; refreshTitle(); showPanel('pTitle'); refreshUI();
+  }
+  function nextStageNo() {
+    for (let i = 1; i <= save.unlocked; i++) if (!save.stars[i - 1]) return i;
+    return save.unlocked;
+  }
+  function refreshTitle() {
+    const n = nextStageNo();
+    $('startBtn').textContent = save.unlocked > 1 || save.stars[0] ? `はじめる（ステージ ${n}）` : 'はじめる';
+    $('titleStats').textContent = `あつめた★ ${totalStars()} / ${STAGES * 3}　・　いろずかん ${save.found.length} / ${NAMED.length}`;
+  }
+  function openSelect() {
+    const g = $('stageGrid'); g.innerHTML = '';
+    for (let i = 1; i <= STAGES; i++) {
+      const b = document.createElement('button'), d = stageDef(i);
+      const cc = d.cols.includes('k') ? '#9a96b8' : d.cols.includes('w') ? '#ffffff' : '#ff5fa2';
+      b.className = 'ch'; b.style.setProperty('--cc', cc);
+      b.dataset.s = i;
+      if (i > save.unlocked) { b.disabled = true; b.innerHTML = `${i}<i>🔒</i>`; }
+      else { const s = save.stars[i - 1]; b.innerHTML = `${i}<i>${'★'.repeat(s)}${'☆'.repeat(3 - s)}</i>`; }
+      if (i === nextStageNo()) b.classList.add('cur');
+      g.appendChild(b);
+    }
+    $('selStats').textContent = `★ ${totalStars()} / ${STAGES * 3}`;
+    showPanel('pSelect');
+  }
+  function openZukan() {
+    const g = $('zGrid'); g.innerHTML = '';
+    NAMED.forEach((n, i) => {
+      const f = save.found.includes(i), el = document.createElement('div');
+      el.className = 'zc' + (f ? '' : ' no');
+      el.innerHTML = f ? `<div class="d" style="background:${css(mixOf(n[1]))}"></div><span>${n[0]}</span>` : `<div class="d">？</div><span>？？？</span>`;
+      g.appendChild(el);
+    });
+    $('zStats').textContent = `${save.found.length} / ${NAMED.length}`;
+    showPanel('pZukan');
+  }
+
+  function refreshUI() {
+    const playing = phase === 'play' || phase === 'free';
+    const al = allowedNow();
+    paintBtns.forEach((b, i) => {
+      const ok = playing && al.includes(i);
+      b.disabled = !ok;
+      b.classList.toggle('new', phase === 'play' && ((i === 3 && stage >= NEW_AT.w && stage < NEW_AT.w + 1) || (i === 4 && stage === NEW_AT.k)));
+      const cnt = b.querySelector('.cnt'); cnt.textContent = drops[i] && playing ? '×' + drops[i] : '';
+      const lab2 = b.querySelector('.nm');
+      lab2.textContent = (phase === 'play' && !al.includes(i)) ? '🔒' : PAINTS[i].name;
+    });
+    $('undoBtn').disabled = !playing || !order.length;
+    $('emptyBtn').disabled = !playing || !order.length;
+    const okB = $('okBtn'), hB = $('hintBtn');
+    if (phase === 'free') { okB.textContent = '📖 ずかん'; okB.disabled = false; hB.disabled = true; hB.textContent = '💡 ヒント'; }
+    else { okB.textContent = 'できた！'; okB.disabled = phase !== 'play' || !order.length; hB.disabled = phase !== 'play' || hintUsed; hB.textContent = '💡 ヒント'; }
+    $('subInfo').textContent = phase === 'free' ? `いろずかん ${save.found.length} / ${NAMED.length}` : phase === 'title' ? '' : `★ ${totalStars()} / ${STAGES * 3}`;
+  }
+
+  // ---- 見た目 -----------------------------------------------------------------------
+  const BEAKER = { x: 362, top: 92, bot: 262, half: 58 };
+  const FLASK = { x: 118, cy: 196, r: 66, neckTop: 72, neckW: 15 };
+  function surfaceY() { return BEAKER.bot - 4 - liqLevel * 150 - 2; }
+  function burst(x, y, color, n) {
+    for (let k = 0; k < n; k++) {
+      const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 180;
+      parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 80, life: 0.7 + Math.random() * 0.5, max: 1.2, c: Math.random() < 0.3 ? '#ffd166' : color, r: 2 + Math.random() * 3, star: Math.random() < 0.25 });
+    }
+  }
+  function update(dt) {
+    t0 += dt;
+    // しずく
+    for (const f of falling) { f.vy += 900 * dt; f.y += f.vy * dt; }
+    const sy = surfaceY();
+    for (let k = falling.length - 1; k >= 0; k--) {
+      const f = falling[k];
+      if (f.y >= sy - 4) {
+        falling.splice(k, 1); wave = Math.min(1.4, wave + 0.6); SFX.plop(f.i);
+        for (let m = 0; m < 9; m++) parts.push({ x: f.x, y: sy, vx: (Math.random() - 0.5) * 140, vy: -80 - Math.random() * 120, life: 0.45, max: 0.45, c: css(PAINT_RGB[f.i]), r: 2 + Math.random() * 2 });
+      }
+    }
+    // 液の色と高さ（しずくが落ちきった分だけ）
+    const pending = [0, 0, 0, 0, 0]; falling.forEach(f => pending[f.i]++);
+    const landed = drops.map((v, i) => Math.max(0, v - pending[i]));
+    const nL = sum(landed), want = mixOf(landed), wantLevel = nL ? 0.16 + 0.84 * nL / CAP : 0;
+    if (want) { if (!liq) liq = want.slice(); else for (let i = 0; i < 3; i++) liq[i] += (want[i] - liq[i]) * Math.min(1, dt * 6); }
+    liqLevel += (wantLevel - liqLevel) * Math.min(1, dt * 7);
+    if (!want && liqLevel < 0.01) liq = null;
+    wave = Math.max(0, wave - dt * 1.4);
+    shakeT = Math.max(0, shakeT - dt);
+    gaugeFlash = Math.max(0, gaugeFlash - dt * 1.5);
+    const gp = curPct();
+    gaugeShown += (gp - gaugeShown) * Math.min(1, dt * 8);
+    if (Math.abs(gp - gaugeShown) < 0.25) gaugeShown = gp;
+    for (const p of parts) { p.life -= dt; p.vy += 420 * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
+    parts = parts.filter(p => p.life > 0);
+    for (const p of pops) { p.t -= dt; p.y -= 26 * dt; }
+    pops = pops.filter(p => p.t > 0);
+    if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
+    bubbleT -= dt;
+    if (bubbleT <= 0 && liqLevel > 0.05) { bubbleT = 0.35 + Math.random() * 0.4; parts.push({ x: BEAKER.x + (Math.random() - 0.5) * 80, y: BEAKER.bot - 8, vx: 0, vy: -30, life: 1.2, max: 1.2, c: 'rgba(255,255,255,.35)', r: 2 + Math.random() * 2, bub: true, top: surfaceY() }); }
+    if (phase === 'clearing') {
+      clearT += dt;
+      if (Math.random() < dt * 14) burst(60 + Math.random() * 360, 40 + Math.random() * 120, ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff'][(Math.random() * 4) | 0], 4);
+      if (clearT >= 1.1) { phase = 'result'; showResult(); }
+    }
+  }
+  function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function text(s, x, y, size, color, align = 'center', base = 'middle') {
+    ctx.font = `${size}px 'DotGothic16', sans-serif`; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = base; ctx.fillText(s, x, y);
+  }
+  function flaskPath() {
+    const F = FLASK, a = Math.asin(F.neckW / F.r);
+    ctx.beginPath();
+    ctx.moveTo(F.x - F.neckW, F.neckTop);
+    ctx.lineTo(F.x - F.neckW, F.cy - F.r * Math.cos(a));
+    ctx.arc(F.x, F.cy, F.r, -Math.PI / 2 - a, -Math.PI / 2 + a + Math.PI * 2, true);
+    ctx.lineTo(F.x + F.neckW, F.neckTop);
+    ctx.closePath();
+  }
+  function beakerPath() {
+    const B = BEAKER;
+    ctx.beginPath();
+    ctx.moveTo(B.x - B.half - 6, B.top);
+    ctx.lineTo(B.x - B.half, B.top + 8);
+    ctx.lineTo(B.x - B.half, B.bot - 14);
+    ctx.quadraticCurveTo(B.x - B.half, B.bot, B.x - B.half + 14, B.bot);
+    ctx.lineTo(B.x + B.half - 14, B.bot);
+    ctx.quadraticCurveTo(B.x + B.half, B.bot, B.x + B.half, B.bot - 14);
+    ctx.lineTo(B.x + B.half, B.top + 8);
+    ctx.lineTo(B.x + B.half + 6, B.top);
+  }
+  function glass(pathFn) {
+    ctx.save(); pathFn();
+    ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(220,230,255,.55)'; ctx.stroke();
+    ctx.lineWidth = 7; ctx.strokeStyle = 'rgba(160,200,255,.08)'; ctx.stroke();
+    ctx.restore();
+  }
+  function shade(rgb, f) { return css(rgb.map(v => v * f)); }
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // はいけい：ラボの かべ
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#1d1636'); bg.addColorStop(1, '#0f0f20');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(160,107,255,.07)'; ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 24) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 24) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    // たな
+    const sh = ctx.createLinearGradient(0, 262, 0, 280);
+    sh.addColorStop(0, '#3a2f5c'); sh.addColorStop(1, '#221b3b');
+    ctx.fillStyle = sh; ctx.fillRect(10, 263, W - 20, 12);
+    ctx.fillStyle = 'rgba(255,95,162,.25)'; ctx.fillRect(10, 263, W - 20, 2);
+
+    const playing = phase === 'play' || phase === 'clearing' || phase === 'result';
+    // 上の じょうほう
+    if (phase === 'free') {
+      text('じゆうに まぜる', 18, 24, 17, '#53e0d8', 'left');
+      text('ずかん ' + save.found.length + '/' + NAMED.length, W - 18, 24, 16, '#ffd166', 'right');
+    } else if (playing) {
+      text('ステージ ' + stage + ' / ' + STAGES, 18, 24, 17, '#ff8fc0', 'left');
+      const got = save.stars[stage - 1];
+      text('★'.repeat(got) + '☆'.repeat(3 - got), W - 18, 24, 16, '#ffd166', 'right');
+      if (misses || hintUsed) text((misses ? 'ミス' + misses : '') + (hintUsed ? ' 💡' : ''), W - 18, 46, 15, '#ff9a9a', 'right');
+    } else {
+      text('いろまぜラボ', 18, 24, 17, '#ff8fc0', 'left');
+    }
+
+    // ---- おてほん フラスコ
+    ctx.save();
+    const tRGB = phase === 'free' ? (freeNear >= 0 ? mixOf(NAMED[freeNear][1]) : null) : (target ? mixOf(target) : null);
+    flaskPath(); ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.fill();
+    if (tRGB) {
+      ctx.save(); flaskPath(); ctx.clip();
+      const top = 142 + Math.sin(t0 * 2) * 1.5;
+      const g = ctx.createLinearGradient(0, top, 0, FLASK.cy + FLASK.r);
+      g.addColorStop(0, shade(tRGB, 1.06)); g.addColorStop(1, shade(tRGB, 0.78));
+      ctx.fillStyle = g; ctx.fillRect(0, top, 240, 200);
+      ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fillRect(0, top, 240, 3);
+      ctx.restore();
+      // ひかり
+      ctx.shadowColor = css(tRGB); ctx.shadowBlur = phase === 'clearing' ? 30 : 14;
+    }
+    glass(flaskPath);
+    ctx.restore();
+    ctx.save(); ctx.globalAlpha = 0.5; ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(FLASK.x, FLASK.cy, FLASK.r - 12, Math.PI * 1.1, Math.PI * 1.35); ctx.stroke(); ctx.restore();
+    // くち
+    roundRect(FLASK.x - FLASK.neckW - 5, FLASK.neckTop - 6, FLASK.neckW * 2 + 10, 8, 4); ctx.fillStyle = 'rgba(220,230,255,.6)'; ctx.fill();
+    if (phase === 'free') {
+      if (freeNear < 0) text('？', FLASK.x, FLASK.cy, 34, '#6d6994');
+      const nm = freeNear < 0 ? 'いろを まぜてね' : (save.found.includes(freeNear) ? NAMED[freeNear][0] : '？？？');
+      text(nm, FLASK.x, 292, 17, '#eeecfa');
+      text('いちばん ちかい いろ', FLASK.x, 314, 15, '#9d99c0');
+    } else if (playing) {
+      text('おてほん', FLASK.x, 292, 17, '#eeecfa');
+      if (hintUsed || phase !== 'play') {
+        const used = target.map((v, i) => [v, i]).filter(a => a[0]);
+        const showCnt = phase !== 'play';
+        let x = FLASK.x - (used.length - 1) * (showCnt ? 22 : 13);
+        for (const [v, i] of used) {
+          ctx.beginPath(); ctx.arc(x, 314, 7, 0, Math.PI * 2); ctx.fillStyle = css(PAINT_RGB[i]); ctx.fill();
+          ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.stroke();
+          if (showCnt) text('×' + v, x + 17, 315, 15, '#eeecfa');
+          x += showCnt ? 44 : 26;
+        }
+      }
+    }
+
+    // ---- ビーカー
+    const sx = shakeT > 0 ? Math.sin(t0 * 70) * 4 * (shakeT / 0.4) : 0;
+    ctx.save(); ctx.translate(sx, 0);
+    // めもり
+    ctx.save(); beakerPath(); ctx.fillStyle = 'rgba(255,255,255,.035)'; ctx.fill(); ctx.restore();
+    if (liq && liqLevel > 0.002) {
+      ctx.save(); beakerPath(); ctx.clip();
+      const top = BEAKER.bot - 4 - liqLevel * 150;
+      const g = ctx.createLinearGradient(0, top, 0, BEAKER.bot);
+      g.addColorStop(0, shade(liq, 1.05)); g.addColorStop(1, shade(liq, 0.75));
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      const x0 = BEAKER.x - BEAKER.half - 4, x1 = BEAKER.x + BEAKER.half + 4;
+      ctx.moveTo(x0, BEAKER.bot + 2);
+      for (let x = x0; x <= x1; x += 4) ctx.lineTo(x, top + Math.sin(x * 0.12 + t0 * 7) * 3.2 * wave + Math.sin(x * 0.05 + t0 * 2) * 1.2);
+      ctx.lineTo(x1, BEAKER.bot + 2); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(x0, top - 1, x1 - x0, 2);
+      ctx.restore();
+    }
+    for (let k = 1; k <= 3; k++) { const y = BEAKER.bot - 4 - k * 50; ctx.fillStyle = 'rgba(220,230,255,.35)'; ctx.fillRect(BEAKER.x + BEAKER.half - 16, y, 12, 2); }
+    glass(beakerPath);
+    ctx.save(); ctx.globalAlpha = 0.35; ctx.fillStyle = '#fff'; ctx.fillRect(BEAKER.x - BEAKER.half + 8, BEAKER.top + 18, 5, 110); ctx.restore();
+    ctx.restore();
+    // しずく
+    for (const f of falling) {
+      ctx.save(); ctx.translate(f.x, f.y);
+      ctx.beginPath(); ctx.moveTo(0, -11); ctx.quadraticCurveTo(8, 0, 0, 7); ctx.quadraticCurveTo(-8, 0, 0, -11);
+      ctx.fillStyle = css(PAINT_RGB[f.i]); ctx.shadowColor = css(PAINT_RGB[f.i]); ctx.shadowBlur = 10; ctx.fill();
+      ctx.restore();
+    }
+    if (phase === 'free' || playing) {
+      text(phase === 'free' ? 'ビーカー' : 'あなたの いろ', BEAKER.x, 292, 17, '#eeecfa');
+      // 入れた じゅんばんの つぶ
+      const n = order.length, step = 15.5;
+      let x = BEAKER.x - (n - 1) * step / 2;
+      for (const i of order) { ctx.beginPath(); ctx.arc(x, 314, 6, 0, Math.PI * 2); ctx.fillStyle = css(PAINT_RGB[i]); ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.stroke(); x += step; }
+      if (!n) text('えのぐを えらんでね', BEAKER.x, 314, 15, '#7d79a3');
+      if (!n && liqLevel < 0.02) text('からっぽ', BEAKER.x, 200, 16, '#5d5980');
+    }
+
+    // ---- ちかさ メーター
+    if (phase === 'free' || playing) {
+      const gx = 240, gy = 168, gr = 36;
+      const meter = phase === 'free' ? 'num' : def().meter;
+      const reveal = phase !== 'play' || gaugeFlash > 0;
+      const hasMix = !!order.length;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.75, Math.PI * 2.25); ctx.lineWidth = 9; ctx.strokeStyle = '#2a2a4a'; ctx.stroke();
+      const v = hasMix ? gaugeShown : 0;
+      if ((meter !== 'off' || reveal) && hasMix) {
+        const f = Math.max(0, Math.min(1, (v - 40) / 60));
+        const hue = Math.round(f * 130);
+        ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.75, Math.PI * (0.75 + 1.5 * f)); ctx.lineWidth = 9;
+        ctx.strokeStyle = `hsl(${hue},85%,58%)`; ctx.shadowColor = `hsl(${hue},85%,58%)`; ctx.shadowBlur = 10; ctx.stroke(); ctx.shadowBlur = 0;
+        // 90%の しるし
+        const a90 = Math.PI * (0.75 + 1.5 * (50 / 60));
+        ctx.beginPath(); ctx.moveTo(gx + Math.cos(a90) * (gr - 8), gy + Math.sin(a90) * (gr - 8)); ctx.lineTo(gx + Math.cos(a90) * (gr + 8), gy + Math.sin(a90) * (gr + 8)); ctx.lineWidth = 2; ctx.strokeStyle = '#ffd166'; ctx.stroke();
+      }
+      if (meter === 'num' || reveal) text(hasMix ? shown(phase === 'play' && gaugeFlash > 0 ? lastPct : v) + '%' : '--', gx, gy - 2, 22, '#eeecfa');
+      else if (meter === 'bar') text(hasMix ? (v >= 90 ? 'ぴったり？' : v >= 75 ? 'ちかい' : 'とおい') : '--', gx, gy - 2, 16, '#eeecfa');
+      else text('？', gx, gy - 2, 26, '#9d99c0');
+      text('ちかさ', gx, gy + 26, 15, '#9d99c0');
+      // やじるし
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      ctx.beginPath(); ctx.moveTo(196, 236); ctx.lineTo(284, 236); ctx.lineTo(284, 230); ctx.lineTo(296, 240); ctx.lineTo(284, 250); ctx.lineTo(284, 244); ctx.lineTo(196, 244); ctx.closePath(); ctx.fill();
+    }
+    // タイトル中の かざり
+    if (phase === 'title') {
+      for (let k = 0; k < 3; k++) {
+        const x = 120 + k * 120, y = 170 + Math.sin(t0 * 2 + k) * 8;
+        ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI * 2); ctx.fillStyle = css(PAINT_RGB[k]); ctx.globalAlpha = 0.6; ctx.fill(); ctx.globalAlpha = 1;
+      }
+    }
+    // つぶつぶ
+    for (const p of parts) {
+      if (p.bub && p.y < p.top) { p.life = 0; continue; }
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.max * 1.4));
+      ctx.fillStyle = p.c;
+      if (p.star) { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(t0 * 4); ctx.fillRect(-p.r, -p.r * 0.3, p.r * 2, p.r * 0.6); ctx.fillRect(-p.r * 0.3, -p.r, p.r * 0.6, p.r * 2); ctx.restore(); }
+      else { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    }
+    ctx.globalAlpha = 1;
+    for (const p of pops) {
+      const k = Math.min(1, (1.2 - p.t) * 6);
+      ctx.save(); ctx.globalAlpha = Math.min(1, p.t * 2); ctx.translate(p.x, p.y); ctx.scale(0.6 + 0.5 * k, 0.6 + 0.5 * k);
+      ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(0,0,0,.6)'; ctx.font = `${p.s}px 'DotGothic16', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.strokeText(p.text, 0, 0); ctx.fillStyle = p.c; ctx.fillText(p.text, 0, 0); ctx.restore();
+    }
+    // おしらせ
+    if (banner) {
+      const a = Math.min(1, banner.t * 3, (3.2 - banner.t) * 6);
+      ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, a));
+      roundRect(60, 44, 360, banner.sub ? 58 : 40, 12); ctx.fillStyle = 'rgba(16,14,34,.9)'; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = banner.color || '#ff5fa2'; ctx.stroke();
+      text(banner.text, 240, 64, 19, banner.color || '#ffd2e6');
+      if (banner.sub) text(banner.sub, 240, 88, 15, '#c9c5e6');
+      ctx.restore();
+    }
+  }
+
+  // ---- ループ ------------------------------------------------------------------------
+  let lastT = 0, hidden = false;
+  function frame(ts) {
+    if (!autoRun) { requestAnimationFrame(frame); return; }
+    const dt = Math.min(0.05, lastT ? (ts - lastT) / 1000 : 0.016); lastT = ts;
+    if (!hidden) { update(dt); draw(); }
+    requestAnimationFrame(frame);
+  }
+
+  // ---- 入力 --------------------------------------------------------------------------
+  function buildPaints() {
+    const box = $('paints');
+    PAINTS.forEach((p, i) => {
+      const b = document.createElement('button');
+      b.className = 'paint'; b.dataset.i = i; b.style.setProperty('--c', css(PAINT_RGB[i]));
+      b.setAttribute('aria-label', p.name + 'を 1てき 入れる');
+      b.innerHTML = `<span class="blob"></span><span class="nm">${p.name}</span><span class="cnt"></span>`;
+      box.appendChild(b); paintBtns.push(b);
+    });
+  }
+  function bind() {
+    paintBtns.forEach((b, i) => b.addEventListener('click', () => { audio(); addDrop(i); }));
+    $('undoBtn').addEventListener('click', () => { audio(); undo(); });
+    $('emptyBtn').addEventListener('click', () => { audio(); empty(); });
+    $('hintBtn').addEventListener('click', () => { audio(); hint(); });
+    $('okBtn').addEventListener('click', () => { audio(); if (phase === 'free') { SFX.ui(); openZukan(); } else submit(); });
+    $('menuBtn').addEventListener('click', () => { audio(); SFX.ui(); goTitle(); });
+    $('startBtn').addEventListener('click', () => { audio(); SFX.ui(); startStage(nextStageNo()); });
+    $('selBtn').addEventListener('click', () => { audio(); SFX.ui(); openSelect(); });
+    $('freeBtn').addEventListener('click', () => { audio(); SFX.ui(); startFree(); });
+    $('selBack').addEventListener('click', () => { SFX.ui(); goTitle(); });
+    $('stageGrid').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; audio(); SFX.ui(); startStage(+b.dataset.s); });
+    $('nextBtn').addEventListener('click', () => { audio(); SFX.ui(); if (stage >= STAGES) startFree(); else startStage(stage + 1); });
+    $('againBtn').addEventListener('click', () => { audio(); SFX.ui(); startStage(stage); });
+    $('resSel').addEventListener('click', () => { audio(); SFX.ui(); openSelect(); });
+    $('zBack').addEventListener('click', () => { SFX.ui(); showPanel(null); });
+    $('mute-btn').addEventListener('click', () => {
+      muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {}
+      $('mute-btn').textContent = muted ? '🔇' : '🔊'; if (!muted) { audio(); SFX.ui(); }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const k = e.key;
+      if (overlay.classList.contains('show')) {
+        if (k === 'Escape' && panels[3].classList.contains('on')) { showPanel(null); e.preventDefault(); }
+        return;
+      }
+      const pi = PAINTS.findIndex(p => p.key === k);
+      if (pi >= 0) { audio(); addDrop(pi); e.preventDefault(); return; }
+      if (k === 'z' || k === 'Z' || k === 'Backspace') { undo(); e.preventDefault(); }
+      else if (k === 'x' || k === 'X' || k === 'Delete') { empty(); e.preventDefault(); }
+      else if (k === 'h' || k === 'H') { hint(); }
+      else if (k === 'Enter') { audio(); if (phase === 'free') openZukan(); else submit(); e.preventDefault(); }
+      else if (k === 'Escape') { goTitle(); }
+    });
+    // ダブルタップ拡大・長押しメニューの じゃまを ふせぐ
+    $('wrap').addEventListener('contextmenu', e => e.preventDefault());
+    let lastTouch = 0;
+    $('wrap').addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouch < 350 && e.target.closest('button')) { e.preventDefault(); e.target.closest('button').click(); } lastTouch = now; }, { passive: false });
+    document.addEventListener('visibilitychange', () => { hidden = document.hidden; lastT = 0; });
+  }
+
+  // ---- テスト用 -----------------------------------------------------------------------
+  function solveStage(n, seed) {
+    const d = stageDef(n), al = allowedIdx(d), T = genTarget(n, seed, null), TL = lab(mixOf(T));
+    let best = 0, bestD = null, clears = 0, total = 0;
+    const cur = [0, 0, 0, 0, 0];
+    (function rec(k, left) {
+      if (k === al.length) {
+        if (left === CAP) return;
+        total++;
+        const p = pctLab(lab(mixOf(cur)), TL);
+        if (p >= CLEAR) clears++;
+        if (p > best) { best = p; bestD = cur.slice(); }
+        return;
+      }
+      for (let v = 0; v <= left; v++) { cur[al[k]] = v; rec(k + 1, left - v); }
+      cur[al[k]] = 0;
+    })(0, CAP);
+    const onlyAllowed = T.every((v, i) => !v || al.includes(i));
+    const kinds = T.filter(v => v).length;
+    return { target: T, best, bestD, clears, total, onlyAllowed, kinds, sum: sum(T), kOk: kinds >= d.k[0] && kinds <= d.k[1], need: d.need ? T[PAINTS.findIndex(p => p.id === d.need)] > 0 : true };
+  }
+  function randomRate(n, trials, seed) {
+    const R = rng(seed), al = allowedIdx(stageDef(n));
+    let ok = 0;
+    for (let t = 0; t < trials; t++) {
+      const T = genTarget(n, (R() * 1e9) | 0, null), TL = lab(mixOf(T));
+      const d = [0, 0, 0, 0, 0], len = 1 + Math.floor(R() * 6);
+      for (let k = 0; k < len; k++) d[al[Math.floor(R() * al.length)]]++;
+      if (pctLab(lab(mixOf(d)), TL) >= CLEAR) ok++;
+    }
+    return ok / trials;
+  }
+  window.__test = {
+    state: () => ({
+      phase, stage, target: target ? target.slice() : null, drops: drops.slice(), order: order.slice(), misses, hintUsed,
+      pct: Math.round(curPct() * 100) / 100, meter: phase === 'play' || phase === 'clearing' || phase === 'result' ? def().meter : null,
+      allowed: allowedNow(), overlay: overlay.classList.contains('show'),
+      panel: (panels.find(p => p.classList.contains('on')) || {}).id || null,
+      result: result ? JSON.parse(JSON.stringify(result)) : null,
+      save: JSON.parse(JSON.stringify(save)), totalStars: totalStars(), muted,
+      freeNear: freeNear >= 0 ? NAMED[freeNear][0] : null, freePct: Math.round(freePct * 100) / 100, newlyFound: newlyFound >= 0 ? NAMED[newlyFound][0] : null,
+      falling: falling.length, banner: banner ? banner.text : null, liqLevel: Math.round(liqLevel * 1000) / 1000,
+    }),
+    start: (n, seed) => { startStage(n, seed == null ? 1 : seed); return window.__test.state(); },
+    free: () => { startFree(); return window.__test.state(); },
+    add: i => { const r = addDrop(i); return r; },
+    addMany: arr => { arr.forEach(i => addDrop(i)); return window.__test.state(); },
+    undo, empty, hint,
+    submit: () => submit(),
+    setTarget: d => { target = d.slice(); targetLab = lab(mixOf(target)); return true; },
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); draw(); return window.__test.state(); },
+    auto: v => { autoRun = !!v; lastT = 0; },
+    mix: d => mixOf(d), pct: (a, b) => pctOf(a, b),
+    gen: (n, seed) => genTarget(n, seed, null),
+    stageDef, solve: solveStage, randomRate,
+    named: () => NAMED.map(n => [n[0], n[1].slice()]),
+    namedWorst: () => { let w = 0; for (let i = 0; i < NAMED.length; i++) for (let j = i + 1; j < NAMED.length; j++) w = Math.max(w, pctLab(NAMED_LAB[i], NAMED_LAB[j])); return w; },
+    clearSave: () => { try { localStorage.removeItem(SAVE_KEY); localStorage.removeItem(MUTE_KEY); } catch (e) {} },
+    setSave: o => { Object.assign(save, o); writeSave(); refreshTitle(); refreshUI(); },
+    seed: s => { seedOverride = s; },
+  };
+
+  // ---- はじまり（いちばん さいご）------------------------------------------------------
+  loadSave();
+  buildPaints();
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+  refreshTitle();
+  refreshUI();
+  bind();
+  draw();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

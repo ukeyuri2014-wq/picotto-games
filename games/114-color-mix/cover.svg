@@ -1,0 +1,84 @@
+<svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="c114bg" cx="50%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#2e1d52"/>
+      <stop offset="0.6" stop-color="#171327"/>
+      <stop offset="1" stop-color="#0c0b18"/>
+    </radialGradient>
+    <linearGradient id="c114liq" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9a3c"/>
+      <stop offset="1" stop-color="#e2541a"/>
+    </linearGradient>
+    <linearGradient id="c114liq2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b56be0"/>
+      <stop offset="1" stop-color="#6a2c9a"/>
+    </linearGradient>
+    <linearGradient id="c114shelf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#40326a"/>
+      <stop offset="1" stop-color="#1f1938"/>
+    </linearGradient>
+    <radialGradient id="c114glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ff5fa2" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ff5fa2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c114glow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#53e0d8" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#53e0d8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="c114blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <rect width="400" height="225" fill="url(#c114bg)"/>
+  <g stroke="#a06bff" stroke-opacity="0.08">
+    <path d="M0 40H400M0 80H400M0 120H400M0 160H400M40 0V225M80 0V225M120 0V225M160 0V225M200 0V225M240 0V225M280 0V225M320 0V225M360 0V225"/>
+  </g>
+  <ellipse cx="120" cy="140" rx="90" ry="70" fill="url(#c114glow2)"/>
+  <ellipse cx="270" cy="140" rx="100" ry="70" fill="url(#c114glow)"/>
+  <rect x="14" y="186" width="372" height="14" rx="3" fill="url(#c114shelf)"/>
+  <rect x="14" y="186" width="372" height="2" fill="#ff5fa2" fill-opacity="0.4"/>
+  <!-- flask -->
+  <path d="M110 70V108A48 48 0 1 0 132 108V70Z" fill="#ffffff" fill-opacity="0.05"/>
+  <path d="M74 140A47 47 0 0 0 168 140Q150 134 121 136Q92 138 74 140Z" fill="url(#c114liq2)"/>
+  <path d="M110 70V108A48 48 0 1 0 132 108V70" fill="none" stroke="#dce6ff" stroke-opacity="0.7" stroke-width="3"/>
+  <rect x="104" y="64" width="34" height="8" rx="4" fill="#dce6ff" fill-opacity="0.7"/>
+  <path d="M86 128A38 38 0 0 1 96 112" stroke="#ffffff" stroke-opacity="0.5" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- beaker -->
+  <path d="M226 78L232 86V170Q232 184 246 184H306Q320 184 320 170V86L326 78Z" fill="#ffffff" fill-opacity="0.05"/>
+  <path d="M232 120Q250 114 270 120T320 120V170Q320 184 306 184H246Q232 184 232 170Z" fill="url(#c114liq)"/>
+  <path d="M232 120Q250 114 270 120T320 120" fill="none" stroke="#ffffff" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M226 78L232 86V170Q232 184 246 184H306Q320 184 320 170V86L326 78" fill="none" stroke="#dce6ff" stroke-opacity="0.7" stroke-width="3"/>
+  <rect x="240" y="96" width="5" height="64" rx="2" fill="#ffffff" fill-opacity="0.35"/>
+  <rect x="302" y="100" width="12" height="2" fill="#dce6ff" fill-opacity="0.5"/>
+  <rect x="302" y="130" width="12" height="2" fill="#dce6ff" fill-opacity="0.5"/>
+  <circle cx="258" cy="160" r="3" fill="#ffffff" fill-opacity="0.35"/>
+  <circle cx="290" cy="146" r="2.5" fill="#ffffff" fill-opacity="0.35"/>
+  <circle cx="276" cy="170" r="2" fill="#ffffff" fill-opacity="0.35"/>
+  <!-- drops -->
+  <g filter="url(#c114blur)" opacity="0.8">
+    <path d="M250 22Q262 40 250 50Q238 40 250 22Z" fill="#ff3b45"/>
+    <path d="M282 44Q294 62 282 72Q270 62 282 44Z" fill="#ffd61e"/>
+    <path d="M310 18Q322 36 310 46Q298 36 310 18Z" fill="#2f6bff"/>
+  </g>
+  <path d="M250 22Q262 40 250 50Q238 40 250 22Z" fill="#ff4a52"/>
+  <path d="M282 44Q294 62 282 72Q270 62 282 44Z" fill="#ffd93a"/>
+  <path d="M310 18Q322 36 310 46Q298 36 310 18Z" fill="#3a74ff"/>
+  <path d="M247 34Q246 40 249 44" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M279 56Q278 62 281 66" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M307 30Q306 36 309 40" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- splash -->
+  <circle cx="262" cy="108" r="3" fill="#ff9a3c"/>
+  <circle cx="290" cy="104" r="2.5" fill="#ffb24a"/>
+  <circle cx="276" cy="98" r="2" fill="#ffd166"/>
+  <!-- sparkles -->
+  <g fill="#ffd166">
+    <path d="M190 60l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/>
+    <path d="M356 70l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+    <path d="M60 52l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+  </g>
+  <!-- paint blobs on shelf -->
+  <circle cx="190" cy="176" r="10" fill="#ff4a52"/>
+  <circle cx="190" cy="176" r="10" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>
+  <circle cx="358" cy="176" r="10" fill="#3a74ff"/>
+  <circle cx="358" cy="176" r="10" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>
+  <circle cx="40" cy="176" r="10" fill="#ffd93a"/>
+  <circle cx="40" cy="176" r="10" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>
+</svg>
