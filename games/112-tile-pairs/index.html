@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>かさねタイルペア｜無料ブラウザゲーム｜ルドット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+  :root{
+    --bg:#131322; --panel:#1c1c33; --edge:#2c2c4d;
+    --ink:#eeecfa; --sub:#9d99c0;
+    --pink:#ff5fa2; --cyan:#53e0d8; --gold:#ffd166; --violet:#a06bff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% 0%,#1d2140 0%,var(--bg) 60%) fixed,var(--bg);
+    color:var(--ink);
+    font-family:'DotGothic16','Hiragino Kaku Gothic ProN',monospace,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:10px 8px 30px; overflow-x:hidden;
+    -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent;
+  }
+  .backbar{width:min(var(--gw,480px),100%);margin:0 2px 4px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .backbar a{color:#c9c5e6;text-decoration:none;padding:4px 0}
+  .backbar button{background:none;border:1px solid var(--edge);border-radius:999px;color:var(--sub);font-size:14px;padding:3px 12px;min-height:30px;min-width:44px;cursor:pointer;font-family:inherit}
+  header{width:min(var(--gw,480px),100%);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 6px}
+  h1{font-size:22px;margin:0;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 12px rgba(83,224,216,.55);font-weight:400}
+  .age-badge{display:inline-flex;padding:3px 10px;border:1px solid rgba(83,224,216,.35);border-radius:999px;color:var(--cyan);background:rgba(83,224,216,.08);font-size:11px;letter-spacing:1px;white-space:nowrap}
+  #wrap{position:relative;width:min(var(--gw,480px),100%)}
+  canvas{display:block;width:100%;height:auto;background:#0f1022;border:1px solid rgba(83,224,216,.28);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 24px rgba(83,224,216,.08);touch-action:none;user-select:none;-webkit-user-select:none}
+  .row{display:flex;gap:6px;margin-top:8px;width:min(var(--gw,480px),100%)}
+  .btn{flex:1;font-family:inherit;font-size:14px;min-height:44px;padding:6px 0;border-radius:10px;border:1px solid var(--edge);background:linear-gradient(#24244a,#1a1a35);color:var(--ink);cursor:pointer;letter-spacing:1px;box-shadow:0 4px 14px rgba(0,0,0,.35);touch-action:manipulation}
+  .btn:disabled{opacity:.38;cursor:default}
+  .btn.pulse{border-color:var(--gold);color:var(--gold);animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{50%{box-shadow:0 0 16px rgba(255,209,102,.6)}}
+  #overlay{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:9px;
+    align-items:center;justify-content:center;background:rgba(17,17,34,.93);
+    border-radius:14px;text-align:center;padding:12px 14px;
+  }
+  #overlay.show{display:flex}
+  #overlay .big{font-size:30px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px rgba(83,224,216,.6);line-height:1.2}
+  #overlay .big.win{color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.6)}
+  #overlay .stars{font-size:34px;letter-spacing:6px;color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.6)}
+  #overlay .stars i{font-style:normal;color:#3b3a5e;text-shadow:none}
+  #overlay .note{font-size:13px;color:var(--ink);line-height:1.75}
+  #overlay .note b{color:var(--gold);font-weight:400}
+  #overlay .note .c{color:var(--cyan)}
+  #overlay .note .pts{font-size:12px;color:var(--sub)}
+  #overlay .rule{font-size:12px;color:var(--sub);line-height:1.6}
+  .stages{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:min(330px,100%)}
+  .stages button{font-family:inherit;font-size:13px;min-height:44px;background:rgba(255,255,255,.03);border:1px solid var(--edge);color:var(--ink);border-radius:10px;padding:4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.35}
+  .stages button small{font-size:11px;color:var(--sub)}
+  .stages button.on{border-color:var(--cyan);background:rgba(83,224,216,.12);box-shadow:0 0 10px rgba(83,224,216,.25)}
+  .stages button.on small{color:var(--gold)}
+  .stages button:disabled{opacity:.42;cursor:default}
+  .stages button:last-child:nth-child(odd){grid-column:1 / span 2}
+  .go{font-family:inherit;font-size:17px;letter-spacing:2px;background:var(--cyan);color:#062a28;border:none;border-radius:10px;padding:10px 26px;min-height:46px;cursor:pointer;box-shadow:0 0 18px rgba(83,224,216,.45)}
+  .go.alt{background:var(--pink);color:#2b0014;box-shadow:0 0 18px rgba(255,95,162,.4)}
+  .go.sub{background:none;color:var(--ink);border:1px solid var(--edge);box-shadow:none;font-size:14px}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .help{width:min(var(--gw,480px),100%);color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.75;background:rgba(13,13,28,.74);border:1px solid var(--edge);border-radius:12px;padding:10px 12px 6px}
+  .help b{color:var(--ink);font-weight:400}
+  .help p{margin:0 0 6px}
+  @media (hover:hover){
+    .backbar a:hover{color:var(--gold)}
+    .backbar button:hover{color:var(--gold);border-color:var(--gold)}
+    .btn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+    .stages button:hover:not(:disabled){border-color:var(--gold)}
+    .go:hover{filter:brightness(1.1)}
+  }
+</style>
+<!-- LUDOT-SEO-START -->
+<meta name="description" content="つまれたタイルから、上があいていて左か右があいている同じ絵を2まいずつ とっていくひとりあそび。同じ絵が かさなった「わな」があり、とる順を考えないと つむ。形は5種類で毎回ちがうならび。れんさでスコアアップ、まぜるは回数つき。★3つ評価・ベストタイム・ハイスコアを記録。 無料・ダウンロード不要。ルドットで遊べます。">
+<link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/games/112-tile-pairs/index.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"かさねタイルペア","description":"つまれたタイルから、上があいていて左か右があいている同じ絵を2まいずつ とっていくひとりあそび。同じ絵が かさなった「わな」があり、とる順を考えないと つむ。形は5種類で毎回ちがうならび。れんさでスコアアップ、まぜるは回数つき。★3つ評価・ベストタイム・ハイスコアを記録。","url":"https://ukeyuri2014-wq.github.io/picotto-games/games/112-tile-pairs/index.html","inLanguage":"ja","genre":"CARD","isAccessibleForFree":true,"gamePlatform":"Web browser"}</script>
+<script defer src="../../assets/ludot-library.js" data-current-game="112"></script>
+<!-- LUDOT-SEO-END -->
+</head>
+<body>
+
+<div class="backbar"><a href="../../index.html">← いちらんへ</a><button id="mute-btn" aria-label="おとのオンオフ">🔊</button></div>
+
+<header>
+  <h1>かさねタイルペア</h1>
+  <div class="age-badge">対象年齢の目安：6歳〜 / ひとり用</div>
+</header>
+
+<div id="wrap">
+  <canvas id="cv" width="480" height="600"></canvas>
+  <div id="overlay" class="show"></div>
+</div>
+<div class="row">
+  <button class="btn" id="hintBtn">💡ヒント</button>
+  <button class="btn" id="shufBtn">🔀まぜる</button>
+  <button class="btn" id="undoBtn">↩もどす</button>
+  <button class="btn" id="menuBtn">メニュー</button>
+</div>
+
+<div class="help">
+  <p><b>あそびかた</b>：つまれたタイルの中から <b>同じ絵</b>を 2まい じゅんに タップすると、ペアで とれるよ。ぜんぶ とったら クリア！</p>
+  <p><b>とれるタイル</b>：上に なにも のっていなくて、<b>左か右の どちらかが あいている</b> タイルだけ。とれないタイルは 少し暗く 見えるよ。</p>
+  <p><b>コツ</b>：同じ絵が 3まい 見えていたら、どれを とるか よく考えよう。<b>同じ絵の タイルの 下に 同じ絵が かくれている</b> ことがあるよ。上の方を のこして ほかの2まいを とると、さいごに 同じ絵が かさなって とれなくなる！</p>
+  <p><b>スコア</b>：1ペア 100点。3びょう いないに つぎのペアを とると「れんさ」で ＋50点ずつ ふえるよ（さいだい ＋250）。クリアが はやいほど はやさボーナス。<br>
+  <b>たすけ</b>：💡ヒント（＋10びょう）は 何回でも。🔀まぜる（のこりの絵を とける ならびに まぜなおす・＋20びょう）は ステージ1で 2回、ほかは 1回だけ（−500点・つかうと ★は 1つまで）。↩もどす は 何回でも（まぜた後は まぜる前に もどれない）。<br>
+  ステージは 5つ（ちいさなやま・さかな・おしろ・ちょうちょ・ピラミッド）。クリアで つぎが ひらき、★と ベストタイムが のこるよ。<br>
+  ⌨️ 矢印キーで えらんで Enter ／ H＝ヒント ／ S＝まぜる ／ Z＝もどす</p>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  // 画面の大きさ：スマホは 480×600 を縮めて表示、PCの広い画面では 実寸で大きく描く
+  let W = 480, H = 600, wide = false;
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * DPR; cv.height = H * DPR;
+  const KEY = 'ludot_tile-pairs_';
+  const MUTE_KEY = KEY + 'mute', SAVE_KEY = KEY + 'save';
+  const BOARD = { x: 10, y: 64, w: 460, h: 526 };
+  const COMBO_SEC = 3, HINT_PEN = 10, SHUF_PEN = 20;
+  // とくてん：1ペア 100点、れんさ中は 2れんさ目から +50点ずつ（さいだい +250）、クリア時に のこり時間ボーナス
+  const PAIR_PTS = 100, COMBO_PTS = 50, COMBO_MAX = 250, TIME_PTS = 10, SHUF_PTS = 500;
+  const UI_FONT = '"DotGothic16","Hiragino Kaku Gothic ProN",monospace,sans-serif';
+  const F = px => px + 'px ' + UI_FONT;
+
+  // ---- sound ---------------------------------------------------------------
+  let muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
+  let ac = null;
+  function audio() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function tone(type, f0, f1, dur, vol, delay = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(); const t = a.currentTime + delay;
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SCALE = [523, 587, 659, 784, 880, 1046, 1175, 1318, 1568];
+  const SFX = {
+    pick() { tone('triangle', 900, 1100, 0.06, 0.06); tone('square', 1800, 1500, 0.03, 0.015); },
+    unpick() { tone('triangle', 700, 500, 0.06, 0.05); },
+    swap() { tone('triangle', 620, 760, 0.07, 0.05); },
+    take(c) { const k = Math.min(SCALE.length - 3, c); [0, 2].forEach((d, i) => tone('triangle', SCALE[k + d], SCALE[k + d] * 1.01, 0.14, 0.08, i * 0.06)); tone('square', 2400, 1600, 0.05, 0.02); },
+    combo(c) { const k = Math.min(SCALE.length - 1, 3 + c); tone('square', SCALE[k], SCALE[k] * 1.5, 0.12, 0.045, 0.12); },
+    bad() { tone('square', 210, 130, 0.12, 0.05); },
+    hint() { [988, 1318].forEach((f, i) => tone('sine', f, f, 0.18, 0.07, i * 0.09)); },
+    shuffle() { for (let i = 0; i < 6; i++) tone('triangle', 300 + i * 90, 500 + i * 90, 0.05, 0.04, i * 0.045); },
+    undo() { tone('triangle', 520, 260, 0.16, 0.05); },
+    stuck() { tone('sawtooth', 330, 220, 0.2, 0.05); tone('sawtooth', 260, 170, 0.28, 0.05, 0.22); },
+    clear() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.16, 0.06, i * 0.09)); tone('triangle', 1046, 1046, 0.6, 0.06, 0.6); },
+    star(i) { tone('triangle', 1046 + i * 260, 1318 + i * 260, 0.2, 0.07); },
+  };
+  const muteBtn = document.getElementById('mute-btn');
+  function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+
+  // ---- random ----------------------------------------------------------------
+  function mulberry(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function shuffleArr(a, rnd) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  // ---- faces (original pictures, drawn with paths) -------------------------------
+  const OUT = '#2a2140';
+  function P(g, fill, lw = 4) { g.fillStyle = fill; g.fill(); g.lineWidth = lw; g.strokeStyle = OUT; g.lineJoin = 'round'; g.stroke(); }
+  function circ(g, x, y, r) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); }
+  function poly(g, pts) { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); }
+  function starPts(cx, cy, R, r, n, rot = -Math.PI / 2) { const p = []; for (let i = 0; i < n * 2; i++) { const a = rot + i * Math.PI / n, rr = i & 1 ? r : R; p.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]); } return p; }
+  const FACES = [
+    ['たいよう', '#ff8a1f', g => { poly(g, starPts(50, 50, 44, 28, 10)); P(g, '#ffb347'); circ(g, 50, 50, 22); P(g, '#ff8a1f'); circ(g, 43, 44, 6); g.fillStyle = 'rgba(255,255,255,.55)'; g.fill(); }],
+    ['つき', '#f2c94c', g => {
+      g.save(); circ(g, 47, 52, 34); g.fillStyle = '#f2c94c'; g.fill(); g.globalCompositeOperation = 'destination-out'; circ(g, 64, 40, 29); g.fill(); g.restore();
+      g.save(); g.beginPath(); g.rect(0, 0, 100, 100); g.arc(64, 40, 29, 0, Math.PI * 2, true); g.clip(); circ(g, 47, 52, 34); g.lineWidth = 4; g.strokeStyle = OUT; g.stroke(); g.restore();
+      g.save(); circ(g, 47, 52, 34); g.clip(); circ(g, 64, 40, 29); g.lineWidth = 4; g.strokeStyle = OUT; g.stroke(); g.restore();
+    }],
+    ['ほし', '#9b5cff', g => { poly(g, starPts(50, 53, 44, 19, 5)); P(g, '#9b5cff'); poly(g, starPts(50, 53, 18, 8, 5)); g.fillStyle = 'rgba(255,255,255,.45)'; g.fill(); }],
+    ['ハート', '#ff4f8b', g => { g.beginPath(); g.moveTo(50, 86); g.bezierCurveTo(14, 60, 6, 36, 22, 22); g.bezierCurveTo(34, 12, 48, 20, 50, 32); g.bezierCurveTo(52, 20, 66, 12, 78, 22); g.bezierCurveTo(94, 36, 86, 60, 50, 86); g.closePath(); P(g, '#ff4f8b'); circ(g, 30, 34, 6); g.fillStyle = 'rgba(255,255,255,.6)'; g.fill(); }],
+    ['しずく', '#2f8cff', g => { g.beginPath(); g.moveTo(50, 8); g.bezierCurveTo(42, 28, 22, 46, 22, 62); g.arc(50, 62, 28, Math.PI, 0, true); g.bezierCurveTo(78, 46, 58, 28, 50, 8); g.closePath(); P(g, '#2f8cff'); g.beginPath(); g.ellipse(39, 62, 5, 10, 0.3, 0, Math.PI * 2); g.fillStyle = 'rgba(255,255,255,.6)'; g.fill(); }],
+    ['はっぱ', '#6cc04a', g => { g.beginPath(); g.moveTo(14, 86); g.bezierCurveTo(10, 40, 40, 12, 88, 12); g.bezierCurveTo(88, 60, 60, 88, 14, 86); g.closePath(); P(g, '#6cc04a'); g.beginPath(); g.moveTo(14, 86); g.quadraticCurveTo(46, 52, 80, 20); g.lineWidth = 4; g.strokeStyle = '#2f6b25'; g.stroke(); }],
+    ['はな', '#e84fd0', g => { for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 2 / 5; circ(g, 50 + Math.cos(a) * 24, 52 + Math.sin(a) * 24, 18); P(g, '#e84fd0'); } circ(g, 50, 52, 15); P(g, '#ffd23f'); }],
+    ['さかな', '#18b3a6', g => { poly(g, [[70, 50], [94, 28], [92, 72]]); P(g, '#0f8f85'); g.beginPath(); g.ellipse(44, 50, 36, 24, 0, 0, Math.PI * 2); P(g, '#18b3a6'); circ(g, 26, 45, 6); g.fillStyle = '#fff'; g.fill(); circ(g, 25, 45, 3); g.fillStyle = OUT; g.fill(); g.beginPath(); g.moveTo(48, 30); g.quadraticCurveTo(58, 50, 48, 70); g.lineWidth = 3; g.strokeStyle = '#0b6e66'; g.stroke(); }],
+    ['ねこ', '#7d84a3', g => { poly(g, [[18, 44], [22, 10], [44, 30]]); P(g, '#7d84a3'); poly(g, [[82, 44], [78, 10], [56, 30]]); P(g, '#7d84a3'); circ(g, 50, 56, 34); P(g, '#7d84a3'); circ(g, 37, 52, 5); g.fillStyle = OUT; g.fill(); circ(g, 63, 52, 5); g.fill(); poly(g, [[45, 63], [55, 63], [50, 69]]); g.fillStyle = '#ff7aa8'; g.fill(); g.beginPath(); g.moveTo(14, 62); g.lineTo(32, 64); g.moveTo(14, 72); g.lineTo(32, 69); g.moveTo(86, 62); g.lineTo(68, 64); g.moveTo(86, 72); g.lineTo(68, 69); g.lineWidth = 2.5; g.strokeStyle = OUT; g.stroke(); }],
+    ['りんご', '#e8384f', g => { g.beginPath(); g.moveTo(50, 30); g.bezierCurveTo(30, 16, 8, 30, 14, 58); g.bezierCurveTo(20, 84, 40, 94, 50, 86); g.bezierCurveTo(60, 94, 80, 84, 86, 58); g.bezierCurveTo(92, 30, 70, 16, 50, 30); g.closePath(); P(g, '#e8384f'); g.beginPath(); g.moveTo(50, 30); g.lineTo(54, 10); g.lineWidth = 5; g.strokeStyle = '#6b3d1f'; g.stroke(); g.beginPath(); g.ellipse(66, 16, 12, 6, -0.4, 0, Math.PI * 2); P(g, '#5fbf3a', 3); circ(g, 30, 46, 6); g.fillStyle = 'rgba(255,255,255,.55)'; g.fill(); }],
+    ['さくらんぼ', '#c2185b', g => { g.beginPath(); g.moveTo(30, 70); g.quadraticCurveTo(40, 30, 62, 10); g.moveTo(70, 66); g.quadraticCurveTo(64, 34, 62, 10); g.lineWidth = 5; g.strokeStyle = '#3f8a2a'; g.stroke(); circ(g, 30, 72, 19); P(g, '#c2185b'); circ(g, 70, 68, 19); P(g, '#c2185b'); circ(g, 24, 66, 4); g.fillStyle = 'rgba(255,255,255,.6)'; g.fill(); circ(g, 64, 62, 4); g.fill(); }],
+    ['きのこ', '#d9643a', g => { g.beginPath(); g.moveTo(38, 54); g.lineTo(34, 88); g.lineTo(66, 88); g.lineTo(62, 54); g.closePath(); P(g, '#fff1d6'); g.beginPath(); g.moveTo(8, 58); g.bezierCurveTo(8, 8, 92, 8, 92, 58); g.closePath(); P(g, '#d9643a'); circ(g, 34, 36, 7); g.fillStyle = '#fff'; g.fill(); circ(g, 62, 30, 6); g.fill(); circ(g, 74, 48, 5); g.fill(); circ(g, 22, 52, 4); g.fill(); }],
+    ['おんぷ', '#4b52d6', g => { g.beginPath(); g.moveTo(34, 76); g.lineTo(34, 22); g.lineTo(80, 12); g.lineTo(80, 66); g.lineWidth = 7; g.strokeStyle = OUT; g.stroke(); g.lineWidth = 3; g.strokeStyle = '#4b52d6'; g.stroke(); poly(g, [[34, 22], [80, 12], [80, 26], [34, 36]]); P(g, '#4b52d6', 3); g.beginPath(); g.ellipse(24, 78, 13, 10, -0.4, 0, Math.PI * 2); P(g, '#4b52d6'); g.beginPath(); g.ellipse(70, 68, 13, 10, -0.4, 0, Math.PI * 2); P(g, '#4b52d6'); }],
+    ['すず', '#f5b400', g => { g.beginPath(); g.moveTo(50, 12); g.bezierCurveTo(26, 12, 24, 44, 22, 62); g.lineTo(12, 74); g.lineTo(88, 74); g.lineTo(78, 62); g.bezierCurveTo(76, 44, 74, 12, 50, 12); g.closePath(); P(g, '#f5b400'); circ(g, 50, 82, 9); P(g, '#c98a00'); circ(g, 50, 10, 5); P(g, '#f5b400', 3); g.beginPath(); g.moveTo(36, 30); g.quadraticCurveTo(32, 44, 32, 58); g.lineWidth = 4; g.strokeStyle = 'rgba(255,255,255,.6)'; g.stroke(); }],
+    ['ほうせき', '#22d3ee', g => { poly(g, [[28, 18], [72, 18], [92, 40], [50, 90], [8, 40]]); P(g, '#22d3ee'); g.beginPath(); g.moveTo(8, 40); g.lineTo(92, 40); g.moveTo(28, 18); g.lineTo(38, 40); g.lineTo(50, 90); g.lineTo(62, 40); g.lineTo(72, 18); g.moveTo(50, 18); g.lineTo(38, 40); g.moveTo(50, 18); g.lineTo(62, 40); g.lineWidth = 2.5; g.strokeStyle = '#0e7f93'; g.stroke(); poly(g, [[28, 18], [50, 18], [38, 40], [8, 40]]); g.fillStyle = 'rgba(255,255,255,.45)'; g.fill(); }],
+    ['くも', '#7cc6ff', g => { g.beginPath(); g.arc(30, 60, 18, Math.PI * 0.5, Math.PI * 1.5); g.arc(46, 40, 20, Math.PI * 1.05, Math.PI * 1.85); g.arc(68, 46, 18, Math.PI * 1.3, Math.PI * 0.05); g.arc(76, 62, 14, Math.PI * 1.6, Math.PI * 0.5); g.closePath(); P(g, '#7cc6ff'); g.beginPath(); g.ellipse(42, 44, 10, 5, -0.3, 0, Math.PI * 2); g.fillStyle = 'rgba(255,255,255,.7)'; g.fill(); }],
+    ['いなずま', '#ffcf1a', g => { poly(g, [[58, 6], [20, 56], [46, 56], [38, 94], [80, 40], [54, 40], [66, 6]]); P(g, '#ffcf1a'); }],
+    ['おうち', '#e0533a', g => { g.beginPath(); g.rect(22, 46, 56, 42); P(g, '#fff1d6'); poly(g, [[10, 50], [50, 12], [90, 50]]); P(g, '#e0533a'); g.beginPath(); g.rect(42, 62, 16, 26); P(g, '#8a5a35', 3); g.beginPath(); g.rect(60, 54, 12, 12); P(g, '#7cc6ff', 3); }],
+    ['き', '#2e9e5b', g => { g.beginPath(); g.rect(42, 70, 16, 22); P(g, '#8a5a35'); poly(g, [[50, 30], [84, 74], [16, 74]]); P(g, '#2e9e5b'); poly(g, [[50, 8], [78, 48], [22, 48]]); P(g, '#38b86b'); circ(g, 40, 58, 4); g.fillStyle = '#ffd23f'; g.fill(); circ(g, 60, 38, 4); g.fill(); }],
+    ['かぎ', '#8a96bf', g => { circ(g, 30, 34, 20); P(g, '#8a96bf'); circ(g, 30, 34, 8); g.fillStyle = '#fffaf0'; g.fill(); g.lineWidth = 3; g.stroke(); poly(g, [[44, 46], [86, 84], [78, 92], [36, 54]]); P(g, '#8a96bf'); poly(g, [[66, 66], [56, 76], [62, 82], [72, 72]]); P(g, '#8a96bf', 3); poly(g, [[76, 76], [68, 86], [74, 90], [82, 82]]); P(g, '#8a96bf', 3); }],
+    ['おうかん', '#f0b429', g => { poly(g, [[12, 76], [12, 30], [32, 52], [50, 20], [68, 52], [88, 30], [88, 76]]); P(g, '#f0b429'); circ(g, 50, 62, 8); P(g, '#e8384f', 3); circ(g, 26, 64, 5); P(g, '#2f8cff', 3); circ(g, 74, 64, 5); P(g, '#2f8cff', 3); }],
+    ['ゆき', '#5aa9ff', g => { g.lineCap = 'round'; for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; const ex = 50 + Math.cos(a) * 38, ey = 50 + Math.sin(a) * 38; const mx = 50 + Math.cos(a) * 24, my = 50 + Math.sin(a) * 24; g.beginPath(); g.moveTo(50, 50); g.lineTo(ex, ey); g.moveTo(mx, my); g.lineTo(mx + Math.cos(a + 0.8) * 11, my + Math.sin(a + 0.8) * 11); g.moveTo(mx, my); g.lineTo(mx + Math.cos(a - 0.8) * 11, my + Math.sin(a - 0.8) * 11); g.lineWidth = 10; g.strokeStyle = OUT; g.stroke(); g.lineWidth = 5; g.strokeStyle = '#5aa9ff'; g.stroke(); } circ(g, 50, 50, 7); P(g, '#bfe0ff', 3); }],
+  ];
+  const FACE_SPR = FACES.map(([, , fn]) => { const c = document.createElement('canvas'); c.width = c.height = 120; const g = c.getContext('2d'); g.scale(1.2, 1.2); fn(g); return c; });
+
+  // ---- layouts (half-tile units; a tile covers x..x+2, y..y+2) ----------------------
+  function build(layers) {
+    const out = [];
+    for (const L of layers) L.rows.forEach((row, r) => { for (let c = 0; c < row.length; c++) if (row[c] === '#') out.push({ x: L.ox + c * 2, y: L.oy + r * 2, z: L.z }); });
+    return out;
+  }
+  const STAGES = [
+    // rr = 「考えずに ランダムに とった時に さいごまで とれる わりあい」の めあて（ならびを作る時に 合わせる）
+    // shuf = まぜる の回数
+    { name: 'ちいさなやま', par: 50, rr: 0.45, shuf: 2, pos: build([
+      { z: 0, ox: 0, oy: 0, rows: ['######', '######', '######'] },
+      { z: 1, ox: 3, oy: 1, rows: ['###', '###'] }]) },
+    { name: 'さかな', par: 85, rr: 0.25, shuf: 1, pos: build([
+      { z: 0, ox: 0, oy: 0, rows: ['  ####    ', ' ######  #', '##########', ' ######  #', '  ####    '] },
+      { z: 1, ox: 5, oy: 3, rows: ['##', '##'] }]) },
+    { name: 'おしろ', par: 150, rr: 0.12, shuf: 1, pos: build([
+      { z: 0, ox: 0, oy: 0, rows: ['##  ##  ##', '##  ##  ##', '##########', '##########', '##########', '####  ####'] },
+      { z: 1, ox: 4, oy: 4, rows: ['######', '######'] },
+      { z: 2, ox: 8, oy: 5, rows: ['##'] }]) },
+    { name: 'ちょうちょ', par: 175, rr: 0.08, shuf: 1, pos: build([
+      { z: 0, ox: 0, oy: 0, rows: ['###    ###', '####  ####', '##########', ' ######## ', ' ######## ', '##########', '####  ####', '###    ###'] },
+      { z: 1, ox: 8, oy: 3, rows: ['##', '##', '##'] },
+      { z: 2, ox: 9, oy: 4, rows: ['#', '#'] }]) },
+    { name: 'ピラミッド', par: 210, rr: 0.05, shuf: 1, pos: build([
+      { z: 0, ox: 2, oy: 0, rows: ['########', '########', '########', '########', '########', '########'] },
+      { z: 0, ox: 0, oy: 5, rows: ['#        #'] },
+      { z: 1, ox: 4, oy: 2, rows: ['######', '######', '######', '######'] },
+      { z: 2, ox: 6, oy: 4, rows: ['####', '####'] },
+      { z: 3, ox: 8, oy: 5, rows: ['##'] }]) },
+  ];
+
+  // ---- rules -----------------------------------------------------------------------
+  let tiles = [], above = [], leftN = [], rightN = [], blocks = [], drawOrder = [];
+  function link() {
+    const n = tiles.length;
+    above = []; leftN = []; rightN = []; blocks = new Array(n).fill(0);
+    for (let i = 0; i < n; i++) { above.push([]); leftN.push([]); rightN.push([]); }
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      if (i === j) continue; const a = tiles[i], b = tiles[j]; const dx = b.x - a.x, dy = b.y - a.y;
+      if (Math.abs(dy) >= 2) continue;
+      if (b.z === a.z + 1 && Math.abs(dx) < 2) { above[i].push(j); blocks[j] += 2; }
+      else if (b.z === a.z && dx <= -1 && dx >= -2) { leftN[i].push(j); blocks[j]++; }
+      else if (b.z === a.z && dx >= 1 && dx <= 2) { rightN[i].push(j); blocks[j]++; }
+    }
+    drawOrder = tiles.map((t, i) => i).sort((p, q) => tiles[p].z - tiles[q].z || tiles[p].y - tiles[q].y || tiles[p].x - tiles[q].x);
+  }
+  function freeIn(al, i) {
+    if (!al[i]) return false;
+    for (const j of above[i]) if (al[j]) return false;
+    let l = false; for (const j of leftN[i]) if (al[j]) { l = true; break; }
+    if (!l) return true;
+    for (const j of rightN[i]) if (al[j]) return false;
+    return true;
+  }
+  const aliveArr = () => tiles.map(t => (t.alive ? 1 : 0));
+  const isFree = i => freeIn(aliveArr(), i);
+  function freePairs(al) {
+    al = al || aliveArr(); const by = new Map(), out = [];
+    for (let i = 0; i < tiles.length; i++) if (freeIn(al, i)) { const f = tiles[i].f; if (!by.has(f)) by.set(f, []); by.get(f).push(i); }
+    for (const arr of by.values()) for (let a = 0; a < arr.length; a++) for (let b = a + 1; b < arr.length; b++) out.push([arr[a], arr[b]]);
+    return out;
+  }
+  const remaining = () => tiles.reduce((s, t) => s + (t.alive ? 1 : 0), 0);
+
+  // ---- deal: remove two free positions at a time from the full shape. That order is a real solution. ----
+  function carve(al, rnd) {
+    const order = []; al = al.slice();
+    let left = al.reduce((s, v) => s + v, 0);
+    while (left > 0) {
+      const free = []; for (let i = 0; i < al.length; i++) if (freeIn(al, i)) free.push(i);
+      if (free.length < 2) return null;
+      const a = free[Math.floor(rnd() * free.length)];
+      let b; do { b = free[Math.floor(rnd() * free.length)]; } while (b === a);
+      al[a] = al[b] = 0; left -= 2; order.push([a, b]);
+    }
+    return order;
+  }
+  // 考えずに とれるペアを ランダムに とりつづけたら さいごまで とれるか（1回ぶん）
+  function randomRun(al0, rnd) {
+    const al = al0.slice(); let left = al.reduce((s, v) => s + v, 0);
+    const n = al.length, by = new Map();
+    while (left > 0) {
+      by.clear();
+      for (let i = 0; i < n; i++) if (freeIn(al, i)) { const f = tiles[i].f; let a = by.get(f); if (!a) by.set(f, a = []); a.push(i); }
+      let total = 0; for (const a of by.values()) total += a.length * (a.length - 1) / 2;
+      if (!total) return false;
+      let r = Math.floor(rnd() * total);
+      outer: for (const a of by.values()) { const c = a.length * (a.length - 1) / 2; if (r >= c) { r -= c; continue; }
+        for (let p = 0; p < a.length; p++) for (let q = p + 1; q < a.length; q++) if (r-- === 0) { al[a[p]] = al[a[q]] = 0; break outer; } }
+      left -= 2;
+    }
+    return true;
+  }
+  function randomRate(al, rnd, runs) { let w = 0; for (let k = 0; k < runs; k++) if (randomRun(al, rnd)) w++; return w / runs; }
+  // ならびの絵を きめる。とける順（order）を先に作り、そのペアごとに 絵を わりあてる。
+  // どんな わりあてでも order の順に とれば かならず とける（作り方で 保証）。
+  // 「わな」：同じ絵の 2ペアを、片方のタイルが もう片方のタイルの 真上に のる ように 置く。
+  //   → 同じ絵が 3まい 見えた時、上にのった タイルを のこして ほかの2まいを とると、さいごに 同じ絵どうしが かさなって つむ。
+  //   考えて 「かさなっている方を 先に つかう」と とける。
+  function paint(order, slots) { order.forEach(([a, b], i) => { tiles[a].f = tiles[b].f = slots[i]; }); }
+  function paintTraps(order, faceList, nTrap, rnd) {
+    const k = order.length, pi = new Array(tiles.length).fill(-1);
+    order.forEach(([a, b], i) => { pi[a] = pi[b] = i; });
+    const cand = [];
+    for (let t = 0; t < tiles.length; t++) if (pi[t] >= 0) for (const u of above[t]) if (pi[u] >= 0 && pi[u] !== pi[t]) cand.push([pi[u], pi[t]]);
+    shuffleArr(cand, rnd);
+    const cnt = new Map(); for (const f of faceList) cnt.set(f, (cnt.get(f) || 0) + 1);
+    const twos = shuffleArr([...cnt.keys()].filter(f => cnt.get(f) >= 2), rnd);
+    const slots = new Array(k).fill(-1), used = new Set(); let nt = 0;
+    for (const [i, j] of cand) {
+      if (nt >= nTrap || nt >= twos.length) break;
+      if (used.has(i) || used.has(j)) continue;
+      const f = twos[nt++]; slots[i] = slots[j] = f; used.add(i); used.add(j); cnt.set(f, cnt.get(f) - 2);
+    }
+    const rest = []; for (const [f, c] of cnt) for (let q = 0; q < c; q++) rest.push(f);
+    shuffleArr(rest, rnd); let r = 0;
+    for (let i = 0; i < k; i++) if (slots[i] < 0) slots[i] = rest[r++];
+    paint(order, slots);
+    return nt;
+  }
+  // 候補を いくつも作り、「考えずに ランダムに とった時の クリア率」が ステージの めあてに いちばん近いものを えらぶ。
+  function pickArrangement(al, faceList, target, cands, runs, rnd) {
+    let best = null, bestErr = 1e9, bestRate = 1;
+    const errOf = r => (r > target ? (r - target) * 2 : (target - r) * 0.7);
+    for (let c = 0; c < cands; c++) {
+      let order = null;
+      for (let tries = 0; tries < 60 && !order; tries++) order = carve(al, rnd);
+      if (!order) continue;
+      paintTraps(order, faceList, c % 4 === 3 ? Math.floor(order.length / 4) : 99, rnd);
+      const rate = randomRate(al, rnd, runs), err = errOf(rate);
+      if (err < bestErr) { bestErr = err; bestRate = rate; best = { order, faces: tiles.map(t => t.f) }; }
+      if (err <= 0.03 && c >= 2) break;
+    }
+    if (!best) return null;
+    best.faces.forEach((f, i) => { if (al[i]) tiles[i].f = f; });
+    return { order: best.order, rate: bestRate };
+  }
+  let dealRate = 0;
+  function deal(stageNo, seed) {
+    const st = STAGES[stageNo - 1], rnd = mulberry(seed);
+    tiles = st.pos.map((p, i) => ({ id: i, x: p.x, y: p.y, z: p.z, f: 0, alive: true, flash: 0, wig: 0, bad: 0 }));
+    link();
+    const nPairs = tiles.length / 2;
+    const faceIds = shuffleArr(FACES.map((_, i) => i), rnd).slice(0, Math.ceil(nPairs / 2));
+    const faceList = []; for (let k = 0; faceList.length < nPairs; k++) faceList.push(faceIds[k >> 1]);
+    const r = pickArrangement(tiles.map(() => 1), faceList, st.rr, 16, 40, rnd);
+    dealRate = r.rate;
+    return r.order;
+  }
+  // まぜる：のこりの絵だけを、とける ならびに 置きなおす（わなも 入れなおすので、考えずに とると また つむ）
+  function reshuffle(rnd) {
+    const al = aliveArr(), ids = []; const cnt = new Map();
+    for (let i = 0; i < tiles.length; i++) if (al[i]) { ids.push(i); cnt.set(tiles[i].f, (cnt.get(tiles[i].f) || 0) + 1); }
+    const faceList = []; for (const [f, c] of cnt) for (let k = 0; k < c / 2; k++) faceList.push(f);
+    const r = pickArrangement(al, faceList, STAGES[(custom ? 1 : stage) - 1].rr, 24, 30, rnd);
+    if (r) return true;
+    const fs = shuffleArr(ids.map(i => tiles[i].f), rnd); ids.forEach((i, k) => { tiles[i].f = fs[k]; });
+    return false;
+  }
+
+  // ---- solver (depth-first search with dead-state memo) -----------------------------------
+  const ABORT = { abort: true };
+  // まず ふつうの順で さがし、だめなら 順番を少しずつ ゆらして やりなおす
+  function solveFrom(al0, cap = 200000) {
+    let used = 0, last = null;
+    for (let r = 0; used < cap; r++) {
+      const budget = Math.min(cap - used, r === 0 ? 6000 : 3000 + r * 500);
+      last = solveOnce(al0, budget, r ? mulberry(r * 7919) : null, Math.min(30, 6 + r));
+      used += last.nodes;
+      if (last.path || !last.timeout) return { path: last.path, nodes: used, timeout: !last.path && !!last.timeout };
+    }
+    return { path: null, nodes: used, timeout: true };
+  }
+  function solveOnce(al0, cap, rnd, amp) {
+    const al = al0.slice(), n = al.length, dead = new Set(), path = []; let nodes = 0;
+    const faceRemain = new Map();
+    for (let i = 0; i < n; i++) if (al[i]) faceRemain.set(tiles[i].f, (faceRemain.get(tiles[i].f) || 0) + 1);
+    let left = al.reduce((s, v) => s + v, 0);
+    const keyOf = () => { let s = ''; for (let i = 0; i < n; i += 30) { let v = 0; for (let k = i; k < Math.min(n, i + 30); k++) v = v * 2 + al[k]; s += v.toString(36) + '.'; } return s; };
+    const apply = (ids, on) => { for (const i of ids) { al[i] = on ? 1 : 0; } const f = tiles[ids[0]].f; faceRemain.set(f, faceRemain.get(f) + (on ? ids.length : -ids.length)); left += on ? ids.length : -ids.length; };
+    const noise = rnd ? tiles.map(() => rnd() * amp) : null;
+    const score = ids => ids.reduce((s, i) => s + blocks[i] * 3 + tiles[i].z * 4 + (noise ? noise[i] : 0), 0);
+    // 同じ絵が のこり2まいで、片方が もう片方の 真上に のっていたら もう とけない
+    const covers = (top, low) => {   // top が（のこっているタイルを通して）low の上に つまれているか
+      const st = [low], vis = new Set([low]);
+      while (st.length) { const c = st.pop(); for (const j of above[c]) if (al[j] && !vis.has(j)) { if (j === top) return true; vis.add(j); st.push(j); } }
+      return false;
+    };
+    const hopeless = () => {
+      const seen = new Map();
+      for (let i = 0; i < n; i++) if (al[i] && faceRemain.get(tiles[i].f) === 2) { const f = tiles[i].f; if (seen.has(f)) { const j = seen.get(f); if (covers(j, i) || covers(i, j)) return true; } else seen.set(f, i); }
+      return false;
+    };
+    function rec() {
+      if (left === 0) return true;
+      if (++nodes > cap) throw ABORT;
+      const k = keyOf(); if (dead.has(k)) return false;
+      if (hopeless()) { dead.add(k); return false; }
+      const by = new Map();
+      for (let i = 0; i < n; i++) if (freeIn(al, i)) { const f = tiles[i].f; if (!by.has(f)) by.set(f, []); by.get(f).push(i); }
+      // 見えている同じ絵が その絵の のこり全部なら、とってしまって そんはない
+      for (const [f, arr] of by) if (arr.length >= 2 && arr.length === faceRemain.get(f)) {
+        apply(arr, false); path.push(arr.slice());
+        if (rec()) return true;
+        path.pop(); apply(arr, true); dead.add(k); return false;
+      }
+      const moves = [];
+      for (const arr of by.values()) for (let a = 0; a < arr.length; a++) for (let b = a + 1; b < arr.length; b++) moves.push([arr[a], arr[b]]);
+      moves.sort((p, q) => score(q) - score(p));
+      for (const m of moves) {
+        apply(m, false); path.push(m);
+        if (rec()) return true;
+        path.pop(); apply(m, true);
+      }
+      dead.add(k); return false;
+    }
+    try { return rec() ? { path, nodes } : { path: null, nodes }; } catch (e) { if (e !== ABORT) throw e; return { path: null, nodes, timeout: true }; }
+  }
+
+  // ---- save ----------------------------------------------------------------------------
+  function freshSave() { return { unlock: 1, best: [0, 0, 0, 0, 0], stars: [0, 0, 0, 0, 0], hi: [0, 0, 0, 0, 0], clears: 0, maxCombo: 0, tut: false }; }
+  let save = freshSave();
+  try { const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (s && typeof s === 'object') save = Object.assign(freshSave(), s); } catch (e) {}
+  function writeSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+
+  // ---- state -------------------------------------------------------------------------------
+  let phase = 'title', stage = 1, pickStage = 1, custom = false, seed = 0;
+  let sel = -1, hist = [], time = 0, hints = 0, shuffles = 0, combo = 0, lastTake = -99, maxCombo = 0, bonus = 0, score = 0, undos = 0;
+  let hintPair = null, tutorial = false, stuck = false, stuckFix = true, toast = null, clearT = 0, result = null, paused = false;
+  let anims = [], parts = [], pops = [], shufT = 0, kbId = -1, kbOn = false, animT = 0, solution = null;
+  let geo = { tw: 40, th: 50, dzx: -5, dzy: -6, sd: 4, ox: 0, oy: 0 };
+  let baseSpr = null;
+  const overlay = document.getElementById('overlay');
+  const hintBtn = document.getElementById('hintBtn'), shufBtn = document.getElementById('shufBtn'), undoBtn = document.getElementById('undoBtn'), menuBtn = document.getElementById('menuBtn');
+
+  function fitGeo() {
+    let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9, maxZ = 0;
+    for (const t of tiles) { minX = Math.min(minX, t.x); maxX = Math.max(maxX, t.x + 2); minY = Math.min(minY, t.y); maxY = Math.max(maxY, t.y + 2); maxZ = Math.max(maxZ, t.z); }
+    if (!tiles.length) { minX = minY = 0; maxX = maxY = 2; }
+    const cols = (maxX - minX) / 2, rows = (maxY - minY) / 2, A = 1.27;
+    let tw = Math.min(wide ? 96 : 64, (BOARD.w - 8) / (cols + 0.12 + maxZ * 0.13));
+    let th = tw * A;
+    const needH = rows * th + th * 0.1 + maxZ * 0.11 * th;
+    if (needH > BOARD.h - 30) { th *= (BOARD.h - 30) / needH; tw = th / A; }
+    const dzx = -tw * 0.13, dzy = -th * 0.11, sd = tw * 0.11;
+    const totW = cols * tw + sd + maxZ * -dzx, totH = rows * th + sd + maxZ * -dzy;
+    geo = { tw, th, dzx, dzy, sd, ox: BOARD.x + (BOARD.w - totW) / 2 + maxZ * -dzx - minX / 2 * tw, oy: BOARD.y + (BOARD.h - 26 - totH) / 2 + maxZ * -dzy - minY / 2 * th };
+    baseSpr = null;
+  }
+  // PCの広い画面では キャンバスを 実寸で 大きくして、タイルを 大きく描く
+  function layoutCanvas() {
+    const iw = window.innerWidth || 480, ih = window.innerHeight || 700;
+    wide = iw >= 820 && ih >= 560;
+    if (wide) { W = Math.round(Math.min(900, iw - 40)); H = Math.round(Math.max(460, Math.min(680, ih - 170))); }
+    else { W = 480; H = 600; }
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    document.documentElement.style.setProperty('--gw', (wide ? W : 480) + 'px');
+    BOARD.w = W - 20; BOARD.h = H - 74;
+    fitGeo();
+  }
+  function tileRect(t) { return [geo.ox + t.x / 2 * geo.tw + t.z * geo.dzx, geo.oy + t.y / 2 * geo.th + t.z * geo.dzy, geo.tw, geo.th]; }
+  function tileCenter(i) { const [x, y, w, h] = tileRect(tiles[i]); return [x + w / 2, y + h / 2]; }
+
+  function resetRun() {
+    sel = -1; hist = []; time = 0; hints = 0; shuffles = 0; combo = 0; lastTake = -99; maxCombo = 0; bonus = 0; score = 0; undos = 0;
+    hintPair = null; stuck = false; stuckFix = true; toast = null; clearT = 0; result = null; anims = []; parts = []; pops = []; shufT = 0; kbId = -1; solution = null;
+  }
+  function start(st, sd) {
+    stage = st || pickStage; pickStage = stage; custom = false;
+    seed = sd != null ? sd : (Math.random() * 1e9) >>> 0;
+    resetRun();
+    solution = deal(stage, seed);
+    fitGeo();
+    phase = 'play'; overlay.classList.remove('show');
+    tutorial = !save.tut && stage === 1;
+    if (tutorial) { hintPair = freePairs()[0] || null; say('光っている 2まいを じゅんに タップ！', 99); }
+    else say(STAGES[stage - 1].name + '　スタート！', 1.6);
+    refresh();
+  }
+  function say(text, dur = 2.2, color = '#eeecfa') { toast = { text, t: dur, color }; }
+  function pop(x, y, text, color = '#ffd166', size = 22) { pops.push({ x, y, text, color, size, t: 0 }); }
+  function burst(x, y, color, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * (0.35 + Math.random()); parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 50, life: 0.45 + Math.random() * 0.5, max: 0.95, c: color, s: 2.5 + Math.random() * 3.5 }); } }
+
+  function refresh() {
+    const playing = phase === 'play';
+    const pairs = playing ? freePairs().length : 0;
+    stuck = playing && remaining() > 0 && pairs === 0;
+    hintBtn.disabled = !playing || stuck;
+    const sl = shufLeft();
+    shufBtn.disabled = !playing || remaining() < 2 || sl <= 0;
+    shufBtn.textContent = '🔀まぜる ' + (phase === 'title' ? '' : sl);
+    undoBtn.disabled = !playing || !hist.length;
+    shufBtn.classList.toggle('pulse', stuck && stuckFix);
+    undoBtn.classList.toggle('pulse', stuck && !stuckFix);
+  }
+
+  function tapTile(id) {
+    if (phase !== 'play') return 'off';
+    if (id < 0 || !tiles[id] || !tiles[id].alive) { if (sel >= 0) { sel = -1; SFX.unpick(); } return 'none'; }
+    const t = tiles[id];
+    if (!isFree(id)) {
+      t.wig = 0.35; SFX.bad();
+      const cov = above[id].some(j => tiles[j].alive);
+      say(cov ? '上に タイルが のっているよ' : '左右 どちらかを あけてね', 1.6, '#ff8fb8');
+      return 'blocked';
+    }
+    if (sel === id) { sel = -1; SFX.unpick(); return 'unpick'; }
+    if (sel >= 0 && tiles[sel].f === t.f) { const a = sel; sel = -1; take(a, id); return 'take'; }
+    if (sel >= 0) { tiles[sel].bad = 0.3; sel = id; SFX.swap(); return 'swap'; }
+    sel = id; SFX.pick(); return 'pick';
+  }
+  function take(a, b) {
+    if (phase !== 'play' || a === b || !tiles[a].alive || !tiles[b].alive || tiles[a].f !== tiles[b].f || !isFree(a) || !isFree(b)) return false;
+    const before = aliveArr();
+    const quick = time - lastTake <= COMBO_SEC;
+    hist.push({ a, b, combo, lastTake, score, bonus, maxCombo });
+    tiles[a].alive = tiles[b].alive = false; sel = -1; hintPair = null; solution = null;
+    // タイムは 実際の時間のまま（へらさない）。れんさは とくてんで ごほうび
+    combo = quick ? combo + 1 : 1; maxCombo = Math.max(maxCombo, combo);
+    const cb = combo >= 2 ? Math.min(COMBO_MAX, COMBO_PTS * (combo - 1)) : 0;
+    score += PAIR_PTS + cb; bonus += cb;
+    lastTake = time;
+    const [ax, ay] = tileCenter(a), [bx, by] = tileCenter(b);
+    anims.push({ id: a, t: 0, tx: (bx - ax) * 0.25, ty: -24 }, { id: b, t: 0, tx: (ax - bx) * 0.25, ty: -24 });
+    const col = FACES[tiles[a].f][1];
+    burst(ax, ay, col, 12, 120); burst(bx, by, col, 12, 120); burst((ax + bx) / 2, Math.min(ay, by) - 10, '#ffd166', 8, 90);
+    SFX.take(Math.min(combo - 1, 5));
+    if (combo >= 2) {
+      SFX.combo(combo);
+      pop((ax + bx) / 2, Math.min(ay, by) - 30, combo + 'れんさ！ +' + (PAIR_PTS + cb), '#53e0d8', 20);
+    } else pop((ax + bx) / 2, Math.min(ay, by) - 16, 'ペア！ +' + PAIR_PTS, '#ffd166', 20);
+    if (tutorial) { tutorial = false; save.tut = true; writeSave(); say('そのちょうし！ 同じ絵を さがそう', 2.2, '#53e0d8'); }
+    const after = aliveArr();
+    for (let i = 0; i < tiles.length; i++) if (after[i] && !freeIn(before, i) && freeIn(after, i)) tiles[i].flash = 0.7;
+    if (remaining() === 0) { finishClear(); return true; }
+    refresh();
+    if (stuck) { stuckFix = canFixByShuffle(); SFX.stuck(); say(stuckFix ? 'とれるペアが ない！ 🔀まぜる（のこり' + shufLeft() + '回）か ↩もどす' : 'とれるペアが ない！ ↩もどす で やりなおそう', 99, '#ffd166'); refresh(); }
+    return true;
+  }
+  const shufMax = () => (custom ? 3 : STAGES[stage - 1].shuf);
+  const shufLeft = () => Math.max(0, shufMax() - shuffles);
+  function canFixByShuffle() { if (shufLeft() <= 0) return false; const al = aliveArr(); const rnd = mulberry(seed ^ 0x5bd1e995); for (let k = 0; k < 120; k++) if (carve(al, rnd)) return true; return false; }
+  function undo() {
+    if (phase !== 'play' || !hist.length) return false;
+    const h = hist.pop();
+    tiles[h.a].alive = tiles[h.b].alive = true; combo = 0; lastTake = -99; score = h.score; bonus = h.bonus; maxCombo = h.maxCombo; undos++;
+    sel = -1; hintPair = null; solution = null; anims = anims.filter(an => an.id !== h.a && an.id !== h.b);
+    SFX.undo(); toast = null; refresh();
+    return true;
+  }
+  function hint() {
+    if (phase !== 'play' || stuck) return null;
+    let pair = null;
+    const r = solveFrom(aliveArr(), 25000);
+    if (r.path && r.path.length) pair = r.path[0].slice(0, 2);
+    else { const fp = freePairs(); if (fp.length) { pair = fp[0]; say('このままだと きびしいかも… ↩もどす も つかってね', 2.6, '#ff8fb8'); } }
+    if (!pair) return null;
+    hintPair = pair; hints++; time += HINT_PEN; SFX.hint();
+    const [x, y] = tileCenter(pair[0]); pop(x, y - 30, '+' + HINT_PEN + 'びょう', '#ff8fb8', 18);
+    refresh();
+    return pair;
+  }
+  function doShuffle() {
+    if (phase !== 'play' || remaining() < 2) return false;
+    if (shufLeft() <= 0) { SFX.bad(); say('まぜるは もう つかえないよ', 1.6, '#ff8fb8'); return false; }
+    const ok = reshuffle(mulberry((seed + shuffles * 7919 + 1) >>> 0));
+    shuffles++; time += SHUF_PEN; score = Math.max(0, score - SHUF_PTS); hist = []; sel = -1; hintPair = null; solution = null; combo = 0; shufT = 0.5; SFX.shuffle();
+    pop(W / 2, BOARD.y + 40, '🔀 まぜた！ +' + SHUF_PEN + 'びょう  -' + SHUF_PTS + '点', '#ffd166', 20);
+    toast = null; refresh();
+    if (stuck) { stuckFix = false; say('まぜても とれない… メニューから やりなおそう', 99, '#ffd166'); refresh(); }
+    else if (shufLeft() <= 0) say('まぜるは これで さいご！ よく考えて とろう', 2.4, '#ffd166');
+    return ok;
+  }
+  function starsFor(st, tm, hn, sh) {
+    const par = STAGES[st - 1].par;
+    if (tm <= par && hn === 0 && sh === 0) return 3;
+    if (tm <= par * 1.8 && sh === 0) return 2;
+    return 1;
+  }
+  function finishClear() {
+    phase = 'clear'; clearT = 0; sel = -1; hintPair = null; toast = null;
+    const tm = Math.max(0.1, Math.round(time * 10) / 10);
+    const stars = starsFor(stage, tm, hints, shuffles);
+    const tBonus = Math.max(0, Math.round((STAGES[stage - 1].par - tm) * TIME_PTS));
+    score += tBonus;
+    let newBest = false, newHi = false;
+    if (!custom) {
+      const i = stage - 1;
+      if (!(save.best[i] > 0) || tm < save.best[i]) { save.best[i] = tm; newBest = true; }
+      if (!Array.isArray(save.hi)) save.hi = [0, 0, 0, 0, 0];
+      if (score > (save.hi[i] || 0)) { save.hi[i] = score; newHi = true; }
+      save.stars[i] = Math.max(save.stars[i] || 0, stars);
+      save.clears++; save.maxCombo = Math.max(save.maxCombo, maxCombo);
+      if (stage < STAGES.length) save.unlock = Math.max(save.unlock, stage + 1);
+      writeSave();
+    }
+    result = { time: tm, stars, newBest, hints, shuffles, maxCombo, best: custom ? tm : save.best[stage - 1], score, comboPts: bonus, timePts: tBonus, newHi, hi: custom ? score : save.hi[stage - 1] };
+    SFX.clear();
+    for (let k = 0; k < 6; k++) burst(BOARD.x + 60 + Math.random() * (BOARD.w - 120), BOARD.y + 80 + Math.random() * 300, ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff'][k % 4], 22, 200);
+    refresh();
+  }
+  const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+  // ---- overlay screens ----------------------------------------------------------------
+  function starStr(n) { let s = ''; for (let i = 0; i < 3; i++) s += i < n ? '★' : '<i>★</i>'; return s; }
+  function showTitle() {
+    phase = 'title'; refresh();
+    if (pickStage > save.unlock) pickStage = save.unlock;
+    let h = '<div class="big">かさねタイルペア</div>';
+    h += '<div class="note">つまれたタイルから <b>同じ絵</b>を 2まい タップして とろう。<br>とれるのは <b>上</b>と <b>左か右</b>が あいている タイル。<br>ぜんぶ とったら クリア！<br>同じ絵が 3まい 見えたら <b>どれを とるか</b> 考えよう。<br>つづけて とると <span class="c">れんさ</span>で スコア アップ！</div>';
+    h += '<div class="stages" id="stages">';
+    STAGES.forEach((st, i) => {
+      const n = i + 1, lock = n > save.unlock;
+      const sub = lock ? '🔒 まえを クリア' : (save.best[i] ? starStr(save.stars[i]).replace(/<i>★<\/i>/g, '☆') + ' ' + fmt(save.best[i]) : st.pos.length + 'まい');
+      h += '<button data-st="' + n + '"' + (lock ? ' disabled' : '') + (n === pickStage ? ' class="on"' : '') + '>' + n + '. ' + st.name + '<small>' + sub + '</small></button>';
+    });
+    h += '</div><button class="go" id="startBtn">はじめる</button>';
+    h += '<div class="rule">クリアした回数 ' + save.clears + '　さいこう れんさ ' + save.maxCombo + '</div>';
+    overlay.innerHTML = h; overlay.classList.add('show');
+  }
+  function showResult() {
+    phase = 'result'; refresh();
+    const r = result, par = STAGES[stage - 1].par;
+    let h = '<div class="big win">クリア！</div><div class="stars">' + starStr(r.stars) + '</div>';
+    h += '<div class="note">' + STAGES[stage - 1].name + '　タイム <b>' + fmt(r.time) + '</b>' + (r.newBest ? '　<span class="c">ベスト こうしん！</span>' : '　（ベスト ' + fmt(r.best) + '）') +
+      '<br>スコア <b>' + r.score + '</b>' + (r.newHi ? '　<span class="c">ハイスコア！</span>' : '　（さいこう ' + r.hi + '）') +
+      '<br><span class="pts">れんさ +' + r.comboPts + '　はやさ +' + r.timePts + '　ヒント ' + r.hints + '　まぜる ' + r.shuffles + '</span></div>';
+    h += '<div class="rule">★3：' + fmt(par) + ' いない・ヒントも まぜるも なし<br>★2：' + fmt(par * 1.8) + ' いない・まぜる なし（ヒントは OK）</div>';
+    h += '<div class="btns">';
+    if (!custom && stage < STAGES.length) h += '<button class="go" id="nextBtn">つぎへ（' + STAGES[stage].name + '）</button>';
+    h += '<button class="go alt" id="againBtn">もういちど</button><button class="go sub" id="selBtn">ステージえらび</button></div>';
+    overlay.innerHTML = h; overlay.classList.add('show');
+    r.stars && [0, 1, 2].slice(0, r.stars).forEach(i => SFX.star(i));
+  }
+  function goMenu() { sel = -1; hintPair = null; toast = null; showTitle(); }
+
+  // ---- input -----------------------------------------------------------------------------
+  function toLogical(e) { const rc = cv.getBoundingClientRect(); return [(e.clientX - rc.left) * (W / rc.width), (e.clientY - rc.top) * (H / rc.height)]; }
+  function tileAt(x, y) {
+    for (let k = drawOrder.length - 1; k >= 0; k--) {
+      const i = drawOrder[k], t = tiles[i]; if (!t.alive) continue;
+      const [tx, ty, tw, th] = tileRect(t);
+      if (x >= tx && x < tx + tw && y >= ty && y < ty + th) return i;
+    }
+    return -1;
+  }
+  function moveKb(dx, dy) {
+    const al = aliveArr(); const cand = []; for (let i = 0; i < tiles.length; i++) if (freeIn(al, i)) cand.push(i);
+    if (!cand.length) return;
+    if (kbId < 0 || !tiles[kbId] || !tiles[kbId].alive) { kbId = cand[0]; return; }
+    const [cx, cy] = tileCenter(kbId); let best = -1, bs = 1e9;
+    for (const i of cand) { if (i === kbId) continue; const [x, y] = tileCenter(i); const vx = x - cx, vy = y - cy; const along = vx * dx + vy * dy; if (along <= 4) continue; const side = Math.abs(vx * dy) + Math.abs(vy * dx); const s = along + side * 2.2; if (s < bs) { bs = s; best = i; } }
+    if (best >= 0) { kbId = best; tone('square', 900, 900, 0.03, 0.02); }
+  }
+
+  // ---- drawing -------------------------------------------------------------------------------
+  function rrOn(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function makeBase() {
+    const { tw, th, sd } = geo, q = DPR * 1.5, pad = 6;
+    const c = document.createElement('canvas'); c.width = Math.ceil((tw + sd + pad * 2) * q); c.height = Math.ceil((th + sd + pad * 2) * q);
+    const g = c.getContext('2d'); g.scale(q, q); g.translate(pad, pad);
+    const r = tw * 0.16;
+    g.save(); g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 6; g.shadowOffsetX = 2; g.shadowOffsetY = 3;
+    const sg = g.createLinearGradient(0, 0, tw + sd, th + sd); sg.addColorStop(0, '#5fd1c8'); sg.addColorStop(1, '#1d6f78');
+    g.fillStyle = sg; rrOn(g, sd, sd, tw, th, r); g.fill(); g.restore();
+    g.fillStyle = '#c9b48f'; rrOn(g, sd * 0.45, sd * 0.45, tw, th, r); g.fill();
+    const tg = g.createLinearGradient(0, 0, tw * 0.4, th); tg.addColorStop(0, '#fffef8'); tg.addColorStop(1, '#efe3c9');
+    g.fillStyle = tg; rrOn(g, 0, 0, tw, th, r); g.fill();
+    g.strokeStyle = 'rgba(92,72,44,.55)'; g.lineWidth = 1.1; rrOn(g, 0.5, 0.5, tw - 1, th - 1, r); g.stroke();
+    g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 1.2; rrOn(g, 2.5, 2.5, tw - 5, th - 5, r * 0.7); g.stroke();
+    return { c, q, pad };
+  }
+  function drawTileAt(i, x, y, sc = 1, alpha = 1, sx = 1) {
+    const t = tiles[i], { tw, th } = geo;
+    if (!baseSpr) baseSpr = makeBase();
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.translate(x + tw / 2, y + th / 2); ctx.scale(sc * sx, sc); ctx.translate(-tw / 2, -th / 2);
+    ctx.drawImage(baseSpr.c, -baseSpr.pad, -baseSpr.pad, baseSpr.c.width / baseSpr.q, baseSpr.c.height / baseSpr.q);
+    const s = tw * 0.86; ctx.drawImage(FACE_SPR[t.f], (tw - s) / 2, (th - s) / 2 - th * 0.02, s, s);
+    ctx.restore();
+  }
+  function drawBoardBg() {
+    const g = ctx;
+    const bg = g.createRadialGradient(W / 2, H * 0.55, 40, W / 2, H * 0.55, 380); bg.addColorStop(0, '#1f2346'); bg.addColorStop(1, '#0f1022');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(83,224,216,.06)'; g.lineWidth = 1;
+    for (let x = 0; x <= W; x += 24) { g.beginPath(); g.moveTo(x, 58); g.lineTo(x, H); g.stroke(); }
+    for (let y = 58; y <= H; y += 24) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+    // HUD
+    g.fillStyle = 'rgba(28,28,51,.92)'; rrOn(g, 6, 6, W - 12, 50, 10); g.fill();
+    g.strokeStyle = 'rgba(83,224,216,.3)'; g.stroke();
+  }
+  function drawHud() {
+    const g = ctx; g.textBaseline = 'middle';
+    const st = STAGES[stage - 1];
+    g.textAlign = 'left'; g.font = F(17); g.fillStyle = '#ffd166';
+    g.fillText(custom ? 'れんしゅう' : stage + '. ' + st.name, 16, 21);
+    g.font = F(15); g.fillStyle = '#c9c5e6';
+    const pairs = phase === 'play' ? freePairs().length : 0;
+    g.fillText('のこり ' + remaining() + 'まい', 16, 43);
+    g.textAlign = 'right'; g.font = F(24); g.fillStyle = '#53e0d8';
+    g.fillText('⏱ ' + fmt(time), W - 16, 22);
+    g.font = F(15); g.fillStyle = pairs ? '#c9c5e6' : '#ff8fb8';
+    g.fillText('とれるペア ' + pairs, W - 16, 44);
+    g.textAlign = 'center'; g.font = F(16); g.fillStyle = '#ffd166';
+    g.fillText('スコア ' + score, W / 2 + 8, 21);
+    if (combo >= 2 && time - lastTake <= COMBO_SEC && phase === 'play') {
+      const k = 1 - (time - lastTake) / COMBO_SEC;
+      g.textAlign = 'center'; g.font = F(16); g.fillStyle = '#ff5fa2'; g.fillText(combo + 'れんさ中', W / 2 + 8, 43);
+      g.fillStyle = 'rgba(255,95,162,.25)'; g.fillRect(W / 2 - 52, 51, 120, 3); g.fillStyle = '#ff5fa2'; g.fillRect(W / 2 - 52, 51, 120 * k, 3);
+    }
+  }
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    drawBoardBg();
+    const al = aliveArr();
+    const pulse = 0.5 + 0.5 * Math.sin(animT * 6);
+    const sx = shufT > 0 ? Math.abs(Math.cos((1 - shufT / 0.5) * Math.PI)) * 0.9 + 0.1 : 1;
+    for (const i of drawOrder) {
+      const t = tiles[i]; if (!t.alive) continue;
+      let [x, y, w, h] = tileRect(t);
+      if (t.wig > 0) x += Math.sin(t.wig * 60) * 3 * (t.wig / 0.35);
+      const lift = i === sel ? -4 : 0;
+      drawTileAt(i, x, y + lift, 1, 1, sx);
+      const free = freeIn(al, i);
+      if (!free && phase === 'play') { ctx.fillStyle = 'rgba(16,14,40,.34)'; rrOn(ctx, x, y + lift, w, h, w * 0.16); ctx.fill(); }
+      if (t.flash > 0) { ctx.fillStyle = 'rgba(255,255,255,' + (t.flash * 0.5) + ')'; rrOn(ctx, x, y, w, h, w * 0.16); ctx.fill(); }
+      if (t.bad > 0) { ctx.strokeStyle = 'rgba(255,95,162,' + (t.bad / 0.3) + ')'; ctx.lineWidth = 3; rrOn(ctx, x, y, w, h, w * 0.16); ctx.stroke(); }
+      if (i === sel) { ctx.save(); ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 14; ctx.strokeStyle = '#53e0d8'; ctx.lineWidth = 3.5; rrOn(ctx, x - 1, y + lift - 1, w + 2, h + 2, w * 0.17); ctx.stroke(); ctx.restore(); }
+      if (hintPair && hintPair.includes(i)) { ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10 + pulse * 10; ctx.strokeStyle = 'rgba(255,209,102,' + (0.55 + pulse * 0.45) + ')'; ctx.lineWidth = 3.5; rrOn(ctx, x - 2, y - 2, w + 4, h + 4, w * 0.18); ctx.stroke(); ctx.restore(); }
+      if (kbOn && i === kbId && phase === 'play') { ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; rrOn(ctx, x - 3, y + lift - 3, w + 6, h + 6, w * 0.2); ctx.stroke(); ctx.restore(); }
+    }
+    // とった タイル
+    for (const a of anims) {
+      const [x, y] = tileRect(tiles[a.id]); const k = Math.min(1, a.t / 0.4), e = 1 - (1 - k) * (1 - k);
+      drawTileAt(a.id, x + a.tx * e, y + a.ty * e, 1 + 0.25 * e, 1 - k);
+    }
+    for (const p of parts) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const p of pops) {
+      const k = p.t / 1.1; ctx.globalAlpha = Math.max(0, 1 - k * k); ctx.font = F(p.size * (k < 0.15 ? 0.7 + k * 2 : 1));
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(10,8,24,.9)'; ctx.strokeText(p.text, p.x, p.y - k * 30); ctx.fillStyle = p.color; ctx.fillText(p.text, p.x, p.y - k * 30);
+    }
+    ctx.globalAlpha = 1;
+    drawHud();
+    if (toast && phase === 'play') {
+      ctx.font = F(16); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; const tw = Math.min(W - 20, ctx.measureText(toast.text).width + 30);
+      ctx.globalAlpha = Math.min(1, toast.t * 3);
+      ctx.fillStyle = 'rgba(16,16,36,.92)'; rrOn(ctx, W / 2 - tw / 2, H - 44, tw, 34, 17); ctx.fill();
+      ctx.strokeStyle = toast.color; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = toast.color; ctx.fillText(toast.text, W / 2, H - 27);
+      ctx.globalAlpha = 1;
+    }
+    if (phase === 'clear') {
+      const k = Math.min(1, clearT / 0.5);
+      ctx.fillStyle = 'rgba(10,10,26,' + 0.45 * k + ')'; ctx.fillRect(0, 58, W, H - 58);
+      ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k);
+      ctx.font = F(52); ctx.lineWidth = 7; ctx.strokeStyle = 'rgba(10,8,24,.9)'; ctx.strokeText('クリア！', 0, 0);
+      ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 24; ctx.fillStyle = '#ffd166'; ctx.fillText('クリア！', 0, 0);
+      ctx.shadowBlur = 0; ctx.font = F(22); ctx.fillStyle = '#53e0d8'; ctx.fillText('タイム ' + fmt(result.time), 0, 46);
+      ctx.restore();
+    }
+  }
+
+  // ---- update ---------------------------------------------------------------------------
+  function update(dt) {
+    animT += dt;
+    if (phase === 'play' && !paused) time += dt;
+    for (const t of tiles) { if (t.wig > 0) t.wig = Math.max(0, t.wig - dt); if (t.flash > 0) t.flash = Math.max(0, t.flash - dt); if (t.bad > 0) t.bad = Math.max(0, t.bad - dt); }
+    for (const a of anims) a.t += dt; anims = anims.filter(a => a.t < 0.4);
+    for (const p of parts) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt; } parts = parts.filter(p => p.life > 0);
+    for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 1.1);
+    if (shufT > 0) shufT = Math.max(0, shufT - dt);
+    if (toast && toast.t < 90) { toast.t -= dt; if (toast.t <= 0) toast = null; }
+    if (phase === 'clear') {
+      clearT += dt;
+      if (Math.random() < dt * 8) burst(40 + Math.random() * (W - 80), 90 + Math.random() * 200, ['#ffd166', '#53e0d8', '#ff5fa2', '#a06bff'][(Math.random() * 4) | 0], 10, 150);
+      if (clearT >= 2.0) showResult();
+    }
+  }
+  let last = performance.now();
+  function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+
+  // ---- test hooks ----------------------------------------------------------------------------
+  window.__test = {
+    state: () => ({
+      phase, overlay: overlay.classList.contains('show'), stage, cw: W, ch: H, tw: Math.round(geo.tw), score, dealRate, shufLeft: shufLeft(), undos, custom, seed, total: tiles.length, n: remaining(),
+      tiles: tiles.map(t => ({ id: t.id, x: t.x, y: t.y, z: t.z, f: t.f, alive: t.alive, free: t.alive && isFree(t.id) })),
+      sel, hint: hintPair, time: Math.round(time * 100) / 100, hints, shuffles, combo, maxCombo, bonus, pairs: phase === 'play' ? freePairs().length : 0,
+      stuck, stuckFix, tutorial, toast: toast ? toast.text : '', save: JSON.parse(JSON.stringify(save)), result, hist: hist.length, unlock: save.unlock,
+    }),
+    start: (st, sd) => start(st, sd),
+    setTiles: list => {
+      resetRun(); custom = true; stage = 1;
+      tiles = list.map((p, i) => ({ id: i, x: p[0], y: p[1], z: p[2], f: p[3], alive: true, flash: 0, wig: 0, bad: 0 }));
+      link(); fitGeo(); phase = 'play'; tutorial = false; overlay.classList.remove('show'); refresh();
+    },
+    isFree, tap: id => tapTile(id), take: (a, b) => take(a, b),
+    tileXY: id => tileCenter(id), tileAt: (x, y) => tileAt(x, y),
+    step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
+    hint, shuffle: doShuffle, undo, menu: goMenu,
+    freePairs: () => freePairs(),
+    nextMove: () => { const r = solveFrom(aliveArr(), 300000); return r.path && r.path.length ? r.path[0].slice(0, 2) : null; },
+    solve: cap => { const r = solveFrom(aliveArr(), cap || 300000); return r.path ? { len: r.path.length, nodes: r.nodes } : { len: 0, nodes: r.nodes, timeout: !!r.timeout }; },
+    // さいしょの ならびで、作ったときの順番どおりに ルールの take だけで とりきれるか
+    replayDeal: (st, sd) => {
+      const order = deal(st, sd); fitGeo(); resetRun(); custom = true; phase = 'play'; overlay.classList.remove('show');
+      for (const [a, b] of order) if (!take(a, b)) return false;
+      return remaining() === 0;
+    },
+    autoPlay: () => {
+      const r = solveFrom(aliveArr(), 300000); if (!r.path) return -1; let n = 0;
+      for (const m of r.path) { for (let k = 0; k + 1 < m.length; k += 2) { time += 1.5; if (!take(m[k], m[k + 1])) return -2; n++; } }
+      return n;
+    },
+    // 考えずに とれるペアを ランダムに とる人の まね（ほんものの take / まぜる を つかう）。記録は のこさない
+    randomPlay: (st, sd, rs, useShuffle) => {
+      const keep = JSON.stringify(save);
+      start(st, sd); tutorial = false; const rnd = mulberry(rs); let moves = 0, stuckN = 0;
+      while (phase === 'play') {
+        const fp = freePairs();
+        if (!fp.length) { stuckN++; if (useShuffle && shufLeft() > 0) { doShuffle(); continue; } break; }
+        const p = fp[Math.floor(rnd() * fp.length)]; time += 1; take(p[0], p[1]); moves++;
+      }
+      const out = { clear: phase === 'clear', n: remaining(), moves, stuckN, shuffles };
+      save = JSON.parse(keep); writeSave(); phase = 'title'; showTitle();
+      return out;
+    },
+    stages: () => STAGES.map(s => ({ name: s.name, n: s.pos.length, par: s.par, shuf: s.shuf })),
+    faces: () => FACES.length,
+    setTime: v => { time = v; },
+    resetSave: () => { const tut = save.tut; save = freshSave(); save.tut = tut; writeSave(); pickStage = 1; },
+  };
+
+  // ---- wiring (kept at the end) ------------------------------------------------------------
+  muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
+  let downId = -2;
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); kbOn = false; const [x, y] = toLogical(e); downId = tileAt(x, y); });
+  cv.addEventListener('pointerup', e => { e.preventDefault(); const [x, y] = toLogical(e); const id = tileAt(x, y); if (id === downId) tapTile(id); downId = -2; });
+  cv.addEventListener('pointercancel', () => { downId = -2; });
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  overlay.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled) return; audio();
+    if (b.dataset.st) { pickStage = +b.dataset.st; overlay.querySelectorAll('#stages button').forEach(x => x.classList.toggle('on', x === b)); SFX.pick(); return; }
+    if (b.id === 'startBtn') start(pickStage);
+    else if (b.id === 'nextBtn') start(stage + 1);
+    else if (b.id === 'againBtn') start(custom ? 1 : stage);
+    else if (b.id === 'selBtn') goMenu();
+  });
+  hintBtn.addEventListener('click', () => { audio(); hint(); });
+  shufBtn.addEventListener('click', () => { audio(); doShuffle(); });
+  undoBtn.addEventListener('click', () => { audio(); undo(); });
+  menuBtn.addEventListener('click', () => { audio(); goMenu(); });
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if (overlay.classList.contains('show')) {
+      if (k === 'Enter' || k === ' ') { if (e.target && e.target.tagName === 'BUTTON') return; e.preventDefault(); audio(); if (phase === 'result') start(custom ? 1 : stage); else start(pickStage); }
+      return;
+    }
+    if (phase !== 'play') return;
+    const dirs = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    if (dirs[k]) { e.preventDefault(); kbOn = true; moveKb(...dirs[k]); return; }
+    if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); if (!kbOn || kbId < 0) { kbOn = true; moveKb(1, 0); return; } tapTile(kbId); if (!tiles[kbId] || !tiles[kbId].alive) { kbId = -1; moveKb(1, 0); } return; }
+    if (k === 'h' || k === 'H') { audio(); hint(); return; }
+    if (k === 's' || k === 'S') { audio(); doShuffle(); return; }
+    if (k === 'z' || k === 'Z' || k === 'Backspace') { e.preventDefault(); audio(); undo(); return; }
+    if (k === 'Escape') goMenu();
+  });
+  document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!document.hidden) last = performance.now(); });
+
+  // タイトルの うしろに 見本の やまを 出しておく
+  deal(1, 20261017); layoutCanvas();
+  let rzT = 0; window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(layoutCanvas, 120); });
+  drawMute(); showTitle(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
