@@ -165,5 +165,11 @@
     rating.dataset.currentGame = currentId;
     document.head.append(rating);
   }
+  if (currentId) {
+    const bgm = document.createElement('script');
+    bgm.src = new URL('assets/ludot-bgm.js?v=20261023', root).href;
+    bgm.dataset.currentGame = currentId;
+    document.head.append(bgm);
+  }
   window.LudotLibrary = {setGames};
 })();
