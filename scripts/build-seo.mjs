@@ -1,3 +1,4 @@
+import './check-ad-placement.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import path from 'node:path';
@@ -26,6 +27,6 @@ for (const g of games) {
   html = html.replace(/<\/head>/i, `<!-- LUDOT-SEO-START -->\n<meta name="description" content="${esc(g.description)} 無料・ダウンロード不要。ルドットで遊べます。">\n<link rel="canonical" href="${base + g.path}">\n<script type="application/ld+json">${json(data)}</script>\n<script defer src="../../assets/ludot-library.js" data-current-game="${esc(g.id)}"></script>\n<!-- LUDOT-SEO-END -->\n</head>`);
   fs.writeFileSync(file, html);
 }
-const urls = ['', 'about.html', 'privacy.html', 'contact.html', 'help.html', 'submit.html', 'blog/', ...fs.readdirSync(path.join(root, 'blog')).filter(f => f.endsWith('.html') && f !== 'index.html').map(f => 'blog/' + f), ...games.map(g => g.path)];
+const urls = ['', 'about.html', 'privacy.html', 'contact.html', 'help.html', 'game-guide.html', 'submit.html', 'blog/', ...fs.readdirSync(path.join(root, 'blog')).filter(f => f.endsWith('.html') && f !== 'index.html').map(f => 'blog/' + f), ...games.map(g => g.path)];
 fs.writeFileSync(path.join(root, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map(p => `  <url><loc>${base + p}</loc></url>`).join('\n') + '\n</urlset>\n');
 console.log(`Generated static links and metadata for ${games.length} games; sitemap ${urls.length} URLs.`);

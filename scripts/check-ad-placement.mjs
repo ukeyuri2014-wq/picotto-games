@@ -1,0 +1,5 @@
+// Run before adding/changing advertising code. No publisher ID is embedded here.
+import fs from 'node:fs';import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..');const failures=[];
+function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){if(item.name.startsWith('.')||['node_modules','docs','template'].includes(item.name))continue;const f=path.join(dir,item.name);if(item.isDirectory())walk(f);else if(item.name.endsWith('.html')){const rel=path.relative(root,f).split(path.sep).join('/');const h=fs.readFileSync(f,'utf8');const ad=/<script[^>]+src=["'][^"']*(?:pagead2\.googlesyndication\.com|googlesyndication\.com\/pagead)/i.test(h)||/class=["'][^"']*\badsbygoogle\b/.test(h);if(ad && !(rel.startsWith('blog/') && rel!=='blog/index.html'))failures.push(rel);if(/enable_page_level_ads\s*:\s*true/.test(h))failures.push(rel+' (automatic page ads)');}}}
+walk(root);if(failures.length){console.error('Advertising is limited to reviewed strategy articles; blocked pages:',failures.join(', '));process.exit(1);}console.log('Ad placement check passed: game, submission, contact, help and error pages have no ad units.');
