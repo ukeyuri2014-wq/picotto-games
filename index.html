@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://ukeyuri2014-wq.github.io/picotto-games/">
 <meta property="og:image" content="https://ukeyuri2014-wq.github.io/picotto-games/assets/picotto-pop-play-hero-v3.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preload" as="image" href="assets/picotto-pop-play-hero-v3.jpg">
+<link rel="preload" as="image" href="assets/picotto-pop-play-hero-v3.webp" type="image/webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Antique+B1&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
@@ -653,7 +653,7 @@
   .hero-stage { min-height: min(900px, 100svh); background: #fff9e9; }
   .hero-stage::before {
     inset: -2%;
-    background-image: url("assets/picotto-pop-play-hero-v3.jpg");
+    background-image: url("assets/picotto-pop-play-hero-v3.webp");
     background-position: center center;
   }
   .hero-stage::after {
@@ -811,7 +811,7 @@
     pointer-events: none;
     background:
       linear-gradient(105deg, rgba(250,252,246,.93) 0%, rgba(255,250,235,.76) 48%, rgba(236,249,255,.67) 100%),
-      url("assets/picotto-pop-play-hero-v3.jpg") 68% center / cover no-repeat;
+      url("assets/picotto-pop-play-hero-v3.webp") 68% center / cover no-repeat;
     filter: saturate(.82) contrast(.96);
   }
   body::after {
@@ -845,7 +845,7 @@
     body::before {
       background:
         linear-gradient(180deg, rgba(255,250,235,.86), rgba(244,251,252,.78)),
-        url("assets/picotto-pop-play-hero-v3.jpg") 73% center / auto 100% no-repeat;
+        url("assets/picotto-pop-play-hero-v3.webp") 73% center / auto 100% no-repeat;
     }
     .rank-card,
     .card,
@@ -1067,7 +1067,7 @@
 <link rel="stylesheet" href="assets/ludot-library.css?v=20260914">
 <script defer src="assets/ludot-rating.js?v=20261002"></script>
 </head>
-<body>
+<body><a class="ludot-skip" href="#games">ゲーム一覧へスキップ</a>
 
 <div class="nav-outer">
   <div class="wrap">
@@ -1348,6 +1348,7 @@
         <a href="about.html">ABOUT</a>
         <a href="privacy.html">PRIVACY</a>
         <a href="help.html">遊び方・FAQ</a>
+        <a href="game-guide.html">全作品の操作説明</a>
         <a href="contact.html">お問い合わせ</a>
         <a href="#">TOP</a>
       </div>
@@ -1360,7 +1361,7 @@
 </footer>
 
 <script src="games.js"></script>
-<script src="assets/ludot-library.js?v=20261002"></script>
+<script src="assets/ludot-library.js?v=20261023"></script>
 <script>
   // ============ ゲームごとのキービジュアル（描き下ろしSVG） ============
   const ART = {
