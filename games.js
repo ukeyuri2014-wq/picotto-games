@@ -1585,21 +1585,7 @@ const GAMES = [
     path: "games/005-ricochet-one/index.html",
     cover: "assets/covers/005.webp",
   },
-  {
-    id: "004",
-    genre: "ARENA SHOOTER",
-    age: "10歳〜",
-    color: "#ff7a3d",
-    title: "アーセナル10",
-    emoji: "💥",
-    author: "ゲスト",
-    date: "2026-08-20",
-    description:
-      "10種の武器を切り替えて敵の波を迎え撃つアリーナシューティング。ウェーブを重ねて武器を解放し、ボスを撃破せよ。",
-    controls: "WASD＋マウス / スマホは左右スティック",
-    path: "games/004-arsenal-10/index.html",
-    cover: "assets/covers/004.webp",
-  },
+  
   {
     id: "003",
     genre: "SHOOTER",
