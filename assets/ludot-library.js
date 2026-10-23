@@ -4,6 +4,10 @@
   const COUNTS = 'picotto-home-plays-v1';
   const root = new URL('../', document.currentScript.src);
   const currentId = document.currentScript.dataset.currentGame;
+  // Permit browser zoom; keep each game's touch controls unchanged.
+  const viewport = document.querySelector('meta[name="viewport"]');
+  if (viewport) viewport.content = viewport.content.replace(/,?\s*(?:user-scalable\s*=\s*(?:no|0)|maximum-scale\s*=\s*[\d.]+)/gi,'');
+  const accessibility = document.createElement('link'); accessibility.rel='stylesheet'; accessibility.href=new URL('assets/ludot-accessibility.css?v=20261023',root).href;document.head.append(accessibility);
   const remoteBase = 'https://picotto-secure-submissions.edamame2025.chatgpt.site/play/';
   let catalog = new Map();
   let persistent = true;
@@ -152,6 +156,8 @@
   window.addEventListener('storage', e => { if (e.key === KEY || e.key === null) { state = read(); render(); } });
   window.addEventListener('pageshow', () => { if (persistent) state = read(); render(); });
   if (currentId) {
+    const back=document.querySelector('a[href="../../index.html"],a[href="../../"],a[href="../../index.html#games"]');
+    if(back){const a=document.createElement('a');a.href=new URL('game-guide.html#game-'+currentId,root).href;a.className='ludot-manual-link';a.textContent='遊び方';a.setAttribute('aria-label',document.title.split('｜')[0]+'の遊び方');back.insertAdjacentElement('afterend',a);}
     const g = {id:currentId,title:document.title.split('｜')[0],path:location.href.split(/[?#]/)[0]};
     if (validGame(g)) {
       // Direct search/bookmark visits are included, while a home click is already recorded.
