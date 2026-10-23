@@ -2200,6 +2200,9 @@
   let activeAudience = "all";
   let activeAge = null;
   let searchQuery = "";
+  let catalogLoading = true;
+  let catalogLoadFailed = false;
+  let refreshCatalogStatus = function () {};
   function normalizeSearch(value) {
     return String(value || "").normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }).replace(/[\s・･._〜~ー—–-]+/g, "");
   }
@@ -2369,14 +2372,18 @@
       more.hidden = shown >= match;
       more.textContent = "もっと見る（のこり " + Math.max(0, match - shown) + "本）";
       filterEmpty.hidden = match !== 0;
+      filterEmpty.textContent = catalogLoading ? "投稿作品を読み込んでいます…" : catalogLoadFailed ? "投稿作品の検索結果は未確認です。ページを再読み込みしてください。" : "この条件に合うゲームは、まだありません。条件を少し変えてみてね。";
       const categoryLabel = CAT_TABS.find(function (t) { return t[0] === activeCat; });
       const labels = [searchQuery.trim() ? "「" + searchQuery.trim() + "」" : "", activeCat !== "all" ? categoryLabel[1] : "", audienceLabel(), ageLabel()].filter(Boolean);
       if (finderResult) finderResult.textContent = labels.length ? labels.join("・") + "ゲームが " + match + "本あります。" : "すべてのゲーム " + match + "本から探せます。";
+      if (finderResult && catalogLoading) finderResult.textContent += "（投稿作品を読み込み中…）";
+      if (finderResult && catalogLoadFailed) finderResult.textContent += " 投稿作品を読み込めませんでした。再読み込みしてください。";
       if (browseSummary && browseSummaryText) {
         browseSummary.hidden = !labels.length;
         browseSummaryText.textContent = labels.length ? labels.join("・") + "ゲームを表示中（" + match + "本）" : "";
       }
     };
+    refreshCatalogStatus = applyPager;
     if (searchInput) {
       searchInput.value = searchQuery;
       searchInput.oninput = function () { searchQuery = searchInput.value; shownCount = PAGE_SIZE; applyPager(); };
@@ -2496,9 +2503,9 @@
     const timeout = setTimeout(() => controller.abort(), 5000);
     try {
       const response = await fetch("https://picotto-secure-submissions.edamame2025.chatgpt.site/api/public/games", {mode:"cors", credentials:"omit", signal:controller.signal});
-      if (!response.ok) return;
+      if (!response.ok) throw new Error("catalog unavailable");
       const data = await response.json();
-      if (!data || !Array.isArray(data.games)) return;
+      if (!data || !Array.isArray(data.games)) throw new Error("catalog unavailable");
       const remote = data.games.filter(g => g && /^U[A-Z0-9]+$/.test(g.id) && typeof g.path === "string" && g.path === "https://picotto-secure-submissions.edamame2025.chatgpt.site/play/" + g.id);
       // Public metadata is escaped before insertion into HTML.
       const escapeText = v => String(v || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -2507,8 +2514,8 @@
       const REMOTE_COVERS = ["UFA3EB38", "U29B5A65", "U416C768", "UD97A47E", "U51EB0AD", "U5135AEB", "U0C519F5", "U24FCC73", "UBEE727A", "U423E5BD", "U09D704F", "U2EF28CD", "U845A5DA", "U77B199F", "U4E3BE26", "UAC5C586", "UC202074", "U943DE94", "UCFB9B7C", "U77A0720", "UB732BAB", "U6086AF6", "U2BFD8E1", "U7B2A34C"];
       const safe = remote.map(g => ({...g, title:escapeText(g.title), description:escapeText(g.description), controls:escapeText(g.controls), author:escapeText(g.author), genre:escapeText(g.genre), age:escapeText(g.age), emoji:escapeText(g.emoji), date:/^\d{4}-\d{2}-\d{2}$/.test(g.date) ? g.date : "", color:/^#[a-fA-F0-9]{3,8}$/.test(g.color) ? g.color : "#7c5cff", cover: REMOTE_COVERS.indexOf(g.id) >= 0 ? "assets/covers/" + g.id + ".webp" : ""}));
       if (safe.length) renderGames([...safe, ...localGames]);
-    } catch (_) { /* Local games remain available. */ }
-    finally { clearTimeout(timeout); }
+    } catch (_) { catalogLoadFailed = true; }
+    finally { clearTimeout(timeout); catalogLoading = false; refreshCatalogStatus(); }
   })();
 </script>
 </body>
