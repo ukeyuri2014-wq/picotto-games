@@ -54,8 +54,17 @@
   .pad .lab{position:absolute;left:0;right:0;top:7px;text-align:center;font-size:11px;color:var(--sub);pointer-events:none;letter-spacing:1px}
   .pad.hint{animation:padhint 1s ease-in-out infinite}
   @keyframes padhint{0%,100%{box-shadow:inset 0 0 18px rgba(0,0,0,.6),0 0 6px rgba(255,209,102,.2)}50%{box-shadow:inset 0 0 18px rgba(0,0,0,.6),0 0 22px rgba(255,209,102,.9);border-color:var(--gold)}}
-  .padmid{flex:1;text-align:center;font-size:11px;color:var(--sub);line-height:1.6;padding:0 4px}
-  .padmid b{color:var(--gold);font-weight:400;font-size:13px}
+  .padmid{flex:1;min-width:0;display:flex;justify-content:center;align-items:center;padding:0 4px}
+  .shbtn{position:relative;width:min(76px,100%);aspect-ratio:1;border-radius:50%;padding:0;cursor:pointer;touch-action:none;font-family:inherit;color:var(--ink);
+    border:2px solid rgba(255,209,102,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;
+    background:radial-gradient(circle,#231f3e 0 64%,transparent 66%),conic-gradient(var(--gold) calc(var(--g,1) * 360deg),rgba(255,255,255,.07) 0);
+    box-shadow:inset 0 0 12px rgba(0,0,0,.6),0 0 10px rgba(255,209,102,.15);-webkit-touch-callout:none}
+  .shbtn .shi{font-size:22px;pointer-events:none}
+  .shbtn .shl{font-size:12px;color:var(--gold);letter-spacing:1px;pointer-events:none}
+  .shbtn.on{border-color:#fff;box-shadow:inset 0 0 12px rgba(0,0,0,.4),0 0 18px rgba(255,209,102,.95)}
+  .shbtn.lock{opacity:.45}
+  .shbtn.hint{animation:padhint 1s ease-in-out infinite}
+  #skipBtn{height:36px;border-radius:10px;border:1px solid rgba(255,209,102,.6);background:rgba(255,209,102,.1);color:var(--gold);font-size:13px;cursor:pointer;font-family:inherit;padding:0 10px;white-space:nowrap}
 
   #overlay{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(12,14,32,.97);text-align:center;padding:10px 12px;z-index:3}
   #overlay.show{display:flex}
@@ -65,7 +74,7 @@
   .logorow{display:flex;align-items:center;gap:10px}
   .tankicon{width:54px;height:40px;animation:bob 1.3s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-  .how{font-size:13px;line-height:1.7;color:var(--ink)}
+  .how{font-size:13px;line-height:1.7;color:var(--ink);word-break:keep-all;overflow-wrap:anywhere}
   .how b{color:var(--gold);font-weight:400}
   .how i{font-style:normal;color:var(--pink)}
   #stages{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;width:100%;max-width:560px}
@@ -85,12 +94,13 @@
   .big.win{color:var(--gold);text-shadow:0 0 18px rgba(255,209,102,.75)}
   .big.lose{color:var(--pink);text-shadow:0 0 18px rgba(255,95,162,.75)}
   .big.pz{color:var(--cyan);text-shadow:0 0 18px rgba(83,224,216,.7)}
-  .note{font-size:14px;line-height:1.8}
+  .note{font-size:14px;line-height:1.8;word-break:keep-all;overflow-wrap:anywhere}
   .note b{color:var(--gold);font-weight:400}
   .note .rec{color:var(--cyan)}
 
-  .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.75;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
+  .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere;text-wrap:pretty;background:rgba(13,11,32,.66);border:1px solid rgba(90,75,158,.5);border-radius:12px;padding:10px 12px}
   .help b{color:var(--ink);font-weight:400}
+  .help .nw{white-space:nowrap}
   .help .c1{color:var(--violet)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)} .help .c4{color:var(--cyan)}
   @media (max-width:540px){
     #stages{grid-template-columns:repeat(5,1fr);max-width:320px}
@@ -125,12 +135,13 @@
     <div class="lives" id="hudLives">❤️❤️❤️</div>
     <div class="stg" id="hudStage">ステージ 1</div>
     <div class="score" id="hudScore">0</div>
+    <button id="skipBtn" hidden>とばす ▶</button>
     <button id="pauseBtn" aria-label="ポーズ">⏸</button>
   </div>
   <canvas id="cv" width="448" height="320"></canvas>
   <div id="pads">
     <div class="pad" id="padMove"><div class="lab">うごく</div><div class="knob" id="knobMove"></div></div>
-    <div class="padmid" id="padMid">たまは かべで<br><b>1かい</b><br>はねかえる</div>
+    <div class="padmid" id="padMid"><button class="shbtn" id="shieldBtn" aria-label="まもる（おしている あいだ たてで たまを ふせぐ）"><span class="shi">🛡️</span><span class="shl">まもる</span></button></div>
     <div class="pad fire" id="padAim"><div class="lab">ねらう・うつ</div><div class="knob" id="knobAim"></div></div>
   </div>
   <div id="overlay" class="show">
@@ -142,7 +153,7 @@
       <div class="how" id="howText"></div>
       <div id="stages"></div>
       <div class="stats" id="titleStats"></div>
-      <div class="btns"><button class="main" id="startBtn">スタート</button></div>
+      <div class="btns"><button class="main" id="startBtn">スタート</button><button class="alt" id="tutBtn">れんしゅう</button></div>
     </div>
     <div class="pane" id="endPane" hidden>
       <div class="big" id="endBig">ゲームオーバー</div>
@@ -160,10 +171,12 @@
 <div class="help">
   <b>あそびかた</b>：じぶんの <span class="c4">ちびタンク</span> を うごかして、てきの せんしゃを <b>ぜんぶ たおせば ステージクリア</b>！ たまは かべで <b>1かい だけ はねかえる</b>ので、かべの むこうの てきも ねらえるよ（はねかえして たおすと <span class="c3">とくてん2ばい</span>）。<br>
   <b>てき</b>：<span class="c1">のろのろ（むらさき）</span>…ゆっくり うごく ／ <span class="c2">ねらいうち（ピンク）</span>…かべで はねかえして ねらってくる ／ <span class="c3">かたい（きいろ）</span>…2かい あてないと こわれない。てきは うつまえに たいほうが <b>ひかる</b> から、よく見て よけよう。<br>
+  <b>まもる</b>：<span class="c3">🛡️まもる</span>を おしている あいだ、たてで てきの たまを ふせげる。つかうと ゲージが へり、からに なると すこし まつ。たての あいだは うてない。<br>
+  <b>れんしゅう</b>：はじめての ときは うごく・うつ・まもるの れんしゅうから。タイトルの「れんしゅう」で いつでも できる。<br>
   <b>コツ</b>：てきの たまに じぶんの たまを あてると けせる。木の はこは たまで こわせる。じぶんの たまは 1どに 2はつまで。<br>
-  <b>★</b>：クリアで1つ、ノーダメージで1つ、はやく クリアで1つ。5・10・15ステージを クリアすると ❤️が ふえる。<br>
-  📱 ひだりの まるで うごく、みぎの まるを ひっぱった ほうへ うつ（がめんを タップしても そこへ うつ）。<br>
-  🖱 WASD・やじるしキーで うごく、マウスで ねらって クリック。⌨️ スペースで うつ、Q・Eで たいほうを まわす、Pで ひとやすみ。
+  <b>★</b>：クリアで1つ、ノーダメージで1つ、はやく クリアで1つ。5・10・15ステージを クリアすると <span class="nw">❤️が</span> ふえる。<br>
+  📱 ひだりの まるで うごく、みぎの まるを ひっぱった ほうへ うつ（がめんを タップしても そこへ うつ）、まんなかの 🛡️で まもる。<br>
+  🖱 WASD・やじるしキーで うごく、マウスで ねらって クリック。⌨️ スペースで うつ、Fで まもる、Q・Eで たいほうを まわす、Pで ひとやすみ。
 </div>
 
 <script>
@@ -177,6 +190,8 @@
   const RS = Math.min(2, window.devicePixelRatio || 1);
   const TR = 11, HB = 10, BR = 3.5, MUZZLE = 15;
   const P_SPEED = 92, P_BSPEED = 235, P_MAXB = 2, P_CD = 0.24;
+  /* まもる（たて）：おしている あいだ SH_TIME びょうで ゲージが からに、SH_FILL びょうで まんたんに もどる。からに したら SH_RE まで もどるのを まつ */
+  const SH_TIME = 2.0, SH_FILL = 3.0, SH_RE = 0.35, SH_R = 19, SH_SLOW = 0.5;
   const NSTAGE = 20;
   const ETYPES = {
     slow:   { name: 'のろのろ',   col: '#a06bff', light: '#d7c2ff', dark: '#3e2a78', hp: 1, speed: 34, bspeed: 120, cd: 3.0, err: 0.15, turn: 2.4, charge: 0.85, maxb: 1, pts: 100, bounce: false },
@@ -236,13 +251,15 @@
     over() { [392, 330, 262, 196].forEach((f, i) => tone('triangle', f, f * 0.98, 0.22, 0.07, i * 0.18)); },
     win() { [523, 659, 784, 1046, 784, 1046, 1318, 1568].forEach((f, i) => tone('square', f, f, 0.16, 0.06, i * 0.11)); },
     deny() { tone('square', 210, 150, 0.09, 0.05); },
+    shield() { tone('triangle', 520, 980, 0.12, 0.05); },
+    block() { tone('triangle', 1800, 1250, 0.08, 0.07); noise(0.05, 0.05, 0, 5000, 2000); },
     click() { tone('square', 1000, 1000, 0.03, 0.03); },
   };
   const muteBtn = $('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 
   // ---- save ----------------------------------------------------------------
-  function freshSave() { return { best: 0, unlocked: 1, stars: new Array(NSTAGE).fill(0), played: false, sel: 1 }; }
+  function freshSave() { return { best: 0, unlocked: 1, stars: new Array(NSTAGE).fill(0), played: false, sel: 1, tut: false }; }
   let save = freshSave();
   function loadSave() {
     save = freshSave();
@@ -253,6 +270,7 @@
         if (typeof s.unlocked === 'number') save.unlocked = Math.max(1, Math.min(NSTAGE, s.unlocked));
         if (Array.isArray(s.stars)) for (let i = 0; i < NSTAGE; i++) save.stars[i] = Math.max(0, Math.min(3, +s.stars[i] || 0));
         save.played = !!s.played;
+        save.tut = !!s.tut;
         if (typeof s.sel === 'number') save.sel = Math.max(1, Math.min(save.unlocked, s.sel));
       }
     } catch (e) {}
@@ -343,15 +361,18 @@
   let god = false, autoRun = true, testInput = null, bot = null;
   let mapCanvas = null, mapDirty = true, preview = null;
   let selStage = 1;
+  let tut = null, blocks = 0;   /* tut：れんしゅうの ようす ／ blocks：たてで ふせいだ かず */
 
   function stageParams(n) {
+    /* 1めんは れんしゅうめん：てきの たまは おそく・すくなく・ねらいも あまい（2めん いこうは そのまま） */
+    if (n === 1) return { bmul: 0.75, cdmul: 1.6, errmul: 1.8, smul: 0.8, chmul: 1.4 };
     const k = n - 1;
     return { bmul: 1 + 0.022 * k, cdmul: Math.max(0.6, 1 - 0.022 * k), errmul: Math.max(0.45, 1 - 0.03 * k), smul: 1 + 0.018 * k, chmul: Math.max(0.7, 1 - 0.016 * k) };
   }
   let SP = stageParams(1);
   const parTime = n => 22 + 7 * STAGES[n - 1].reduce((a, b) => a + b, 0);
 
-  function makePlayer() { return { x: center(PSPAWN.c), y: center(PSPAWN.r), body: -Math.PI / 2, turret: -Math.PI / 2, alive: true, inv: 0, cd: 0, tread: 0, trk: 0, flash: 0 }; }
+  function makePlayer() { return { x: center(PSPAWN.c), y: center(PSPAWN.r), body: -Math.PI / 2, turret: -Math.PI / 2, alive: true, inv: 0, cd: 0, tread: 0, trk: 0, flash: 0, sh: 1, shOn: false, shLock: false }; }
   function makeEnemy(type, c, r) {
     const E = ETYPES[type];
     return { id: nextId++, type, x: center(c), y: center(r), body: Math.PI / 2, turret: Math.PI / 2, hp: E.hp, alive: true, path: [], think: 0.4 + rnd() * 1.2, wait: 0, cd: 1.2 + rnd() * 1.6, scan: rnd() * 0.3, charge: 0, aim: 0, tread: 0, trk: 0, flash: 0, stuck: 0 };
@@ -361,7 +382,8 @@
     const g = genStage(runSeed, n);
     map = g.map; mapDirty = true;
     enemies = g.enemies.map(e => makeEnemy(e.type, e.c, e.r));
-    bullets = []; tracks = []; rings = []; pops = [];
+    if (n === 1) for (const e of enemies) e.cd += 1.5;   /* 1めんは さいしょの 1ぱつまで すこし まつ */
+    bullets = []; tracks = []; rings = []; pops = []; blocks = 0;
     player = makePlayer();
     stageTime = 0; stageHit = false; clearInfo = null;
     phase = 'intro'; phaseT = 0;
@@ -372,7 +394,7 @@
     startStage = n; lives = 3; score = 0; parts = [];
     runSeed = seed != null ? seed : (Math.floor(Math.random() * 1e9) + 1);
     rnd = mulberry(runSeed ^ 0x5bd1e995);
-    paused = false; endInfo = null;
+    paused = false; endInfo = null; tut = null;
     hideOverlay();
     if (!save.played) hintT = 7;
     loadStage(n);
@@ -382,6 +404,7 @@
   const keys = new Set();
   const mv = { id: null, x: 0, y: 0 };
   const am = { id: null, x: 0, y: 0, t0: 0, maxMag: 0 };
+  const shp = { id: null };
   let mouse = { active: false, x: 0, y: 0, down: false }, fireQueued = false, kbAim = false;
   function moveInput() {
     if (testInput) return { x: testInput.mx || 0, y: testInput.my || 0 };
@@ -403,6 +426,10 @@
   function fireHeld() {
     if (testInput) return !!testInput.fire;
     return keys.has('Space') || mouse.down || (am.id !== null && Math.hypot(am.x, am.y) > 0.45);
+  }
+  function shieldHeld() {
+    if (testInput) return !!testInput.shield;
+    return keys.has('KeyF') || shp.id !== null;
   }
 
   // ---- bullets -------------------------------------------------------------
@@ -461,8 +488,9 @@
     return b;
   }
   function playerFire() {
-    const p = player; if (!p || !p.alive || phase !== 'play') return false;
-    if (p.cd > 0) return false;
+    const p = player; if (!p || !p.alive || (phase !== 'play' && phase !== 'tut')) return false;
+    if (p.cd > 0 || p.shOn) return false;
+    if (phase === 'tut' && tut && tut.step === 3) return false;
     if (bullets.filter(b => b.owner === 'p').length >= P_MAXB) return false;
     p.cd = P_CD;
     const b = spawnBullet('p', p.x, p.y, p.turret, P_BSPEED);
@@ -478,15 +506,22 @@
   function updateBullets(dt) {
     for (const b of bullets) {
       if (b.dead) continue;
-      if (phase !== 'play' && phase !== 'dead') break;
+      if (phase !== 'play' && phase !== 'dead' && phase !== 'tut') break;
       b.age += dt;
       // 4pxずつ すすめる（ねらい線の よそうと ぴったり おなじ 道すじに なる）
       b.acc = (b.acc || 0) + b.sp * dt; const go = Math.floor(b.acc / 4) * 4; b.acc -= go;
       const res = stepBullet(b, go, bb => {
-        if (phase !== 'play' && phase !== 'dead') return null;
+        if (phase !== 'play' && phase !== 'dead' && phase !== 'tut') return null;
         if (bb.owner === 'p') {
           for (const e of enemies) if (e.alive && (bb.x - e.x) ** 2 + (bb.y - e.y) ** 2 < (TR + BR) ** 2) { hitEnemy(e, bb); return 'hit'; }
-        } else if (player && player.alive && player.inv <= 0 && !god && (bb.x - player.x) ** 2 + (bb.y - player.y) ** 2 < (TR - 1 + BR) ** 2) { hitPlayer(); return 'hit'; }
+        } else if (player && player.alive) {
+          const d2 = (bb.x - player.x) ** 2 + (bb.y - player.y) ** 2;
+          if (player.shOn && d2 < (SH_R + BR) ** 2) { blockBullet(bb); return 'block'; }
+          if (d2 < (TR - 1 + BR) ** 2) {
+            if (phase === 'tut') { tutOuch(bb); return 'hit'; }
+            if (player.inv <= 0 && !god) { hitPlayer(); return 'hit'; }
+          }
+        }
         return null;
       }, null);
       if (res) { b.dead = true; if (res === 'wall') { SFX.puff(); sparks(b.x, b.y, '#cfcfe6', 6, 60); smoke(b.x, b.y, 1); } }
@@ -505,7 +540,14 @@
     }
     bullets = bullets.filter(b => !b.dead);
   }
+  function blockBullet(b) {
+    blocks++; SFX.block();
+    sparks(b.x, b.y, '#ffd166', 10, 110); rings.push({ x: b.x, y: b.y, t: 0, max: 0.3, r: 14, col: '#ffd166' });
+    pops.push({ x: player.x, y: player.y - 24, text: 'ガード！', col: '#ffd166', t: 0 });
+    if (phase === 'tut' && tut && tut.step === 3) tut.blocked++;
+  }
   function hitEnemy(e, b) {
+    if (e.tutor) { e.flash = 0.18; SFX.armor(); pops.push({ x: e.x, y: e.y - 16, text: 'カン！', col: '#fff0c4', t: 0 }); return; }
     e.hp--; e.flash = 0.18;
     if (e.hp > 0) { SFX.armor(); sparks(b.x, b.y, '#fff0c4', 10, 120); pops.push({ x: e.x, y: e.y - 16, text: 'カン！', col: '#fff0c4', t: 0 }); return; }
     e.alive = false;
@@ -516,7 +558,7 @@
     // その てきの たまは けす
     for (const bb of bullets) if (bb.owner === e) { bb.dead = true; sparks(bb.x, bb.y, E.col, 4, 40); }
     updateHud();
-    if (enemies.every(x => !x.alive)) stageClear();
+    if (enemies.every(x => !x.alive)) { if (phase === 'tut') tutNext(); else stageClear(); }
   }
   function hitPlayer() {
     const p = player; p.alive = false; stageHit = true; lives--;
@@ -565,9 +607,16 @@
     const p = player; if (!p || !p.alive) return;
     if (p.inv > 0) p.inv -= dt;
     p.cd -= dt; if (p.recoil) p.recoil = Math.max(0, p.recoil - dt * 6);
+    /* まもる：おしている あいだ たてが でる。ゲージが からに なると SH_RE まで もどるのを まつ */
+    const wasSh = p.shOn;
+    if (p.shLock && p.sh >= SH_RE) p.shLock = false;
+    p.shOn = shieldHeld() && !p.shLock && p.sh > 0;
+    if (p.shOn) { p.sh -= dt / SH_TIME; if (p.sh <= 0) { p.sh = 0; p.shOn = false; p.shLock = true; SFX.deny(); } }
+    else p.sh = Math.min(1, p.sh + dt / SH_FILL);
+    if (p.shOn && !wasSh) SFX.shield();
     const m = moveInput(); const mag = Math.min(1, Math.hypot(m.x, m.y));
     if (mag > 0.18) {
-      const sp = P_SPEED * Math.min(1, 0.35 + mag * 0.8), ux = m.x / Math.hypot(m.x, m.y), uy = m.y / Math.hypot(m.x, m.y);
+      const sp = P_SPEED * Math.min(1, 0.35 + mag * 0.8) * (p.shOn ? SH_SLOW : 1), ux = m.x / Math.hypot(m.x, m.y), uy = m.y / Math.hypot(m.x, m.y);
       const ox = p.x, oy = p.y;
       const bl = moveTank(p, ux * sp * dt, uy * sp * dt);
       // かどに ひっかからないよう、すきまの まん中へ すこし よせる
@@ -582,7 +631,8 @@
       if (keys.has('KeyE')) { p.turret += 3.2 * dt; kbAim = true; }
     }
     const a = aimInput(); if (a != null) p.turret = a;
-    if (fireQueued) { fireQueued = false; playerFire(); }
+    if (p.shOn) fireQueued = false;
+    else if (fireQueued) { fireQueued = false; playerFire(); }
     else if (fireHeld()) playerFire();
   }
   function planPath(e) {
@@ -718,6 +768,58 @@
     if (!autoRun) showEnd();
     updateHud();
   }
+  /* ---- れんしゅう（うごく → うつ → まもる。やられない）---- */
+  const TUT_GOAL = { c: 3, r: 6 };
+  function startTutorial() {
+    lives = 3; score = 0; parts = []; paused = false; endInfo = null; hintT = 0;
+    rnd = mulberry(4242);
+    hideOverlay();
+    stage = 1; SP = stageParams(1);
+    map = blankMap(); mapDirty = true;
+    enemies = []; bullets = []; tracks = []; rings = []; pops = []; blocks = 0;
+    player = makePlayer();
+    stageTime = 0; stageHit = false; clearInfo = null;
+    tut = { step: 1, t: 0, fire: 0, blocked: 0, ouch: 0 };
+    phase = 'tut'; phaseT = 0;
+    SFX.intro(); updateHud();
+  }
+  function tutNext() {
+    if (!tut) return;
+    tut.step++; tut.t = 0; SFX.clear();
+    if (tut.step === 2) { const e = makeEnemy('slow', 11, 4); e.wait = 1e9; e.cd = 1e9; enemies = [e]; }
+    else if (tut.step === 3) { bullets = []; const e = makeEnemy('slow', 7, 3); e.tutor = true; e.wait = 1e9; e.cd = 1e9; enemies = [e]; tut.fire = 2.2; }
+    else if (tut.step === 4) { for (const e of enemies) if (e.alive) { e.alive = false; explode(e.x, e.y, ETYPES[e.type].col, 1); } bullets = []; }
+    updateHud();
+  }
+  function tutOuch(b) {
+    tut.ouch = 1.6; SFX.deny(); sparks(b.x, b.y, '#ff5fa2', 8, 90);
+  }
+  function tutUpdate(dt) {
+    tut.t += dt; if (tut.ouch > 0) tut.ouch -= dt;
+    const p = player;
+    if (tut.step === 1) {
+      if (Math.hypot(p.x - center(TUT_GOAL.c), p.y - center(TUT_GOAL.r)) < 16) tutNext();
+    } else if (tut.step === 3) {
+      const e = enemies.find(x => x.alive && x.tutor);
+      if (e) {
+        const a = Math.atan2(p.y - e.y, p.x - e.x);
+        e.turret = turnToward(e.turret, a, 4 * dt);
+        if (!bullets.some(b => b.owner === e)) tut.fire -= dt;
+        e.charge = tut.fire > 0 && tut.fire < 0.45 ? tut.fire : 0;
+        if (tut.fire <= 0) { e.turret = a; e.charge = 0; tut.fire = 1.6; if (spawnBullet(e, e.x, e.y, a, 95)) { SFX.eshoot(); e.recoil = 1; } }
+      }
+      if (tut.blocked >= 2) tutNext();
+    } else if (tut.step === 4) {
+      if (tut.t >= 2.2) finishTutorial();
+    }
+  }
+  function finishTutorial() {
+    save.tut = true; writeSave();
+    tut = null; startRun(selStage);
+  }
+  function skipTutorial() { if (phase !== 'tut') return; SFX.click(); finishTutorial(); }
+  function startFromTitle() { if (!save.tut && !save.played) startTutorial(); else startRun(selStage); }
+
   function update(dt) {
     T += dt;
     if (shake > 0) shake = Math.max(0, shake - dt * 2.5);
@@ -725,6 +827,10 @@
     if (paused) return;
     if (hintT > 0 && phase === 'play') hintT -= dt;
     if (phase === 'intro') { phaseT += dt; if (phaseT >= 1.5) { phase = 'play'; phaseT = 0; } return; }
+    if (phase === 'tut' && tut) {
+      updatePlayer(dt); separateTanks(); updateBullets(dt); tutUpdate(dt);
+      return;
+    }
     if (phase === 'play') {
       stageTime += dt;
       if (bot) botThink(dt);
@@ -861,8 +967,38 @@
     if (t.flash > 0) { c.globalAlpha = Math.min(1, t.flash * 6); c.fillStyle = '#ffffff'; c.beginPath(); c.arc(0, 0, 9, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1; }
     c.restore();
   }
+  function drawShield(p) {
+    if (p.shOn) {
+      const k = 0.85 + 0.15 * Math.sin(T * 18);
+      ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 14 * RS;
+      ctx.fillStyle = 'rgba(255,209,102,' + (0.16 * k).toFixed(3) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, SH_R, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,240,196,' + (0.9 * k).toFixed(3) + ')'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.restore();
+    }
+    /* ゲージ（まんたんで つかっていない ときは かくす） */
+    if (p.sh < 1 || p.shOn) {
+      const w = 26, x = p.x - w / 2, y = p.y + 20;
+      ctx.fillStyle = 'rgba(8,8,24,.8)'; ctx.fillRect(x - 1, y - 1, w + 2, 5);
+      ctx.fillStyle = p.shLock ? '#ff5fa2' : '#ffd166'; ctx.fillRect(x, y, w * clamp(p.sh, 0, 1), 3);
+    }
+  }
+  function drawTutWorld() {
+    if (tut.step === 1) {
+      const gx = center(TUT_GOAL.c), gy = center(TUT_GOAL.r), k = 0.5 + 0.5 * Math.sin(T * 5);
+      ctx.save(); ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.5; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 12 * RS;
+      ctx.globalAlpha = 0.6 + 0.4 * k; ctx.beginPath(); ctx.arc(gx, gy, 13 + k * 3, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      txt('★', gx, gy, 18, '#ffd166');
+      /* おてほん：うすい タンクが ★まで うごいて みせる */
+      const sx = center(PSPAWN.c), sy = center(PSPAWN.r), q = clamp(((tut.t % 2.6) - 0.3) / 1.7, 0, 1), e = q * q * (3 - 2 * q);
+      const ang = Math.atan2(gy - sy, gx - sx), ghost = { x: sx + (gx - sx) * e, y: sy + (gy - sy) * e, body: ang, turret: ang, tread: e * 200, flash: 0 };
+      ctx.save(); ctx.globalAlpha = 0.3; drawTank(ghost, '#53e0d8', '#d6fffb', '#1d6a6e'); ctx.restore();
+    } else if (tut.step === 2) {
+      const e = enemies.find(x => x.alive);
+      if (e) { const k = 0.5 + 0.5 * Math.sin(T * 6); ctx.save(); ctx.strokeStyle = '#ff5fa2'; ctx.globalAlpha = 0.5 + 0.5 * k; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.arc(e.x, e.y, 20 + k * 3, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+    }
+  }
   function drawPreview() {
-    const p = player; if (!p || !p.alive || phase !== 'play') { preview = null; return; }
+    const p = player; if (!p || !p.alive || (phase !== 'play' && phase !== 'tut') || p.shOn || (phase === 'tut' && tut && tut.step === 3)) { preview = null; return; }
     const tr = [];
     simShot(p.x, p.y, p.turret, null, 420, tr);
     preview = tr;
@@ -900,6 +1036,7 @@
       ctx.restore();
     }
     ctx.globalAlpha = 1;
+    if (phase === 'tut' && tut) drawTutWorld();
     if (phase !== 'title') {
       drawPreview();
       // たま
@@ -921,6 +1058,7 @@
           ctx.save(); ctx.shadowColor = '#53e0d8'; ctx.shadowBlur = 14 * RS; ctx.fillStyle = 'rgba(83,224,216,.12)'; ctx.beginPath(); ctx.arc(player.x, player.y, 16, 0, Math.PI * 2); ctx.fill(); ctx.restore();
           drawTank(player, '#53e0d8', '#d6fffb', '#1d6a6e');
         }
+        drawShield(player);
       }
     }
     // こうか
@@ -945,6 +1083,32 @@
       txt(on && k > 0 ? '★' : '☆', x + (i - 1) * size * 1.25, y, Math.round(s), on && k > 0 ? '#ffd166' : '#55537a', 'center', on);
     }
   }
+  function drawTutBanner() {
+    const s = tut.step;
+    if (s >= 4) {
+      const k = clamp(tut.t / 0.25, 0, 1);
+      ctx.globalAlpha = 0.78 * k; ctx.fillStyle = '#0b0c20'; ctx.fillRect(0, H / 2 - 50, W, 100); ctx.globalAlpha = 1;
+      txt('じゅんび OK！', W / 2, H / 2 - 16, 28, '#53e0d8');
+      txt('ステージ ' + selStage + ' へ いこう', W / 2, H / 2 + 22, 16, '#ffd166', 'center', false);
+      return;
+    }
+    const HEAD = ['', 'うごく', 'うつ', 'まもる'];
+    const SUB = isTouch
+      ? ['', 'ひだりの まるで ★まで うごこう', 'みぎの まるを ひっぱるか てきを タップ', 'まんなかの 🛡️を おして たまを ふせごう']
+      : ['', 'WASD・やじるしで ★まで うごこう', 'てきに マウスを あわせて クリック', 'Fキーを おして たまを ふせごう'];
+    ctx.fillStyle = 'rgba(11,12,32,.8)'; ctx.fillRect(TS, TS - 6, W - TS * 2, 52);
+    txt('れんしゅう ' + s + '/3　' + HEAD[s] + (s === 3 ? '（' + tut.blocked + '/2）' : ''), W / 2, TS + 7, 17, '#ffd166');
+    txt(SUB[s], W / 2, TS + 30, 15, '#eeecfa', 'center', false);
+    if (s === 3 && player && !player.shOn && (bullets.some(b => b.owner !== 'p') || tut.fire < 0.45)) {
+      ctx.globalAlpha = 0.6 + 0.4 * Math.sin(T * 14);
+      txt(isTouch ? 'いま 🛡️まもる！' : 'いま F で まもる！', player.x, player.y - 34, 16, '#ffd166');
+      ctx.globalAlpha = 1;
+    } else if (tut.ouch > 0) {
+      ctx.globalAlpha = Math.min(1, tut.ouch);
+      txt('いたっ！ まもるを おしたままに しよう', W / 2, H - TS - 14, 14, '#ff5fa2');
+      ctx.globalAlpha = 1;
+    }
+  }
   function drawBanner() {
     if (phase === 'intro') {
       const k = clamp(phaseT / 0.25, 0, 1), out = clamp((phaseT - 1.25) / 0.25, 0, 1);
@@ -965,10 +1129,12 @@
       txt(clearInfo.noHit ? 'ノーダメージ ★' : 'ノーダメージ ☆', W / 2, H / 2 + 18, 13, clearInfo.noHit ? ok : ng, 'center', false);
       txt((clearInfo.fast ? '★ ' : '☆ ') + Math.round(clearInfo.time) + '/' + clearInfo.par + 'びょう', W / 2 + 140, H / 2 + 18, 13, clearInfo.fast ? ok : ng, 'center', false);
       txt('ボーナス +' + clearInfo.bonus + (clearInfo.lifeUp ? '   ❤️+1' : ''), W / 2, H / 2 + 50, 16, '#ffd166');
+    } else if (phase === 'tut' && tut) {
+      drawTutBanner();
     } else if (phase === 'play' && hintT > 0) {
       ctx.globalAlpha = Math.min(1, hintT) * (0.75 + 0.25 * Math.sin(T * 5));
       ctx.fillStyle = 'rgba(11,12,32,.75)'; ctx.fillRect(TS, H - TS - 34, W - TS * 2, 30);
-      txt(isTouch ? '↙ ひだりで うごく　　みぎを ひっぱって うつ ↘' : 'WASD・やじるしで うごく ／ マウスで ねらって クリック', W / 2, H - TS - 19, 14, '#ffd166', 'center', false);
+      txt(isTouch ? '↙ うごく　　まんなか：まもる　　うつ ↘' : 'WASDで うごく ／ クリックで うつ ／ Fで まもる', W / 2, H - TS - 19, 14, '#ffd166', 'center', false);
       ctx.globalAlpha = 1;
     } else if (phase === 'dead' && lives > 0) {
       txt('のこり ❤️×' + lives, W / 2, H / 2, 20, '#ff5fa2');
@@ -979,13 +1145,22 @@
   // ---- HUD / overlay ---------------------------------------------------------
   let hudCache = '';
   function updateHud() {
-    const key = lives + '|' + stage + '|' + score + '|' + phase;
+    const ts = phase === 'tut' && tut ? tut.step : 0;
+    const key = lives + '|' + stage + '|' + score + '|' + phase + '|' + ts;
     if (key === hudCache) return; hudCache = key;
     $('hudLives').textContent = lives > 0 ? '❤️'.repeat(Math.min(5, lives)) : '💔';
-    $('hudStage').innerHTML = 'ステージ ' + stage + ' <small>/ ' + NSTAGE + '</small>';
+    $('hudStage').innerHTML = ts ? 'れんしゅう <small>' + Math.min(3, ts) + ' / 3</small>' : 'ステージ ' + stage + ' <small>/ ' + NSTAGE + '</small>';
     $('hudScore').textContent = String(score);
+    $('hudScore').hidden = !!ts; $('skipBtn').hidden = !ts;
     const showHint = hintT > 0 && phase !== 'title';
-    $('padMove').classList.toggle('hint', showHint); $('padAim').classList.toggle('hint', showHint);
+    $('padMove').classList.toggle('hint', showHint || ts === 1); $('padAim').classList.toggle('hint', showHint || ts === 2);
+    $('shieldBtn').classList.toggle('hint', showHint || ts === 3);
+  }
+  let shCache = '';
+  function updateShieldUI() {
+    const p = player, g = p ? clamp(p.sh, 0, 1) : 1, on = !!(p && p.alive && p.shOn), lock = !!(p && p.shLock);
+    const k = g.toFixed(2) + '|' + on + '|' + lock; if (k === shCache) return; shCache = k;
+    const b = $('shieldBtn'); b.style.setProperty('--g', g.toFixed(2)); b.classList.toggle('on', on); b.classList.toggle('lock', lock);
   }
   function showPane(id) { for (const p of ['titlePane', 'endPane', 'pausePane']) $(p).hidden = p !== id; overlay.classList.add('show'); }
   function hideOverlay() { overlay.classList.remove('show'); }
@@ -1009,11 +1184,11 @@
     selStage = n; save.sel = n; writeSave(); SFX.click(); renderStages(); return true;
   }
   function toTitle() {
-    phase = 'title'; paused = false; bullets = []; testInput = bot ? testInput : null;
+    phase = 'title'; paused = false; bullets = []; testInput = bot ? testInput : null; tut = null;
     selStage = Math.min(save.sel || 1, save.unlocked);
     $('howText').innerHTML = isTouch
-      ? '<b>ひだりの まる</b>で うごく<br><b>みぎの まる</b>を ひっぱった ほうへ うつ<br>たまは かべで <i>1かい はねかえる</i>！<br>てきの せんしゃを ぜんぶ たおせば クリア'
-      : '<b>WASD・やじるし</b>で うごく・<b>マウス</b>で ねらって クリック<br>たまは かべで <i>1かい はねかえる</i>！<br>てきの せんしゃを ぜんぶ たおせば クリア';
+      ? '<b>ひだり</b>で うごく・<b>みぎ</b>を ひっぱって うつ<br><b>まんなかの 🛡️</b>を おすと たまを ふせぐ<br>たまは かべで <i>1かい はねかえる</i>！<br>てきの せんしゃを ぜんぶ たおせば クリア'
+      : '<b>WASD・やじるし</b>で うごく・<b>マウス</b>で ねらって クリック<br><b>F</b>を おしている あいだ たてで たまを ふせぐ<br>たまは かべで <i>1かい はねかえる</i>！<br>てきの せんしゃを ぜんぶ たおせば クリア';
     renderStages(); showPane('titlePane'); updateHud();
   }
   function showEnd() {
@@ -1028,9 +1203,9 @@
     showPane('endPane');
   }
   function setPause(on) {
-    if (on && !['intro', 'play', 'dead', 'clear'].includes(phase)) return;
+    if (on && !['intro', 'play', 'dead', 'clear', 'tut'].includes(phase)) return;
     paused = on;
-    if (on) { $('pauseNote').innerHTML = 'ステージ ' + stage + '　スコア ' + score; showPane('pausePane'); mv.id = am.id = null; keys.clear(); mouse.down = false; resetKnobs(); }
+    if (on) { $('pauseNote').innerHTML = phase === 'tut' ? 'れんしゅう ちゅう' : 'ステージ ' + stage + '　スコア ' + score; showPane('pausePane'); mv.id = am.id = shp.id = null; keys.clear(); mouse.down = false; resetKnobs(); }
     else hideOverlay();
   }
 
@@ -1063,7 +1238,7 @@
   function canvasPt(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * VW / r.width + VB, y: (e.clientY - r.top) * VH / r.height + VB }; }
   function onCanvasDown(e) {
     audio();
-    if (phase !== 'play' || paused) return;
+    if ((phase !== 'play' && phase !== 'tut') || paused) return;
     const pt = canvasPt(e);
     if (e.pointerType === 'mouse') {
       if (e.button !== 0) return;
@@ -1084,7 +1259,7 @@
         if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault(); audio();
-          if (!$('titlePane').hidden) startRun(selStage);
+          if (!$('titlePane').hidden) startFromTitle();
           else if (!$('endPane').hidden) again();
           else if (!$('pausePane').hidden) setPause(false);
         } else if (!$('titlePane').hidden && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
@@ -1109,7 +1284,7 @@
   function loop(now) {
     const dt = Math.min((now - last) / 1000, 0.05); last = now;
     if (autoRun) update(dt);
-    updateHud();
+    updateHud(); updateShieldUI();
     draw();
     requestAnimationFrame(loop);
   }
@@ -1127,6 +1302,8 @@
       alive: enemies.filter(e => e.alive).length,
       bullets: bullets.map(b => ({ x: +b.x.toFixed(1), y: +b.y.toFixed(1), dx: +b.dx.toFixed(3), dy: +b.dy.toFixed(3), bounces: b.bounces, owner: b.owner === 'p' ? 'p' : b.owner.id })),
       map: encodeMap(), stageTime: +stageTime.toFixed(2), clear: clearInfo, end: endInfo,
+      tut: tut ? { step: tut.step, blocked: tut.blocked } : null, savedTut: save.tut, blocks,
+      shield: player ? { sh: +player.sh.toFixed(3), on: player.shOn, lock: player.shLock } : null,
       touchUI: document.body.classList.contains('touch'), move: { x: +mv.x.toFixed(2), y: +mv.y.toFixed(2), on: mv.id !== null }, aimStick: { x: +am.x.toFixed(2), y: +am.y.toFixed(2), on: am.id !== null },
     };
   }
@@ -1140,7 +1317,9 @@
   { const g = genStage(12345, 3); map = g.map; enemies = g.enemies.map(e => makeEnemy(e.type, e.c, e.r)); player = makePlayer(); }
   drawMute(); toTitle();
   muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(KEY + 'mute', muted ? '1' : '0'); } catch (e) {} drawMute(); if (!muted) { audio(); SFX.click(); } muteBtn.blur(); });
-  $('startBtn').addEventListener('click', () => { audio(); startRun(selStage); $('startBtn').blur(); });
+  $('startBtn').addEventListener('click', () => { audio(); startFromTitle(); $('startBtn').blur(); });
+  $('tutBtn').addEventListener('click', () => { audio(); startTutorial(); $('tutBtn').blur(); });
+  $('skipBtn').addEventListener('click', () => { audio(); skipTutorial(); $('skipBtn').blur(); });
   $('againBtn').addEventListener('click', () => { audio(); again(); $('againBtn').blur(); });
   $('titleBtn').addEventListener('click', () => { audio(); SFX.click(); toTitle(); });
   $('resumeBtn').addEventListener('click', () => { audio(); setPause(false); $('resumeBtn').blur(); });
@@ -1148,6 +1327,13 @@
   $('pauseBtn').addEventListener('click', () => { audio(); if (paused) setPause(false); else setPause(true); $('pauseBtn').blur(); });
   bindPad($('padMove'), mv, $('knobMove'), false);
   bindPad($('padAim'), am, $('knobAim'), true);
+  {
+    const sb = $('shieldBtn');
+    sb.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (shp.id !== null) return; shp.id = e.pointerId; try { sb.setPointerCapture(e.pointerId); } catch (_) {} });
+    const shEnd = e => { if (e.pointerId === shp.id) shp.id = null; };
+    sb.addEventListener('pointerup', shEnd); sb.addEventListener('pointercancel', shEnd); sb.addEventListener('lostpointercapture', shEnd);
+    sb.addEventListener('contextmenu', e => e.preventDefault());
+  }
   for (const el of [$('pads'), cv]) el.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });
   cv.addEventListener('pointerdown', onCanvasDown);
   cv.addEventListener('pointermove', onCanvasMove);
@@ -1184,6 +1370,8 @@
     kill: id => { const e = enemies.find(x => x.id === id && x.alive); if (e) { e.hp = 1; hitEnemy(e, { x: e.x, y: e.y, bounced: false }); } return stateObj(); },
     hitPlayer: () => { if (player && player.alive) hitPlayer(); return stateObj(); },
     toTitle: () => { toTitle(); return stateObj(); },
+    tutorial: () => { startTutorial(); return stateObj(); },
+    tutGoal: () => ({ x: center(TUT_GOAL.c), y: center(TUT_GOAL.r) }),
     stageParams,
     genInfo: (seed, n) => {
       const g = genStage(seed, n), m = g.map;
