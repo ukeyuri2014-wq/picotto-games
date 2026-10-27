@@ -72,6 +72,10 @@
   .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(60,90,150,.5);border-radius:12px;padding:10px 12px}
   .help b{color:var(--ink);font-weight:400}
   .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)}
+  /* スマホで 2行目に 1〜2文字だけ のこらないように */
+  .help,#overlay .note{text-wrap:pretty}
+  #overlay .stats{text-wrap:balance}
+  .nw{display:inline-block}
 </style>
 <!-- LUDOT-SEO-START -->
 <meta name="description" content="よぞらのピンボール台で、左右のフリッパーで たまを うちかえそう。たまは3こ。上の3レーンで ばいりつアップ（さいだい×5）、左の3つのまとを光らせて ⭐あなに入れると ジャックポット。とるたびに レベルが上がり たまが はやくなる。スキルショット・ボールセーブ・ハイスコア記録つき。 無料・ダウンロード不要。ルドットで遊べます。">
@@ -116,11 +120,11 @@
 </div>
 
 <div class="help">
-  <b>あそびかた</b>：左右の <i class="c1">フリッパー</i> で たまを うちかえして、とくてんを かせごう。たまは <b>3こ</b>。まん中から おちたら 1こ へるよ。<br>
-  🚀 <b>はっしゃ</b>：🚀ボタン（または ばんめん）を ながおしして、はなすと とびだす。長くおすほど つよい。ひかっている レーンに 入れば <i class="c3">スキルショット</i>！<br>
-  ⭐ <b>上の3つのレーン</b> を ぜんぶ光らせると <i class="c3">ばいりつ アップ</i>（さいだい×5）。フリッパーを うごかすと 光るレーンが となりへ ずれるよ。<br>
-  🎯 <b>左の3つのまと</b> を ぜんぶ光らせると <i class="c2">ジャックポット チャンス</i>。右の ⭐あな に入れると ジャックポット！ とるたびに レベルが上がって たまが はやくなる。2かいめの ジャックポットで ボールが1こ ふえる。<br>
-  📱 ばんめんの 左半分／右半分を タッチ、または下のボタン。🖱 ばんめんの左右クリック。⌨️ ←・Z で左、→・X で右、スペース／↓ ながおしで はっしゃ。
+  <b>あそびかた</b>：左右の <i class="c1">フリッパー</i> で たまを うちかえして、とくてんを かせごう。たまは <b>3こ</b>。まん中から おちたら <span class="nw">1こ へるよ。</span><br>
+  🚀 <b>はっしゃ</b>：🚀ボタン（または ばんめん）を ながおしして、はなすと とびだす。長くおすほど つよい。ひかっている レーンに 入れば <span class="nw"><i class="c3">スキルショット</i>！</span><br>
+  ⭐ <b>上の3つのレーン</b> を ぜんぶ光らせると <i class="c3">ばいりつ アップ</i>（さいだい×5）。フリッパーを うごかすと 光るレーンが <span class="nw">となりへ ずれるよ。</span><br>
+  🎯 <b>左の3つのまと</b> を ぜんぶ光らせると <i class="c2">ジャックポット チャンス</i>。右の ⭐あな に入れると ジャックポット！ とるたびに レベルが上がって たまが はやくなる。2かいめの ジャックポットで <span class="nw">ボールが1こ ふえる。</span><br>
+  📱 ばんめんの 左半分／右半分を タッチ、または下のボタン。🖱 ばんめんの左右クリック。⌨️ ←・Z で左、→・X で右、スペース／↓ <span class="nw">ながおしで はっしゃ。</span>
 </div>
 
 <script>
@@ -345,7 +349,7 @@
     $('ovNote').style.display = 'none';
     $('ovScore').style.display = 'block'; $('ovScore').textContent = fmt(score) + ' てん';
     $('ovRec').style.display = newRecord ? 'block' : 'none';
-    $('ovStats').innerHTML = 'ハイスコア ' + fmt(best) + '<br>ジャックポット ' + jackpots + 'かい ・ さいだい ばいりつ ×' + maxMult + ' ・ レベル ' + level;
+    $('ovStats').innerHTML = 'ハイスコア ' + fmt(best) + '<br><span class="nw">ジャックポット ' + jackpots + 'かい</span> ・ <span class="nw">さいだい ばいりつ ×' + maxMult + '</span> ・ <span class="nw">レベル ' + level + '</span>';
     $('startBtn').textContent = 'もう一回';
     $('ovSmall').textContent = '';
     overlay.classList.add('show');
@@ -775,7 +779,7 @@
 
   // ---- init & events (keep at the very end) -----------------------------------------
   cv.width = W * RS; cv.height = H * RS;
-  $('ovNote').innerHTML = '◀▶ 左右の <span class="c">フリッパー</span> で たまを うちかえそう。<br>🚀 ながおし→はなすで はっしゃ。たまは <b>3こ</b>。<br>⭐ レーンで <b>ばいりつUP</b>、🎯まと→右の あなで <span class="p">ジャックポット</span>！';
+  $('ovNote').innerHTML = '◀▶ 左右の <span class="c">フリッパー</span> で <span class="nw">たまを うちかえそう。</span><br>🚀 ながおし→はなすで はっしゃ。<span class="nw">たまは <b>3こ</b>。</span><br>⭐ レーンで <b>ばいりつUP</b>、🎯まと→右の あなで <span class="nw"><span class="p">ジャックポット</span>！</span>';
   $('ovStats').textContent = best > 0 ? 'ハイスコア ' + fmt(best) : '';
   $('ovSmall').textContent = '📱 画面の 左右タッチ ／ ⌨️ ← → と スペース';
   drawMute(); updateHud();
