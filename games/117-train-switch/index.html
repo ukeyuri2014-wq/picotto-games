@@ -312,7 +312,7 @@
   let trains = [], nextId = 1, queue = [], qPos = 0, spawnT = 0, nextGap = 1.6, vBase = 1, gapBase = 3, conflictBudget = 1;
   let hearts = 3, score = 0, correct = 0, missN = 0, combo = 0, maxCombo = 0, log = [];
   let pops = [], parts = [], swFx = {}, stFx = {}, crashFx = [], shake = 0, animT = 0, endT = 0, endReason = '', result = null;
-  let auto = false, spawnOn = true, tutorial = false, cursorSw = 0, kbMode = false, warnIds = new Set(), banner = null, rng = Math.random, playT = 0;
+  let auto = false, spawnOn = true, tutorial = false, cursorSw = 0, kbMode = false, warnIds = new Set(), banner = null, intro = null, rng = Math.random, playT = 0;
   const overlay = document.getElementById('overlay');
 
   // ---- rules ---------------------------------------------------------------------
@@ -392,7 +392,7 @@
     return t;
   }
   function toggleSwitch(si, viaInput) {
-    if (phase !== 'play' || paused) return false;
+    if (phase !== 'play' || paused || intro) return false;
     const cell = layout.cells[si]; if (!cell || cell.t !== 'sw') return false;
     if (lockedBy(si)) {
       SFX.locked(); swFx[si] = { t: 0, bad: true };
@@ -453,12 +453,17 @@
       if (reason === 'miss') SFX.over();
     }
   }
-  function startStage(n) {
+  function startStage(n, up) {
     mode = 'stage'; stageN = Math.max(1, Math.min(20, n)); cfg = STAGES[stageN - 1]; layout = stageLayout(stageN);
     resetPlay();
     tutorial = !save.tut && stageN === 1;
-    banner = { t: 0, text: 'ステージ ' + stageN, sub: 'えき ' + cfg.S + 'つ ・ でんしゃ ' + cfg.K + 'だい' };
+    banner = null;
+    /* はじまる前の よこく（でんしゃは まだ 出ない・うごかない） */
+    const nSw = layout.switches.length, prev = stageN > 1 ? STAGES[stageN - 2] : null;
+    intro = { t: 0, n: nSw, up: !!up, add: up && prev ? nSw - (prev.S - 1) : 0, newEx: cfg.ex > 0 && (!prev || prev.ex === 0), shown: 0 };
+    intro.dur = Math.max(2.8, 0.45 + nSw * 0.16 + 1.6);
   }
+  function endIntro() { if (!intro) return; intro = null; tone('triangle', 784, 784, 0.08, 0.05); tone('triangle', 1175, 1175, 0.16, 0.05, 0.09); }
   function startEndless(seed) {
     mode = 'endless'; cfg = ENDLESS;
     layout = genLayout(ENDLESS.S, seed != null ? seed : Math.floor(Math.random() * 1e9));
@@ -472,7 +477,7 @@
     queue = mode === 'stage' ? buildQueue() : [];
     hearts = 3; score = 0; correct = 0; missN = 0; combo = 0; maxCombo = 0; log = [];
     pops = []; parts = []; swFx = {}; stFx = {}; crashFx = []; shake = 0; endT = 0; endReason = ''; result = null;
-    warnIds = new Set(); paused = false; playT = 0; cursorSw = 0; spawnOn = true;
+    warnIds = new Set(); paused = false; playT = 0; cursorSw = 0; spawnOn = true; intro = null;
     phase = 'play'; hideOverlay(); buildLayer(); SFX.go();
   }
 
@@ -518,6 +523,13 @@
       return;
     }
     if (phase !== 'play' || paused) return;
+    if (intro) {
+      intro.t += dt;
+      const sh = Math.min(intro.n, Math.max(0, Math.floor((intro.t - 0.45) / 0.16) + 1));
+      while (intro.shown < sh) { const f = 660 * Math.pow(1.122, intro.shown); tone('triangle', f, f, 0.09, 0.045); intro.shown++; }
+      if (intro.t >= intro.dur) endIntro();
+      return;
+    }
     playT += dt;
     if (auto) botStep();
     // でんしゃを出す
@@ -576,7 +588,7 @@
   }
   function hideOverlay() { overlay.classList.remove('show'); ovKind = 'none'; }
   function showTitle() {
-    phase = 'title'; paused = false; trains = []; banner = null;
+    phase = 'title'; paused = false; trains = []; banner = null; intro = null;
     selStage = Math.max(1, Math.min(selStage, save.unlock));
     $('ovBig').textContent = 'でんしゃのポイント'; $('ovBig').className = 'big';
     $('ovNote').innerHTML = '分かれ道の <b>ポイント</b>を タップして 線路を きりかえ！<br>でんしゃを <b>おなじ色の えき</b>へ とどけよう<br>ちがう えきは ミス（3回まで）・<b>ぶつかると おわり</b>';
@@ -830,6 +842,57 @@
       ctx.fillText('とどけた ' + correct + ' だい ・ スピード ' + vBase.toFixed(1), W / 2, GY + GH + 19);
     }
   }
+  /* ステージの よこく：「きりかえポイントが ●こ でるよ！」 */
+  function drawIntro() {
+    const it = intro, t = it.t, fade = t > it.dur - 0.25 ? Math.max(0, (it.dur - t) / 0.25) : 1;
+    /* ポイントを ひとつずつ ピカッと しょうかい */
+    ctx.save(); ctx.globalAlpha = fade;
+    layout.switches.forEach((si, k) => {
+      const t0 = 0.45 + k * 0.16; if (t < t0) return;
+      const u = t - t0, x = cellX(si) + CS / 2, y = cellY(si) + CS / 2, p = (u % 1) / 1;
+      ctx.strokeStyle = 'rgba(255,209,102,' + (0.9 * (1 - p)) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, 15 + p * 16, 0, TAU); ctx.stroke();
+      const s = u < 0.2 ? 0.5 + u / 0.2 * 0.7 : u < 0.32 ? 1.2 - (u - 0.2) / 0.12 * 0.2 : 1;
+      ctx.save(); ctx.translate(x + 15, y - 16); ctx.scale(s, s);
+      ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#3a2400'; ctx.font = FONT(13); ctx.textAlign = 'center'; ctx.fillText(String(k + 1), 0, 5); ctx.restore();
+    });
+    ctx.restore();
+    /* カード */
+    const lines = [{ h: 34, f: 26, c: '#53e0d8', s: 'ステージ ' + stageN }, { h: 28, f: 17, c: '#eeecfa', s: (it.up ? 'つぎは ' : '') + 'きりかえポイントが' }, { h: 54, num: true }];
+    if (it.add > 0) lines.push({ h: 24, f: 14, c: '#ff8fb8', s: 'まえより ' + it.add + 'こ ふえたよ！' });
+    if (it.newEx) lines.push({ h: 24, f: 14, c: '#ffd166', s: '金色の はやい でんしゃも でるよ！' });
+    lines.push({ h: 24, f: 14, c: '#9d99c0', s: 'えき ' + cfg.S + 'つ ・ でんしゃ ' + cfg.K + 'だい' }, { h: 24, f: 12, c: '#53e0d8', s: 'タップで スタート', blink: true });
+    const ch = lines.reduce((a, l) => a + l.h, 0) + 22, cw = 360;
+    if (it.cy == null) {
+      let best = 0, bn = Infinity;
+      [GY + GH / 2, GY + ch / 2 + 8, GY + GH - ch / 2 - 8].forEach(cy => {
+        const n = layout.switches.filter(si => { const y = cellY(si) + CS / 2; return y > cy - ch / 2 - 22 && y < cy + ch / 2 + 22; }).length;
+        if (n < bn) { bn = n; best = cy; }
+      });
+      it.cy = best;
+    }
+    const k = Math.min(1, t / 0.25), sc = 0.85 + 0.15 * (k < 1 ? k : 1), top = it.cy - ch / 2;
+    ctx.save(); ctx.globalAlpha = fade * k; ctx.translate(W / 2, it.cy); ctx.scale(sc, sc); ctx.translate(-W / 2, -it.cy);
+    ctx.fillStyle = 'rgba(15,15,32,.93)'; rrOn(ctx, W / 2 - cw / 2, top, cw, ch, 18); ctx.fill();
+    ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.5; ctx.shadowColor = 'rgba(255,209,102,.55)'; ctx.shadowBlur = 14 * DPR; rrOn(ctx, W / 2 - cw / 2, top, cw, ch, 18); ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.textAlign = 'center';
+    let y = top + 12;
+    for (const l of lines) {
+      if (l.num) {
+        const u = Math.max(0, t - 0.3), b = u < 0.25 ? 0.4 + u / 0.25 * 0.9 : u < 0.4 ? 1.3 - (u - 0.25) / 0.15 * 0.3 : 1 + Math.sin(t * 5) * 0.04;
+        ctx.save(); ctx.translate(W / 2, y + l.h / 2);
+        ctx.font = FONT(46); const nw = ctx.measureText(String(it.n)).width; ctx.font = FONT(20); const tw = ctx.measureText(' こ でるよ！').width;
+        const x0 = -(nw + tw) / 2;
+        ctx.save(); ctx.translate(x0 + nw / 2, 0); ctx.scale(b, b); ctx.font = FONT(46); ctx.fillStyle = '#ffd166'; ctx.shadowColor = 'rgba(255,209,102,.8)'; ctx.shadowBlur = 16 * DPR; ctx.fillText(String(it.n), 0, 16); ctx.restore();
+        ctx.textAlign = 'left'; ctx.font = FONT(20); ctx.fillStyle = '#eeecfa'; ctx.fillText(' こ でるよ！', x0 + nw, 8); ctx.restore();
+      } else {
+        ctx.save(); if (l.blink) ctx.globalAlpha *= 0.55 + 0.45 * Math.abs(Math.sin(t * 3));
+        ctx.font = FONT(l.f); ctx.fillStyle = l.c; ctx.fillText(l.s, W / 2, y + l.h / 2 + l.f * 0.36); ctx.restore();
+      }
+      y += l.h;
+    }
+    ctx.restore();
+  }
   function draw() {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     if (!layer) buildLayer();
@@ -843,7 +906,7 @@
     ctx.restore();
     drawTunnel();
     // チュートリアル
-    if (tutorial && phase === 'play' && !paused && !banner) {
+    if (tutorial && phase === 'play' && !paused && !banner && !intro) {
       const si = layout.paths[0][layout.fs], x = cellX(si) + CS / 2, y = cellY(si) + CS / 2, p = (animT % 1.2) / 1.2;
       ctx.save(); ctx.strokeStyle = 'rgba(83,224,216,' + (1 - p) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, 14 + p * 22, 0, TAU); ctx.stroke(); ctx.restore();
       const msg = 'ここを タップで きりかえ'; ctx.font = FONT(14); const bw = ctx.measureText(msg).width + 28;
@@ -885,6 +948,7 @@
       ctx.textAlign = 'center'; ctx.fillStyle = '#53e0d8'; ctx.font = FONT(28); ctx.fillText(banner.text, W / 2, GY + GH / 2 - 8);
       ctx.fillStyle = '#eeecfa'; ctx.font = FONT(14); ctx.fillText(banner.sub, W / 2, GY + GH / 2 + 22); ctx.restore();
     }
+    if (intro && phase === 'play') drawIntro();
     if (phase === 'clear' || (phase === 'over' && endT > 0.3)) {
       const t = phase === 'clear' ? endT : endT - 0.3, k = Math.min(1, t / 0.3);
       const txt = phase === 'clear' ? 'クリア！' : endReason === 'crash' ? 'ぶつかった！' : mode === 'endless' ? 'おしまい' : 'ミス 3回…';
@@ -926,6 +990,7 @@
   cv.addEventListener('pointerdown', e => {
     e.preventDefault(); audio();
     if (phase !== 'play' || paused) return;
+    if (intro) { if (intro.t > 0.35) endIntro(); return; }
     const [x, y] = toLogical(e), si = switchAt(x, y);
     if (e.pointerType !== 'touch' && e.pointerType !== 'pen') { /* マウス */ }
     kbMode = false;
@@ -935,10 +1000,11 @@
   document.addEventListener('keydown', e => {
     const k = e.key;
     if (ovKind === 'title') { if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); startStage(selStage); } return; }
-    if (ovKind === 'result') { if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); if (endReason === 'clear' && mode === 'stage' && stageN < 20) startStage(stageN + 1); else if (mode === 'stage') startStage(stageN); else startEndless(); } return; }
+    if (ovKind === 'result') { if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); if (endReason === 'clear' && mode === 'stage' && stageN < 20) { startStage(stageN + 1, true); selStage = stageN; } else if (mode === 'stage') startStage(stageN); else startEndless(); } return; }
     if (ovKind === 'pause') { if (k === 'Enter' || k === ' ' || k === 'p' || k === 'P') { e.preventDefault(); resume(); } return; }
     if (phase !== 'play') return;
     if (k === 'p' || k === 'P' || k === 'Escape') { e.preventDefault(); pauseGame(); return; }
+    if (intro) { if ((k === 'Enter' || k === ' ') && intro.t > 0.35) { e.preventDefault(); audio(); endIntro(); } return; }
     const dirs = { ArrowUp: 0, ArrowRight: 1, ArrowDown: 2, ArrowLeft: 3 };
     if (k in dirs) { e.preventDefault(); audio(); if (kbMode) moveCursor(dirs[k]); kbMode = true; return; }
     if (k === ' ' || k === 'Enter') { e.preventDefault(); audio(); kbMode = true; const si = layout.switches[cursorSw]; if (si != null) toggleSwitch(si, true); return; }
@@ -946,7 +1012,7 @@
   });
   $('startBtn').addEventListener('click', () => { audio(); startStage(selStage); });
   $('endlessBtn').addEventListener('click', () => { audio(); startEndless(); });
-  $('nextBtn').addEventListener('click', () => { audio(); startStage(stageN + 1); selStage = stageN; });
+  $('nextBtn').addEventListener('click', () => { audio(); startStage(stageN + 1, true); selStage = stageN; });
   $('retryBtn').addEventListener('click', () => { audio(); if (mode === 'stage') startStage(stageN); else startEndless(); });
   $('selectBtn').addEventListener('click', () => { audio(); selStage = mode === 'stage' ? Math.min(save.unlock, endReason === 'clear' ? stageN + 1 : stageN) : selStage; showTitle(); });
   $('resumeBtn').addEventListener('click', () => { audio(); resume(); });
@@ -963,8 +1029,11 @@
       stations: layout.stations.map(s => ({ i: s.i, color: s.color })),
       overlay: overlay.classList.contains('show'), ov: ovKind, reason: endReason, result, tutorial, warn: [...warnIds],
       queue: queue.map(q => q.c), save: JSON.parse(JSON.stringify(save)), selStage, vBase,
+      intro: intro ? { n: intro.n, up: intro.up, add: intro.add, newEx: intro.newEx, t: +intro.t.toFixed(2), dur: +intro.dur.toFixed(2) } : null,
     }),
-    start: n => startStage(n),
+    /* 自動テストは よこくを とばす（withIntro=true で ほんばんと おなじ） */
+    start: (n, withIntro) => { startStage(n); if (!withIntro) intro = null; },
+    skipIntro: () => endIntro(),
     endless: seed => startEndless(seed),
     menu: () => showTitle(),
     step: ms => { for (let i = 0; i < Math.ceil(ms / 16); i++) update(0.016); },
