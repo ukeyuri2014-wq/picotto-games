@@ -85,6 +85,12 @@
   .help{color:#b9b5d8;font-size:13px;margin-top:12px;line-height:1.7;background:rgba(13,11,32,.66);border:1px solid rgba(47,111,120,.5);border-radius:12px;padding:10px 12px}
   .help b{color:var(--ink);font-weight:400}
   .help .c1{color:var(--cyan)} .help .c2{color:var(--pink)} .help .c3{color:var(--gold)}
+  /* スマホで 2行目に 1〜2文字だけ のこらないように */
+  .help{text-wrap:pretty}
+  #ovNote,#ovRule,#chalInfo{text-wrap:balance}
+  .nw{display:inline-block}
+  .row .btn{white-space:nowrap}
+  @media (max-width:380px){ .row .btn{letter-spacing:0;padding-left:2px;padding-right:2px} }
   @media (max-width:420px){
     h1{font-size:21px}
     .lcd{font-size:17px;min-width:92px;padding:3px 6px}
@@ -127,7 +133,7 @@
         <div class="pick" id="orderRow">
           <button data-order="num">1→ すうじ</button>
           <button data-order="rev">ぎゃく →1</button>
-          <button data-order="kana">あ→ ひらがな</button>
+          <button data-order="kana">あ→ <span class="nw">ひらがな</span></button>
         </div>
         <div class="pick" id="sizeRow">
           <button data-n="3">3×3<em>--</em></button>
@@ -152,11 +158,11 @@
 </div>
 
 <div class="help">
-  <b>あそびかた</b>：ばらばらに ならんだ すうじを、<b class="c3">1・2・3…</b>の じゅんばんに できるだけ はやく タッチしよう！ まちがえると <i class="c2">+1びょう</i>（チャレンジでは のこり時間が −1びょう）。上の「つぎ」に、つぎに おす もじが 出ているよ。<br>
-  ⏱ <b>タイムアタック</b>：3×3〜6×6 と「すうじ・ぎゃく・ひらがな」を えらんで、ベストタイムと★を ねらおう。<br>
-  🏆 <b>チャレンジ</b>：12ステージ。ばんが 大きくなり、ぎゃくじゅん・ひらがな・「1あ2い」まぜ・タッチするたび いれかわる ばん・色のまどわし が出てくるよ。じかんぎれで おしまい。<br>
-  🖱 クリック・📱 タッチで おす。⌨️ やじるしで えらんで Enter・スペースで おす、Pで ひとやすみ、Escで メニュー。<br>
-  <i class="c1">コツ</i>：いま おす もじだけでなく、その つぎの もじも 目で さがしておくと はやくなるよ。
+  <b>あそびかた</b>：ばらばらに ならんだ すうじを、<b class="c3">1・2・3…</b>の じゅんばんに できるだけ はやく タッチしよう！ まちがえると <i class="c2">+1びょう</i>（チャレンジでは のこり時間が −1びょう）。上の「つぎ」に、つぎに おす もじが <span class="nw">出ているよ。</span><br>
+  ⏱ <b>タイムアタック</b>：3×3〜6×6 と「すうじ・ぎゃく・ひらがな」を えらんで、<span class="nw">ベストタイムと★を</span> <span class="nw">ねらおう。</span><br>
+  🏆 <b>チャレンジ</b>：12ステージ。ばんが 大きくなり、ぎゃくじゅん・ひらがな・「1あ2い」まぜ・タッチするたび いれかわる ばん・色のまどわし が出てくるよ。じかんぎれで <span class="nw">おしまい。</span><br>
+  🖱 クリック・📱 タッチで おす。⌨️ やじるしで えらんで Enter・スペースで おす、Pで ひとやすみ、<span class="nw">Escで メニュー。</span><br>
+  <i class="c1">コツ</i>：いま おす もじだけでなく、その つぎの もじも 目で さがしておくと <span class="nw">はやくなるよ。</span>
 </div>
 
 <script>
@@ -368,7 +374,7 @@
   function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
   // ---- overlay ----------------------------------------------------------------
-  const TITLE_NOTE = 'ばらばらの すうじを <b>じゅんばんに</b> タッチ！<br>まちがえると +1びょう。はやさを きそおう。';
+  const TITLE_NOTE = 'ばらばらの すうじを <b>じゅんばんに</b> タッチ！<br>まちがえると +1びょう。<span class="nw">はやさを きそおう。</span>';
   function toTitle() {
     phase = 'title'; paused = false; overlayKind = 'title'; resultAt = Infinity; fwLeft = 0;
     $('ovBig').textContent = 'すうじタッチ'; $('ovBig').className = '';
@@ -387,7 +393,7 @@
     $('taOpts').style.display = mode === 'ta' ? '' : 'none';
     $('chalInfo').style.display = mode === 'chal' ? '' : 'none';
     if (overlayKind === 'title') $('ovRule').textContent = mode === 'ta' ? 'まちがえずに はやく おすと ★3つ！' : 'じかんが のこるほど とくてんアップ・ノーミスで +100';
-    $('chalInfo').innerHTML = '12ステージを つぎつぎ クリア！ ばんが大きくなり、<br>ぎゃく・ひらがな・まぜ・いれかわり が出てくるよ。<br>ベスト：<b>ステージ ' + chalBest.stage + ' / 12</b>・<b>' + chalBest.score + 'てん</b>';
+    $('chalInfo').innerHTML = '12ステージを つぎつぎ クリア！ ばんが大きくなり、<br>ぎゃく・ひらがな・まぜ・いれかわり <span class="nw">が出てくるよ。</span><br>ベスト：<b>ステージ ' + chalBest.stage + ' / 12</b>・<b>' + chalBest.score + 'てん</b>';
   }
   function starHtml(k) { let s = ''; for (let i = 0; i < 3; i++) s += i < k ? '★' : '<s>★</s>'; return '<span class="stars">' + s + '</span>'; }
   function showResult() {
