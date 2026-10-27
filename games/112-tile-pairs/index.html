@@ -33,6 +33,12 @@
   .row{display:flex;gap:6px;margin-top:8px;width:min(var(--gw,480px),100%)}
   .btn{flex:1;font-family:inherit;font-size:14px;min-height:44px;padding:6px 0;border-radius:10px;border:1px solid var(--edge);background:linear-gradient(#24244a,#1a1a35);color:var(--ink);cursor:pointer;letter-spacing:1px;box-shadow:0 4px 14px rgba(0,0,0,.35);touch-action:manipulation}
   .btn:disabled{opacity:.38;cursor:default}
+  /* スマホで 2行目に 1〜2文字だけ のこらないように */
+  .row .btn{white-space:nowrap}
+  @media (max-width:380px){ .row .btn{letter-spacing:0;padding-left:2px;padding-right:2px} }
+  .help p{text-wrap:pretty}
+  #overlay .note,#overlay .rule{text-wrap:balance}
+  .nw{display:inline-block}
   .btn.pulse{border-color:var(--gold);color:var(--gold);animation:pulse 1s ease-in-out infinite}
   @keyframes pulse{50%{box-shadow:0 0 16px rgba(255,209,102,.6)}}
   #overlay{
@@ -100,13 +106,13 @@
 </div>
 
 <div class="help">
-  <p><b>あそびかた</b>：つまれたタイルの中から <b>同じ絵</b>を 2まい じゅんに タップすると、ペアで とれるよ。ぜんぶ とったら クリア！</p>
-  <p><b>とれるタイル</b>：上に なにも のっていなくて、<b>左か右の どちらかが あいている</b> タイルだけ。とれないタイルは 少し暗く 見えるよ。</p>
-  <p><b>コツ</b>：同じ絵が 3まい 見えていたら、どれを とるか よく考えよう。<b>同じ絵の タイルの 下に 同じ絵が かくれている</b> ことがあるよ。上の方を のこして ほかの2まいを とると、さいごに 同じ絵が かさなって とれなくなる！</p>
-  <p><b>スコア</b>：1ペア 100点。3びょう いないに つぎのペアを とると「れんさ」で ＋50点ずつ ふえるよ（さいだい ＋250）。クリアが はやいほど はやさボーナス。<br>
-  <b>たすけ</b>：💡ヒント（＋10びょう）は 何回でも。🔀まぜる（のこりの絵を とける ならびに まぜなおす・＋20びょう）は ステージ1で 2回、ほかは 1回だけ（−500点・つかうと ★は 1つまで）。↩もどす は 何回でも（まぜた後は まぜる前に もどれない）。<br>
-  ステージは 5つ（ちいさなやま・さかな・おしろ・ちょうちょ・ピラミッド）。クリアで つぎが ひらき、★と ベストタイムが のこるよ。<br>
-  ⌨️ 矢印キーで えらんで Enter ／ H＝ヒント ／ S＝まぜる ／ Z＝もどす</p>
+  <p><b>あそびかた</b>：つまれたタイルの中から <b>同じ絵</b>を 2まい じゅんに タップすると、ペアで とれるよ。ぜんぶ <span class="nw">とったら クリア！</span></p>
+  <p><b>とれるタイル</b>：上に なにも のっていなくて、<b>左か右の どちらかが あいている</b> タイルだけ。とれないタイルは <span class="nw">少し暗く 見えるよ。</span></p>
+  <p><b>コツ</b>：同じ絵が 3まい 見えていたら、どれを とるか よく考えよう。<b>同じ絵の タイルの 下に 同じ絵が かくれている</b> ことがあるよ。上の方を のこして ほかの2まいを とると、さいごに 同じ絵が かさなって <span class="nw">とれなくなる！</span></p>
+  <p><b>スコア</b>：1ペア 100点。3びょう いないに つぎのペアを とると「れんさ」で ＋50点ずつ ふえるよ（さいだい ＋250）。クリアが はやいほど <span class="nw">はやさボーナス。</span><br>
+  <b>たすけ</b>：💡ヒント（＋10びょう）は 何回でも。🔀まぜる（のこりの絵を とける ならびに まぜなおす・＋20びょう）は ステージ1で 2回、ほかは 1回だけ（−500点・つかうと ★は 1つまで）。↩もどす は 何回でも（まぜた後は まぜる前に <span class="nw">もどれない）。</span><br>
+  ステージは 5つ（ちいさなやま・さかな・おしろ・ちょうちょ・ピラミッド）。クリアで つぎが ひらき、★と ベストタイムが <span class="nw">のこるよ。</span><br>
+  ⌨️ 矢印キーで えらんで Enter ／ H＝ヒント ／ S＝まぜる ／ <span class="nw">Z＝もどす</span></p>
 </div>
 
 <script>
@@ -605,7 +611,7 @@
     phase = 'title'; refresh();
     if (pickStage > save.unlock) pickStage = save.unlock;
     let h = '<div class="big">かさねタイルペア</div>';
-    h += '<div class="note">つまれたタイルから <b>同じ絵</b>を 2まい タップして とろう。<br>とれるのは <b>上</b>と <b>左か右</b>が あいている タイル。<br>ぜんぶ とったら クリア！<br>同じ絵が 3まい 見えたら <b>どれを とるか</b> 考えよう。<br>つづけて とると <span class="c">れんさ</span>で スコア アップ！</div>';
+    h += '<div class="note">つまれたタイルから <b>同じ絵</b>を 2まい <span class="nw">タップして とろう。</span><br>とれるのは <b>上</b>と <b>左か右</b>が <span class="nw">あいている タイル。</span><br>ぜんぶ とったら クリア！<br>同じ絵が 3まい 見えたら <span class="nw"><b>どれを とるか</b> 考えよう。</span><br>つづけて とると <span class="c">れんさ</span>で <span class="nw">スコア アップ！</span></div>';
     h += '<div class="stages" id="stages">';
     STAGES.forEach((st, i) => {
       const n = i + 1, lock = n > save.unlock;
