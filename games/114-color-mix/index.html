@@ -134,6 +134,7 @@
       <div class="row2">
         <button id="selBtn">ステージを えらぶ</button>
         <button id="freeBtn" class="cy">じゆうに まぜる</button>
+        <button id="pracBtn">🧪 れんしゅう</button>
       </div>
       <div class="small" id="titleStats"></div>
     </div>
@@ -163,10 +164,24 @@
       <div class="small">じゆうに まぜる で、ちかさ 96% いじょうの いろを つくると のるよ。</div>
       <div class="row2"><button id="zBack">とじる</button></div>
     </div>
+
+    <div class="ov" id="pPrac">
+      <div class="big">じゅんび OK！</div>
+      <div class="swatches" id="pracSw"></div>
+      <div class="note">
+        いろと いろを まぜると、<b>ちがう いろ</b> に なるね。<br>
+        つぎは <b>おてほんと おなじ いろ</b> を つくろう！
+      </div>
+      <div class="row2">
+        <button id="pracGo" class="cy">ステージ 1 へ ▶</button>
+        <button id="pracMore">もっと まぜる</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="help">
+  <p><b>れんしゅう</b>：はじめて あそぶ ときは、まず じゆうに まぜて「あか＋きいろ＝オレンジ」のように どんな いろに なるか ためせるよ。メニューの「れんしゅう」から なんどでも できる。</p>
   <p><b>あそびかた</b>：えのぐボタンを おすと、ビーカーに 1てき ずつ 入るよ。<b>あか＋きいろ＝オレンジ</b> のように、まぜる <b>りょう（てきの数）</b> で いろが かわる。おてほんと 同じに なったと おもったら「できた！」。</p>
   <p><b>ちかさ</b>：90%で クリア、95%で ★2、98%で ★3。まちがえて「できた！」を おすと ★が 1つ へるよ。ヒントは つかう いろが わかるけど、★は 2つまで。</p>
   <p>すすむと <b>しろ</b>（あかるく）と <b>くろ</b>（くらく）が つかえる。ステージ12からは ちかさの数字が かくれ、23からは メーターも かくれるよ。じゆうに まぜる で いろずかん 24しょくを あつめよう。<br>⌨️ 1〜5＝えのぐ ／ Z＝もどす ／ X＝すてる ／ H＝ヒント ／ Enter＝できた！</p>
@@ -243,29 +258,41 @@
   function recipeText(d) { return d.map((v, i) => (v ? PAINTS[i].name + '×' + v : '')).filter(Boolean).join('　'); }
 
   // ---- ステージ -------------------------------------------------------------------
+  // 2026-10-24 本人「作る色が全部一緒。毎回ちがうように・むずかしい色に」→ 1てきの数（max）と まぜる色の数（k）を ふやし、
+  // すすむほど 1:3・2:3・3:4 のような こまかい わりあいや 3〜4色まぜが 出るようにした
   function stageDef(n) {
     if (n <= 2) return { cols: 'ryb', k: [2, 2], max: 1, meter: 'num' };
-    if (n <= 5) return { cols: 'ryb', k: [2, 2], max: 2, meter: 'num' };
-    if (n <= 8) return { cols: 'rybw', need: 'w', k: [2, 2], max: 3, meter: 'num' };
-    if (n <= 11) return { cols: 'rybw', need: 'w', k: [3, 3], max: 2, meter: 'num' };
-    if (n <= 14) return { cols: 'ryb', k: [2, 3], max: 3, meter: 'bar' };
-    if (n <= 17) return { cols: 'rybw', k: [2, 3], max: 3, meter: 'bar' };
-    if (n <= 20) return { cols: 'rybk', need: 'k', k: [2, 3], max: 2, meter: 'bar' };
-    if (n <= 22) return { cols: 'rybwk', k: [2, 3], max: 3, meter: 'bar' };
-    if (n <= 24) return { cols: 'rybwk', k: [2, 3], max: 3, meter: 'off' };
-    return { cols: 'rybwk', k: [3, 4], max: 3, meter: 'off' };
+    if (n <= 5) return { cols: 'ryb', k: [2, 2], max: 3, meter: 'num' };
+    if (n <= 8) return { cols: 'rybw', need: 'w', k: [2, 3], max: 3, meter: 'num' };
+    if (n <= 11) return { cols: 'rybw', need: 'w', k: [3, 3], max: 3, meter: 'num' };
+    if (n <= 14) return { cols: 'ryb', k: [2, 3], max: 4, meter: 'bar' };
+    if (n <= 17) return { cols: 'rybw', k: [3, 4], max: 3, meter: 'bar' };
+    if (n <= 20) return { cols: 'rybk', need: 'k', k: [2, 3], max: 4, meter: 'bar' };
+    if (n <= 22) return { cols: 'rybwk', k: [3, 4], max: 3, meter: 'bar' };
+    if (n <= 24) return { cols: 'rybwk', k: [3, 4], max: 4, meter: 'off' };
+    return { cols: 'rybwk', k: [3, 5], max: 4, meter: 'off' };
+  }
+  // さいきん 出した おてほん（ステージを またいで おぼえる。にた色を つづけて 出さない）
+  const RECENT_KEY = KEY + 'recent', RECENT_N = 30, SIMILAR = 88;
+  let recent = [];
+  try { const r = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); if (Array.isArray(r)) recent = r.filter(d => Array.isArray(d) && d.length === 5).slice(-RECENT_N); } catch (e) {}
+  function rememberTarget(d) {
+    recent.push(d.slice()); if (recent.length > RECENT_N) recent = recent.slice(-RECENT_N);
+    try { localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); } catch (e) {}
   }
   const allowedIdx = def => PAINTS.map((p, i) => i).filter(i => def.cols.includes(PAINTS[i].id));
   function rng(seed) {
     let a = seed >>> 0;
     return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   }
-  // おてほんを つくる（ランダム。ただし「1色だけ」で クリアできてしまう色や、前回とそっくりな色は出さない）
-  function genTarget(n, seed, prev) {
+  // おてほんを つくる（ランダム。ただし「1色だけ」で クリアできてしまう色や、前回・さいきんの おてほんと にた色は出さない）
+  // にた色を さけきれない ときは（ステージ1〜2は 3しょくしか ないので）、さいきんと いちばん ちがう色を えらぶ
+  function genTarget(n, seed, prev, hist) {
     const def = stageDef(n), R = rng(seed), allowed = allowedIdx(def);
     const hues = allowed.filter(i => i < 3);
-    let fallback = null;
-    for (let tries = 0; tries < 400; tries++) {
+    const past = (hist || []).concat(prev ? [prev] : []);
+    let fallback = null, bestScore = 1e9;
+    for (let tries = 0; tries < 600; tries++) {
       const k = def.k[0] + Math.floor(R() * (def.k[1] - def.k[0] + 1));
       const pick = new Set();
       if (def.need) pick.add(PAINTS.findIndex(p => p.id === def.need));
@@ -281,8 +308,12 @@
       let bad = false;
       for (const i of allowed) { const s = [0, 0, 0, 0, 0]; s[i] = 1; if (pctLab(L, lab(mixOf(s))) >= 86) { bad = true; break; } }
       if (bad) continue;
-      if (!fallback) fallback = d;
-      if (prev && pctOf(prev, d) >= 85) continue;
+      // さいきんの おてほんと どれだけ にているか（あたらしいものほど きびしく見る）
+      let score = 0;
+      past.forEach((q, j) => { const s = pctOf(q, d) - (past.length - 1 - j) * 0.2; if (s > score) score = s; });
+      if (prev && pctOf(prev, d) >= 85) score = Math.max(score, 100);
+      if (score < bestScore) { bestScore = score; fallback = d; }
+      if (score >= SIMILAR) continue;
       return d;
     }
     return fallback || [1, 1, 0, 0, 0];
@@ -318,7 +349,7 @@
   };
 
   // ---- ほぞん --------------------------------------------------------------------
-  function freshSave() { return { stars: new Array(STAGES).fill(0), best: new Array(STAGES).fill(0), unlocked: 1, found: [], seen: { w: false, k: false } }; }
+  function freshSave() { return { stars: new Array(STAGES).fill(0), best: new Array(STAGES).fill(0), unlocked: 1, found: [], seen: { w: false, k: false }, practiced: false }; }
   let save = freshSave();
   function loadSave() {
     save = freshSave();
@@ -329,6 +360,8 @@
         save.unlocked = Math.max(1, Math.min(STAGES, s.unlocked | 0));
         save.found = Array.isArray(s.found) ? s.found.filter(i => i >= 0 && i < NAMED.length) : [];
         save.seen = Object.assign({ w: false, k: false }, s.seen || {});
+        /* れんしゅう（まず まぜてみよう）を すませたか。前からの ほぞんで すすんでいる人は すませた あつかい */
+        save.practiced = !!s.practiced || save.unlocked > 1 || save.stars.some(v => v > 0) || save.found.length > 0;
       }
     } catch (e) {}
   }
@@ -341,22 +374,26 @@
   let misses = 0, hintUsed = false, lastPct = 0, result = null, prevTarget = {};
   let freeNear = -1, freePct = 0, newlyFound = -1;
   let seedOverride = null;
+  /* れんしゅう：あか・きいろ・あお だけで まぜて、何いろに なるか 見る（おてほん・しっぱい なし） */
+  const PRAC_GOALS = ['オレンジ', 'みどり', 'むらさき'].map(nm => NAMED.findIndex(n => n[0] === nm));
+  const PRAC_NAMES = NAMED.map((n, i) => i).filter(i => !NAMED[i][1][3] && !NAMED[i][1][4]);
+  let pracMade = [false, false, false], pracDoneT = 0;
   // 見た目
   let liq = null, liqLevel = 0, falling = [], parts = [], pops = [], wave = 0, shakeT = 0, clearT = 0, banner = null, t0 = 0, gaugeShown = 0, gaugeFlash = 0, bubbleT = 0, autoRun = true;
 
   const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   cv.width = W * DPR; cv.height = H * DPR;
   const overlay = document.getElementById('overlay');
-  const panels = ['pTitle', 'pSelect', 'pResult', 'pZukan'].map(id => document.getElementById(id));
+  const panels = ['pTitle', 'pSelect', 'pResult', 'pZukan', 'pPrac'].map(id => document.getElementById(id));
   const $ = id => document.getElementById(id);
   const paintBtns = [];
 
   function def() { return stageDef(stage); }
-  function allowedNow() { return phase === 'free' ? [0, 1, 2, 3, 4] : allowedIdx(def()); }
+  function allowedNow() { return phase === 'free' ? [0, 1, 2, 3, 4] : phase === 'practice' ? [0, 1, 2] : allowedIdx(def()); }
   function curMix() { return mixOf(drops); }
   function curPct() {
     const m = curMix(); if (!m) return 0;
-    if (phase === 'free') return freePct;
+    if (phase === 'free' || phase === 'practice') return freePct;
     return pctLab(lab(m), targetLab);
   }
   function showPanel(id) {
@@ -369,8 +406,9 @@
   function startStage(n, seed) {
     stage = Math.max(1, Math.min(STAGES, n));
     const sd = seed != null ? seed : (seedOverride != null ? seedOverride : (Math.random() * 1e9) | 0);
-    target = genTarget(stage, sd, prevTarget[stage]);
+    target = genTarget(stage, sd, prevTarget[stage], recent);
     prevTarget[stage] = target;
+    rememberTarget(target);
     targetLab = lab(mixOf(target));
     drops = [0, 0, 0, 0, 0]; order = []; misses = 0; hintUsed = false; result = null; lastPct = 0;
     falling = []; parts = []; pops = []; liqLevel = 0; liq = null; clearT = 0; gaugeShown = 0;
@@ -397,8 +435,35 @@
     banner = { text: 'じゆうに まぜる', sub: 'すきな いろを つくって ずかんに のせよう', t: 2.4 };
     showPanel(null); refreshUI();
   }
+  function startPractice() {
+    phase = 'practice';
+    drops = [0, 0, 0, 0, 0]; order = []; falling = []; parts = []; pops = []; liqLevel = 0; liq = null;
+    freeNear = -1; freePct = 0; newlyFound = -1; target = null; result = null;
+    pracMade = [false, false, false]; pracDoneT = 0;
+    banner = { text: 'まず まぜてみよう', sub: 'えのぐを 2しょく 入れると どうなる？', t: 2.8 };
+    showPanel(null); refreshUI();
+  }
+  /* れんしゅうを おえて 本番へ（ステージ1。すすんでいる人は つぎの ステージ） */
+  function endPractice() {
+    if (!save.practiced) { save.practiced = true; writeSave(); }
+    startStage(nextStageNo());
+  }
+  function showPracDone() {
+    $('pracSw').innerHTML = PRAC_GOALS.map(gi => `<div><div class="sw" style="background:${css(mixOf(NAMED[gi][1]))}"></div><div class="small">${NAMED[gi][0]}</div></div>`).join('');
+    $('pracGo').textContent = 'ステージ ' + nextStageNo() + ' へ ▶';
+    showPanel('pPrac');
+  }
+  /* いま ビーカーに 入っている しき（「あか＋きいろ」）と、できた いろの 名まえ */
+  function pracFormula() {
+    const parts2 = [];
+    drops.forEach((v, i) => { if (v) parts2.push({ t: PAINTS[i].name + (v > 1 ? '×' + v : ''), c: PAINT_RGB[i] }); });
+    if (!parts2.length || freeNear < 0) return null;
+    const res = { t: NAMED[freeNear][0], c: mixOf(NAMED[freeNear][1]) };
+    const exact = freePct >= FIND;
+    return { parts: parts2, res, exact, single: parts2.length === 1 && drops.filter(v => v).length === 1 };
+  }
   function addDrop(i) {
-    if (phase !== 'play' && phase !== 'free') return false;
+    if (phase !== 'play' && phase !== 'free' && phase !== 'practice') return false;
     if (!allowedNow().includes(i)) return false;
     if (order.length >= CAP) { SFX.full(); shakeT = 0.35; flashMsg('ビーカーが いっぱい！', '#ff8f8f'); return false; }
     drops[i]++; order.push(i);
@@ -408,7 +473,7 @@
     return true;
   }
   function undo() {
-    if ((phase !== 'play' && phase !== 'free') || !order.length) return false;
+    if ((phase !== 'play' && phase !== 'free' && phase !== 'practice') || !order.length) return false;
     const i = order.pop(); drops[i]--; SFX.undo();
     for (let k = falling.length - 1; k >= 0; k--) if (falling[k].i === i) { falling.splice(k, 1); break; }
     for (let k = 0; k < 6; k++) parts.push({ x: 362, y: surfaceY(), vx: (Math.random() - 0.5) * 80, vy: -60 - Math.random() * 60, life: 0.5, max: 0.5, c: css(PAINT_RGB[i]), r: 3 });
@@ -416,7 +481,7 @@
     return true;
   }
   function empty() {
-    if ((phase !== 'play' && phase !== 'free') || !order.length) return false;
+    if ((phase !== 'play' && phase !== 'free' && phase !== 'practice') || !order.length) return false;
     drops = [0, 0, 0, 0, 0]; order = []; falling = []; SFX.pour(); wave = 1;
     afterChange();
     return true;
@@ -435,10 +500,36 @@
           SFX.find(); burst(118, 190, css(mixOf(NAMED[bi][1])), 30);
         }
       }
+    } else if (phase === 'practice') {
+      const m = curMix();
+      if (!m) { freeNear = -1; freePct = 0; }
+      else {
+        const L = lab(m); let bi = 0, bp = -1;
+        PRAC_NAMES.forEach(i => { const p = pctLab(L, NAMED_LAB[i]); if (p > bp) { bp = p; bi = i; } });
+        freeNear = bi; freePct = bp;
+        const g = PRAC_GOALS.indexOf(bi);
+        if (bp >= FIND && drops.filter(v => v).length >= 2) {
+          const f = pracFormula(), col = css(mixOf(NAMED[bi][1]));
+          const eq = f.parts.map(p => p.t).join('＋') + '＝' + NAMED[bi][0];
+          if (g >= 0 && !pracMade[g]) {
+            pracMade[g] = true;
+            const left = pracMade.filter(v => !v).length;
+            banner = { text: eq + '！', sub: left ? '🗑 すてる で ほかの いろも つくろう（あと ' + left + '）' : 'ぜんぶ できたね！', t: 2.8, color: col };
+            SFX.find(); burst(118, 190, col, 30);
+            if (!left) pracDoneT = 2.2;
+          }
+        }
+      }
     }
     refreshUI();
   }
   function hint() {
+    if (phase === 'practice') {
+      const g = pracMade.findIndex(v => !v), gi = PRAC_GOALS[g < 0 ? 0 : g];
+      SFX.hint();
+      banner = { text: 'ヒント', sub: NAMED[gi][0] + ' は ' + NAMED[gi][1].map((v, i) => (v ? PAINTS[i].name : '')).filter(Boolean).join(' と ') + ' を 1てき ずつ', t: 3 };
+      return true;
+    }
     if (phase !== 'play' || hintUsed) return false;
     hintUsed = true; SFX.hint();
     banner = { text: 'ヒント', sub: 'つかう いろ：' + target.map((v, i) => (v ? PAINTS[i].name : '')).filter(Boolean).join('・'), t: 3 };
@@ -541,7 +632,7 @@
   }
 
   function refreshUI() {
-    const playing = phase === 'play' || phase === 'free';
+    const playing = phase === 'play' || phase === 'free' || phase === 'practice';
     const al = allowedNow();
     paintBtns.forEach((b, i) => {
       const ok = playing && al.includes(i);
@@ -549,14 +640,15 @@
       b.classList.toggle('new', phase === 'play' && ((i === 3 && stage >= NEW_AT.w && stage < NEW_AT.w + 1) || (i === 4 && stage === NEW_AT.k)));
       const cnt = b.querySelector('.cnt'); cnt.textContent = drops[i] && playing ? '×' + drops[i] : '';
       const lab2 = b.querySelector('.nm');
-      lab2.textContent = (phase === 'play' && !al.includes(i)) ? '🔒' : PAINTS[i].name;
+      lab2.textContent = ((phase === 'play' || phase === 'practice') && !al.includes(i)) ? '🔒' : PAINTS[i].name;
     });
     $('undoBtn').disabled = !playing || !order.length;
     $('emptyBtn').disabled = !playing || !order.length;
     const okB = $('okBtn'), hB = $('hintBtn');
     if (phase === 'free') { okB.textContent = '📖 ずかん'; okB.disabled = false; hB.disabled = true; hB.textContent = '💡 ヒント'; }
+    else if (phase === 'practice') { okB.textContent = 'つぎへ ▶'; okB.disabled = false; hB.disabled = false; hB.textContent = '💡 ヒント'; }
     else { okB.textContent = 'できた！'; okB.disabled = phase !== 'play' || !order.length; hB.disabled = phase !== 'play' || hintUsed; hB.textContent = '💡 ヒント'; }
-    $('subInfo').textContent = phase === 'free' ? `いろずかん ${save.found.length} / ${NAMED.length}` : phase === 'title' ? '' : `★ ${totalStars()} / ${STAGES * 3}`;
+    $('subInfo').textContent = phase === 'free' ? `いろずかん ${save.found.length} / ${NAMED.length}` : phase === 'practice' ? `れんしゅう：つくった いろ ${pracMade.filter(v => v).length} / 3` : phase === 'title' ? '' : `★ ${totalStars()} / ${STAGES * 3}`;
   }
 
   // ---- 見た目 -----------------------------------------------------------------------
@@ -601,6 +693,7 @@
     if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
     bubbleT -= dt;
     if (bubbleT <= 0 && liqLevel > 0.05) { bubbleT = 0.35 + Math.random() * 0.4; parts.push({ x: BEAKER.x + (Math.random() - 0.5) * 80, y: BEAKER.bot - 8, vx: 0, vy: -30, life: 1.2, max: 1.2, c: 'rgba(255,255,255,.35)', r: 2 + Math.random() * 2, bub: true, top: surfaceY() }); }
+    if (phase === 'practice' && pracDoneT > 0) { pracDoneT -= dt; if (pracDoneT <= 0 && !overlay.classList.contains('show')) showPracDone(); }
     if (phase === 'clearing') {
       clearT += dt;
       if (Math.random() < dt * 14) burst(60 + Math.random() * 360, 40 + Math.random() * 120, ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff'][(Math.random() * 4) | 0], 4);
@@ -656,7 +749,10 @@
 
     const playing = phase === 'play' || phase === 'clearing' || phase === 'result';
     // 上の じょうほう
-    if (phase === 'free') {
+    if (phase === 'practice') {
+      text('まず まぜてみよう', 18, 24, 17, '#53e0d8', 'left');
+      text('れんしゅう', W - 18, 24, 16, '#ffd166', 'right');
+    } else if (phase === 'free') {
       text('じゆうに まぜる', 18, 24, 17, '#53e0d8', 'left');
       text('ずかん ' + save.found.length + '/' + NAMED.length, W - 18, 24, 16, '#ffd166', 'right');
     } else if (playing) {
@@ -670,7 +766,7 @@
 
     // ---- おてほん フラスコ
     ctx.save();
-    const tRGB = phase === 'free' ? (freeNear >= 0 ? mixOf(NAMED[freeNear][1]) : null) : (target ? mixOf(target) : null);
+    const tRGB = (phase === 'free' || phase === 'practice') ? (freeNear >= 0 ? mixOf(NAMED[freeNear][1]) : null) : (target ? mixOf(target) : null);
     flaskPath(); ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.fill();
     if (tRGB) {
       ctx.save(); flaskPath(); ctx.clip();
@@ -689,7 +785,11 @@
     ctx.beginPath(); ctx.arc(FLASK.x, FLASK.cy, FLASK.r - 12, Math.PI * 1.1, Math.PI * 1.35); ctx.stroke(); ctx.restore();
     // くち
     roundRect(FLASK.x - FLASK.neckW - 5, FLASK.neckTop - 6, FLASK.neckW * 2 + 10, 8, 4); ctx.fillStyle = 'rgba(220,230,255,.6)'; ctx.fill();
-    if (phase === 'free') {
+    if (phase === 'practice') {
+      if (freeNear < 0) text('？', FLASK.x, FLASK.cy, 34, '#6d6994');
+      text(freeNear < 0 ? 'なにいろ かな？' : NAMED[freeNear][0], FLASK.x, 292, 17, '#eeecfa');
+      text('できた いろ', FLASK.x, 314, 15, '#9d99c0');
+    } else if (phase === 'free') {
       if (freeNear < 0) text('？', FLASK.x, FLASK.cy, 34, '#6d6994');
       const nm = freeNear < 0 ? 'いろを まぜてね' : (save.found.includes(freeNear) ? NAMED[freeNear][0] : '？？？');
       text(nm, FLASK.x, 292, 17, '#eeecfa');
@@ -739,8 +839,8 @@
       ctx.fillStyle = css(PAINT_RGB[f.i]); ctx.shadowColor = css(PAINT_RGB[f.i]); ctx.shadowBlur = 10; ctx.fill();
       ctx.restore();
     }
-    if (phase === 'free' || playing) {
-      text(phase === 'free' ? 'ビーカー' : 'あなたの いろ', BEAKER.x, 292, 17, '#eeecfa');
+    if (phase === 'free' || phase === 'practice' || playing) {
+      text(phase === 'free' || phase === 'practice' ? 'ビーカー' : 'あなたの いろ', BEAKER.x, 292, 17, '#eeecfa');
       // 入れた じゅんばんの つぶ
       const n = order.length, step = 15.5;
       let x = BEAKER.x - (n - 1) * step / 2;
@@ -749,6 +849,36 @@
       if (!n && liqLevel < 0.02) text('からっぽ', BEAKER.x, 200, 16, '#5d5980');
     }
 
+    /* ---- れんしゅう：まんなかに「つくってみよう」の 3しょく、上に しき（あか＋きいろ＝オレンジ） */
+    if (phase === 'practice') {
+      text('つくってみよう', 240, 118, 14, '#9d99c0');
+      PRAC_GOALS.forEach((gi, k) => {
+        const y = 146 + k * 32, ok = pracMade[k];
+        ctx.beginPath(); ctx.arc(206, y, 11, 0, Math.PI * 2);
+        if (ok) { ctx.fillStyle = css(mixOf(NAMED[gi][1])); ctx.fill(); }
+        ctx.lineWidth = 2; ctx.strokeStyle = ok ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.25)'; ctx.stroke();
+        if (ok) text('✓', 206, y + 1, 14, '#ffffff');
+        text(ok ? NAMED[gi][0] : '？？？', 224, y + 1, 14, ok ? '#eeecfa' : '#6d6994', 'left');
+      });
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      ctx.beginPath(); ctx.moveTo(284, 236); ctx.lineTo(196, 236); ctx.lineTo(196, 230); ctx.lineTo(184, 240); ctx.lineTo(196, 250); ctx.lineTo(196, 244); ctx.lineTo(284, 244); ctx.closePath(); ctx.fill();
+      const f = pracFormula();
+      if (!f) text(order.length ? '' : 'えのぐを えらんで 入れてみよう', 240, 58, 15, '#7d79a3');
+      else {
+        const lite = c => css(c.map(v => v * 0.55 + 0.45));
+        const segs = [];
+        f.parts.forEach((p, k) => { if (k) segs.push({ t: ' ＋ ', c: '#eeecfa' }); segs.push({ t: p.t, c: lite(p.c) }); });
+        if (!f.single) { segs.push({ t: ' ＝ ', c: '#eeecfa' }); segs.push({ t: f.res.t, c: lite(f.res.c) }); if (!f.exact) segs.push({ t: ' に ちかい いろ', c: '#c9c5e6' }); }
+        else segs.push({ t: ' を 入れたよ', c: '#c9c5e6' });
+        let size = 19;
+        ctx.font = `${size}px 'DotGothic16', sans-serif`;
+        let wsum = segs.reduce((a, s2) => a + ctx.measureText(s2.t).width, 0);
+        if (wsum > 440) { size = Math.max(11, Math.floor(size * 440 / wsum)); ctx.font = `${size}px 'DotGothic16', sans-serif`; wsum = segs.reduce((a, s2) => a + ctx.measureText(s2.t).width, 0); }
+        let x = 240 - wsum / 2;
+        roundRect(Math.max(4, x - 10), 58 - size / 2 - 8, Math.min(472, wsum + 20), size + 16, 10); ctx.fillStyle = 'rgba(16,14,34,.85)'; ctx.fill();
+        for (const s2 of segs) { text(s2.t, x, 58, size, s2.c, 'left'); x += ctx.measureText(s2.t).width; }
+      }
+    }
     // ---- ちかさ メーター
     if (phase === 'free' || playing) {
       const gx = 240, gy = 168, gr = 36;
@@ -834,9 +964,12 @@
     $('undoBtn').addEventListener('click', () => { audio(); undo(); });
     $('emptyBtn').addEventListener('click', () => { audio(); empty(); });
     $('hintBtn').addEventListener('click', () => { audio(); hint(); });
-    $('okBtn').addEventListener('click', () => { audio(); if (phase === 'free') { SFX.ui(); openZukan(); } else submit(); });
+    $('okBtn').addEventListener('click', () => { audio(); if (phase === 'free') { SFX.ui(); openZukan(); } else if (phase === 'practice') { SFX.ui(); endPractice(); } else submit(); });
     $('menuBtn').addEventListener('click', () => { audio(); SFX.ui(); goTitle(); });
-    $('startBtn').addEventListener('click', () => { audio(); SFX.ui(); startStage(nextStageNo()); });
+    $('startBtn').addEventListener('click', () => { audio(); SFX.ui(); if (!save.practiced) startPractice(); else startStage(nextStageNo()); });
+    $('pracBtn').addEventListener('click', () => { audio(); SFX.ui(); startPractice(); });
+    $('pracGo').addEventListener('click', () => { audio(); SFX.ui(); endPractice(); });
+    $('pracMore').addEventListener('click', () => { SFX.ui(); showPanel(null); });
     $('selBtn').addEventListener('click', () => { audio(); SFX.ui(); openSelect(); });
     $('freeBtn').addEventListener('click', () => { audio(); SFX.ui(); startFree(); });
     $('selBack').addEventListener('click', () => { SFX.ui(); goTitle(); });
@@ -913,9 +1046,12 @@
       save: JSON.parse(JSON.stringify(save)), totalStars: totalStars(), muted,
       freeNear: freeNear >= 0 ? NAMED[freeNear][0] : null, freePct: Math.round(freePct * 100) / 100, newlyFound: newlyFound >= 0 ? NAMED[newlyFound][0] : null,
       falling: falling.length, banner: banner ? banner.text : null, liqLevel: Math.round(liqLevel * 1000) / 1000,
+      pracMade: pracMade.slice(), formula: phase === 'practice' ? pracFormula() : null,
     }),
     start: (n, seed) => { startStage(n, seed == null ? 1 : seed); return window.__test.state(); },
     free: () => { startFree(); return window.__test.state(); },
+    practice: () => { startPractice(); return window.__test.state(); },
+    endPractice: () => { endPractice(); return window.__test.state(); },
     add: i => { const r = addDrop(i); return r; },
     addMany: arr => { arr.forEach(i => addDrop(i)); return window.__test.state(); },
     undo, empty, hint,
