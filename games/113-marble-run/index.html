@@ -663,7 +663,7 @@
   const unlocked = i => i === 0 || save.stars[i - 1] > 0 || save.stars[i] > 0;
 
   // ---- じょうたい --------------------------------------------------------------
-  let mode = 'stage', lvIdx = 0, L = null, P = null, inv = {}, placed = [], tool = null, toolDir = {};
+  let mode = 'stage', lvIdx = 0, L = null, P = null, inv = {}, placed = [], tool = null, toolDir = {}, toolAuto = false, tapTip = null;
   let phase = 'title', tries = 0, trail = [], hint = null, toast = null, hintUsed = false;
   let rndLevel = null, rndStreak = 0, lastResult = null, resultInfo = null;
   let run = null, wonT = 0, failT = 0;
@@ -683,11 +683,11 @@
     L = def; P = parseLevel(def);
     if (P.free) { inv = {}; for (const t of PART_ORDER) inv[t] = 99; }
     else inv = Object.assign({}, P.inv);
-    placed = []; tries = 0; trail = []; hint = null; hintUsed = false; run = null; wonT = 0; failT = 0; toast = null;
+    placed = []; tries = 0; trail = []; hint = null; hintUsed = false; run = null; wonT = 0; failT = 0; toast = null; tapTip = null;
     particles = []; pops = []; lastResult = null;
     if (P.free) { for (const p of loadFree()) { if (inv[p.t] > 0 && canPlaceOn(gridNow(), p.t, p.x, p.y)) placed.push(p); } }
     const types = paletteTypes();
-    tool = types.find(t => inv[t] > 0) || types[0] || null;
+    tool = types.find(t => inv[t] > 0) || types[0] || null; toolAuto = true;   /* じどうで えらんだ パーツは、1回目の タップでは むきを かえない */
     for (const t of PART_ORDER) toolDir[t] = 1;
     phase = 'edit'; overlay.classList.remove('show');
     resetMarble(); buildPalette(); updateButtons();
@@ -726,9 +726,12 @@
     if (!canPlaceOn(gridNow(), t, x, y)) return false;
     placed.push({ t, x, y, d: PT[t].ori ? (d < 0 ? -1 : 1) : 0, f: 0, born: animT });
     inv[t]--; hint = hint && hint.x === x && hint.y === y ? null : hint;
-    if (tool === t && inv[t] <= 0) { const nx = paletteTypes().find(k => inv[k] > 0); if (nx) tool = nx; }   // つかいきったら つぎの パーツを えらぶ
+    if (tool === t && inv[t] <= 0) { const nx = paletteTypes().find(k => inv[k] > 0); if (nx) { tool = nx; toolAuto = true; } }   // つかいきったら つぎの パーツを えらぶ
     if (!quiet) { SFX.place(); const [cx, cy] = cellCenter(x, y); burst(cx, cy, PCOL[t], 8, 80); }
-    if (!save.how && mode === 'stage') { save.how = 1; writeSave(); }
+    if (!save.how && mode === 'stage') {
+      save.how = 1; writeSave();
+      if (PT[t].ori && !quiet) { tapTip = { p: placed[placed.length - 1], life: 5 }; showToast('おいた ' + PT[t].name + 'を タップすると むき（⇄）が かわるよ', 4); }   /* はじめて おいたときに 1回だけ */
+    }
     edited();
     return true;
   }
@@ -740,6 +743,7 @@
   }
   function cyclePart(k) {
     const p = placed[k]; if (!p) return;
+    if (tapTip && tapTip.p === p) tapTip = null;
     if (PT[p.t].ori && !p.f) { p.d = -p.d; p.f = 1; p.born = animT; SFX.rot(); const [cx, cy] = cellCenter(p.x, p.y); pops.push({ x: cx, y: cy - 20, text: p.d > 0 ? '→' : '←', t: 0, color: PCOL[p.t], size: 22 }); edited(); }
     else removePart(k);
   }
@@ -781,8 +785,9 @@
   function nope(x, y) { const [cx, cy] = cellCenter(x, y); pops.push({ x: cx, y: cy, text: '✕', t: 0, color: '#ff5fa2', size: 22 }); }
   function selectTool(t) {
     if (!PT[t] || !paletteTypes().includes(t)) return;
-    if (tool === t && PT[t].ori) { toolDir[t] = -toolDir[t]; SFX.rot(); }
+    if (tool === t && PT[t].ori && !toolAuto) { toolDir[t] = -toolDir[t]; SFX.rot(); }
     else { tool = t; SFX.click(); }
+    toolAuto = false;
     refreshPalette();
   }
 
@@ -831,7 +836,7 @@
     } else {
       phase = 'fail'; failT = 1.3;
       lastResult = { res: run.res };
-      if (run.res === 'fall') showToast('おちちゃった！ パーツを かえて もういちど', 2.4);
+      if (run.res === 'fall') showToast(mode === 'stage' && lvIdx === 0 && placed.some(p => p.t === 'slope') ? 'おちちゃった！ さかを タップで むきが かわるよ' : 'おちちゃった！ パーツを かえて もういちど', mode === 'stage' && lvIdx === 0 ? 3.2 : 2.4);
       else { SFX.stuck(); showToast('とまっちゃった… ちがう おきかたを ためそう', 2.4); const [cx, cy] = cellCenter(marble.x, marble.y); pops.push({ x: cx, y: cy - 16, text: '？', t: 0, color: '#ff5fa2', size: 26 }); }
     }
   }
@@ -1239,6 +1244,7 @@
       drawPart(ctx, p.t, GX + p.x * CELL, GY + p.y * CELL, p.d, { squish: squish[p.y + ',' + p.x], swing: swing[p.y * COLS + p.x], pop: age < 0.25 ? age / 0.25 : undefined });
     }
     if (hint && phase === 'edit') { const a = 0.4 + 0.35 * Math.sin(animT * 6); ghostAt(hint.t, hint.x, hint.y, hint.d, true, a); }
+    if (tapTip && phase === 'edit' && placed.includes(tapTip.p)) drawTapTip(tapTip.p, Math.min(1, tapTip.life * 2));
     // ドラッグ中・カーソル
     if (phase === 'edit') {
       if (drag && drag.moved && drag.cell) {
@@ -1282,6 +1288,19 @@
       ctx.restore();
     }
   }
+  /* はじめて おいた パーツの 上に 「タップで むき⇄」の ふきだし */
+  function drawTapTip(p, a) {
+    const [cx] = cellCenter(p.x, p.y), below = p.y < ROWS - 2;   /* ふつうは パーツの 下に 出す（上の ほしを かくさない） */
+    const txt = 'タップで むき⇄', bob = Math.sin(animT * 5) * 2;
+    ctx.save(); ctx.globalAlpha = a; ctx.font = FONT(14);
+    const bw = ctx.measureText(txt).width + 20, bh = 28;
+    const bx = Math.max(4, Math.min(W - 4 - bw, cx - bw / 2)), by = (below ? GY + (p.y + 1) * CELL + 8 : Math.max(2, GY + p.y * CELL - bh - 8)) + bob;
+    ctx.fillStyle = '#ffd166'; rr(ctx, bx, by, bw, bh, 9); ctx.fill();
+    const ty = below ? by + 1 : by + bh - 1, tip = below ? by - 7 : by + bh + 7;
+    ctx.beginPath(); ctx.moveTo(cx - 7, ty); ctx.lineTo(cx + 7, ty); ctx.lineTo(cx, tip); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#1b1530'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, bx + bw / 2, by + bh / 2 + 1);
+    ctx.restore();
+  }
   function wrapText(s, maxW) {
     const out = []; let cur = '';
     const parts = s.split(/(?<= )/);   // 空白の あとで くぎる（ことばの とちゅうで おりかえさない）
@@ -1315,6 +1334,7 @@
     particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 280 * dt; s.life -= dt; return s.life > 0; });
     if (toast) { toast.t += dt; if (toast.t > toast.life) toast = null; }
     if (hint) { hint.life -= dt; if (hint.life <= 0) hint = null; }
+    if (tapTip && phase === 'edit') { tapTip.life -= dt; if (tapTip.life <= 0) tapTip = null; }
   }
   let last = performance.now();
   function loop(now) {
@@ -1354,7 +1374,7 @@
     const b = toBoard(e.clientX, e.clientY), [x, y] = b.inside ? b.cell : [-9, -9];
     if (phase !== 'edit') return;
     if (d.from === 'pal') {
-      if (d.moved) { if (inGrid(x, y)) { tool = d.t; refreshPalette(); tapCell(x, y); } }
+      if (d.moved) { if (inGrid(x, y)) { tool = d.t; toolAuto = false; refreshPalette(); tapCell(x, y); } }
       else if (d.wasSel) selectTool(d.t);
       return;
     }
@@ -1389,7 +1409,7 @@
     }
     if (k === 'Enter') { e.preventDefault(); audio(); kb = true; tapCell(cursor.x, cursor.y); return; }
     if (k === ' ') { e.preventDefault(); audio(); startRun(); return; }
-    if (k === 'r' || k === 'R') { if (tool && PT[tool].ori) { toolDir[tool] = -toolDir[tool]; SFX.rot(); refreshPalette(); } return; }
+    if (k === 'r' || k === 'R') { if (tool && PT[tool].ori) { toolDir[tool] = -toolDir[tool]; toolAuto = false; SFX.rot(); refreshPalette(); } return; }
     if (/^[1-8]$/.test(k)) { const ts = paletteTypes(), t = ts[+k - 1]; if (t && t !== tool) selectTool(t); return; }
     if (k === 'Backspace' || k === 'Delete') { e.preventDefault(); const i = partAt(cursor.x, cursor.y); if (i >= 0) removePart(i); return; }
     if (k === 'h' || k === 'H') { doHint(); return; }
@@ -1427,7 +1447,7 @@
       run: run ? { i: run.i, n: run.steps.length, res: run.res, got: run.got.slice(), bells: run.bells, speed: run.speed } : null,
       marble: { x: marble.x, y: marble.y }, lastResult, rndStreak, stars: P ? P.stars.slice() : [],
       save: JSON.parse(JSON.stringify(save)), hint: hint ? { t: hint.t, x: hint.x, y: hint.y, d: hint.d } : null,
-      levels: LEVELS.length, toast: toast ? toast.text : '',
+      levels: LEVELS.length, toast: toast ? toast.text : '', tapTip: !!tapTip, toolAuto,
     }),
     startStage, startFree, startRandom: () => startRandom(false), title: showTitle, select: showSelect,
     setLevel: (rows, invObj) => { mode = 'stage'; loadLevel({ name: 'テスト', rows, inv: invObj || {} }); },
