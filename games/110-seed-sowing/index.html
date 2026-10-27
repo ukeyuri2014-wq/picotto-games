@@ -107,7 +107,7 @@
       <button id="btn2p" class="alt">ふたりで はじめる</button>
     </div>
     <div class="levels" id="levels">
-      <button data-l="1">よわい</button><button data-l="2" class="on">ふつう</button><button data-l="3">つよい</button>
+      <button data-l="1" class="on">よわい</button><button data-l="2">ふつう</button><button data-l="3">つよい</button>
     </div>
     <div class="rules">
       <button id="ruleExtra" class="on">もう1回 ON</button><button id="ruleCap" class="on">よこどり ON</button><button id="ruleSeeds">たね 4こ</button>
@@ -198,7 +198,7 @@
 
   // ---- state ----------------------------------------------------------------
   let board = new Array(14).fill(0), disp = board.slice();
-  let turn = 0, mode = 'cpu', level = 2, phase = 'title', over = false, winner = null, again = false;
+  let turn = 0, mode = 'cpu', level = 1, phase = 'title', over = false, winner = null, again = false;
   let rules = { extra: true, cap: true, seeds: 4 };
   let showHint = true, fast = false, autoCpu = true, tutOn = true;
   let history = [], evq = [], cur = null, handN = 0, lastLand = -1;
