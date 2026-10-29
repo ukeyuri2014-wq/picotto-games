@@ -64,6 +64,24 @@
   .shbtn.on{border-color:#fff;box-shadow:inset 0 0 12px rgba(0,0,0,.4),0 0 18px rgba(255,209,102,.95)}
   .shbtn.lock{opacity:.45}
   .shbtn.hint{animation:padhint 1s ease-in-out infinite}
+  /* かんたん（うつ・まもる だけ）：うごかす まるを かくして、大きい「うつ」と「まもる」の 2つに */
+  .efire{display:none;position:relative;width:132px;height:132px;border-radius:50%;padding:0;cursor:pointer;touch-action:none;font-family:inherit;color:#fff;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;
+    border:3px solid rgba(255,95,162,.8);background:radial-gradient(circle at 35% 30%,#ffd0e4,#ff5fa2 50%,#7a2150);box-shadow:0 5px 0 #4a1230,0 0 16px rgba(255,95,162,.45);-webkit-touch-callout:none}
+  .efire:active,.efire.on{transform:translateY(3px);box-shadow:0 2px 0 #4a1230,0 0 22px rgba(255,95,162,.8)}
+  .efire .efi{font-size:28px;pointer-events:none}
+  .efire .efl{font-size:20px;letter-spacing:3px;pointer-events:none}
+  .efire.hint{animation:padhint 1s ease-in-out infinite}
+  body.easy .pad{display:none}
+  body.easy .efire{display:flex}
+  body.easy #pads{justify-content:space-around}
+  body.easy .padmid{flex:0 0 auto}
+  body.easy .shbtn{width:132px}
+  body.easy .shbtn .shi{font-size:34px}
+  body.easy .shbtn .shl{font-size:18px}
+  .modesel{display:flex;gap:6px;justify-content:center}
+  .modesel button{font-family:inherit;font-size:14px;padding:6px 14px;border-radius:999px;border:1px solid var(--edge);background:#1a1a33;color:var(--sub);cursor:pointer;line-height:1.2}
+  .modesel button small{display:block;font-size:10px}
+  .modesel button.on{background:var(--gold);color:#3a2a00;border-color:var(--gold)}
   #skipBtn{height:36px;border-radius:10px;border:1px solid rgba(255,209,102,.6);background:rgba(255,209,102,.1);color:var(--gold);font-size:13px;cursor:pointer;font-family:inherit;padding:0 10px;white-space:nowrap}
 
   #overlay{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(12,14,32,.97);text-align:center;padding:10px 12px;z-index:3}
@@ -141,6 +159,7 @@
   <canvas id="cv" width="448" height="320"></canvas>
   <div id="pads">
     <div class="pad" id="padMove"><div class="lab">うごく</div><div class="knob" id="knobMove"></div></div>
+    <button class="efire" id="easyFire" aria-label="うつ（ちかくの てきを じどうで ねらう）"><span class="efi">●</span><span class="efl">うつ</span></button>
     <div class="padmid" id="padMid"><button class="shbtn" id="shieldBtn" aria-label="まもる（おしている あいだ たてで たまを ふせぐ）"><span class="shi">🛡️</span><span class="shl">まもる</span></button></div>
     <div class="pad fire" id="padAim"><div class="lab">ねらう・うつ</div><div class="knob" id="knobAim"></div></div>
   </div>
@@ -150,6 +169,7 @@
         <svg class="tankicon" viewBox="0 0 54 40" aria-hidden="true"><rect x="4" y="24" width="46" height="11" rx="5" fill="#1b1b2e" stroke="#53e0d8" stroke-width="1.5"/><rect x="8" y="14" width="38" height="14" rx="5" fill="#53e0d8"/><rect x="27" y="10" width="25" height="5" rx="2" fill="#d8d6ee"/><circle cx="25" cy="14" r="8" fill="#8ff0ea" stroke="#1d6a6e" stroke-width="1.5"/><circle cx="23" cy="13" r="1.6" fill="#10142a"/><circle cx="28" cy="13" r="1.6" fill="#10142a"/></svg>
         <div class="logo">ちび<span>タンク</span></div>
       </div>
+      <div class="modesel" id="modeSel"><button id="modeNormal" class="on">ふつう</button><button id="modeEasy">かんたん<small>うつ・まもる だけ</small></button></div>
       <div class="how" id="howText"></div>
       <div id="stages"></div>
       <div class="stats" id="titleStats"></div>
@@ -172,6 +192,7 @@
   <b>あそびかた</b>：じぶんの <span class="c4">ちびタンク</span> を うごかして、てきの せんしゃを <b>ぜんぶ たおせば ステージクリア</b>！ たまは かべで <b>1かい だけ はねかえる</b>ので、かべの むこうの てきも ねらえるよ（はねかえして たおすと <span class="c3">とくてん2ばい</span>）。<br>
   <b>てき</b>：<span class="c1">のろのろ（むらさき）</span>…ゆっくり うごく ／ <span class="c2">ねらいうち（ピンク）</span>…かべで はねかえして ねらってくる ／ <span class="c3">かたい（きいろ）</span>…2かい あてないと こわれない。てきは うつまえに たいほうが <b>ひかる</b> から、よく見て よけよう。<br>
   <b>まもる</b>：<span class="c3">🛡️まもる</span>を おしている あいだ、たてで てきの たまを ふせげる。つかうと ゲージが へり、からに なると すこし まつ。たての あいだは うてない。<br>
+  <b>かんたん</b>：タイトルで「かんたん」を えらぶと、うごかさずに <b>うつ</b> と <b>🛡️まもる</b> だけで あそべる。たいほうは ちかくの てきを じどうで ねらうよ。てきの たまは おそく、たても ながく つかえる。<br>
   <b>れんしゅう</b>：はじめての ときは うごく・うつ・まもるの れんしゅうから。タイトルの「れんしゅう」で いつでも できる。<br>
   <b>コツ</b>：てきの たまに じぶんの たまを あてると けせる。木の はこは たまで こわせる。じぶんの たまは 1どに 2はつまで。<br>
   <b>★</b>：クリアで1つ、ノーダメージで1つ、はやく クリアで1つ。5・10・15ステージを クリアすると <span class="nw">❤️が</span> ふえる。<br>
@@ -198,7 +219,7 @@
     sniper: { name: 'ねらいうち', col: '#ff5fa2', light: '#ffc2dc', dark: '#7a2150', hp: 1, speed: 38, bspeed: 165, cd: 2.3, err: 0.04, turn: 3.0, charge: 0.6,  maxb: 1, pts: 200, bounce: true },
     hard:   { name: 'かたい',     col: '#ffd166', light: '#fff0c4', dark: '#7a5a14', hp: 2, speed: 50, bspeed: 190, cd: 1.8, err: 0.08, turn: 4.0, charge: 0.5,  maxb: 2, pts: 300, bounce: false },
   };
-  // [のろのろ, ねらいうち, かたい]
+  /* [のろのろ, ねらいうち, かたい] */
   const STAGES = [
     [2, 0, 0], [3, 0, 0], [2, 1, 0], [3, 1, 0], [2, 2, 0],
     [2, 1, 1], [3, 2, 0], [2, 2, 1], [3, 1, 2], [2, 2, 2],
@@ -212,7 +233,7 @@
   const PSPAWN = { c: 7, r: 9 };
   const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) && !(window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches);
 
-  // ---- sound ---------------------------------------------------------------
+  /* ---- sound --------------------------------------------------------------- */
   let muted = false;
   try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
   let ac = null;
@@ -258,7 +279,7 @@
   const muteBtn = $('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 
-  // ---- save ----------------------------------------------------------------
+  /* ---- save ---------------------------------------------------------------- */
   function freshSave() { return { best: 0, unlocked: 1, stars: new Array(NSTAGE).fill(0), played: false, sel: 1, tut: false }; }
   let save = freshSave();
   function loadSave() {
@@ -278,7 +299,7 @@
   function writeSave() { try { localStorage.setItem(KEY + 'save', JSON.stringify(save)); } catch (e) {} }
   const totalStars = () => save.stars.reduce((a, b) => a + b, 0);
 
-  // ---- helpers -------------------------------------------------------------
+  /* ---- helpers ------------------------------------------------------------- */
   function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
   const angDiff = (a, b) => { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return d; };
@@ -288,7 +309,7 @@
   const tc = v => Math.floor(v / TS);
   const center = t => (t + 0.5) * TS;
 
-  // ---- map -----------------------------------------------------------------
+  /* ---- map ----------------------------------------------------------------- */
   let map = [];
   function blankMap() { const m = []; for (let r = 0; r < ROWS; r++) { const row = []; for (let c = 0; c < COLS; c++) row.push(r === 0 || c === 0 || r === ROWS - 1 || c === COLS - 1 ? 1 : 0); m.push(row); } return m; }
   function cellOf(m, c, r) { return (r < 0 || c < 0 || r >= ROWS || c >= COLS) ? 1 : m[r][c]; }
@@ -317,7 +338,7 @@
       if (solids < 10 || solids > 40) continue;
       const reach = floodCount(m, PSPAWN.c, PSPAWN.r);
       if (reach.size !== free) continue;
-      // てきの でる ばしょ（上のほう、となりあわない）
+      /* てきの でる ばしょ（上のほう、となりあわない） */
       const cand = [];
       const maxRow = need > 6 ? 5 : 4;
       for (let r = 1; r <= maxRow; r++) for (let c = 1; c < COLS - 1; c++) if (m[r][c] === 0) cand.push([c, r]);
@@ -326,14 +347,14 @@
       for (const p of cand) { if (spawns.length >= need) break; if (spawns.every(s => Math.max(Math.abs(s[0] - p[0]), Math.abs(s[1] - p[1])) >= 2)) spawns.push(p); }
       if (spawns.length < need) continue;
       const types = [];
-      // かたい・ねらいうちを 先に（散らばるように まぜる）
+      /* かたい・ねらいうちを 先に（散らばるように まぜる） */
       for (let k = 0; k < comp[2]; k++) types.push('hard');
       for (let k = 0; k < comp[1]; k++) types.push('sniper');
       for (let k = 0; k < comp[0]; k++) types.push('slow');
       for (let i = types.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = types[i]; types[i] = types[j]; types[j] = t; }
       return { map: m, enemies: spawns.map((s, i) => ({ type: types[i], c: s[0], r: s[1] })), tries };
     }
-    // ここに来ることはほぼ無いが、念のため 柱だけの面
+    /* ここに来ることはほぼ無いが、念のため 柱だけの面 */
     const m = blankMap();
     for (const [c, r] of [[3, 3], [3, 6], [11, 3], [11, 6], [7, 5]]) m[r][c] = 1;
     const sp = [[2, 1], [12, 1], [5, 2], [9, 2], [7, 1], [1, 3], [13, 3], [4, 4], [10, 4]];
@@ -350,14 +371,15 @@
     return null;
   }
 
-  // ---- state ---------------------------------------------------------------
-  let phase = 'title';           // title | intro | play | dead | clear | over | allclear
+  /* ---- state --------------------------------------------------------------- */
+  let phase = 'title';           /* title | intro | play | dead | clear | over | allclear */
   let paused = false;
   let stage = 1, startStage = 1, lives = 3, score = 0, runSeed = 1, rnd = Math.random;
   let enemies = [], bullets = [], parts = [], pops = [], tracks = [], rings = [];
   let player = null;
   let phaseT = 0, stageTime = 0, stageHit = false, T = 0, shake = 0;
   let clearInfo = null, endInfo = null, hintT = 0, nextId = 1;
+  let easy = false;   /* かんたん：うごかさず「うつ」「まもる」だけ。たいほうは ちかくの てきを じどうで ねらう */
   let god = false, autoRun = true, testInput = null, bot = null;
   let mapCanvas = null, mapDirty = true, preview = null;
   let selStage = 1;
@@ -379,6 +401,7 @@
   }
   function loadStage(n) {
     stage = n; SP = stageParams(n);
+    if (easy) SP = { bmul: SP.bmul * 0.8, cdmul: SP.cdmul * 1.4, errmul: SP.errmul * 1.3, smul: SP.smul * 0.85, chmul: SP.chmul * 1.3 };   /* かんたん：てきの たまは おそく・すくなく、うつまえに ながく ひかる */
     const g = genStage(runSeed, n);
     map = g.map; mapDirty = true;
     enemies = g.enemies.map(e => makeEnemy(e.type, e.c, e.r));
@@ -400,14 +423,15 @@
     loadStage(n);
   }
 
-  // ---- input ---------------------------------------------------------------
+  /* ---- input --------------------------------------------------------------- */
   const keys = new Set();
   const mv = { id: null, x: 0, y: 0 };
   const am = { id: null, x: 0, y: 0, t0: 0, maxMag: 0 };
-  const shp = { id: null };
+  const shp = { id: null }, ef = { id: null };
   let mouse = { active: false, x: 0, y: 0, down: false }, fireQueued = false, kbAim = false;
   function moveInput() {
     if (testInput) return { x: testInput.mx || 0, y: testInput.my || 0 };
+    if (easy) return { x: 0, y: 0 };
     let x = 0, y = 0;
     if (keys.has('ArrowLeft') || keys.has('KeyA')) x -= 1;
     if (keys.has('ArrowRight') || keys.has('KeyD')) x += 1;
@@ -425,15 +449,15 @@
   }
   function fireHeld() {
     if (testInput) return !!testInput.fire;
-    return keys.has('Space') || mouse.down || (am.id !== null && Math.hypot(am.x, am.y) > 0.45);
+    return keys.has('Space') || mouse.down || (am.id !== null && Math.hypot(am.x, am.y) > 0.45) || (easy && ef.id !== null);
   }
   function shieldHeld() {
     if (testInput) return !!testInput.shield;
     return keys.has('KeyF') || shp.id !== null;
   }
 
-  // ---- bullets -------------------------------------------------------------
-  // b: {x,y,dx,dy,sp,bounces,owner,bounced}
+  /* ---- bullets ------------------------------------------------------------- */
+  /* b: {x,y,dx,dy,sp,bounces,owner,bounced} */
   function stepBullet(b, dist, check, trace) {
     let rem = dist;
     while (rem > 1e-6) {
@@ -508,7 +532,7 @@
       if (b.dead) continue;
       if (phase !== 'play' && phase !== 'dead' && phase !== 'tut') break;
       b.age += dt;
-      // 4pxずつ すすめる（ねらい線の よそうと ぴったり おなじ 道すじに なる）
+      /* 4pxずつ すすめる（ねらい線の よそうと ぴったり おなじ 道すじに なる） */
       b.acc = (b.acc || 0) + b.sp * dt; const go = Math.floor(b.acc / 4) * 4; b.acc -= go;
       const res = stepBullet(b, go, bb => {
         if (phase !== 'play' && phase !== 'dead' && phase !== 'tut') return null;
@@ -527,7 +551,7 @@
       if (res) { b.dead = true; if (res === 'wall') { SFX.puff(); sparks(b.x, b.y, '#cfcfe6', 6, 60); smoke(b.x, b.y, 1); } }
       else { b.trail.push([b.x, b.y]); if (b.trail.length > 7) b.trail.shift(); }
     }
-    // たま どうしが ぶつかると きえる
+    /* たま どうしが ぶつかると きえる */
     const pb = bullets.filter(b => !b.dead && b.owner === 'p'), eb = bullets.filter(b => !b.dead && b.owner !== 'p');
     for (const a of pb) for (const b of eb) {
       if (a.dead || b.dead) continue;
@@ -555,7 +579,7 @@
     score += pts;
     explode(e.x, e.y, E.col, 1);
     pops.push({ x: e.x, y: e.y - 14, text: (b.bounced ? 'はねかえし！ ' : '') + '+' + pts, col: b.bounced ? '#ffd166' : '#eeecfa', t: 0, big: b.bounced });
-    // その てきの たまは けす
+    /* その てきの たまは けす */
     for (const bb of bullets) if (bb.owner === e) { bb.dead = true; sparks(bb.x, bb.y, E.col, 4, 40); }
     updateHud();
     if (enemies.every(x => !x.alive)) { if (phase === 'tut') tutNext(); else stageClear(); }
@@ -568,7 +592,7 @@
   }
   function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
-  // ---- fx ------------------------------------------------------------------
+  /* ---- fx ------------------------------------------------------------------ */
   function sparks(x, y, col, n, sp) {
     if (!autoRun || parts.length > 900) return;
     for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = sp * (0.4 + Math.random()); parts.push({ k: 'spark', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.2 + Math.random() * 0.3, max: 0.5, col, size: 1.6 + Math.random() * 1.4 }); }
@@ -586,7 +610,7 @@
     tracks.push({ x, y, a: 0, life: 6, scorch: true });
   }
 
-  // ---- tanks ---------------------------------------------------------------
+  /* ---- tanks --------------------------------------------------------------- */
   function moveTank(t, dx, dy) {
     let bx = false, by = false;
     if (dx) {
@@ -611,7 +635,7 @@
     const wasSh = p.shOn;
     if (p.shLock && p.sh >= SH_RE) p.shLock = false;
     p.shOn = shieldHeld() && !p.shLock && p.sh > 0;
-    if (p.shOn) { p.sh -= dt / SH_TIME; if (p.sh <= 0) { p.sh = 0; p.shOn = false; p.shLock = true; SFX.deny(); } }
+    if (p.shOn) { p.sh -= dt / (easy ? SH_TIME * 1.75 : SH_TIME); if (p.sh <= 0) { p.sh = 0; p.shOn = false; p.shLock = true; SFX.deny(); } }
     else p.sh = Math.min(1, p.sh + dt / SH_FILL);
     if (p.shOn && !wasSh) SFX.shield();
     const m = moveInput(); const mag = Math.min(1, Math.hypot(m.x, m.y));
@@ -619,7 +643,7 @@
       const sp = P_SPEED * Math.min(1, 0.35 + mag * 0.8) * (p.shOn ? SH_SLOW : 1), ux = m.x / Math.hypot(m.x, m.y), uy = m.y / Math.hypot(m.x, m.y);
       const ox = p.x, oy = p.y;
       const bl = moveTank(p, ux * sp * dt, uy * sp * dt);
-      // かどに ひっかからないよう、すきまの まん中へ すこし よせる
+      /* かどに ひっかからないよう、すきまの まん中へ すこし よせる */
       if (bl.bx && Math.abs(uy) < 0.5) { const cy = center(tc(p.y)), ahead = p.x + Math.sign(ux) * (HB + 3); if (!solidAt(ahead, cy)) moveTank(p, 0, clamp(cy - p.y, -sp * dt, sp * dt)); }
       if (bl.by && Math.abs(ux) < 0.5) { const cx = center(tc(p.x)), ahead = p.y + Math.sign(uy) * (HB + 3); if (!solidAt(cx, ahead)) moveTank(p, clamp(cx - p.x, -sp * dt, sp * dt), 0); }
       p.body = turnAxis(p.body, Math.atan2(uy, ux), 10 * dt);
@@ -630,23 +654,41 @@
       if (keys.has('KeyQ')) { p.turret -= 3.2 * dt; kbAim = true; }
       if (keys.has('KeyE')) { p.turret += 3.2 * dt; kbAim = true; }
     }
-    const a = aimInput(); if (a != null) p.turret = a;
+    if (easy) {   /* じどうで ねらう：0.15びょうごとに ねらいを きめて、たいほうを そちらへ まわす */
+      p.aimT = (p.aimT || 0) - dt;
+      if (p.aimT <= 0) { p.aimT = 0.15; p.aimA = autoAim(); }
+      if (p.aimA != null) { p.turret = turnToward(p.turret, p.aimA, 9 * dt); if (fireQueued || fireHeld()) p.turret = p.aimA; }
+    } else { const a = aimInput(); if (a != null) p.turret = a; }
     if (p.shOn) fireQueued = false;
     else if (fireQueued) { fireQueued = false; playerFire(); }
     else if (fireHeld()) playerFire();
+  }
+  function autoAim() {
+    const p = player; if (!p) return null;
+    let best = null, bd = 1e9;
+    for (const e of enemies) if (e.alive) {   /* まっすぐ あたる てき（ちかい じゅん） */
+      const a = Math.atan2(e.y - p.y, e.x - p.x);
+      if (simShot(p.x, p.y, a, playerSimCheck).hit === 'enemy') { const d = Math.hypot(e.x - p.x, e.y - p.y); if (d < bd) { bd = d; best = a; } }
+    }
+    if (best != null) return best;
+    let bb = null, ba = 9;   /* かべで はねかえして あたる むき */
+    for (let i = 0; i < 144; i++) { const a = i * Math.PI * 2 / 144; if (simShot(p.x, p.y, a, playerSimCheck).hit === 'enemy') { const d = Math.abs(angDiff(p.turret, a)); if (d < ba) { ba = d; bb = a; } } }
+    if (bb != null) return bb;
+    for (const e of enemies) if (e.alive) { const d = Math.hypot(e.x - p.x, e.y - p.y); if (d < bd) { bd = d; best = Math.atan2(e.y - p.y, e.x - p.x); } }   /* 見えない ときは いちばん ちかい てきの ほうへ（はこを こわせる） */
+    return best;
   }
   function planPath(e) {
     const E = ETYPES[e.type], c = tc(e.x), r = tc(e.y);
     const pc = player ? tc(player.x) : PSPAWN.c, pr = player ? tc(player.y) : PSPAWN.r;
     let path = null;
-    if (e.type === 'hard') {
-      const want = 2 + Math.floor(rnd() * 2);
+    if (e.type === 'hard' || easy) {   /* かんたん：うごかない プレイヤーから 見える ところへ てきが ちかづいてくる */
+      const want = e.type === 'hard' ? 2 + Math.floor(rnd() * 2) : 3 + Math.floor(rnd() * 2);
       path = bfsPath(c, r, (cc, rr) => Math.abs(cc - pc) + Math.abs(rr - pr) <= want);
       e.think = 1.0 + rnd() * 0.7;
     } else {
       const R = e.type === 'slow' ? 4 : 3;
       const gc = clamp(c + Math.round((rnd() * 2 - 1) * R), 1, COLS - 2), gr = clamp(r + Math.round((rnd() * 2 - 1) * R), 1, ROWS - 2);
-      // ねらいうちは プレイヤーから すこし はなれた ところを このむ
+      /* ねらいうちは プレイヤーから すこし はなれた ところを このむ */
       path = bfsPath(c, r, (cc, rr) => Math.abs(cc - gc) + Math.abs(rr - gr) <= 1 && (e.type !== 'sniper' || Math.abs(cc - pc) + Math.abs(rr - pr) >= 4));
       e.think = (e.type === 'slow' ? 2.2 : 2.8) + rnd() * 1.8;
       if (e.type === 'sniper') e.wait = 0.8 + rnd() * 1.6;
@@ -667,7 +709,7 @@
         if (r.hit === 'player') { const d = Math.abs(angDiff(e.turret, a)); if (d < bd) { bd = d; best = a; } }
       }
       if (best != null) {
-        // まわりも あたるなら その まん中を ねらう（いつも かすらないように）
+        /* まわりも あたるなら その まん中を ねらう（いつも かすらないように） */
         let lo = best, hi = best;
         for (let k = 1; k <= 6; k++) { const a = best - k * 0.01; if (simShot(e.x, e.y, a, chk).hit === 'player') lo = a; else break; }
         for (let k = 1; k <= 6; k++) { const a = best + k * 0.01; if (simShot(e.x, e.y, a, chk).hit === 'player') hi = a; else break; }
@@ -679,7 +721,7 @@
   function updateEnemy(e, dt) {
     const E = ETYPES[e.type];
     if (e.flash > 0) e.flash -= dt;
-    // うごき
+    /* うごき */
     e.think -= dt;
     if (e.wait > 0) e.wait -= dt;
     else {
@@ -697,7 +739,7 @@
         }
       }
     }
-    // ねらう・うつ
+    /* ねらう・うつ */
     e.cd -= dt; e.scan -= dt;
     const mine = bullets.filter(b => b.owner === e).length;
     if (e.charge > 0) {
@@ -733,7 +775,7 @@
     }
   }
 
-  // ---- flow ----------------------------------------------------------------
+  /* ---- flow ---------------------------------------------------------------- */
   function stageClear() {
     phase = 'clear'; phaseT = 0;
     const par = parTime(stage), noHit = !stageHit, fast = stageTime <= par;
@@ -818,7 +860,7 @@
     tut = null; startRun(selStage);
   }
   function skipTutorial() { if (phase !== 'tut') return; SFX.click(); finishTutorial(); }
-  function startFromTitle() { if (!save.tut && !save.played) startTutorial(); else startRun(selStage); }
+  function startFromTitle() { if (easy) { startRun(selStage); hintT = 7; } else if (!save.tut && !save.played) startTutorial(); else startRun(selStage); }
 
   function update(dt) {
     T += dt;
@@ -848,7 +890,7 @@
         player = makePlayer(); player.inv = 2.2;
         for (const b of bullets) if (b.owner !== 'p') b.dead = true;
         bullets = bullets.filter(b => !b.dead);
-        // スポーンの ちかくの てきを すこし どかす
+        /* スポーンの ちかくの てきを すこし どかす */
         for (const e of enemies) if (e.alive && Math.hypot(e.x - player.x, e.y - player.y) < TR * 2 + 2) { e.path = []; }
         separateTanks();
         phase = 'play'; phaseT = 0;
@@ -876,7 +918,7 @@
     pops = pops.filter(p => p.t < 1.0);
   }
 
-  // ---- bot（テスト用：全部の面が クリアできることを 確かめる）---------------
+  /* ---- bot（テスト用：全部の面が クリアできることを 確かめる）--------------- */
   function botThink(dt) {
     const p = player; if (!p || !p.alive) { testInput = { mx: 0, my: 0 }; return; }
     bot.scan -= dt;
@@ -894,7 +936,7 @@
     testInput = { mx: dx / d, my: dy / d };
   }
 
-  // ---- draw ----------------------------------------------------------------
+  /* ---- draw ---------------------------------------------------------------- */
   function renderMap() {
     if (!mapCanvas) mapCanvas = document.createElement('canvas');
     mapCanvas.width = Math.round(W * RS); mapCanvas.height = Math.round(H * RS);
@@ -908,7 +950,7 @@
     for (let col = 1; col < COLS; col++) { c.moveTo(col * TS + 0.5, TS); c.lineTo(col * TS + 0.5, H - TS); }
     for (let r = 1; r < ROWS; r++) { c.moveTo(TS, r * TS + 0.5); c.lineTo(W - TS, r * TS + 0.5); }
     c.stroke();
-    // かげ
+    /* かげ */
     c.fillStyle = 'rgba(0,0,0,.35)';
     for (let r = 0; r < ROWS; r++) for (let col = 0; col < COLS; col++) if (map[r][col]) c.fillRect(col * TS + 5, r * TS + 6, TS, TS);
     for (let r = 0; r < ROWS; r++) for (let col = 0; col < COLS; col++) {
@@ -930,7 +972,7 @@
         c.strokeStyle = 'rgba(255,220,150,.35)'; c.lineWidth = 1; c.beginPath(); c.moveTo(x + 6, y + 11); c.lineTo(x + TS - 6, y + 11); c.moveTo(x + 6, y + 21); c.lineTo(x + TS - 6, y + 21); c.stroke();
       }
     }
-    // そとわく の ひかり
+    /* そとわく の ひかり */
     c.strokeStyle = 'rgba(83,224,216,.45)'; c.lineWidth = 2; c.shadowColor = '#53e0d8'; c.shadowBlur = 10 * RS;
     c.strokeRect(TS - 1, TS - 1, W - TS * 2 + 2, H - TS * 2 + 2); c.shadowBlur = 0;
     mapDirty = false;
@@ -960,7 +1002,7 @@
     const tg = c.createRadialGradient(-2, -3, 1, 0, 0, 8.5); tg.addColorStop(0, light); tg.addColorStop(0.6, col); tg.addColorStop(1, dark);
     c.fillStyle = tg; c.beginPath(); c.arc(0, 0, 7.6, 0, Math.PI * 2); c.fill();
     c.strokeStyle = dark; c.lineWidth = 1.2; c.stroke();
-    // め
+    /* め */
     c.fillStyle = '#ffffff'; c.beginPath(); c.arc(2.2, -2.7, 2.1, 0, Math.PI * 2); c.arc(2.2, 2.7, 2.1, 0, Math.PI * 2); c.fill();
     c.fillStyle = '#10142a'; c.beginPath(); c.arc(3, -2.7, 1.1, 0, Math.PI * 2); c.arc(3, 2.7, 1.1, 0, Math.PI * 2); c.fill();
     if (opts.cracked) { c.strokeStyle = 'rgba(40,20,0,.8)'; c.lineWidth = 1; c.beginPath(); c.moveTo(-5, -4); c.lineTo(-2, -1); c.lineTo(-4, 2); c.stroke(); }
@@ -1028,7 +1070,7 @@
     const sx = shake > 0 ? (Math.random() * 2 - 1) * shake * 4 : 0, sy = shake > 0 ? (Math.random() * 2 - 1) * shake * 4 : 0;
     ctx.translate(sx, sy);
     ctx.drawImage(mapCanvas, 0, 0, W, H);
-    // わだち
+    /* わだち */
     for (const t of tracks) {
       ctx.save(); ctx.translate(t.x, t.y);
       if (t.scorch) { ctx.globalAlpha = Math.min(1, t.life / 3) * 0.5; ctx.fillStyle = '#05050f'; ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.fill(); }
@@ -1039,7 +1081,7 @@
     if (phase === 'tut' && tut) drawTutWorld();
     if (phase !== 'title') {
       drawPreview();
-      // たま
+      /* たま */
       for (const b of bullets) {
         const col = b.owner === 'p' ? '#53e0d8' : ETYPES[b.owner.type].col;
         for (let i = 0; i < b.trail.length; i++) { const [x, y] = b.trail[i]; ctx.globalAlpha = (i + 1) / b.trail.length * 0.35; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, BR * (0.4 + 0.6 * i / b.trail.length), 0, Math.PI * 2); ctx.fill(); }
@@ -1061,7 +1103,7 @@
         drawShield(player);
       }
     }
-    // こうか
+    /* こうか */
     for (const r of rings) { const k = r.t / r.max; ctx.strokeStyle = r.col; ctx.globalAlpha = 1 - k; ctx.lineWidth = 3 * (1 - k) + 0.5; ctx.beginPath(); ctx.arc(r.x, r.y, r.r * (0.3 + 0.7 * Math.sqrt(k)), 0, Math.PI * 2); ctx.stroke(); }
     ctx.globalAlpha = 1;
     for (const p of parts) {
@@ -1134,7 +1176,7 @@
     } else if (phase === 'play' && hintT > 0) {
       ctx.globalAlpha = Math.min(1, hintT) * (0.75 + 0.25 * Math.sin(T * 5));
       ctx.fillStyle = 'rgba(11,12,32,.75)'; ctx.fillRect(TS, H - TS - 34, W - TS * 2, 30);
-      txt(isTouch ? '↙ うごく　　まんなか：まもる　　うつ ↘' : 'WASDで うごく ／ クリックで うつ ／ Fで まもる', W / 2, H - TS - 19, 14, '#ffd166', 'center', false);
+      txt(easy ? (isTouch ? 'うつ で たまが でる　てきが ひかったら まもる！' : 'スペースで うつ ／ Fで まもる（ねらいは じどう）') : isTouch ? '↙ うごく　　まんなか：まもる　　うつ ↘' : 'WASDで うごく ／ クリックで うつ ／ Fで まもる', W / 2, H - TS - 19, 14, '#ffd166', 'center', false);
       ctx.globalAlpha = 1;
     } else if (phase === 'dead' && lives > 0) {
       txt('のこり ❤️×' + lives, W / 2, H / 2, 20, '#ff5fa2');
@@ -1142,19 +1184,20 @@
     if (paused) { ctx.fillStyle = 'rgba(11,12,32,.4)'; ctx.fillRect(0, 0, W, H); }
   }
 
-  // ---- HUD / overlay ---------------------------------------------------------
+  /* ---- HUD / overlay --------------------------------------------------------- */
   let hudCache = '';
   function updateHud() {
     const ts = phase === 'tut' && tut ? tut.step : 0;
-    const key = lives + '|' + stage + '|' + score + '|' + phase + '|' + ts;
+    const key = lives + '|' + stage + '|' + score + '|' + phase + '|' + ts + '|' + easy + '|' + (hintT > 0);
     if (key === hudCache) return; hudCache = key;
     $('hudLives').textContent = lives > 0 ? '❤️'.repeat(Math.min(5, lives)) : '💔';
-    $('hudStage').innerHTML = ts ? 'れんしゅう <small>' + Math.min(3, ts) + ' / 3</small>' : 'ステージ ' + stage + ' <small>/ ' + NSTAGE + '</small>';
+    $('hudStage').innerHTML = ts ? 'れんしゅう <small>' + Math.min(3, ts) + ' / 3</small>' : 'ステージ ' + stage + ' <small>/ ' + NSTAGE + (easy ? '・かんたん' : '') + '</small>';
     $('hudScore').textContent = String(score);
     $('hudScore').hidden = !!ts; $('skipBtn').hidden = !ts;
     const showHint = hintT > 0 && phase !== 'title';
     $('padMove').classList.toggle('hint', showHint || ts === 1); $('padAim').classList.toggle('hint', showHint || ts === 2);
     $('shieldBtn').classList.toggle('hint', showHint || ts === 3);
+    $('easyFire').classList.toggle('hint', showHint);
   }
   let shCache = '';
   function updateShieldUI() {
@@ -1186,7 +1229,9 @@
   function toTitle() {
     phase = 'title'; paused = false; bullets = []; testInput = bot ? testInput : null; tut = null;
     selStage = Math.min(save.sel || 1, save.unlocked);
-    $('howText').innerHTML = isTouch
+    $('howText').innerHTML = easy
+      ? '<b>うつ</b>を おすと ちかくの てきへ たまが とぶ<br>てきの たいほうが ひかったら <b>🛡️まもる</b>！<br>うごかなくて いいよ。てきを ぜんぶ たおせば クリア'
+      : isTouch
       ? '<b>ひだり</b>で うごく・<b>みぎ</b>を ひっぱって うつ<br><b>まんなかの 🛡️</b>を おすと たまを ふせぐ<br>たまは かべで <i>1かい はねかえる</i>！<br>てきの せんしゃを ぜんぶ たおせば クリア'
       : '<b>WASD・やじるし</b>で うごく・<b>マウス</b>で ねらって クリック<br><b>F</b>を おしている あいだ たてで たまを ふせぐ<br>たまは かべで <i>1かい はねかえる</i>！<br>てきの せんしゃを ぜんぶ たおせば クリア';
     renderStages(); showPane('titlePane'); updateHud();
@@ -1209,7 +1254,7 @@
     else hideOverlay();
   }
 
-  // ---- pads / pointer --------------------------------------------------------
+  /* ---- pads / pointer -------------------------------------------------------- */
   function resetKnobs() { $('knobMove').style.transform = ''; $('knobAim').style.transform = ''; mv.x = mv.y = am.x = am.y = 0; }
   function bindPad(el, st, knob, isAim) {
     const upd = e => {
@@ -1229,7 +1274,7 @@
     el.addEventListener('pointermove', e => { if (e.pointerId === st.id) { e.preventDefault(); upd(e); } });
     const end = e => {
       if (e.pointerId !== st.id) return;
-      if (isAim && st.maxMag < 0.45 && performance.now() - st.t0 < 300) fireQueued = true;   // ちょんと さわると いまの むきに うつ
+      if (isAim && st.maxMag < 0.45 && performance.now() - st.t0 < 300) fireQueued = true;   /* ちょんと さわると いまの むきに うつ */
       st.id = null; st.x = st.y = 0; knob.style.transform = '';
     };
     el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
@@ -1239,6 +1284,7 @@
   function onCanvasDown(e) {
     audio();
     if ((phase !== 'play' && phase !== 'tut') || paused) return;
+    if (easy) { e.preventDefault(); fireQueued = true; return; }
     const pt = canvasPt(e);
     if (e.pointerType === 'mouse') {
       if (e.button !== 0) return;
@@ -1279,7 +1325,7 @@
     startRun(endInfo.win ? 1 : endInfo.stage);
   }
 
-  // ---- loop ----------------------------------------------------------------
+  /* ---- loop ---------------------------------------------------------------- */
   let last = performance.now();
   function loop(now) {
     const dt = Math.min((now - last) / 1000, 0.05); last = now;
@@ -1289,7 +1335,7 @@
     requestAnimationFrame(loop);
   }
 
-  // ---- test API --------------------------------------------------------------
+  /* ---- test API -------------------------------------------------------------- */
   function encodeMap() { return map.map(row => row.map(v => v === 1 ? '#' : v === 2 ? 'x' : '.').join('')); }
   function stateObj() {
     return {
@@ -1309,7 +1355,7 @@
   }
   function stepMs(ms) { const n = Math.ceil(ms / 16); for (let i = 0; i < n; i++) update(0.016); updateHud(); return stateObj(); }
 
-  // ---- init (いちばん さいご) -------------------------------------------------
+  /* ---- init (いちばん さいご) ------------------------------------------------- */
   if (isTouch) document.body.classList.add('touch');
   cv.width = Math.round(VW * RS); cv.height = Math.round(VH * RS);
   loadSave();
@@ -1333,6 +1379,16 @@
     const shEnd = e => { if (e.pointerId === shp.id) shp.id = null; };
     sb.addEventListener('pointerup', shEnd); sb.addEventListener('pointercancel', shEnd); sb.addEventListener('lostpointercapture', shEnd);
     sb.addEventListener('contextmenu', e => e.preventDefault());
+  }
+  {
+    const fb = $('easyFire');
+    fb.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (ef.id !== null) return; ef.id = e.pointerId; fireQueued = true; fb.classList.add('on'); try { fb.setPointerCapture(e.pointerId); } catch (_) {} });
+    const fEnd = e => { if (e.pointerId === ef.id) { ef.id = null; fb.classList.remove('on'); } };
+    fb.addEventListener('pointerup', fEnd); fb.addEventListener('pointercancel', fEnd); fb.addEventListener('lostpointercapture', fEnd);
+    fb.addEventListener('contextmenu', e => e.preventDefault());
+    const setEasy = on => { easy = on; document.body.classList.toggle('easy', on); $('modeEasy').classList.toggle('on', on); $('modeNormal').classList.toggle('on', !on); SFX.click(); hudCache = ''; toTitle(); };
+    $('modeNormal').addEventListener('click', () => { audio(); setEasy(false); });
+    $('modeEasy').addEventListener('click', () => { audio(); setEasy(true); });
   }
   for (const el of [$('pads'), cv]) el.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });
   cv.addEventListener('pointerdown', onCanvasDown);
@@ -1381,7 +1437,7 @@
       const types = { slow: 0, sniper: 0, hard: 0 }; for (const e of g.enemies) types[e.type]++;
       return { tries: g.tries, free, crates, walls, connected: reach.size === free, enemiesOk: eOk, count: g.enemies.length, types, playerFree: m[PSPAWN.r][PSPAWN.c] === 0, sig: m.map(r => r.join('')).join('') };
     },
-    // 無敵のボットで その面を さいごまで あそぶ（全部の面が クリアできるかの たしかめ）
+    /* 無敵のボットで その面を さいごまで あそぶ（全部の面が クリアできるかの たしかめ） */
     autoClear: (seed, n, maxSec, noGod) => {
       const was = autoRun; autoRun = false;
       startRun(n, seed); phase = 'play'; god = !noGod; bot = { scan: 0, shot: null };
@@ -1391,7 +1447,7 @@
       bot = null; god = false; testInput = null; autoRun = was;
       return res;
     },
-    // なにもしない／うちっぱなし の プレイヤーが どうなるか
+    /* なにもしない／うちっぱなし の プレイヤーが どうなるか */
     dummy: (seed, n, kind, maxSec) => {
       const was = autoRun; autoRun = false;
       startRun(n, seed); phase = 'play';
