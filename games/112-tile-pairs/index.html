@@ -110,7 +110,7 @@
   <p><b>とれるタイル</b>：上に なにも のっていなくて、<b>左か右の どちらかが あいている</b> タイルだけ。とれないタイルは <span class="nw">少し暗く 見えるよ。</span></p>
   <p><b>コツ</b>：同じ絵が 3まい 見えていたら、どれを とるか よく考えよう。<b>同じ絵の タイルの 下に 同じ絵が かくれている</b> ことがあるよ。上の方を のこして ほかの2まいを とると、さいごに 同じ絵が かさなって <span class="nw">とれなくなる！</span></p>
   <p><b>スコア</b>：1ペア 100点。3びょう いないに つぎのペアを とると「れんさ」で ＋50点ずつ ふえるよ（さいだい ＋250）。クリアが はやいほど <span class="nw">はやさボーナス。</span><br>
-  <b>たすけ</b>：💡ヒント（＋10びょう）は 何回でも。🔀まぜる（のこりの絵を とける ならびに まぜなおす・＋20びょう）は ステージ1で 2回、ほかは 1回だけ（−500点・つかうと ★は 1つまで）。↩もどす は 何回でも（まぜた後は まぜる前に <span class="nw">もどれない）。</span><br>
+  <b>たすけ</b>：💡ヒント（＋10びょう）は 何回でも。🔀まぜる（のこりの絵を とける ならびに まぜなおす・＋20びょう）は ステージ1で 2回、ほかは 1回だけ（−500点・つかうと ★は 1つまで）。🔀まぜると かならず とける ならびに なるよ（どう まぜても とけない のこりかたの ときは、まぜずに おしえてくれる）。↩もどす は 何回でも、まぜる前を こえて <span class="nw">さいしょの 1手まで もどれる。</span><br>
   ステージは 5つ（ちいさなやま・さかな・おしろ・ちょうちょ・ピラミッド）。クリアで つぎが ひらき、★と ベストタイムが <span class="nw">のこるよ。</span><br>
   ⌨️ 矢印キーで えらんで Enter ／ H＝ヒント ／ S＝まぜる ／ <span class="nw">Z＝もどす</span></p>
 </div>
@@ -119,7 +119,7 @@
 (() => {
   'use strict';
   const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
-  // 画面の大きさ：スマホは 480×600 を縮めて表示、PCの広い画面では 実寸で大きく描く
+  /* 画面の大きさ：スマホは 480×600 を縮めて表示、PCの広い画面では 実寸で大きく描く */
   let W = 480, H = 600, wide = false;
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   cv.width = W * DPR; cv.height = H * DPR;
@@ -127,12 +127,12 @@
   const MUTE_KEY = KEY + 'mute', SAVE_KEY = KEY + 'save';
   const BOARD = { x: 10, y: 64, w: 460, h: 526 };
   const COMBO_SEC = 3, HINT_PEN = 10, SHUF_PEN = 20;
-  // とくてん：1ペア 100点、れんさ中は 2れんさ目から +50点ずつ（さいだい +250）、クリア時に のこり時間ボーナス
+  /* とくてん：1ペア 100点、れんさ中は 2れんさ目から +50点ずつ（さいだい +250）、クリア時に のこり時間ボーナス */
   const PAIR_PTS = 100, COMBO_PTS = 50, COMBO_MAX = 250, TIME_PTS = 10, SHUF_PTS = 500;
   const UI_FONT = '"DotGothic16","Hiragino Kaku Gothic ProN",monospace,sans-serif';
   const F = px => px + 'px ' + UI_FONT;
 
-  // ---- sound ---------------------------------------------------------------
+  /* ---- sound --------------------------------------------------------------- */
   let muted = false;
   try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
   let ac = null;
@@ -162,11 +162,11 @@
   const muteBtn = document.getElementById('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 
-  // ---- random ----------------------------------------------------------------
+  /* ---- random ---------------------------------------------------------------- */
   function mulberry(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   function shuffleArr(a, rnd) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
-  // ---- faces (original pictures, drawn with paths) -------------------------------
+  /* ---- faces (original pictures, drawn with paths) ------------------------------- */
   const OUT = '#2a2140';
   function P(g, fill, lw = 4) { g.fillStyle = fill; g.fill(); g.lineWidth = lw; g.strokeStyle = OUT; g.lineJoin = 'round'; g.stroke(); }
   function circ(g, x, y, r) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); }
@@ -202,15 +202,15 @@
   ];
   const FACE_SPR = FACES.map(([, , fn]) => { const c = document.createElement('canvas'); c.width = c.height = 120; const g = c.getContext('2d'); g.scale(1.2, 1.2); fn(g); return c; });
 
-  // ---- layouts (half-tile units; a tile covers x..x+2, y..y+2) ----------------------
+  /* ---- layouts (half-tile units; a tile covers x..x+2, y..y+2) ---------------------- */
   function build(layers) {
     const out = [];
     for (const L of layers) L.rows.forEach((row, r) => { for (let c = 0; c < row.length; c++) if (row[c] === '#') out.push({ x: L.ox + c * 2, y: L.oy + r * 2, z: L.z }); });
     return out;
   }
   const STAGES = [
-    // rr = 「考えずに ランダムに とった時に さいごまで とれる わりあい」の めあて（ならびを作る時に 合わせる）
-    // shuf = まぜる の回数
+    /* rr = 「考えずに ランダムに とった時に さいごまで とれる わりあい」の めあて（ならびを作る時に 合わせる） */
+    /* shuf = まぜる の回数 */
     { name: 'ちいさなやま', par: 50, rr: 0.45, shuf: 2, pos: build([
       { z: 0, ox: 0, oy: 0, rows: ['######', '######', '######'] },
       { z: 1, ox: 3, oy: 1, rows: ['###', '###'] }]) },
@@ -233,7 +233,7 @@
       { z: 3, ox: 8, oy: 5, rows: ['##'] }]) },
   ];
 
-  // ---- rules -----------------------------------------------------------------------
+  /* ---- rules ----------------------------------------------------------------------- */
   let tiles = [], above = [], leftN = [], rightN = [], blocks = [], drawOrder = [];
   function link() {
     const n = tiles.length;
@@ -266,7 +266,7 @@
   }
   const remaining = () => tiles.reduce((s, t) => s + (t.alive ? 1 : 0), 0);
 
-  // ---- deal: remove two free positions at a time from the full shape. That order is a real solution. ----
+  /* ---- deal: remove two free positions at a time from the full shape. That order is a real solution. ---- */
   function carve(al, rnd) {
     const order = []; al = al.slice();
     let left = al.reduce((s, v) => s + v, 0);
@@ -279,7 +279,9 @@
     }
     return order;
   }
-  // 考えずに とれるペアを ランダムに とりつづけたら さいごまで とれるか（1回ぶん）
+  /* のこりの かたちから とける 順番を さがす（なんども ためす）。見つからなければ null＝どう まぜても とけない */
+  function carveAny(al, rnd, tries) { for (let k = 0; k < tries; k++) { const o = carve(al, rnd); if (o) return o; } return null; }
+  /* 考えずに とれるペアを ランダムに とりつづけたら さいごまで とれるか（1回ぶん） */
   function randomRun(al0, rnd) {
     const al = al0.slice(); let left = al.reduce((s, v) => s + v, 0);
     const n = al.length, by = new Map();
@@ -296,11 +298,11 @@
     return true;
   }
   function randomRate(al, rnd, runs) { let w = 0; for (let k = 0; k < runs; k++) if (randomRun(al, rnd)) w++; return w / runs; }
-  // ならびの絵を きめる。とける順（order）を先に作り、そのペアごとに 絵を わりあてる。
-  // どんな わりあてでも order の順に とれば かならず とける（作り方で 保証）。
-  // 「わな」：同じ絵の 2ペアを、片方のタイルが もう片方のタイルの 真上に のる ように 置く。
-  //   → 同じ絵が 3まい 見えた時、上にのった タイルを のこして ほかの2まいを とると、さいごに 同じ絵どうしが かさなって つむ。
-  //   考えて 「かさなっている方を 先に つかう」と とける。
+  /* ならびの絵を きめる。とける順（order）を先に作り、そのペアごとに 絵を わりあてる。 */
+  /* どんな わりあてでも order の順に とれば かならず とける（作り方で 保証）。 */
+  /* 「わな」：同じ絵の 2ペアを、片方のタイルが もう片方のタイルの 真上に のる ように 置く。 */
+  /*   → 同じ絵が 3まい 見えた時、上にのった タイルを のこして ほかの2まいを とると、さいごに 同じ絵どうしが かさなって つむ。 */
+  /*   考えて 「かさなっている方を 先に つかう」と とける。 */
   function paint(order, slots) { order.forEach(([a, b], i) => { tiles[a].f = tiles[b].f = slots[i]; }); }
   function paintTraps(order, faceList, nTrap, rnd) {
     const k = order.length, pi = new Array(tiles.length).fill(-1);
@@ -322,7 +324,7 @@
     paint(order, slots);
     return nt;
   }
-  // 候補を いくつも作り、「考えずに ランダムに とった時の クリア率」が ステージの めあてに いちばん近いものを えらぶ。
+  /* 候補を いくつも作り、「考えずに ランダムに とった時の クリア率」が ステージの めあてに いちばん近いものを えらぶ。 */
   function pickArrangement(al, faceList, target, cands, runs, rnd) {
     let best = null, bestErr = 1e9, bestRate = 1;
     const errOf = r => (r > target ? (r - target) * 2 : (target - r) * 0.7);
@@ -351,20 +353,23 @@
     dealRate = r.rate;
     return r.order;
   }
-  // まぜる：のこりの絵だけを、とける ならびに 置きなおす（わなも 入れなおすので、考えずに とると また つむ）
+  /* まぜる：のこりの絵だけを、とける ならびに 置きなおす（わなも 入れなおすので、考えずに とると また つむ） */
   function reshuffle(rnd) {
     const al = aliveArr(), ids = []; const cnt = new Map();
     for (let i = 0; i < tiles.length; i++) if (al[i]) { ids.push(i); cnt.set(tiles[i].f, (cnt.get(tiles[i].f) || 0) + 1); }
     const faceList = []; for (const [f, c] of cnt) for (let k = 0; k < c / 2; k++) faceList.push(f);
     const r = pickArrangement(al, faceList, STAGES[(custom ? 1 : stage) - 1].rr, 24, 30, rnd);
     if (r) return true;
-    const fs = shuffleArr(ids.map(i => tiles[i].f), rnd); ids.forEach((i, k) => { tiles[i].f = fs[k]; });
-    return false;
+    /* かならず とける ならびに する：とける 順番を 見つけて、その順に 絵を わりあてる */
+    const order = carveAny(al, rnd, 3000);
+    if (!order) return false;
+    paintTraps(order, faceList, 0, rnd);
+    return true;
   }
 
-  // ---- solver (depth-first search with dead-state memo) -----------------------------------
+  /* ---- solver (depth-first search with dead-state memo) ----------------------------------- */
   const ABORT = { abort: true };
-  // まず ふつうの順で さがし、だめなら 順番を少しずつ ゆらして やりなおす
+  /* まず ふつうの順で さがし、だめなら 順番を少しずつ ゆらして やりなおす */
   function solveFrom(al0, cap = 200000) {
     let used = 0, last = null;
     for (let r = 0; used < cap; r++) {
@@ -384,8 +389,8 @@
     const apply = (ids, on) => { for (const i of ids) { al[i] = on ? 1 : 0; } const f = tiles[ids[0]].f; faceRemain.set(f, faceRemain.get(f) + (on ? ids.length : -ids.length)); left += on ? ids.length : -ids.length; };
     const noise = rnd ? tiles.map(() => rnd() * amp) : null;
     const score = ids => ids.reduce((s, i) => s + blocks[i] * 3 + tiles[i].z * 4 + (noise ? noise[i] : 0), 0);
-    // 同じ絵が のこり2まいで、片方が もう片方の 真上に のっていたら もう とけない
-    const covers = (top, low) => {   // top が（のこっているタイルを通して）low の上に つまれているか
+    /* 同じ絵が のこり2まいで、片方が もう片方の 真上に のっていたら もう とけない */
+    const covers = (top, low) => {   /* top が（のこっているタイルを通して）low の上に つまれているか */
       const st = [low], vis = new Set([low]);
       while (st.length) { const c = st.pop(); for (const j of above[c]) if (al[j] && !vis.has(j)) { if (j === top) return true; vis.add(j); st.push(j); } }
       return false;
@@ -402,7 +407,7 @@
       if (hopeless()) { dead.add(k); return false; }
       const by = new Map();
       for (let i = 0; i < n; i++) if (freeIn(al, i)) { const f = tiles[i].f; if (!by.has(f)) by.set(f, []); by.get(f).push(i); }
-      // 見えている同じ絵が その絵の のこり全部なら、とってしまって そんはない
+      /* 見えている同じ絵が その絵の のこり全部なら、とってしまって そんはない */
       for (const [f, arr] of by) if (arr.length >= 2 && arr.length === faceRemain.get(f)) {
         apply(arr, false); path.push(arr.slice());
         if (rec()) return true;
@@ -421,13 +426,13 @@
     try { return rec() ? { path, nodes } : { path: null, nodes }; } catch (e) { if (e !== ABORT) throw e; return { path: null, nodes, timeout: true }; }
   }
 
-  // ---- save ----------------------------------------------------------------------------
+  /* ---- save ---------------------------------------------------------------------------- */
   function freshSave() { return { unlock: 1, best: [0, 0, 0, 0, 0], stars: [0, 0, 0, 0, 0], hi: [0, 0, 0, 0, 0], clears: 0, maxCombo: 0, tut: false }; }
   let save = freshSave();
   try { const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (s && typeof s === 'object') save = Object.assign(freshSave(), s); } catch (e) {}
   function writeSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
 
-  // ---- state -------------------------------------------------------------------------------
+  /* ---- state ------------------------------------------------------------------------------- */
   let phase = 'title', stage = 1, pickStage = 1, custom = false, seed = 0;
   let sel = -1, hist = [], time = 0, hints = 0, shuffles = 0, combo = 0, lastTake = -99, maxCombo = 0, bonus = 0, score = 0, undos = 0;
   let hintPair = null, tutorial = false, stuck = false, stuckFix = true, toast = null, clearT = 0, result = null, paused = false;
@@ -451,7 +456,7 @@
     geo = { tw, th, dzx, dzy, sd, ox: BOARD.x + (BOARD.w - totW) / 2 + maxZ * -dzx - minX / 2 * tw, oy: BOARD.y + (BOARD.h - 26 - totH) / 2 + maxZ * -dzy - minY / 2 * th };
     baseSpr = null;
   }
-  // PCの広い画面では キャンバスを 実寸で 大きくして、タイルを 大きく描く
+  /* PCの広い画面では キャンバスを 実寸で 大きくして、タイルを 大きく描く */
   function layoutCanvas() {
     const iw = window.innerWidth || 480, ih = window.innerHeight || 700;
     wide = iw >= 820 && ih >= 560;
@@ -519,7 +524,7 @@
     const quick = time - lastTake <= COMBO_SEC;
     hist.push({ a, b, combo, lastTake, score, bonus, maxCombo });
     tiles[a].alive = tiles[b].alive = false; sel = -1; hintPair = null; solution = null;
-    // タイムは 実際の時間のまま（へらさない）。れんさは とくてんで ごほうび
+    /* タイムは 実際の時間のまま（へらさない）。れんさは とくてんで ごほうび */
     combo = quick ? combo + 1 : 1; maxCombo = Math.max(maxCombo, combo);
     const cb = combo >= 2 ? Math.min(COMBO_MAX, COMBO_PTS * (combo - 1)) : 0;
     score += PAIR_PTS + cb; bonus += cb;
@@ -543,10 +548,15 @@
   }
   const shufMax = () => (custom ? 3 : STAGES[stage - 1].shuf);
   const shufLeft = () => Math.max(0, shufMax() - shuffles);
-  function canFixByShuffle() { if (shufLeft() <= 0) return false; const al = aliveArr(); const rnd = mulberry(seed ^ 0x5bd1e995); for (let k = 0; k < 120; k++) if (carve(al, rnd)) return true; return false; }
+  function canFixByShuffle() { if (shufLeft() <= 0) return false; return !!carveAny(aliveArr(), mulberry(seed ^ 0x5bd1e995), 3000); }
   function undo() {
     if (phase !== 'play' || !hist.length) return false;
     const h = hist.pop();
+    if (h.shuf) {   /* まぜる前の 絵の ならびに もどす（まぜた 回数・びょう・点は もどさない） */
+      h.faces.forEach((f, i) => { tiles[i].f = f; }); combo = 0; lastTake = -99; undos++; shufT = 0.5;
+      sel = -1; hintPair = null; solution = null; SFX.undo(); say('まぜる前に もどったよ', 1.6, '#53e0d8'); refresh();
+      return true;
+    }
     tiles[h.a].alive = tiles[h.b].alive = true; combo = 0; lastTake = -99; score = h.score; bonus = h.bonus; maxCombo = h.maxCombo; undos++;
     sel = -1; hintPair = null; solution = null; anims = anims.filter(an => an.id !== h.a && an.id !== h.b);
     SFX.undo(); toast = null; refresh();
@@ -567,11 +577,14 @@
   function doShuffle() {
     if (phase !== 'play' || remaining() < 2) return false;
     if (shufLeft() <= 0) { SFX.bad(); say('まぜるは もう つかえないよ', 1.6, '#ff8fb8'); return false; }
+    const before = tiles.map(t => t.f);
     const ok = reshuffle(mulberry((seed + shuffles * 7919 + 1) >>> 0));
-    shuffles++; time += SHUF_PEN; score = Math.max(0, score - SHUF_PTS); hist = []; sel = -1; hintPair = null; solution = null; combo = 0; shufT = 0.5; SFX.shuffle();
+    if (!ok) { before.forEach((f, i) => { tiles[i].f = f; }); SFX.bad(); say('この のこりかたは まぜても とけない… ↩もどす で もどろう（まぜるは へらないよ）', 3.2, '#ffd166'); return false; }
+    hist.push({ shuf: true, faces: before });
+    shuffles++; time += SHUF_PEN; score = Math.max(0, score - SHUF_PTS); sel = -1; hintPair = null; solution = null; combo = 0; shufT = 0.5; SFX.shuffle();
     pop(W / 2, BOARD.y + 40, '🔀 まぜた！ +' + SHUF_PEN + 'びょう  -' + SHUF_PTS + '点', '#ffd166', 20);
     toast = null; refresh();
-    if (stuck) { stuckFix = false; say('まぜても とれない… メニューから やりなおそう', 99, '#ffd166'); refresh(); }
+    if (stuck) { stuckFix = false; say('まぜても とれない… ↩もどす で もどろう', 99, '#ffd166'); refresh(); }
     else if (shufLeft() <= 0) say('まぜるは これで さいご！ よく考えて とろう', 2.4, '#ffd166');
     return ok;
   }
@@ -605,7 +618,7 @@
   }
   const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
-  // ---- overlay screens ----------------------------------------------------------------
+  /* ---- overlay screens ---------------------------------------------------------------- */
   function starStr(n) { let s = ''; for (let i = 0; i < 3; i++) s += i < n ? '★' : '<i>★</i>'; return s; }
   function showTitle() {
     phase = 'title'; refresh();
@@ -638,7 +651,7 @@
   }
   function goMenu() { sel = -1; hintPair = null; toast = null; showTitle(); }
 
-  // ---- input -----------------------------------------------------------------------------
+  /* ---- input ----------------------------------------------------------------------------- */
   function toLogical(e) { const rc = cv.getBoundingClientRect(); return [(e.clientX - rc.left) * (W / rc.width), (e.clientY - rc.top) * (H / rc.height)]; }
   function tileAt(x, y) {
     for (let k = drawOrder.length - 1; k >= 0; k--) {
@@ -657,7 +670,7 @@
     if (best >= 0) { kbId = best; tone('square', 900, 900, 0.03, 0.02); }
   }
 
-  // ---- drawing -------------------------------------------------------------------------------
+  /* ---- drawing ------------------------------------------------------------------------------- */
   function rrOn(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   function makeBase() {
     const { tw, th, sd } = geo, q = DPR * 1.5, pad = 6;
@@ -690,7 +703,7 @@
     g.strokeStyle = 'rgba(83,224,216,.06)'; g.lineWidth = 1;
     for (let x = 0; x <= W; x += 24) { g.beginPath(); g.moveTo(x, 58); g.lineTo(x, H); g.stroke(); }
     for (let y = 58; y <= H; y += 24) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
-    // HUD
+    /* HUD */
     g.fillStyle = 'rgba(28,28,51,.92)'; rrOn(g, 6, 6, W - 12, 50, 10); g.fill();
     g.strokeStyle = 'rgba(83,224,216,.3)'; g.stroke();
   }
@@ -734,7 +747,7 @@
       if (hintPair && hintPair.includes(i)) { ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10 + pulse * 10; ctx.strokeStyle = 'rgba(255,209,102,' + (0.55 + pulse * 0.45) + ')'; ctx.lineWidth = 3.5; rrOn(ctx, x - 2, y - 2, w + 4, h + 4, w * 0.18); ctx.stroke(); ctx.restore(); }
       if (kbOn && i === kbId && phase === 'play') { ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = '#a06bff'; ctx.lineWidth = 3; rrOn(ctx, x - 3, y + lift - 3, w + 6, h + 6, w * 0.2); ctx.stroke(); ctx.restore(); }
     }
-    // とった タイル
+    /* とった タイル */
     for (const a of anims) {
       const [x, y] = tileRect(tiles[a.id]); const k = Math.min(1, a.t / 0.4), e = 1 - (1 - k) * (1 - k);
       drawTileAt(a.id, x + a.tx * e, y + a.ty * e, 1 + 0.25 * e, 1 - k);
@@ -767,7 +780,7 @@
     }
   }
 
-  // ---- update ---------------------------------------------------------------------------
+  /* ---- update --------------------------------------------------------------------------- */
   function update(dt) {
     animT += dt;
     if (phase === 'play' && !paused) time += dt;
@@ -786,7 +799,7 @@
   let last = performance.now();
   function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
 
-  // ---- test hooks ----------------------------------------------------------------------------
+  /* ---- test hooks ---------------------------------------------------------------------------- */
   window.__test = {
     state: () => ({
       phase, overlay: overlay.classList.contains('show'), stage, cw: W, ch: H, tw: Math.round(geo.tw), score, dealRate, shufLeft: shufLeft(), undos, custom, seed, total: tiles.length, n: remaining(),
@@ -807,7 +820,7 @@
     freePairs: () => freePairs(),
     nextMove: () => { const r = solveFrom(aliveArr(), 300000); return r.path && r.path.length ? r.path[0].slice(0, 2) : null; },
     solve: cap => { const r = solveFrom(aliveArr(), cap || 300000); return r.path ? { len: r.path.length, nodes: r.nodes } : { len: 0, nodes: r.nodes, timeout: !!r.timeout }; },
-    // さいしょの ならびで、作ったときの順番どおりに ルールの take だけで とりきれるか
+    /* さいしょの ならびで、作ったときの順番どおりに ルールの take だけで とりきれるか */
     replayDeal: (st, sd) => {
       const order = deal(st, sd); fitGeo(); resetRun(); custom = true; phase = 'play'; overlay.classList.remove('show');
       for (const [a, b] of order) if (!take(a, b)) return false;
@@ -818,7 +831,7 @@
       for (const m of r.path) { for (let k = 0; k + 1 < m.length; k += 2) { time += 1.5; if (!take(m[k], m[k + 1])) return -2; n++; } }
       return n;
     },
-    // 考えずに とれるペアを ランダムに とる人の まね（ほんものの take / まぜる を つかう）。記録は のこさない
+    /* 考えずに とれるペアを ランダムに とる人の まね（ほんものの take / まぜる を つかう）。記録は のこさない */
     randomPlay: (st, sd, rs, useShuffle) => {
       const keep = JSON.stringify(save);
       start(st, sd); tutorial = false; const rnd = mulberry(rs); let moves = 0, stuckN = 0;
@@ -837,7 +850,7 @@
     resetSave: () => { const tut = save.tut; save = freshSave(); save.tut = tut; writeSave(); pickStage = 1; },
   };
 
-  // ---- wiring (kept at the end) ------------------------------------------------------------
+  /* ---- wiring (kept at the end) ------------------------------------------------------------ */
   muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); });
   let downId = -2;
   cv.addEventListener('pointerdown', e => { e.preventDefault(); audio(); kbOn = false; const [x, y] = toLogical(e); downId = tileAt(x, y); });
@@ -873,7 +886,7 @@
   });
   document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!document.hidden) last = performance.now(); });
 
-  // タイトルの うしろに 見本の やまを 出しておく
+  /* タイトルの うしろに 見本の やまを 出しておく */
   deal(1, 20261017); layoutCanvas();
   let rzT = 0; window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(layoutCanvas, 120); });
   drawMute(); showTitle(); requestAnimationFrame(loop);
