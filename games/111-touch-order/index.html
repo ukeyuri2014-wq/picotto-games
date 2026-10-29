@@ -145,6 +145,7 @@
       <div id="chalInfo"></div>
     </div>
     <div class="acts">
+      <button class="go" id="nextBtn" style="display:none">つぎへ</button>
       <button class="go" id="startBtn">スタート</button>
       <button class="alt" id="toTitleBtn" style="display:none">メニュー</button>
     </div>
@@ -179,7 +180,7 @@
   const ORDER_NAME = { num: 'すうじ', rev: 'ぎゃく', kana: 'ひらがな', mix: '1あ2い まぜ' };
   const HUES = ['#ff5fa2', '#53e0d8', '#ffd166', '#a06bff', '#7cff7c', '#4db8ff', '#ff8c42'];
   const LABEL_FONT = '"Hiragino Maru Gothic ProN","Hiragino Sans","Arial Rounded MT Bold","Yu Gothic",system-ui,sans-serif';
-  // チャレンジの12ステージ（k＝1マスあたりの秒数。小さいほどきびしい）
+  /* チャレンジの12ステージ（k＝1マスあたりの秒数。小さいほどきびしい） */
   const STAGES = [
     { n: 3, order: 'num', k: 1.7 },
     { n: 4, order: 'num', k: 1.5 },
@@ -195,10 +196,10 @@
     { n: 6, order: 'mix', k: 1.7, swap: true, color: true },
   ];
   const STAGE_TAG = s => [s.n + '×' + s.n, ORDER_NAME[s.order], s.swap ? 'いれかわり' : '', s.color ? 'いろまどわし' : ''].filter(Boolean).join('・');
-  // ★のめやす（1マスあたりの秒）
+  /* ★のめやす（1マスあたりの秒） */
   const STAR3 = { num: 0.8, rev: 0.9, kana: 1.15 }, STAR2 = { num: 1.25, rev: 1.4, kana: 1.75 };
 
-  // ---- sound ----------------------------------------------------------------
+  /* ---- sound ---------------------------------------------------------------- */
   let muted = false;
   try { muted = localStorage.getItem(KEY + 'mute') === '1'; } catch (e) {}
   let ac = null;
@@ -229,10 +230,10 @@
   const muteBtn = $('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 
-  // ---- state ----------------------------------------------------------------
-  let mode = 'ta', order = 'num', size = 5;            // えらんでいるもの
-  let n = 3, cur = { n: 3, order: 'num' }, stage = 0;   // いまのばん
-  let phase = 'title';                                   // title | count | play | stageclear | done
+  /* ---- state ---------------------------------------------------------------- */
+  let mode = 'ta', order = 'num', size = 5;            /* えらんでいるもの */
+  let n = 3, cur = { n: 3, order: 'num' }, stage = 0;   /* いまのばん */
+  let phase = 'title';                                   /* title | count | play | stageclear | done */
   let paused = false, won = false, overlayKind = 'title';
   let tiles = [], posTile = [], seq = [], next = 0, total = 0;
   let elapsed = 0, left = 0, limit = 0, misses = 0, stageMisses = 0, score = 0, combo = 0, maxCombo = 0;
@@ -253,7 +254,7 @@
   function rrPath(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
-  // じゅんばん（k番目におすもじ）
+  /* じゅんばん（k番目におすもじ） */
   function makeSeq(ord, cnt) {
     const out = [];
     for (let k = 0; k < cnt; k++) {
@@ -266,7 +267,7 @@
   }
   const bestKey = (ord, sz) => ord + '-' + sz;
 
-  // ---- board ----------------------------------------------------------------
+  /* ---- board ---------------------------------------------------------------- */
   let cell = 0, BX = PAD, BY = PAD;
   function buildBoard(cfg) {
     cur = cfg; n = cfg.n; total = n * n; seq = makeSeq(cfg.order, total);
@@ -308,7 +309,7 @@
   }
   const isCleared = () => tiles.length > 0 && tiles.every(t => t.done);
 
-  // ---- tap ------------------------------------------------------------------
+  /* ---- tap ------------------------------------------------------------------ */
   function center(p) { const r = Math.floor(p / n), c = p % n; return { x: BX + c * cell + cell / 2, y: BY + r * cell + cell / 2 }; }
   function tapPos(p) {
     if (phase !== 'play' || paused || p < 0 || p >= total) return 'ignore';
@@ -373,13 +374,13 @@
   }
   function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
-  // ---- overlay ----------------------------------------------------------------
+  /* ---- overlay ---------------------------------------------------------------- */
   const TITLE_NOTE = 'ばらばらの すうじを <b>じゅんばんに</b> タッチ！<br>まちがえると +1びょう。<span class="nw">はやさを きそおう。</span>';
   function toTitle() {
     phase = 'title'; paused = false; overlayKind = 'title'; resultAt = Infinity; fwLeft = 0;
     $('ovBig').textContent = 'すうじタッチ'; $('ovBig').className = '';
     $('ovNote').innerHTML = TITLE_NOTE;
-    $('opts').style.display = ''; $('startBtn').textContent = 'スタート'; $('toTitleBtn').style.display = 'none';
+    $('opts').style.display = ''; $('startBtn').textContent = 'スタート'; $('toTitleBtn').style.display = 'none'; setNextBtn(false);
     syncPicks(); overlay.classList.add('show'); updateHud();
   }
   function syncPicks() {
@@ -395,6 +396,20 @@
     if (overlayKind === 'title') $('ovRule').textContent = mode === 'ta' ? 'まちがえずに はやく おすと ★3つ！' : 'じかんが のこるほど とくてんアップ・ノーミスで +100';
     $('chalInfo').innerHTML = '12ステージを つぎつぎ クリア！ ばんが大きくなり、<br>ぎゃく・ひらがな・まぜ・いれかわり <span class="nw">が出てくるよ。</span><br>ベスト：<b>ステージ ' + chalBest.stage + ' / 12</b>・<b>' + chalBest.score + 'てん</b>';
   }
+  /* おわった がめんの「つぎへ」：おなじ じゅんばんで ひとつ 大きい ばん → 6×6 の つぎは つぎの じゅんばんの 3×3 */
+  const NEXT_ORDER = { num: 'rev', rev: 'kana' };
+  function nextPick() {
+    if (mode !== 'ta' || !won) return null;
+    if (n < 6) return { order: cur.order, n: n + 1 };
+    if (NEXT_ORDER[cur.order]) return { order: NEXT_ORDER[cur.order], n: 3 };
+    return null;
+  }
+  function setNextBtn(show) {
+    const nx = show ? nextPick() : null, b = $('nextBtn');
+    b.style.display = nx ? '' : 'none';
+    $('startBtn').className = nx ? 'alt' : 'go';
+    if (nx) b.textContent = 'つぎへ（' + (nx.order !== cur.order ? ORDER_NAME[nx.order] + ' ' : '') + nx.n + '×' + nx.n + '）';
+  }
   function starHtml(k) { let s = ''; for (let i = 0; i < 3; i++) s += i < k ? '★' : '<s>★</s>'; return '<span class="stars">' + s + '</span>'; }
   function showResult() {
     resultAt = Infinity; overlayKind = 'result';
@@ -404,7 +419,7 @@
       const bb = best[bestKey(cur.order, n)];
       note.innerHTML = starHtml(stars) + '<br>タイム <b>' + fmt(finalTime) + 'びょう</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '') +
         '<br>ミス ' + misses + 'かい・さいだい ' + maxCombo + 'れんぞく<br>' + n + '×' + n + '・' + ORDER_NAME[cur.order] + ' のベスト：' + fmt(bb ? bb.t : finalTime) + 'びょう';
-      $('ovRule').textContent = stars < 3 ? 'つぎは ★' + (stars + 1) + ' を めざそう（1マス ' + (stars < 2 ? STAR2 : STAR3)[cur.order] + 'びょう いない）' : 'さいこうの ★3つ！ 大きい ばんにも ちょうせんしよう';
+      $('ovRule').textContent = stars < 3 ? 'つぎは ★' + (stars + 1) + ' を めざそう（1マス ' + (stars < 2 ? STAR2 : STAR3)[cur.order] + 'びょう より はやく）' : 'さいこうの ★3つ！ 大きい ばんにも ちょうせんしよう';
     } else if (won) {
       big.textContent = 'ぜんぶ クリア！'; big.className = 'win';
       note.innerHTML = '12ステージ せいは！<br>とくてん <b>' + score + 'てん</b>' + (newRecord ? '　<span class="rec">🏆 しんきろく！</span>' : '') + '<br>ミス ' + misses + 'かい・さいだい ' + maxCombo + 'れんぞく<br>ベスト：' + chalBest.score + 'てん';
@@ -415,6 +430,7 @@
       $('ovRule').textContent = 'つぎに おす もじの 「その つぎ」も さがしておこう';
     }
     $('opts').style.display = 'none'; $('startBtn').textContent = 'もういちど'; $('toTitleBtn').style.display = '';
+    setNextBtn(true);
     overlay.classList.add('show');
   }
   function pause() {
@@ -422,7 +438,7 @@
     paused = true; overlayKind = 'pause';
     $('ovBig').textContent = 'ひとやすみ'; $('ovBig').className = '';
     $('ovNote').innerHTML = 'タイマーは とまっているよ。<br>じゅんびが できたら つづけよう。';
-    $('opts').style.display = 'none'; $('startBtn').textContent = 'つづける'; $('toTitleBtn').style.display = ''; $('ovRule').textContent = '';
+    $('opts').style.display = 'none'; $('startBtn').textContent = 'つづける'; $('toTitleBtn').style.display = ''; $('ovRule').textContent = ''; setNextBtn(false);
     overlay.classList.add('show');
   }
   function resume() { if (!paused) return; paused = false; overlay.classList.remove('show'); overlayKind = 'none'; if (phase === 'play' || phase === 'count') { phase = 'count'; phaseT = T; lastCount = -1; } }
@@ -432,7 +448,7 @@
     startGame();
   }
 
-  // ---- hud --------------------------------------------------------------------
+  /* ---- hud -------------------------------------------------------------------- */
   function updateHud() {
     const tt = $('hudTime'), hr = $('hudRight');
     if (mode === 'ta' || phase === 'title') { tt.textContent = '⏱ ' + fmt(elapsed); tt.classList.remove('warn'); hr.textContent = 'ミス ' + misses; }
@@ -442,7 +458,7 @@
     $('bar').style.width = (total ? Math.round(next / total * 100) : 0) + '%';
   }
 
-  // ---- fx -----------------------------------------------------------------------
+  /* ---- fx ----------------------------------------------------------------------- */
   function burst(x, y, cols, cnt, scale) {
     if (particles.length > 900) return;
     for (let i = 0; i < cnt; i++) {
@@ -456,7 +472,7 @@
     burst(x, y, [col, '#ffffff', col], 40, 1.25); rings.push({ x, y, t: T, col, r: 70 }); SFX.pop();
   }
 
-  // ---- update -------------------------------------------------------------------
+  /* ---- update ------------------------------------------------------------------- */
   function update(dt) {
     T += dt * 1000;
     if (!paused) {
@@ -486,7 +502,7 @@
   let hudLast = 0;
   function hudTick() { if (T - hudLast > 50) { hudLast = T; updateHud(); } }
 
-  // ---- draw ---------------------------------------------------------------------
+  /* ---- draw --------------------------------------------------------------------- */
   const labelCache = new Map();
   function labelSprite(label, col) {
     const key = label + '|' + col + '|' + Math.round(cell);
@@ -605,7 +621,7 @@
     if (phase === 'done' && won && mode === 'ta') bigText('クリア！  ' + fmt(finalTime) + 'びょう', H / 2, 34, '#ffd166', easeOutBack(clamp((T - (resultAt - RESULT_MS)) / 350, 0, 1)));
     if (phase === 'done' && !won) { ctx.fillStyle = 'rgba(40,6,24,.35)'; ctx.fillRect(0, 0, W, H); bigText('じかんぎれ！', H / 2, 46, '#ff5fa2'); }
   }
-  // タイトル中のうしろの絵（すうじがゆっくり光る）
+  /* タイトル中のうしろの絵（すうじがゆっくり光る） */
   function drawTitleDemo() {
     const m = 5, c = (W - PAD * 2) / m;
     for (let i = 0; i < m * m; i++) {
@@ -615,13 +631,13 @@
     }
   }
 
-  // ---- input ----------------------------------------------------------------------
+  /* ---- input ---------------------------------------------------------------------- */
   function posAt(e) {
     const rc = cv.getBoundingClientRect(); if (!rc.width) return -1;
     const x = (e.clientX - rc.left) * (W / rc.width), y = (e.clientY - rc.top) * (H / rc.height);
     const c = Math.floor((x - BX) / cell), r = Math.floor((y - BY) / cell);
     if (c < 0 || r < 0 || c >= n || r >= n) return -1;
-    // マスのすきまぎりぎりは、近いマスに入れる（はやおしでのとりこぼし防止）
+    /* マスのすきまぎりぎりは、近いマスに入れる（はやおしでのとりこぼし防止） */
     return r * n + c;
   }
   function onPointerDown(e) {
@@ -652,11 +668,11 @@
     if (k === 'Enter' || k === ' ') { e.preventDefault(); kb = true; audio(); tapPos(cursor); }
   }
 
-  // ---- loop -------------------------------------------------------------------------
+  /* ---- loop ------------------------------------------------------------------------- */
   let last = performance.now();
   function loop(now) { const dt = Math.min((now - last) / 1000, 0.05); last = now; update(dt); draw(); requestAnimationFrame(loop); }
 
-  // ---- init（いちばん最後） ---------------------------------------------------------
+  /* ---- init（いちばん最後） --------------------------------------------------------- */
   try { const s = JSON.parse(localStorage.getItem(KEY + 'sel') || 'null'); if (s) { if (s.mode === 'ta' || s.mode === 'chal') mode = s.mode; if (ORDER_NAME[s.order] && s.order !== 'mix') order = s.order; if ([3, 4, 5, 6].includes(+s.size)) size = +s.size; } } catch (e) {}
   if (!seen) { size = 3; mode = 'ta'; order = 'num'; }
   cv.width = Math.round(W * RS); cv.height = Math.round(H * RS);
@@ -670,6 +686,7 @@
   document.querySelectorAll('#sizeRow button').forEach(b => b.addEventListener('click', () => { audio(); SFX.click(); size = +b.dataset.n; syncPicks(); updateHud(); b.blur(); }));
   $('startBtn').addEventListener('click', () => { onStartBtn(); $('startBtn').blur(); });
   $('toTitleBtn').addEventListener('click', () => { audio(); paused = false; toTitle(); });
+  $('nextBtn').addEventListener('click', () => { const nx = nextPick(); if (!nx) return; audio(); SFX.click(); setNextBtn(false); startGame({ mode: 'ta', order: nx.order, n: nx.n }); $('nextBtn').blur(); });
   $('pauseBtn').addEventListener('click', () => { audio(); if (paused) resume(); else pause(); $('pauseBtn').blur(); });
   $('retryBtn').addEventListener('click', () => { audio(); paused = false; startGame(mode === 'chal' ? { stage: 1 } : {}); $('retryBtn').blur(); });
   $('menuBtn').addEventListener('click', () => { audio(); paused = false; toTitle(); $('menuBtn').blur(); });
