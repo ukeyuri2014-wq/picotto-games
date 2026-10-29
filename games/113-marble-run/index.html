@@ -119,7 +119,7 @@
 <script>
 (() => {
   'use strict';
-  // ENGINE-START
+  /* ENGINE-START */
   const COLS = 8, ROWS = 9, NC = COLS * ROWS;
   const PART_ORDER = ['slope', 'jump', 'funnel', 'block', 'tramp', 'belt', 'lift', 'bell'];
   const PT = {
@@ -132,7 +132,7 @@
   const WALLC = { k: 'wall' }, VOIDC = { k: 'void' }, EMPTYC = { k: 'empty' };
   const CH = { '#': ['wall'], 'r': ['slope', 1], 'l': ['slope', -1], 'J': ['jump', 1], 'j': ['jump', -1], 'b': ['block'], 'T': ['tramp'],
     '>': ['belt', 1], '<': ['belt', -1], 'U': ['lift', 1], 'u': ['lift', -1], 'n': ['bell'] };
-  // お題の文字列 → 盤
+  /* お題の文字列 → 盤 */
   function parseLevel(L) {
     const cells = new Array(NC).fill(null), stars = [];
     let start = null, goal = -1;
@@ -143,7 +143,7 @@
       if (ch === 'G') { goal = i; cells[i] = { k: 'goal' }; continue; }
       if (ch === '*') { stars.push(i); cells[i] = { k: 'star' }; continue; }
       if (ch === 'F') { for (let k = -1; k <= 1; k++) cells[i + k] = { k: 'funnel', cx: x, fixed: true }; continue; }
-      if (ch === 'f') continue;   // じょうごの はし（F が うめる）
+      if (ch === 'f') continue;   /* じょうごの はし（F が うめる） */
       const c = CH[ch]; if (!c) continue;
       cells[i] = c[0] === 'wall' ? { k: 'wall' } : { k: c[0], d: c[1] || 0, fixed: true };
     }
@@ -159,7 +159,7 @@
     for (const [cx, cy] of partCells(t, x, y)) { if (cx < 0 || cx >= COLS || cy < 0 || cy >= ROWS || g[cy * COLS + cx]) return false; }
     return true;
   }
-  // ビー玉を ころがす（決まった ルールで 1マスずつ うごく）
+  /* ビー玉を ころがす（決まった ルールで 1マスずつ うごく） */
   function simulate(P, placed, maxSteps) {
     maxSteps = maxSteps || 320;
     const g = buildGrid(P, placed);
@@ -192,7 +192,7 @@
     function doSlope(c) {
       const s = c.d; d = s;
       const side = look(x + s, y);
-      if (solid(side)) return;              // でぐちが ふさがっている：ここで とまる（あとは 下へ）
+      if (solid(side)) return;              /* でぐちが ふさがっている：ここで とまる（あとは 下へ） */
       const dg = look(x + s, y + 1);
       if (!solid(dg)) { drop++; enter(x + s, y + 1, 'slope'); return; }
       enter(x + s, y, 'roll');
@@ -254,7 +254,7 @@
     return { res, steps, got, touch, bells };
   }
   const cleared = (P, r, needStars) => r.res === 'goal' && (!needStars || r.got.length === P.stars.length);
-  // ソルバー：ビー玉が さわった マスにだけ パーツを おいて さがす（さわった じゅんに おくので むだがない）
+  /* ソルバー：ビー玉が さわった マスにだけ パーツを おいて さがす（さわった じゅんに おくので むだがない） */
   function solve(P, opt) {
     opt = opt || {};
     const needStars = !!opt.needStars, budget = opt.budget || 200000, base = opt.base || [];
@@ -276,7 +276,7 @@
           const xs = t === 'funnel' ? [cx - 1, cx, cx + 1] : [cx];
           for (const px of xs) {
             if (!canPlaceOn(g, t, px, cy)) continue;
-            if (t === 'funnel') {   // じょうごは いちばん はやく さわる マスで 1回だけ ためす
+            if (t === 'funnel') {   /* じょうごは いちばん はやく さわる マスで 1回だけ ためす */
               let mn = 1e9, bad = false;
               for (const [qx, qy] of partCells(t, px, cy)) { const tt = r.touch[qy * COLS + qx]; if (tt >= 0 && tt <= minT) bad = true; if (tt >= 0) mn = Math.min(mn, tt); }
               if (bad || mn !== r.touch[i]) continue;
@@ -297,13 +297,13 @@
     const sol = rec([], Object.assign({}, P.inv), -1);
     return { sol, sims, found, done: sims <= budget };
   }
-  // 乱数（シードつき）
+  /* 乱数（シードつき） */
   function rng32(seed) {
     let a = seed >>> 0;
     return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   }
   const SYM = { slope: ['r', 'l'], jump: ['J', 'j'], block: ['b', 'b'], tramp: ['T', 'T'], belt: ['>', '<'], lift: ['U', 'u'], bell: ['n', 'n'] };
-  // おだいを つくる：じっさいに パーツを おいて ころがし、とどいた ところに ゴールを おく → ソルバーで たしかめる
+  /* おだいを つくる：じっさいに パーツを おいて ころがし、とどいた ところに ゴールを おく → ソルバーで たしかめる */
   function genLevel(seed, opt) {
     const R = rng32(seed), ri = n => (R() * n) | 0;
     const types = opt.types || ['slope', 'jump', 'funnel', 'block', 'tramp', 'belt', 'lift'];
@@ -333,7 +333,7 @@
       if (!ok) continue;
       const r0 = simulate(P, []);
       const g = buildGrid(P, placed);
-      // ゴール：さいごの パーツより あとで、パーツなしでは さわらない マス
+      /* ゴール：さいごの パーツより あとで、パーツなしでは さわらない マス */
       const lastI = r.steps.length - 1; let goalStep = -1;
       for (let si = lastI; si > lastI * 0.45; si--) {
         const s = r.steps[si]; if (s.y >= ROWS) continue;
@@ -348,7 +348,7 @@
       P = parseLevel({ rows: grid.map(rw => rw.join('')) });
       const rs = simulate(P, placed);
       if (rs.res !== 'goal' || simulate(P, []).res === 'goal' || rs.steps.length < 10) continue;
-      // ほし：とちゅうの マスに 2つ
+      /* ほし：とちゅうの マスに 2つ */
       const r0b = simulate(P, []), gg = buildGrid(P, placed);
       const pathCells = [];
       for (let si = 1; si < rs.steps.length - 1; si++) { const s = rs.steps[si], i = s.y * COLS + s.x; if (!gg[i] && r0b.touch[i] < 0 && !pathCells.includes(i)) pathCells.push(i); }
@@ -361,7 +361,7 @@
       const L = { rows: grid.map(rw => rw.join('')), inv };
       P = parseLevel(L);
       const budget = opt.budget || 8000;
-      // パーツが少なくても とけるなら 在庫を へらす
+      /* パーツが少なくても とけるなら 在庫を へらす */
       for (const t of Object.keys(inv)) {
         while (inv[t] > 0) {
           const P2 = parseLevel({ rows: L.rows, inv: Object.assign({}, inv, { [t]: inv[t] - 1 }) });
@@ -381,8 +381,8 @@
     }
     return null;
   }
-  // ENGINE-END
-  // LEVELS-START
+  /* ENGINE-END */
+  /* LEVELS-START */
   const LEVELS = [
     { name: 'さかで みぎへ', inv: { slope: 1 }, rows: [
       '.S......',
@@ -585,8 +585,8 @@
       '....###.',
       '........'] },
   ];
-  // LEVELS-END
-  // ---- 画面・定数 ------------------------------------------------------------
+  /* LEVELS-END */
+  /* ---- 画面・定数 ------------------------------------------------------------ */
   const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   const W = 480, H = 548, DPR = Math.min(2, window.devicePixelRatio || 1);
   cv.width = W * DPR; cv.height = H * DPR;
@@ -598,7 +598,7 @@
   const overlay = document.getElementById('overlay'), pal = document.getElementById('palette');
   const runBtn = document.getElementById('runBtn'), hintBtn = document.getElementById('hintBtn'), clearBtn = document.getElementById('clearBtn'), menuBtn = document.getElementById('menuBtn');
 
-  // ---- おと --------------------------------------------------------------------
+  /* ---- おと -------------------------------------------------------------------- */
   let muted = false;
   try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
   let ac = null;
@@ -642,7 +642,7 @@
   const muteBtn = document.getElementById('mute-btn');
   function drawMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 
-  // ---- きろく ------------------------------------------------------------------
+  /* ---- きろく ------------------------------------------------------------------ */
   let save = { stars: new Array(LEVELS.length).fill(0), how: 0, rndBest: 0, rndClears: 0, freeBest: 0 };
   function loadSave() {
     try {
@@ -662,7 +662,7 @@
   const totalStars = () => save.stars.reduce((a, b) => a + b, 0);
   const unlocked = i => i === 0 || save.stars[i - 1] > 0 || save.stars[i] > 0;
 
-  // ---- じょうたい --------------------------------------------------------------
+  /* ---- じょうたい -------------------------------------------------------------- */
   let mode = 'stage', lvIdx = 0, L = null, P = null, inv = {}, placed = [], tool = null, toolDir = {}, toolAuto = false, tapTip = null;
   let phase = 'title', tries = 0, trail = [], hint = null, toast = null, hintUsed = false;
   let rndLevel = null, rndStreak = 0, lastResult = null, resultInfo = null;
@@ -678,7 +678,7 @@
   const gridNow = () => buildGrid(P, enginePlaced());
   function partAt(x, y) { return placed.findIndex(p => partCells(p.t, p.x, p.y).some(([a, b]) => a === x && b === y)); }
 
-  // ---- めんの よみこみ ----------------------------------------------------------
+  /* ---- めんの よみこみ ---------------------------------------------------------- */
   function loadLevel(def) {
     L = def; P = parseLevel(def);
     if (P.free) { inv = {}; for (const t of PART_ORDER) inv[t] = 99; }
@@ -720,13 +720,13 @@
   }
   function paletteTypes() { return P.free ? PART_ORDER.slice() : PART_ORDER.filter(t => (P.inv[t] || 0) > 0); }
 
-  // ---- パーツを おく・うごかす ------------------------------------------------------
+  /* ---- パーツを おく・うごかす ------------------------------------------------------ */
   function placeAt(t, x, y, d, quiet) {
     if (phase !== 'edit' || !PT[t] || !(inv[t] > 0)) return false;
     if (!canPlaceOn(gridNow(), t, x, y)) return false;
     placed.push({ t, x, y, d: PT[t].ori ? (d < 0 ? -1 : 1) : 0, f: 0, born: animT });
     inv[t]--; hint = hint && hint.x === x && hint.y === y ? null : hint;
-    if (tool === t && inv[t] <= 0) { const nx = paletteTypes().find(k => inv[k] > 0); if (nx) { tool = nx; toolAuto = true; } }   // つかいきったら つぎの パーツを えらぶ
+    if (tool === t && inv[t] <= 0) { const nx = paletteTypes().find(k => inv[k] > 0); if (nx) { tool = nx; toolAuto = true; } }   /* つかいきったら つぎの パーツを えらぶ */
     if (!quiet) { SFX.place(); const [cx, cy] = cellCenter(x, y); burst(cx, cy, PCOL[t], 8, 80); }
     if (!save.how && mode === 'stage') {
       save.how = 1; writeSave();
@@ -785,13 +785,13 @@
   function nope(x, y) { const [cx, cy] = cellCenter(x, y); pops.push({ x: cx, y: cy, text: '✕', t: 0, color: '#ff5fa2', size: 22 }); }
   function selectTool(t) {
     if (!PT[t] || !paletteTypes().includes(t)) return;
-    if (tool === t && PT[t].ori && !toolAuto) { toolDir[t] = -toolDir[t]; SFX.rot(); }
+    if (tool === t && PT[t].ori && !toolAuto && !(mode === 'stage' && lvIdx === 0)) { toolDir[t] = -toolDir[t]; SFX.rot(); }   /* おだい1では 下の ボタンを 2回 おしても むきを かえない（おいた さかを タップで かえる） */
     else { tool = t; SFX.click(); }
     toolAuto = false;
     refreshPalette();
   }
 
-  // ---- ころがす ----------------------------------------------------------------
+  /* ---- ころがす ---------------------------------------------------------------- */
   function startRun() {
     if (phase !== 'edit') return false;
     const r = simulate(P, enginePlaced());
@@ -886,7 +886,7 @@
     marble.x = P.start.x; marble.y = P.start.y; marble.alpha = 1; marble.sq = 0; marble.vis = true;
   }
 
-  // ---- ヒント --------------------------------------------------------------------
+  /* ---- ヒント -------------------------------------------------------------------- */
   function doHint() {
     if (phase !== 'edit') return null;
     if (P.free) { showToast('じゆうモードは すきに つくってね', 1.8); return null; }
@@ -906,7 +906,7 @@
     return hint;
   }
 
-  // ---- 画面（オーバーレイ） --------------------------------------------------------
+  /* ---- 画面（オーバーレイ） -------------------------------------------------------- */
   function showTitle() {
     phase = 'title'; run = null; drag = null; toast = null;
     overlay.innerHTML =
@@ -980,7 +980,7 @@
     else if (act === 'resume') retry();
   }
 
-  // ---- ボタン・パレット ---------------------------------------------------------------
+  /* ---- ボタン・パレット --------------------------------------------------------------- */
   function updateButtons() {
     const playing = phase === 'edit' || phase === 'run' || phase === 'fail';
     runBtn.disabled = !playing;
@@ -1013,7 +1013,7 @@
     });
   }
 
-  // ---- えがく --------------------------------------------------------------------------
+  /* ---- えがく -------------------------------------------------------------------------- */
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
   function starPath(g, cx, cy, r1, r2, rot) {
@@ -1032,7 +1032,7 @@
     g.fillStyle = 'rgba(255,255,255,.05)'; g.fillRect(px + 8, py + 16, 10, 3); g.fillRect(px + 30, py + 30, 12, 3);
     if (!up) { g.save(); g.shadowColor = '#a06bff'; g.shadowBlur = 10; g.strokeStyle = 'rgba(190,160,255,.9)'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(px + (lf ? 0 : 5), py + 2); g.lineTo(px + CELL - (rt ? 0 : 5), py + 2); g.stroke(); g.restore(); }
   }
-  // パーツ1こ（g：描く先、px,py：マスの左上）
+  /* パーツ1こ（g：描く先、px,py：マスの左上） */
   function drawPart(g, t, px, py, d, o) {
     o = o || {};
     const c = o.fixed ? '#b9b3e0' : PCOL[t], h = CELL / 2;
@@ -1109,7 +1109,7 @@
     }
     if (o.fixed && !o.icon) { g.setTransform(1, 0, 0, 1, 0, 0); }
     g.restore();
-    if (o.fixed && !o.icon) {   // うごかせない しるし
+    if (o.fixed && !o.icon) {   /* うごかせない しるし */
       g.save(); g.fillStyle = 'rgba(19,19,34,.85)'; g.beginPath(); g.arc(px + CELL - 9, py + 9, 6, 0, Math.PI * 2); g.fill();
       g.fillStyle = '#9d99c0'; g.fillRect(px + CELL - 12, py + 8, 6, 5); g.strokeStyle = '#9d99c0'; g.lineWidth = 1.5; g.beginPath(); g.arc(px + CELL - 9, py + 8, 2.2, Math.PI, 0); g.stroke(); g.restore();
     }
@@ -1212,7 +1212,7 @@
     ctx.save();
     if (shake > 0) ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
     drawBoard();
-    // まえに ころがった あと
+    /* まえに ころがった あと */
     if (trail.length && phase !== 'run') {
       ctx.fillStyle = 'rgba(83,224,216,.28)';
       for (const [x, y] of trail) { const [cx, cy] = cellCenter(x, y); ctx.beginPath(); ctx.arc(cx, cy + MOFF, 4, 0, Math.PI * 2); ctx.fill(); }
@@ -1230,13 +1230,13 @@
       else if (c.k === 'star') drawStar(y * COLS + x);
       else if (c.fixed && (c.k !== 'funnel' || c.cx === x)) drawPart(ctx, c.k, GX + x * CELL, GY + y * CELL, c.d, { fixed: true, squish: squish[y + ',' + x], swing: swing[y * COLS + x] });
     }
-    // チュートリアルの 光る マス
+    /* チュートリアルの 光る マス */
     if (mode === 'stage' && lvIdx === 0 && !placed.length && phase === 'edit' && !save.how) {
       const a = 0.35 + 0.3 * Math.sin(animT * 5);
-      ghostAt('slope', 1, 3, 1, true, a);
-      const [cx, cy] = cellCenter(1, 3), by = cy - 50 + Math.sin(animT * 6) * 4;
+      ghostAt('slope', 1, 1, 1, true, a);   /* ここに おくと ほしを 2つとも とおって ★3 */
+      const [cx, cy] = cellCenter(1, 1), bx = cx - CELL * .95 + Math.sin(animT * 6) * 4;
       ctx.save(); ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 10;
-      ctx.beginPath(); ctx.moveTo(cx - 6, by - 8); ctx.lineTo(cx + 6, by - 8); ctx.lineTo(cx + 6, by + 4); ctx.lineTo(cx + 14, by + 4); ctx.lineTo(cx, by + 18); ctx.lineTo(cx - 14, by + 4); ctx.lineTo(cx - 6, by + 4); ctx.closePath(); ctx.fill(); ctx.restore();
+      ctx.beginPath(); ctx.moveTo(bx - 10, cy - 6); ctx.lineTo(bx + 2, cy - 6); ctx.lineTo(bx + 2, cy - 14); ctx.lineTo(bx + 16, cy); ctx.lineTo(bx + 2, cy + 14); ctx.lineTo(bx + 2, cy + 6); ctx.lineTo(bx - 10, cy + 6); ctx.closePath(); ctx.fill(); ctx.restore();
     }
     for (const p of placed) {
       if (drag && drag.from === 'grid' && drag.moved && placed[drag.k] === p) continue;
@@ -1245,7 +1245,7 @@
     }
     if (hint && phase === 'edit') { const a = 0.4 + 0.35 * Math.sin(animT * 6); ghostAt(hint.t, hint.x, hint.y, hint.d, true, a); }
     if (tapTip && phase === 'edit' && placed.includes(tapTip.p)) drawTapTip(tapTip.p, Math.min(1, tapTip.life * 2));
-    // ドラッグ中・カーソル
+    /* ドラッグ中・カーソル */
     if (phase === 'edit') {
       if (drag && drag.moved && drag.cell) {
         const t = drag.from === 'grid' ? placed[drag.k].t : drag.t, d = drag.from === 'grid' ? placed[drag.k].d : toolDir[drag.t];
@@ -1303,22 +1303,22 @@
   }
   function wrapText(s, maxW) {
     const out = []; let cur = '';
-    const parts = s.split(/(?<= )/);   // 空白の あとで くぎる（ことばの とちゅうで おりかえさない）
+    const parts = s.split(/(?<= )/);   /* 空白の あとで くぎる（ことばの とちゅうで おりかえさない） */
     for (const w of parts) {
       if (ctx.measureText(cur + w).width <= maxW || !cur) { cur += w; if (ctx.measureText(cur).width <= maxW) continue; }
       else { out.push(cur.trimEnd()); cur = w; if (ctx.measureText(cur).width <= maxW) continue; }
-      let line = '';   // 1つの ことばが ながすぎる ときは 文字で くぎる
+      let line = '';   /* 1つの ことばが ながすぎる ときは 文字で くぎる */
       for (const ch of cur) { if (ctx.measureText(line + ch).width > maxW && line) { out.push(line); line = ch; } else line += ch; }
       cur = line;
     }
     if (cur.trim()) out.push(cur.trimEnd());
     return out;
   }
-  // おしらせは 上の 見出しの ところに 出す（ばんの パーツや ゴールを かくさない）
+  /* おしらせは 上の 見出しの ところに 出す（ばんの パーツや ゴールを かくさない） */
   function showToast(text, life) { toast = { text, t: 0, life: life || 2.2, top: true }; }
   function burst(x, y, c, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c, s: 2 + Math.random() * 3 }); } }
 
-  // ---- うごき ----------------------------------------------------------------------
+  /* ---- うごき ---------------------------------------------------------------------- */
   function update(dt) {
     animT += dt;
     if (shake > 0) shake = Math.max(0, shake - dt * 14);
@@ -1343,7 +1343,7 @@
     draw(); requestAnimationFrame(loop);
   }
 
-  // ---- 入力 ------------------------------------------------------------------------
+  /* ---- 入力 ------------------------------------------------------------------------ */
   function toBoard(clientX, clientY) {
     const rc = cv.getBoundingClientRect();
     const x = (clientX - rc.left) * (W / rc.width), y = (clientY - rc.top) * (H / rc.height);
@@ -1417,7 +1417,7 @@
     if (k === 'Escape') { showMenu(); return; }
   }
 
-  // ---- はじめる（ここから下で イベントを つなぐ） ---------------------------------------
+  /* ---- はじめる（ここから下で イベントを つなぐ） --------------------------------------- */
   loadSave(); drawMute();
   muteBtn.addEventListener('click', () => { muted = !muted; try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {} drawMute(); if (!muted) { audio(); SFX.click(); } });
   cv.addEventListener('pointerdown', onCanvasDown);
