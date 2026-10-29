@@ -2511,7 +2511,7 @@
       const escapeText = v => String(v || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
       // 投稿作は審査時にこちらで専用キービジュアルを用意する。
       // 新しい投稿を公開するときは assets/covers/<公開ID>.webp と、この一覧を同じ公開作業で追加する。
-      const REMOTE_COVERS = ["UFA3EB38", "U29B5A65", "U416C768", "UD97A47E", "U51EB0AD", "U5135AEB", "U0C519F5", "U24FCC73", "UBEE727A", "U423E5BD", "U09D704F", "U2EF28CD", "U845A5DA", "U77B199F", "U4E3BE26", "UAC5C586", "UC202074", "U943DE94", "UCFB9B7C", "U77A0720", "UB732BAB", "U6086AF6", "U2BFD8E1", "U7B2A34C"];
+      const REMOTE_COVERS = ["UFA3EB38", "U29B5A65", "U416C768", "UD97A47E", "U51EB0AD", "U5135AEB", "U0C519F5", "U24FCC73", "UBEE727A", "U423E5BD", "U09D704F", "U2EF28CD", "U845A5DA", "U77B199F", "U4E3BE26", "UAC5C586", "UC202074", "U943DE94", "UCFB9B7C", "U77A0720", "UB732BAB", "U6086AF6", "U2BFD8E1", "U7B2A34C", "U5854B6C", "U206124A", "U52E79D2", "U148343B", "UE9D0689"];
       const safe = remote.map(g => ({...g, title:escapeText(g.title), description:escapeText(g.description), controls:escapeText(g.controls), author:escapeText(g.author), genre:escapeText(g.genre), age:escapeText(g.age), emoji:escapeText(g.emoji), date:/^\d{4}-\d{2}-\d{2}$/.test(g.date) ? g.date : "", color:/^#[a-fA-F0-9]{3,8}$/.test(g.color) ? g.color : "#7c5cff", cover: REMOTE_COVERS.indexOf(g.id) >= 0 ? "assets/covers/" + g.id + ".webp" : ""}));
       if (safe.length) renderGames([...safe, ...localGames]);
     } catch (_) { catalogLoadFailed = true; }
