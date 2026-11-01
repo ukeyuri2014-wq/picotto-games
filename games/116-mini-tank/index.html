@@ -1250,13 +1250,17 @@
   function setPause(on) {
     if (on && !['intro', 'play', 'dead', 'clear', 'tut'].includes(phase)) return;
     paused = on;
-    if (on) { $('pauseNote').innerHTML = phase === 'tut' ? 'れんしゅう ちゅう' : 'ステージ ' + stage + '　スコア ' + score; showPane('pausePane'); mv.id = am.id = shp.id = null; keys.clear(); mouse.down = false; resetKnobs(); }
+    if (on) { $('pauseNote').innerHTML = phase === 'tut' ? 'れんしゅう ちゅう' : 'ステージ ' + stage + '　スコア ' + score; showPane('pausePane'); releaseTouches(); keys.clear(); mouse.down = false; resetKnobs(); }
     else hideOverlay();
   }
 
   /* ---- pads / pointer -------------------------------------------------------- */
+  const releasers = [];   /* ゆびの きろくを ぜんぶ けす（ひとやすみ・ゆびが ぜんぶ はなれた とき） */
+  function releaseTouches() { for (const f of releasers) f(); }
   function resetKnobs() { $('knobMove').style.transform = ''; $('knobAim').style.transform = ''; mv.x = mv.y = am.x = am.y = 0; }
   function bindPad(el, st, knob, isAim) {
+    /* いま この まるに ふれている ゆび。親指を おきなおすと 2本ぶん かさなる ことが あるので、さいごに ふれた ゆびで うごかす */
+    const held = new Set();
     const upd = e => {
       const r = el.getBoundingClientRect(), R = r.width / 2;
       let dx = (e.clientX - (r.left + R)) / (R * 0.75), dy = (e.clientY - (r.top + R)) / (R * 0.75);
@@ -1264,20 +1268,27 @@
       st.x = dx; st.y = dy; if (isAim) st.maxMag = Math.max(st.maxMag, Math.hypot(dx, dy));
       knob.style.transform = 'translate(' + (dx * R * 0.55).toFixed(1) + 'px,' + (dy * R * 0.55).toFixed(1) + 'px)';
     };
+    const reset = () => { held.clear(); st.id = null; st.x = st.y = 0; knob.style.transform = ''; };
+    releasers.push(reset);
     el.addEventListener('pointerdown', e => {
       e.preventDefault(); audio();
-      if (st.id !== null) return;
+      held.add(e.pointerId);
       st.id = e.pointerId; st.t0 = performance.now(); st.maxMag = 0;
       try { el.setPointerCapture(e.pointerId); } catch (_) {}
       upd(e);
     });
-    el.addEventListener('pointermove', e => { if (e.pointerId === st.id) { e.preventDefault(); upd(e); } });
+    el.addEventListener('pointermove', e => {
+      if (!held.has(e.pointerId)) return;
+      e.preventDefault();
+      if (st.id === null) { st.id = e.pointerId; st.maxMag = 1; }   /* まだ ふれている ゆびが うごいたら そちらで つづける */
+      if (e.pointerId === st.id) upd(e);
+    });
     const end = e => {
-      if (e.pointerId !== st.id) return;
+      if (!held.delete(e.pointerId) || e.pointerId !== st.id) return;
       if (isAim && st.maxMag < 0.45 && performance.now() - st.t0 < 300) fireQueued = true;   /* ちょんと さわると いまの むきに うつ */
       st.id = null; st.x = st.y = 0; knob.style.transform = '';
     };
-    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end); el.addEventListener('lostpointercapture', end);
     el.addEventListener('contextmenu', e => e.preventDefault());
   }
   function canvasPt(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * VW / r.width + VB, y: (e.clientY - r.top) * VH / r.height + VB }; }
@@ -1374,16 +1385,18 @@
   bindPad($('padMove'), mv, $('knobMove'), false);
   bindPad($('padAim'), am, $('knobAim'), true);
   {
-    const sb = $('shieldBtn');
-    sb.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (shp.id !== null) return; shp.id = e.pointerId; try { sb.setPointerCapture(e.pointerId); } catch (_) {} });
-    const shEnd = e => { if (e.pointerId === shp.id) shp.id = null; };
+    const sb = $('shieldBtn'), shHeld = new Set();   /* ゆびが 1本でも ふれていれば まもる */
+    releasers.push(() => { shHeld.clear(); shp.id = null; });
+    sb.addEventListener('pointerdown', e => { e.preventDefault(); audio(); shHeld.add(e.pointerId); shp.id = e.pointerId; try { sb.setPointerCapture(e.pointerId); } catch (_) {} });
+    const shEnd = e => { if (!shHeld.delete(e.pointerId)) return; shp.id = shHeld.size ? [...shHeld].pop() : null; };
     sb.addEventListener('pointerup', shEnd); sb.addEventListener('pointercancel', shEnd); sb.addEventListener('lostpointercapture', shEnd);
     sb.addEventListener('contextmenu', e => e.preventDefault());
   }
   {
-    const fb = $('easyFire');
-    fb.addEventListener('pointerdown', e => { e.preventDefault(); audio(); if (ef.id !== null) return; ef.id = e.pointerId; fireQueued = true; fb.classList.add('on'); try { fb.setPointerCapture(e.pointerId); } catch (_) {} });
-    const fEnd = e => { if (e.pointerId === ef.id) { ef.id = null; fb.classList.remove('on'); } };
+    const fb = $('easyFire'), fHeld = new Set();
+    releasers.push(() => { fHeld.clear(); ef.id = null; fb.classList.remove('on'); });
+    fb.addEventListener('pointerdown', e => { e.preventDefault(); audio(); fHeld.add(e.pointerId); ef.id = e.pointerId; fireQueued = true; fb.classList.add('on'); try { fb.setPointerCapture(e.pointerId); } catch (_) {} });
+    const fEnd = e => { if (!fHeld.delete(e.pointerId)) return; ef.id = fHeld.size ? [...fHeld].pop() : null; if (ef.id === null) fb.classList.remove('on'); };
     fb.addEventListener('pointerup', fEnd); fb.addEventListener('pointercancel', fEnd); fb.addEventListener('lostpointercapture', fEnd);
     fb.addEventListener('contextmenu', e => e.preventDefault());
     const setEasy = on => { easy = on; document.body.classList.toggle('easy', on); $('modeEasy').classList.toggle('on', on); $('modeNormal').classList.toggle('on', !on); SFX.click(); hudCache = ''; toTitle(); };
@@ -1391,6 +1404,14 @@
     $('modeEasy').addEventListener('click', () => { audio(); setEasy(true); });
   }
   for (const el of [$('pads'), cv]) el.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });
+  /* ねんのため：がめんから ゆびが ぜんぶ はなれたのに はなした しらせが こなかった ときも、スティックが のこらない ように */
+  {
+    let touchGen = 0;
+    window.addEventListener('touchstart', () => { touchGen++; }, { capture: true, passive: true });
+    const allUp = e => { if (e.touches.length) return; const g = touchGen; setTimeout(() => { if (g === touchGen) releaseTouches(); }, 80); };
+    window.addEventListener('touchend', allUp, { capture: true, passive: true });
+    window.addEventListener('touchcancel', allUp, { capture: true, passive: true });
+  }
   cv.addEventListener('pointerdown', onCanvasDown);
   cv.addEventListener('pointermove', onCanvasMove);
   window.addEventListener('pointerup', e => { if (e.pointerType === 'mouse') mouse.down = false; });
