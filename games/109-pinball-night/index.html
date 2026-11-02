@@ -243,6 +243,7 @@
   let skillLane = -1, skillT = 0, bumperHits = 0, drains = 0, newRecord = false, overAt = -1, launchedOnce = false;
   let flipCount = { L: 0, R: 0 }, holeCool = 0, T = 0, paused = false, lastTime = 0, shake = 0, seenHelp = false;
   let parts = [], pops = [], banner = null, trail = [];
+  let guideOn = false, guideFade = 0, guidedOnce = false;   /* 初めての1球目だけ、矢印で場所を見せる */
   try { best = Math.max(0, parseInt(localStorage.getItem(KEY + 'best') || '0', 10) || 0); } catch (e) {}
   try { seenHelp = localStorage.getItem(KEY + 'help') === '1'; } catch (e) {}
 
@@ -273,20 +274,29 @@
   function hitSling(s) { s.flash = 1; add(20); SFX.sling(); burst((s.ax + s.bx) / 2, (s.ay + s.by) / 2, [COL.violet, '#fff'], 5, 140); }
   function hitTarget(i) {
     targetSegs[i].flash = 1;
+    const fresh = !targets[i];
     if (!targets[i]) { targets[i] = true; add(250, 40, TGT_Y[i], COL.gold); SFX.target(); burst(20, TGT_Y[i], [COL.gold, '#fff'], 10, 160); }
     else { add(50); SFX.sling(); }
     if (targets.every(Boolean)) {
       targets = [false, false, false];
-      if (!jpLit) { jpLit = true; add(1000); say('ジャックポット チャンス！', COL.pink); SFX.chance(); }
+      if (!jpLit) {
+        jpLit = true; add(1000); say('ジャックポット チャンス！', COL.pink); SFX.chance();
+        setTimeout(() => { if (phase === 'play' && jpLit) say(jackpots === 1 && !extraGiven ? '⭐あなに 入れると ボール+1！' : '右の ⭐あなに 入れよう！', COL.gold); }, 1500);
+      }
       else add(2000, 60, 270, COL.gold);
-    }
+    } else if (fresh && !jpLit) say('まと あと ' + targets.filter(v => !v).length + 'つ', COL.gold);
   }
   function hitLane(i) {
+    let skilled = false;
     if (skillT > 0) {
       skillT = 0;
-      if (i === skillLane) { add(5000, POSTS[i] + 20, 110, COL.gold); say('スキルショット！', COL.gold); SFX.skill(); burst(POSTS[i] + 20, 62, [COL.gold, COL.cyan, '#fff'], 22, 220); }
+      if (i === skillLane) { skilled = true; add(5000, POSTS[i] + 20, 110, COL.gold); say('スキルショット！', COL.gold); SFX.skill(); burst(POSTS[i] + 20, 62, [COL.gold, COL.cyan, '#fff'], 22, 220); }
     }
-    if (!lanes[i]) { lanes[i] = true; add(300, POSTS[i] + 20, 110, COL.cyan); SFX.lane(i); burst(POSTS[i] + 20, 62, [COL.cyan, '#fff'], 8, 120); }
+    if (!lanes[i]) {
+      lanes[i] = true; add(300, POSTS[i] + 20, 110, COL.cyan); SFX.lane(i); burst(POSTS[i] + 20, 62, [COL.cyan, '#fff'], 8, 120);
+      const left = lanes.filter(v => !v).length;
+      if (left > 0 && !skilled) say('あと ' + left + 'つで ' + (mult < 5 ? '×' + (mult + 1) : 'ボーナス'), COL.cyan);
+    }
     else add(30);
     if (lanes.every(Boolean)) {
       lanes = [false, false, false];
@@ -361,6 +371,7 @@
     newRecord = false; parts = []; pops = []; banner = null; shake = 0; launchedOnce = false;
     flippers.L.pressed = flippers.R.pressed = false;
     toPlunger(); overlay.classList.remove('show'); updateHud();
+    if (!guidedOnce) { guidedOnce = true; guideOn = true; guideFade = 1; }
     say(seenHelp ? 'たまを はっしゃ！' : 'ながおしして はなすと はっしゃ！', COL.cyan);
     if (!seenHelp) { seenHelp = true; try { localStorage.setItem(KEY + 'help', '1'); } catch (e) {} }
   }
@@ -457,6 +468,7 @@
     for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 0.9);
     if (banner) { banner.t += dt; if (banner.t > (banner.big ? 2.2 : 1.6)) banner = null; }
     shake = Math.max(0, shake - dt);
+    if (guideOn && !inPlunger) { guideFade -= dt / 3; if (guideFade <= 0) { guideOn = false; guideFade = 0; } }
     if (phase !== 'play') { moveFlipper(flippers.L, dt); moveFlipper(flippers.R, dt); return; }
     playTime += dt;
     if (saver > 0 && !inPlunger && held <= 0) saver = Math.max(0, saver - dt);
@@ -639,7 +651,32 @@
     });
     // jackpot / info text
     ctx.textAlign = 'center'; ctx.font = '11px DotGothic16, monospace';
-    ctx.fillStyle = 'rgba(157,153,192,.9)'; ctx.fillText('レベル ' + level, 178, 152 - 0);
+    if (!guideOn) { ctx.fillStyle = 'rgba(157,153,192,.9)'; ctx.fillText('レベル ' + level, 178, 152 - 0); }
+    if (phase === 'play') {
+      const ln = lanes.filter(v => !v).length, tn = targets.filter(v => !v).length;
+      ctx.font = '10px DotGothic16, monospace';
+      if (!guideOn) { ctx.fillStyle = 'rgba(83,224,216,.85)'; ctx.textAlign = 'center'; ctx.fillText((mult < 5 ? '×' + (mult + 1) : 'ボーナス') + 'まで あと' + ln, 178, 112); }
+      if (!jpLit) { ctx.fillStyle = 'rgba(255,209,102,.85)'; ctx.textAlign = 'left'; ctx.fillText('まと あと' + tn, 26, TGT_Y[0] - 20); }
+      else {
+        const pa = 0.6 + 0.4 * Math.sin(T * 6);
+        ctx.globalAlpha = pa; ctx.fillStyle = COL.gold; ctx.textAlign = 'center'; ctx.font = '12px DotGothic16, monospace';
+        ctx.fillText('ここへ！', HOLE.x - 4, HOLE.y - 48);
+        if (jackpots === 1 && !extraGiven) ctx.fillText('ボール+1', HOLE.x - 4, HOLE.y - 62);
+        ctx.globalAlpha = 1;
+      }
+      ctx.textAlign = 'center';
+    }
+    if (guideOn) {
+      const ga = guideFade * (0.75 + 0.25 * Math.sin(T * 5));
+      ctx.save(); ctx.globalAlpha = Math.max(0, ga); ctx.font = '11px DotGothic16, monospace';
+      arrow(178, 132, 178, 100, COL.cyan);
+      ctx.fillStyle = COL.cyan; ctx.textAlign = 'center'; ctx.fillText('3つ 通ると ばいりつUP', 178, 146);
+      arrow(84, 276, 38, 276, COL.gold);
+      ctx.fillStyle = COL.gold; ctx.textAlign = 'left'; ctx.fillText('まとを 3つ', 90, 272); ctx.fillText('光らせて', 90, 287);
+      arrow(236, 300, 268, 300, COL.pink);
+      ctx.fillStyle = COL.pink; ctx.textAlign = 'right'; ctx.fillText('そのあと ここへ', 230, 296); ctx.fillText('ジャックポット', 230, 311);
+      ctx.restore(); ctx.textAlign = 'center';
+    }
     // flippers
     for (const f of [flippers.L, flippers.R]) {
       const tx = f.px + Math.cos(f.ang) * f.len, ty = f.py + Math.sin(f.ang) * f.len;
@@ -707,6 +744,12 @@
     }
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
+  function arrow(x0, y0, x1, y1, col) {
+    const a = Math.atan2(y1 - y0, x1 - x0);
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - Math.cos(a) * 6, y1 - Math.sin(a) * 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - Math.cos(a - 0.5) * 10, y1 - Math.sin(a - 0.5) * 10); ctx.lineTo(x1 - Math.cos(a + 0.5) * 10, y1 - Math.sin(a + 0.5) * 10); ctx.closePath(); ctx.fill();
+  }
   function star(x, y, r, col) {
     ctx.fillStyle = col; ctx.beginPath();
     for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
@@ -771,6 +814,8 @@
     setLanes: a => { lanes = a.slice(); },
     setTargets: a => { targets = a.slice(); },
     setJp: on => { jpLit = !!on; },
+    guide: () => ({ guideOn, guideFade, guidedOnce }),
+    hitTarget: i => hitTarget(i), hitLane: i => hitLane(i), enterHole: () => enterHole(), setJackpots: n => { jackpots = n; },
     setLevel: n => { level = n; },
     setSkill: (lane, t) => { skillLane = lane; skillT = t; },
     fuzz,
