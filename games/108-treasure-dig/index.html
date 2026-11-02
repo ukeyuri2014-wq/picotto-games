@@ -65,6 +65,8 @@
   #overlay .big{font-size:27px;letter-spacing:2px;color:var(--gold);text-shadow:0 0 16px rgba(255,209,102,.7);line-height:1.2}
   #overlay .big.lose{color:var(--pink);text-shadow:0 0 16px rgba(255,95,162,.7)}
   #overlay .note{font-size:13px;color:var(--ink);line-height:1.7}
+  #overlay .note.aims{text-align:left;line-height:1.6}
+  #overlay .note .nw{display:inline-block}
   #overlay .note b{color:var(--gold);font-weight:400}
   #overlay .note i{font-style:normal;color:var(--cyan)}
   #overlay .stars{font-size:34px;letter-spacing:6px;color:var(--gold);text-shadow:0 0 14px rgba(255,209,102,.8);line-height:1}
@@ -402,7 +404,10 @@
       if (v >= 0) SFX.num(v);
       if (k) SFX.kit();
       let m = '';
-      if (!save.tut && isl === 0 && used === 1) m = `「<b>${v}</b>」は たからまで <b>${v}歩</b>（たて＋よこ）。<br>すうじを タップすると ${v}歩の マスが 光るよ`;
+      const hc = isl === 0 && v >= 0 ? hintCells() : null;
+      if (hc && hc.n === 1) m = `「<b>${v}</b>」＝ たからまで <b>${v}歩</b>（たて＋よこ）。<br>光った どこかに たからが あるよ。すうじが 小さいほど 近い`;
+      else if (hc && hc.strong.length === 1) m = `光りが 重なった ところが <b>あやしい！</b><br>のこりは <b>1マス</b>。ほってみよう`;
+      else if (hc && hc.strong.length) m = `光りが 重なった ところが <b>あやしい！</b>（<b>${hc.strong.length}マス</b>）<br>すうじを くみあわせて しぼろう`;
       else if (k) m = '🧰 どうぐばこ！ スコップが <b>2本</b> ふえた！';
       else m = v === 1 ? '🔥 <b>あつい！</b> となりに たからが ある！' : v === 2 ? '🔥 あつい！ かなり 近いよ' : v === 3 ? '♨️ あったかい…' : v <= 5 ? '🌤 ちょっと とおい' : '❄️ つめたい… とおくだね';
       if (shovels === 1 && remaining().length) m += '<br>スコップ のこり <b>1本</b>！ よく かんがえて';
@@ -411,6 +416,20 @@
     updateHud();
     if (!remaining().length) return finish(true);
     if (shovels <= 0) return finish(false);
+  }
+  /* 最初の島だけの 手びき：ほった すうじ ぜんぶに 合う マス＝あやしい、どれかに 合う マス＝うっすら */
+  function hintCells() {
+    if (isl !== 0 || phase !== 'play') return null;
+    const nums = [];
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) { const g = grid[r][c]; if (g.dug && g.tre < 0 && g.v >= 0) nums.push([r, c, g.v]); }
+    if (!nums.length) return null;
+    const light = [], strong = [];
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      if (!diggable(r, c) || grid[r][c].dug) continue;
+      const k = nums.filter(([a, b, v]) => mdist(r, c, a, b) === v).length;
+      if (k === nums.length && nums.length >= 2) strong.push([r, c]); else if (k > 0) light.push([r, c]);
+    }
+    return { light, strong, n: nums.length };
   }
   function starsFor(i, u) { const L = ISLANDS[i]; return u <= L.s3 ? 3 : u <= L.s2 ? 2 : 1; }
   function finish(win) {
@@ -477,7 +496,7 @@
     const sel = unlocked(save.sel) ? save.sel : 0, L = ISLANDS[sel];
     overlay.innerHTML =
       '<div class="big">たからほり<br>アイランド</div>' +
-      '<div class="note">すなを ほると <b>すうじ</b> が 出るよ。<br>すうじは いちばん近い たからまでの <b>歩数</b>。<br>スコップが なくなる前に ぜんぶ 見つけよう！</div>' +
+      '<div class="note aims"><div><b>めざす</b>：<span class="nw">少ない スコップで</span> <span class="nw">たからを ぜんぶ</span></div><div><b>すうじ</b>：<span class="nw">いちばん近い たからまでの</span> <span class="nw">歩数（たて＋よこ）</span></div><div><b>コツ</b>：<span class="nw">すうじを くみあわせて しぼる</span></div></div>' +
       '<div class="isles">' + ISLANDS.map((x, i) => `<button data-act="isl" data-i="${i}" class="${i === sel ? 'on' : ''} ${unlocked(i) ? '' : 'lock'}" aria-label="${x.name}"><span class="e">${unlocked(i) ? x.e : '🔒'}</span><small>${i + 1}</small><em>${unlocked(i) ? starStr(save.stars[i]) : '　'}</em></button>`).join('') + '</div>' +
       `<div class="iinfo" id="iinfo">${L.e} ${L.name}<br>たから ${L.K}こ・スコップ ${L.budget}本（★3は ${L.s3}本いか）</div>` +
       '<div class="modes"><button id="startBtn" data-act="start">▶ はじめる</button><button class="alt" id="zukanBtn" data-act="zukan">📖 ずかん ' + zukanCount() + '/30</button></div>' +
@@ -677,6 +696,17 @@
       const p = clamp((T - g.dt) / 220, 0, 1); if (p >= 1) continue;
       const x = BX + c * cell, y = BY + r * cell, k = 1 - p, d = cell * k;
       ctx.drawImage(sprite('sand' + g.var, (cc, s) => sandTile(cc, s, g.var)), x + (cell - d) / 2, y + (cell - d) / 2, d, d);
+    }
+    /* 最初の島の 手びき（うっすら＝どれかの すうじに 合う／こい＝ぜんぶに 合う） */
+    const hc = hintCells();
+    if (hc) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,209,102,.28)'; ctx.strokeStyle = 'rgba(255,209,102,.7)'; ctx.lineWidth = 2;
+      for (const [r, c] of hc.light) { const x = BX + c * cell, y = BY + r * cell; rr(ctx, x + 4, y + 4, cell - 8, cell - 8, cell * 0.16); ctx.fill(); ctx.stroke(); }
+      const pa = 0.75 + 0.25 * Math.sin(T / 140);
+      ctx.globalAlpha = pa; ctx.fillStyle = 'rgba(255,209,102,.5)'; ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.5; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 12 * RS;
+      for (const [r, c] of hc.strong) { const x = BX + c * cell, y = BY + r * cell; rr(ctx, x + 3, y + 3, cell - 6, cell - 6, cell * 0.16); ctx.fill(); ctx.stroke(); }
+      ctx.restore();
     }
     // 光る リング（すうじの 歩数）
     if (ring) {
@@ -895,6 +925,7 @@
     // こたえ（テスト用）
     treasures: () => treasures.map(t => ({ r: t.r, c: t.c, found: t.found })),
     kits: () => { const o = []; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (grid[r][c].kit) o.push([r, c]); return o; },
+    hint: () => hintCells(),
     islands: () => ISLANDS.map(x => ({ name: x.name, K: x.K, budget: x.budget, s3: x.s3, s2: x.s2, compass: x.compass, wide: x.wide, kits: x.kits, map: x.map.slice() })),
     items: () => ITEMS.map(x => Object.assign({}, x)),
     seed: s => { fixedSeed = (s == null ? null : s | 0); },
