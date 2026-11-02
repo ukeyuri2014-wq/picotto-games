@@ -56,6 +56,19 @@
   .rules button.on{border-color:rgba(83,224,216,.6);color:var(--cyan)}
   .rules .lb{font-size:12px;color:var(--sub);align-self:center}
   #overlay .rule{font-size:12px;color:var(--sub);line-height:1.5}
+  #guide{width:min(480px,100%);min-height:62px;margin-top:7px;padding:8px 10px 8px 12px;border:1px solid rgba(255,209,102,.35);border-radius:12px;background:rgba(13,13,28,.82);font-size:13.5px;line-height:1.6;color:var(--ink);display:flex;align-items:center;gap:8px}
+  #guide #gT{flex:1}
+  #guide b{color:var(--gold);font-weight:400}
+  #guide .c1{color:var(--cyan)} #guide .c2{color:var(--pink)}
+  #guide .gb{display:flex;flex-direction:column;gap:5px;flex:none}
+  #guide .gb button{font-family:inherit;font-size:14px;border:none;border-radius:8px;padding:8px 12px;background:var(--gold);color:#2a1a00;cursor:pointer;white-space:nowrap;touch-action:manipulation}
+  #guide .gb button.alt{background:none;border:1px solid var(--edge);color:var(--sub);font-size:11.5px;padding:4px 8px}
+  #guide .gb button:disabled{opacity:.35;cursor:default}
+  .levels button.les{border-color:rgba(255,209,102,.55);color:var(--gold)}
+  .hidden{display:none !important}
+  #overlay .note .aim{display:block;text-align:left;font-size:12px;line-height:1.45;margin:1px auto;max-width:400px}
+  @media (max-width:420px){ #wrap #overlay .big{font-size:21px} #wrap #overlay{gap:5px} #overlay .note .aim{font-size:11.5px} }
+  #overlay .note .aim b{color:var(--gold)}
   .help{width:min(480px,100%);color:#b9b5d8;font-size:13px;margin-top:10px;line-height:1.7;background:rgba(13,13,28,.74);border:1px solid var(--edge);border-radius:12px;padding:10px 12px 6px}
   .help b{color:var(--ink);font-weight:400}
   .help p{margin:0 0 6px}
@@ -97,17 +110,16 @@
   <div id="overlay" class="show">
     <div class="big" id="ovBig">たねまきマンカラ</div>
     <div class="note" id="ovNote">
-      くぼみを えらぶと たねを <b>1つずつ</b> となりへ まくよ。<br>
-      さいごの たねが <b>じぶんのゴール</b>に 入ったら <b>もう1回</b>！<br>
-      からっぽの くぼみで おわると むかいを <b>よこどり</b>！<br>
-      ゴールの たねが 多いほうの かち。
+      <span class="aim"><b>めざす</b>：じぶんの ゴールに たねを たくさん あつめよう</span>
+      <span class="aim"><b>ボーナス</b>：さいごの 1こが じぶんの からっぽの くぼみに 入ると、むかいの たねも もらえる（ゴールなら もう1回）</span>
+      <span class="aim"><b>おわり</b>：どちらかの くぼみが ぜんぶ からっぽで おしまい。ゴールの たねが 多いほうの かち</span>
     </div>
     <div class="modes">
       <button id="btnCpu">ひとりで はじめる</button>
       <button id="btn2p" class="alt">ふたりで はじめる</button>
     </div>
     <div class="levels" id="levels">
-      <button data-l="1" class="on">よわい</button><button data-l="2">ふつう</button><button data-l="3">つよい</button>
+      <button data-l="1" class="on">よわい</button><button data-l="2">ふつう</button><button data-l="3">つよい</button><button id="btnLesson" class="les">おてほんを 見る</button>
     </div>
     <div class="rules">
       <button id="ruleExtra" class="on">もう1回 ON</button><button id="ruleCap" class="on">よこどり ON</button><button id="ruleSeeds">たね 4こ</button>
@@ -115,6 +127,7 @@
     <div class="rule" id="ovStats"></div>
   </div>
 </div>
+<div id="guide"><div id="gT"></div><div class="gb hidden" id="gB"><button id="gNext">つぎへ</button><button id="gSkip" class="alt">とばして あそぶ</button></div></div>
 <div class="row">
   <button class="btn" id="undoBtn">1手もどす</button>
   <button class="btn" id="menuBtn">メニュー</button>
@@ -201,6 +214,9 @@
   let turn = 0, mode = 'cpu', level = 1, phase = 'title', over = false, winner = null, again = false;
   let rules = { extra: true, cap: true, seeds: 4 };
   let showHint = true, fast = false, autoCpu = true, tutOn = true;
+  let lesson = null, lessonSeen = false, slow = false; const tipped = {};
+  let openingLeft = true, opening = false, tutMoves = 0;
+  const OPEN = [2, 4, 4, 4, 5, 5, 0, 4, 4, 4, 5, 3, 4, 0];  /* 1手目：3つめ（4こ）→ ゴールで もう1回／2手目：1つめ（2こ）→ からっぽで よこどり */
   let history = [], evq = [], cur = null, handN = 0, lastLand = -1;
   let particles = [], pops = [], animT = 0, cpuWait = 0, endT = 0, endSfx = false, resultShown = false;
   let hover = -1, press = -1, kbCol = 2, kb = false, STRONG_MS = 550, lastScores = [];
@@ -294,7 +310,7 @@
   const busy = () => !!cur || evq.length > 0;
   const humanTurn = () => phase === 'play' && !over && !busy() && !(mode === 'cpu' && turn !== 0);
   function canUndo() {
-    if (phase !== 'play' || over || !history.length) return false;
+    if (lesson || phase !== 'play' || over || !history.length) return false;
     if (mode === 'cpu') return history.some(h => h.turn === 0);
     return true;
   }
@@ -306,7 +322,7 @@
     re.textContent = 'もう1回 ' + (rules.extra ? 'ON' : 'OFF'); re.classList.toggle('on', rules.extra);
     rc.textContent = 'よこどり ' + (rules.cap ? 'ON' : 'OFF'); rc.classList.toggle('on', rules.cap);
     rs.textContent = 'たね ' + rules.seeds + 'こ';
-    document.querySelectorAll('#levels button').forEach(x => {
+    document.querySelectorAll('#levels button[data-l]').forEach(x => {
       const l = +x.dataset.l, s = stats[l];
       x.classList.toggle('on', l === level);
       x.textContent = LEVEL_NAME[l] + (s.w > 0 ? (l === 3 ? ' 🏆' : ' ★') : '');
@@ -317,10 +333,13 @@
     if (m) mode = m;
     tally = tallies[mode]; first = firsts[mode];
     initBoard();
+    opening = openingLeft && rules.seeds === 4;
+    if (opening) { openingLeft = false; board = OPEN.slice(); disp = board.slice(); tutOn = true; tutMoves = 0; if (mode === 'cpu') setLevel(1); }
     turn = tutOn ? 0 : first; history = []; over = false; winner = null; again = false;
     evq = []; cur = null; handN = 0; particles = []; pops = []; lastLand = -1;
     cpuWait = 0; endT = 0; endSfx = false; resultShown = false; hover = -1; press = -1;
     phase = 'play'; overlay.classList.remove('show');
+    lesson = null; slow = false; autoCpu = true; setGuide(opening ? 'まずは <b>光る くぼみ</b>を おしてみよう。中の たねを、となりから 1こずつ くばるよ。' : PLAY_TIP, false);
     updateButtons();
   }
   function doMove(i) {
@@ -329,7 +348,7 @@
     const p = turn, n = board[i];
     history.push({ board: board.slice(), turn: p, again });
     const r = sow(board, p, i, rules);
-    const sp = fast ? 0.5 : 1, dd = (r.path.length > 12 ? 0.1 : 0.15) * sp;
+    const sp = slow ? 4 : fast ? 0.5 : 1, dd = (r.path.length > 12 ? 0.1 : 0.15) * sp;
     evq.push({ k: 'pick', i, n, p, dur: 0.16 * sp });
     let prev = i;
     r.path.forEach((j, idx) => { evq.push({ k: 'drop', j, from: prev, idx, p, dur: dd }); prev = j; });
@@ -339,7 +358,8 @@
     evq.push({ k: 'sync', dur: 0 });
     board = r.b; lastLand = r.last; hover = -1; press = -1;
     again = !r.end && r.next === p;
-    if (tutOn && (mode !== 'cpu' || p === 0)) { tutOn = false; try { localStorage.setItem(TUT_KEY, '1'); } catch (e) {} }
+    if (tutOn && (mode !== 'cpu' || p === 0)) { tutMoves++; if (!opening || tutMoves >= 2) { tutOn = false; try { localStorage.setItem(TUT_KEY, '1'); } catch (e) {} } }
+    if (!lesson && !tipped.sow) tip('sow', '<span class="' + (p === 0 ? 'c1' : 'c2') + '">' + seatName(p) + '</span>は くぼみの たねを <b>ぜんぶ とって</b>、となりから <b>1こずつ</b> くばったよ');
     if (r.end) finish(); else turn = r.next;
     updateButtons();
     return true;
@@ -355,6 +375,7 @@
       try { localStorage.setItem(STAT_KEY, JSON.stringify(stats)); } catch (e) {}
     }
     first = 1 - first; firsts[mode] = first;
+    tip('end', 'くぼみが からっぽに なったので おしまい。のこりの たねは それぞれの ゴールへ。<b>ゴールの たねが 多いほうの かち</b>', true);
     endT = 0; endSfx = false; resultShown = false;
   }
   function showResult() {
@@ -376,6 +397,8 @@
     document.getElementById('ovStats').textContent = 'CPU' + LEVEL_NAME[level] + '：' + s.w + 'しょう ' + s.l + 'はい ' + s.d + 'わけ' + (s.w ? ' ／ さいだいの さ +' + s.best : '');
   }
   function goMenu() {
+    if (lesson) { lesson = null; slow = false; autoCpu = true; }
+    setGuide(TITLE_TIP, false);
     phase = 'title'; evq = []; cur = null; disp = board.slice();
     document.getElementById('ovBig').textContent = 'たねまきマンカラ'; document.getElementById('ovBig').className = 'big';
     const t2 = tallies['2p'], tc = tallies.cpu;
@@ -402,6 +425,7 @@
   }
   function tryHuman(i) {
     if (!humanTurn()) return false;
+    if (lesson) { const st = LESSON[lesson.i]; if (st && i === st.pit && !lesson.played) lessonPlay(); else if (st && st.pit !== undefined && !lesson.played) { const [x, y] = pos(st.pit); pops.push({ x, y: y + 44, text: 'ここを おしてね', t: 0, color: '#ffd166', size: 15 }); } return false; }
     if (doMove(i)) return true;
     const [x, y] = pos(i);
     pops.push({ x, y: y - 4, text: '✕', t: 0, color: '#ff5fa2', size: 20 }); SFX.bad();
@@ -411,12 +435,64 @@
   }
   function burst(x, y, glow, n, sp0) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, sp = sp0 * 0.4 + Math.random() * sp0; particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.4 + Math.random() * 0.5, c: glow, s: 2 + Math.random() * 3 }); } }
 
+  /* ---- おてほん（さいしょの 1回・ほんものの 盤で 1つずつ 止めて 見せる） ---- */
+  const TITLE_TIP = 'ひとりでも（CPU と）、ふたりでも あそべるよ。';
+  const PLAY_TIP = 'くぼみに ゆびを おくと（パソコンは マウスを のせると）、<b>さいごの 1こが 入る ところ</b>が 光るよ。はなすと まく。';
+  const L0 = () => { const b = new Array(14).fill(0); for (let k = 0; k < 6; k++) { b[k] = 4; b[7 + k] = 4; } return b; };
+  const LESSON = [
+    { b: L0, mark: 'own', say: '<span class="c1">下の 6つ</span>が あなたの くぼみ。<span class="c1">右はしの 大きな ところ</span>が あなたの ゴール。上と 左は CPU の ぶん。' },
+    { pit: 0, say: '<b>光る くぼみ</b>を おしてみよう。<br>（「つぎへ」でも うごくよ）', after: 'たねを <b>ぜんぶ とって</b>、となりから <b>1こずつ</b> くばったよ。4こ だから 4つ さきまで。' },
+    { pit: 1, say: 'おてほんなので つづけて あなた。ここは 5こ。さいごの 1こは どこに 入るかな？', after: 'さいごの 1こが <b>じぶんの ゴール</b>に 入ったので <b>もう1回</b>！ つづけて あなたの ばん。' },
+    { b: () => [3, 1, 0, 4, 5, 2, 5, 2, 3, 4, 5, 1, 3, 4], pit: 1, opp: 10, say: 'べつの ばめん。この 1こは <b>からっぽの くぼみ</b>に 入るよ。むかいの 5こに ちゅうもく', after: '<b>よこどり</b>！ からっぽの くぼみで おわると、<b>むかいの たね</b>も いっしょに ゴールへ。' },
+    { mark: 'stores', say: 'どちらかの くぼみが ぜんぶ からっぽに なったら おしまい。<b>ゴールの たねが 多いほうの かち</b>！' },
+  ];
+  function setGuide(html, lessonBtns) {
+    document.getElementById('gT').innerHTML = html;
+    document.getElementById('gB').classList.toggle('hidden', !lesson);
+    if (lesson) {
+      const st = LESSON[lesson.i], nx = document.getElementById('gNext');
+      nx.disabled = !lessonBtns;
+      nx.textContent = lesson.i >= LESSON.length - 1 ? 'あそんでみる' : 'つぎへ';
+      if (st && st.pit !== undefined && !lesson.played) nx.disabled = false;
+    }
+  }
+  function tip(key, html, force) { if (tipped[key] && !force) return; tipped[key] = true; if (!lesson) setGuide(html, false); }
+  function startLesson(m) {
+    if (m) mode = m;
+    tally = tallies[mode]; first = firsts[mode];
+    history = []; over = false; winner = null; again = false;
+    evq = []; cur = null; handN = 0; particles = []; pops = []; lastLand = -1;
+    cpuWait = 0; endT = 0; endSfx = false; resultShown = false; hover = -1; press = -1;
+    lesson = { i: -1, played: false, done: false }; slow = true; autoCpu = false; tutOn = false;
+    phase = 'play'; overlay.classList.remove('show');
+    lessonStep();
+  }
+  function lessonStep() {
+    lesson.i++;
+    const st = LESSON[lesson.i];
+    if (!st) { endLesson(); return; }
+    if (st.b) { board = st.b(); disp = board.slice(); history = []; }
+    turn = 0; again = false; lesson.played = false; lesson.done = st.pit === undefined;
+    setGuide(st.say, lesson.done);
+    updateButtons();
+  }
+  function lessonPlay() {
+    const st = LESSON[lesson.i];
+    if (!st || lesson.played || st.pit === undefined || busy()) return;
+    lesson.played = true; turn = 0;
+    doMove(st.pit);
+    turn = 0; again = false;
+    document.getElementById('gNext').disabled = true;
+  }
+  function endLesson() { lessonSeen = true; for (const k of ['sow', 'extra', 'cap']) tipped[k] = true; startGame(); }
+  function begin(m) { startGame(m); }
+
   // ---- events (たねが 1つずつ うごく演出) -----------------------------------
   function beginEv(e) {
     if (e.k === 'pick') { disp[e.i] = 0; handN = e.n; const [x, y] = pos(e.i); SFX.pick(); burst(x, y, PGLOW[e.p], 6, 60); }
     else if (e.k === 'drop') { e.col = seedColor(e.j, disp[e.j]); }
-    else if (e.k === 'cap') { e.cnt = [disp[e.j], disp[e.o]]; disp[e.j] = 0; disp[e.o] = 0; SFX.cap(); const [x, y] = pos(e.o); burst(x, y, 'rgba(255,95,162,', 14, 120); }
-    else if (e.k === 'extra') { const [x, y] = pos(STORE[e.p]); pops.push({ x: x + (e.p === 0 ? -34 : 34), y: y - 70, text: 'もう1回！', t: 0, color: '#ffd166', size: 22 }); SFX.extra(); burst(x, y - 40, 'rgba(255,209,102,', 18, 140); }
+    else if (e.k === 'cap') { if (!lesson) tip('cap', (e.p === 0 && mode === 'cpu' ? '' : '<span class="' + (e.p === 0 ? 'c1' : 'c2') + '">' + seatName(e.p) + '</span>：') + '<b>からっぽの くぼみ</b>で おわったから、むかいの たねも もらえたよ'); e.cnt = [disp[e.j], disp[e.o]]; disp[e.j] = 0; disp[e.o] = 0; SFX.cap(); const [x, y] = pos(e.o); burst(x, y, 'rgba(255,95,162,', 14, 120); }
+    else if (e.k === 'extra') { if (!lesson) tip('extra', (e.p === 0 && mode === 'cpu' ? '' : '<span class="' + (e.p === 0 ? 'c1' : 'c2') + '">' + seatName(e.p) + '</span>：') + '<b>ゴール</b>に 入ったから <b>もう1回</b>！'); const [x, y] = pos(STORE[e.p]); pops.push({ x: x + (e.p === 0 ? -34 : 34), y: y - 70, text: 'もう1回！', t: 0, color: '#ffd166', size: 22 }); SFX.extra(); burst(x, y - 40, 'rgba(255,209,102,', 18, 140); }
     else if (e.k === 'sweep') { e.cnt = disp.slice(); for (let k = 0; k < 6; k++) { disp[k] = 0; disp[7 + k] = 0; } SFX.sweep(); }
     else if (e.k === 'sync') { disp = board.slice(); handN = 0; }
   }
@@ -424,6 +500,7 @@
     if (e.k === 'drop') {
       disp[e.j]++; handN = Math.max(0, handN - 1);
       const [x, y] = pos(e.j);
+      if (slow) pops.push({ x, y: (e.j === 6 || e.j === 13) ? SY + SH / 2 - 20 : y + (e.j > 6 ? 44 : -44), text: (e.idx + 1) + 'こ', t: 0, color: '#ffd166', size: 20 });
       if (e.j === 6 || e.j === 13) { SFX.store(); burst(x, y - 20, PGLOW[e.j === 6 ? 0 : 1], 8, 90); pops.push({ x, y: SY - 6, text: '+1', t: 0, color: PCOL[e.j === 6 ? 0 : 1], size: 16 }); }
       else { SFX.drop(e.idx); burst(x, y, 'rgba(255,240,200,', 3, 40); }
     } else if (e.k === 'cap') {
@@ -522,6 +599,7 @@
   function tutTarget() {
     const h = hintsFor(); const ms = legal(board, turn);
     for (const i of ms) if (h[i].extraHit) return i;
+    for (const i of ms) if (h[i].cap) return i;
     return ms[0];
   }
   function previewPit() {
@@ -547,7 +625,7 @@
     const pr = pv >= 0 ? hintsFor()[pv] : null;
     // えらべる くぼみ
     if (hum) {
-      const h = showHint ? hintsFor() : null;
+      const h = showHint && !lesson ? hintsFor() : null;
       for (const i of legal(board, turn)) {
         const [x, y] = pos(i);
         const sel = i === pv;
@@ -576,11 +654,20 @@
       if (L === 6 || L === 13) { rrOn(ctx, ST_X[L === 6 ? 0 : 1] - 3, SY - 3, ST_W + 6, SH + 6, 28); ctx.stroke(); }
       else { ctx.beginPath(); ctx.arc(lx, ly, PIT_R + 5, 0, Math.PI * 2); ctx.stroke(); }
       ctx.restore();
-      if (pr.cap) { const [ox, oy] = pos(pr.capOpp); ctx.strokeStyle = 'rgba(255,95,162,' + (0.6 + pulse * 0.4) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(ox, oy, PIT_R + 5, 0, Math.PI * 2); ctx.stroke(); }
+      if (pr.extraHit && !pr.end) label('もう1回', lx, SY - 10, '#ffd166', F(15), 3);
+      if (pr.cap) { const [ox, oy] = pos(pr.capOpp); label('よこどり', ox, oy + (pr.capOpp > 6 ? PIT_R + 26 : -PIT_R - 30), '#ff5fa2', F(14), 3); ctx.strokeStyle = 'rgba(255,95,162,' + (0.6 + pulse * 0.4) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(ox, oy, PIT_R + 5, 0, Math.PI * 2); ctx.stroke(); }
     }
     // チュートリアル
-    if (tutOn && hum && (mode !== 'cpu' || turn === 0)) {
-      const ti = tutTarget(), [x, y] = pos(ti);
+    if (lesson && LESSON[lesson.i]) {
+      const st = LESSON[lesson.i];
+      const ring = (x, y, w, h, c) => { ctx.save(); ctx.shadowColor = c; ctx.shadowBlur = 14 * DPR; ctx.strokeStyle = c; ctx.globalAlpha = 0.55 + pulse * 0.45; ctx.lineWidth = 3; rrOn(ctx, x, y, w, h, Math.min(w, h) / 2); ctx.stroke(); ctx.restore(); };
+      if (st.mark === 'own') { const [x0, y0] = pos(0), [x5] = pos(5); ring(x0 - PIT_R - 8, y0 - PIT_R - 8, x5 - x0 + PIT_R * 2 + 16, PIT_R * 2 + 16, '#53e0d8'); ring(ST_X[0] - 4, SY - 4, ST_W + 8, SH + 8, '#53e0d8'); }
+      if (st.mark === 'stores') { ring(ST_X[0] - 4, SY - 4, ST_W + 8, SH + 8, '#53e0d8'); ring(ST_X[1] - 4, SY - 4, ST_W + 8, SH + 8, '#ff5fa2'); }
+      if (st.pit !== undefined && st.opp !== undefined && !lesson.played) { const [ox, oy] = pos(st.opp); ctx.save(); ctx.strokeStyle = 'rgba(255,95,162,' + (0.5 + pulse * 0.5) + ')'; ctx.lineWidth = 3; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.arc(ox, oy, PIT_R + 5, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+    }
+    const lessonPit = lesson && LESSON[lesson.i] && !lesson.played && hum ? LESSON[lesson.i].pit : undefined;
+    if (lessonPit !== undefined || (!lesson && tutOn && hum && (mode !== 'cpu' || turn === 0))) {
+      const ti = lessonPit !== undefined ? lessonPit : tutTarget(), [x, y] = pos(ti);
       ctx.save(); ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 20 * DPR; ctx.strokeStyle = 'rgba(255,209,102,' + (0.5 + pulse * 0.5) + ')'; ctx.lineWidth = 3.5;
       ctx.beginPath(); ctx.arc(x, y, PIT_R + 6 + pulse * 4, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       ctx.font = F(26); ctx.textAlign = 'center'; ctx.fillText('👆', x + 4, y + PIT_R + 44 + Math.sin(animT * 6) * 4);
@@ -647,14 +734,15 @@
     }
     // 上の 帯：いまの ばん
     let main = '', sub = '', col = '#eeecfa';
-    if (phase === 'title') { main = 'たねまきマンカラ'; col = '#53e0d8'; }
+    if (lesson) { main = 'おてほん（' + Math.min(lesson.i + 1, LESSON.length) + ' / ' + LESSON.length + '）'; col = '#ffd166'; sub = busy() ? 'ゆっくり くばるよ' : ''; }
+    else if (phase === 'title') { main = 'たねまきマンカラ'; col = '#53e0d8'; }
     else if (over) { main = 'おしまい！'; col = '#ffd166'; sub = 'ゴールの たねを くらべるよ'; }
     else if (busy()) { main = 'たねを まいているよ…'; col = PCOL[history.length ? history[history.length - 1].turn : turn]; }
     else if (mode === 'cpu' && turn === 1) { main = (again ? 'もう1回！ ' : '') + 'CPU が かんがえ中…'; col = PCOL[1]; }
     else {
       main = (again ? 'もう1回！ ' : '▶ ') + seatName(turn) + ' の ばん' + (mode === '2p' ? (turn === 0 ? '（下）' : '（上）') : '');
       col = again ? '#ffd166' : PCOL[turn];
-      if (tutOn && (mode !== 'cpu' || turn === 0)) sub = '光る くぼみを タップ！ ゴールで ぴったり おわると もう1回';
+      if (tutOn && (mode !== 'cpu' || turn === 0)) sub = tutMoves ? '光る くぼみを タップ！ さいごの 1こは どこへ？' : '光る くぼみを タップ！ ゴールで ぴったり おわると もう1回';
       else if (pr) sub = pr.end ? 'これで おしまいに なるよ' : pr.cap ? 'よこどりで +' + pr.cap + '！' : pr.extraHit ? 'ゴールで ぴったり → もう1回！' : 'さいごの たねは ここに 入るよ';
       else sub = mode === 'cpu' ? '下の くぼみを えらんでね' : (turn === 0 ? '下の くぼみを えらんでね' : '上の くぼみを えらんでね');
     }
@@ -665,11 +753,13 @@
     // 下の 帯
     const by0 = BY + BH + 30;
     ctx.font = F(15);
+    if (!lesson) {
     const t1 = seatName(0) + ' ' + tally[0], mid = ' - ', t2 = seatName(1) + ' ' + tally[1], tail = '（ひきわけ ' + tally.d + '）';
     const w1 = ctx.measureText(t1).width, wm = ctx.measureText(mid).width, w2 = ctx.measureText(t2).width, wt = ctx.measureText(tail).width;
     let x0 = W / 2 - (w1 + wm + w2 + wt) / 2; ctx.textAlign = 'left';
     label(t1, x0, by0 + 16, PCOL[0], F(15)); x0 += w1; label(mid, x0, by0 + 16, '#c9c5e6', F(15)); x0 += wm;
     label(t2, x0, by0 + 16, PCOL[1], F(15)); x0 += w2; label(tail, x0, by0 + 16, '#c9c5e6', F(15));
+    } else label('おてほん中（せいせきには 入らないよ）', W / 2, by0 + 16, '#ffd166', F(14), 2);
     ctx.textAlign = 'center';
     const rl = (rules.extra ? 'もう1回' : '') + (rules.extra && rules.cap ? '・' : '') + (rules.cap ? 'よこどり' : '') + (!rules.extra && !rules.cap ? 'シンプル' : '');
     label((mode === 'cpu' ? 'CPU ' + LEVEL_NAME[level] : 'ふたりモード') + ' ／ ' + rl + ' ／ たね' + rules.seeds + 'こ', W / 2, by0 + 40, '#9d99c0', F(13), 2);
@@ -692,6 +782,7 @@
     while (!cur && evq.length) { cur = evq.shift(); cur.t = 0; beginEv(cur); if (cur.dur <= 0) { endEv(cur); cur = null; } }
     for (const p of pops) p.t += dt; pops = pops.filter(p => p.t < 1.0);
     particles = particles.filter(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 240 * dt; s.life -= dt; return s.life > 0; });
+    if (lesson && lesson.played && !lesson.done && !busy()) { lesson.done = true; const st = LESSON[lesson.i]; setGuide(st.after, true); }
     if (!busy()) {
       if (over && phase === 'over' && !resultShown) {
         endT += dt;
@@ -731,16 +822,19 @@
   cv.addEventListener('pointerup', e => { e.preventDefault(); const i = pitAt(e); if (i >= 0 && i === press) tryHuman(i); press = -1; if (e.pointerType === 'touch') hover = -1; });
   cv.addEventListener('pointercancel', () => { press = -1; });
   document.addEventListener('keydown', e => {
-    if (overlay.classList.contains('show')) { if (e.key === 'Enter') { e.preventDefault(); audio(); startGame(); } return; }
+    if (overlay.classList.contains('show')) { if (e.key === 'Enter') { e.preventDefault(); audio(); begin(); } return; }
     const k = e.key;
     if (k === 'ArrowLeft' || k === 'ArrowRight') { e.preventDefault(); kb = true; kbCol = Math.max(0, Math.min(5, kbCol + (k === 'ArrowLeft' ? -1 : 1))); SFX.hover(); return; }
     if (k === 'Enter' || k === ' ') { e.preventDefault(); audio(); if (!kb) { kb = true; return; } tryHuman(turn === 0 ? kbCol : 12 - kbCol); return; }
     if (k === 'z' || k === 'Z' || k === 'Backspace') { e.preventDefault(); undo(false); return; }
     if (k === 'h' || k === 'H') { showHint = !showHint; saveOpts(); updateButtons(); SFX.toggle(); }
   });
-  document.getElementById('btnCpu').addEventListener('click', () => { audio(); startGame('cpu'); });
-  document.getElementById('btn2p').addEventListener('click', () => { audio(); startGame('2p'); });
-  document.querySelectorAll('#levels button').forEach(b => b.addEventListener('click', () => { audio(); SFX.toggle(); setLevel(+b.dataset.l); }));
+  document.getElementById('btnCpu').addEventListener('click', () => { audio(); begin('cpu'); });
+  document.getElementById('btn2p').addEventListener('click', () => { audio(); begin('2p'); });
+  document.getElementById('btnLesson').addEventListener('click', () => { audio(); startLesson('cpu'); });
+  document.getElementById('gNext').addEventListener('click', () => { audio(); if (!lesson) return; const st = LESSON[lesson.i]; if (st && st.pit !== undefined && !lesson.played) lessonPlay(); else if (lesson.done) lessonStep(); });
+  document.getElementById('gSkip').addEventListener('click', () => { audio(); if (lesson) endLesson(); });
+  document.querySelectorAll('#levels button[data-l]').forEach(b => b.addEventListener('click', () => { audio(); SFX.toggle(); setLevel(+b.dataset.l); }));
   document.getElementById('ruleExtra').addEventListener('click', () => { audio(); rules.extra = !rules.extra; saveOpts(); updateButtons(); SFX.toggle(); });
   document.getElementById('ruleCap').addEventListener('click', () => { audio(); rules.cap = !rules.cap; saveOpts(); updateButtons(); SFX.toggle(); });
   document.getElementById('ruleSeeds').addEventListener('click', () => { audio(); rules.seeds = rules.seeds >= 5 ? 3 : rules.seeds + 1; saveOpts(); initBoard(); updateButtons(); SFX.toggle(); });
@@ -773,9 +867,10 @@
     undo: () => undo(true),
     menu: goMenu,
     setFirst: f => { first = f; firsts[mode] = f; },
+    lesson: () => lesson && { i: lesson.i, played: lesson.played, done: lesson.done },
   };
 
-  initBoard(); drawMute(); renderStats(); updateButtons(); requestAnimationFrame(loop);
+  initBoard(); drawMute(); renderStats(); updateButtons(); setGuide(TITLE_TIP, false); requestAnimationFrame(loop);
 })();
 </script>
 </body>
