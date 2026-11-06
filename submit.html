@@ -484,17 +484,33 @@
       showStatus("1MB以下のHTMLファイルを選んでください。", "error");
       return;
     }
+    // 選んだファイルを先に読み込んで手元に写す（拡張機能などが入れたファイルは、送信の瞬間に読めず
+    // 「Failed to fetch」になることがあるため）。読めなければ、送る前に分かりやすく知らせる。
+    let gameBlob;
+    try {
+      gameBlob = new Blob([await file.arrayBuffer()], { type: "text/html" });
+    } catch (readError) {
+      showStatus("選んだファイルを読み込めませんでした。お手数ですが「ここを押してHTMLを選ぶ」から、ご自分でファイルを選び直してください。（ChatGPTなどの拡張機能にファイル選択を任せると、読み込めないことがあります）", "error");
+      return;
+    }
+    const NETWORK_HELP = "受付サーバーと通信できませんでした（Failed to fetch）。\n・ページを再読み込みして、ご自分でファイルを選び直してから送ってください\n・ChatGPTなどのブラウザ拡張機能に操作を任せず、ご自分でボタンを押してください\n・それでも送れないときは、HTMLファイルを担当者へ送ってください（こちらで代わりに投稿します）";
+    const call = async function (url, options) {
+      try { return await fetch(url, options); }
+      catch (networkError) { throw new Error(NETWORK_HELP); }
+    };
     submitButton.disabled = true;
     submitButton.textContent = "安全確認中…";
     showStatus("投稿前の安全確認をしています。画面を閉じずにお待ちください。", "ok");
     try {
-      const challengeResponse = await fetch(SUBMISSION_API + "/api/challenge", { method: "GET", mode: "cors", credentials: "omit", cache: "no-store" });
+      const challengeResponse = await call(SUBMISSION_API + "/api/challenge", { method: "GET", mode: "cors", credentials: "omit", cache: "no-store" });
       const challenge = await challengeResponse.json();
       if (!challengeResponse.ok) throw new Error(challenge.error || "安全確認を開始できませんでした");
       document.getElementById("proof-nonce").value = challenge.nonce;
       document.getElementById("proof-counter").value = await solveProof(challenge.nonce, challenge.difficulty);
       submitButton.textContent = "送信中…";
-      const response = await fetch(SUBMISSION_API + "/api/submit", { method: "POST", mode: "cors", credentials: "omit", body: new FormData(submitForm) });
+      const payload = new FormData(submitForm);
+      payload.set("game", gameBlob, file.name);
+      const response = await call(SUBMISSION_API + "/api/submit", { method: "POST", mode: "cors", credentials: "omit", body: payload });
       const result = await response.json();
       if (!response.ok) {
         const detail = Array.isArray(result.details) && result.details.length ? "\n・" + result.details.join("\n・") : "";
