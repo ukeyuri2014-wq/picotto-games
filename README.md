@@ -8,3 +8,7 @@
 ## 検索向けページの更新
 
 ゲーム追加・説明文変更後は `node scripts/build-seo.mjs` を実行し、トップの静的リンク、各ゲームの説明・正規URL、サイトマップを一緒に更新してください。既存URLとゲームの保存キーは継続しています。お気に入り・最近遊んだゲームは利用者のブラウザ内に保存します。
+
+## 遊び方一覧の更新
+
+公開作品を追加・変更したら `node scripts/build-guide.mjs --refresh` を実行し、公開一覧を再取得してください。取得失敗時は古い一覧を消さず、公開を保留します。`node scripts/build-seo.mjs` は保存済みの公開一覧と本体作品から説明を再生成します。公開前に `node scripts/check-site.mjs` と `node scripts/check-ad-placement.mjs` でリンク・説明・広告配置を検査してください。実際のゲーム操作や素材の権利の確認は別途必要です。
