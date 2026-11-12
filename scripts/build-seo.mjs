@@ -1,3 +1,4 @@
+import './build-guide.mjs';
 import './check-ad-placement.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';
