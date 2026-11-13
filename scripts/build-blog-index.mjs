@@ -1,0 +1,38 @@
+// Keep visible article cards, counts and structured data aligned with source articles.
+import fs from 'node:fs';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..'), dir=path.join(root,'blog');
+const base='https://ukeyuri2014-wq.github.io/picotto-games/';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const decode=s=>s.replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+let index=fs.readFileSync(path.join(dir,'index.html'),'utf8');
+const blogPattern=/<script type="application\/ld\+json">({"@context":"https:\/\/schema.org","@type":"Blog",[\s\S]*?)<\/script>/;
+const blogMatch=index.match(blogPattern);
+if(!blogMatch)throw Error('Blog structured data boundary missing');
+const oldBlog=JSON.parse(blogMatch[1]);
+const old=new Map((oldBlog.blogPost||[]).map(x=>[x.url,x]));
+const articles=fs.readdirSync(dir).filter(f=>f.endsWith('.html')&&f!=='index.html').map(file=>{
+  const h=fs.readFileSync(path.join(dir,file),'utf8');
+  const parsed=[...h.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
+  const post=parsed.find(x=>x['@type']==='BlogPosting');
+  const url=base+'blog/'+file, prior=old.get(url);
+  const title=decode(h.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.replace(/\s*\|.*$/,'')||'');
+  const description=decode(h.match(/<meta name="description" content="([^"]*)"/)?.[1]||'');
+  const published=post?.datePublished||prior?.datePublished;
+  const modified=post?.dateModified||prior?.dateModified;
+  const image=post?.image||base+'assets/covers/'+(file==='train-switch-guide.html'?'117':'115')+'.webp';
+  if(!title||!description||!/^\d{4}-\d{2}-\d{2}$/.test(published||'')||!/^\d{4}-\d{2}-\d{2}$/.test(modified||''))throw Error('Incomplete article metadata: '+file);
+  if(!image.startsWith(base+'assets/covers/')||!fs.existsSync(path.join(root,image.slice(base.length))))throw Error('Invalid cover: '+file);
+  const tag=file==='puzzle-state-design.html'?'作り方':file==='browser-game-family-guide.html'?'コラム':['yofukashi-hockey-guide.html','browser-game-save-guide.html'].includes(file)?'遊び方':'攻略';
+  return {file,url,title,description,published,modified,image,tag};
+}).sort((a,b)=>b.published.localeCompare(a.published)||a.file.localeCompare(b.file));
+const cards=articles.map((a,i)=>`<a class="article-card${i===0?' feature':''}" data-tag="${a.tag}" href="${a.file}"><div class="card-art has-img"><img src="${esc('../'+a.image.slice(base.length))}" alt="" width="800" height="450" ${i?'loading="lazy"':'fetchpriority="high"'} decoding="async"><span class="art-tag">${a.tag}</span></div><div class="card-copy"><div class="card-meta"><time datetime="${a.published}">${a.published.replace(/-/g,'.')}</time>${a.modified!==a.published?`<span>更新 ${a.modified.replace(/-/g,'.')}</span>`:''}</div><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p><span class="read">続きを読む →</span></div></a>`).join('\n');
+const grid=/<div class="article-grid">[\s\S]*?\n    <\/div>/;
+if(!grid.test(index))throw Error('Article grid boundary missing');
+index=index.replace(grid,`<div class="article-grid">${cards}\n    </div>`);
+const description=`無料ブラウザゲーム「ルドット」の公式ノート。ゲームの実装を確かめた攻略、保存データの使い方、ゲーム制作の考え方を${articles.length}本掲載しています。`;
+index=index.replace(/<meta name="description" content="[^"]*">/,`<meta name="description" content="${esc(description)}">`).replace(/<meta property="og:description" content="[^"]*">/,`<meta property="og:description" content="${esc(description)}">`).replace(/<p class="mag-count"><b>\d+<\/b>本の記事<\/p>/,`<p class="mag-count"><b>${articles.length}</b>本の記事</p>`);
+const blog={...oldBlog,description,blogPost:articles.map(a=>({'@type':'BlogPosting',headline:a.title,url:a.url,datePublished:a.published,dateModified:a.modified}))};
+index=index.replace(blogPattern,`<script type="application/ld+json">${JSON.stringify(blog).replace(/</g,'\\u003c')}</script>`);
+fs.writeFileSync(path.join(dir,'index.html'),index);
+console.log(`Blog index synchronized: ${articles.length} articles.`);

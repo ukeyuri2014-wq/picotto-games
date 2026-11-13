@@ -1,4 +1,6 @@
+import {articleMap} from './article-map.mjs';
 import './build-guide.mjs';
+import './build-blog-index.mjs';
 import './check-ad-placement.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -10,6 +12,16 @@ vm.runInContext(fs.readFileSync(path.join(root, 'games.js'), 'utf8') + '\nthis.g
 const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const json = v => JSON.stringify(v).replace(/</g, '\\u003c');
 const games = context.games;
+for (const [id, file] of Object.entries(articleMap)) {
+  const game = games.find(g => g.id === id);
+  const article = fs.readFileSync(path.join(root, 'blog', file), 'utf8');
+  if (!game || !article.includes('../' + game.path)) throw Error('Game/article mismatch: ' + id);
+}
+const libraryFile = path.join(root, 'assets/ludot-library.js');
+let library = fs.readFileSync(libraryFile, 'utf8');
+if (!library.includes('// ARTICLE-MAP-START') || !library.includes('// ARTICLE-MAP-END')) throw Error('Article map markers missing');
+library = library.replace(/\/\/ ARTICLE-MAP-START[\s\S]*?\/\/ ARTICLE-MAP-END/, '// ARTICLE-MAP-START\n    const guides = ' + JSON.stringify(articleMap) + ';\n    // ARTICLE-MAP-END');
+fs.writeFileSync(libraryFile, library);
 let home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const cards = games.map(g => `<a class="card" data-game-id="${esc(g.id)}" href="${esc(g.path)}"><div class="art"><div class="fallback">${esc(g.emoji)}</div></div><div class="card-body"><div class="chips"><span class="chip">${esc(g.genre || 'GAME')}</span><span class="chip age">目安 ${esc(g.age || '未確認')}</span></div><h3>${esc(g.title)}</h3><p class="desc">${esc(g.description)}</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>`).join('\n');
 home = home.replace(/<!-- STATIC-GAMES-START -->[\s\S]*?<!-- STATIC-GAMES-END -->/, `<!-- STATIC-GAMES-START -->\n${cards}\n<!-- STATIC-GAMES-END -->`);
@@ -28,6 +40,6 @@ for (const g of games) {
   html = html.replace(/<\/head>/i, `<!-- LUDOT-SEO-START -->\n<meta name="description" content="${esc(g.description)} 無料・ダウンロード不要。ルドットで遊べます。">\n<link rel="canonical" href="${base + g.path}">\n<script type="application/ld+json">${json(data)}</script>\n<script defer src="../../assets/ludot-library.js" data-current-game="${esc(g.id)}"></script>\n<!-- LUDOT-SEO-END -->\n</head>`);
   fs.writeFileSync(file, html);
 }
-const urls = ['', 'about.html', 'privacy.html', 'contact.html', 'help.html', 'game-guide.html', 'submit.html', 'blog/', ...fs.readdirSync(path.join(root, 'blog')).filter(f => f.endsWith('.html') && f !== 'index.html').map(f => 'blog/' + f), ...games.map(g => g.path)];
+const urls = ['', 'about.html', 'changelog.html', 'privacy.html', 'contact.html', 'help.html', 'game-guide.html', 'submit.html', 'blog/', ...fs.readdirSync(path.join(root, 'blog')).filter(f => f.endsWith('.html') && f !== 'index.html').map(f => 'blog/' + f), ...games.map(g => g.path)];
 fs.writeFileSync(path.join(root, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map(p => `  <url><loc>${base + p}</loc></url>`).join('\n') + '\n</urlset>\n');
 console.log(`Generated static links and metadata for ${games.length} games; sitemap ${urls.length} URLs.`);
