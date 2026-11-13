@@ -98,13 +98,13 @@
 .lr-stars button{appearance:none;border:0;background:none;padding:2px;font-size:40px;line-height:1;color:#d9d6e6;cursor:pointer;min-width:48px;min-height:48px;transition:transform .12s,color .12s;-webkit-tap-highlight-color:transparent}
 .lr-stars button.on{color:#ffb800}.lr-stars button:hover{transform:scale(1.12)}.lr-stars button:focus-visible{outline:3px solid #7547d8;outline-offset:2px;border-radius:8px}
 .lr-stars.lr-small button{font-size:26px;min-width:40px;min-height:40px}
-.lr-label{min-height:22px;font-size:14px;font-weight:700;color:#b57a00}
+.lr-label{min-height:22px;font-size:14px;font-weight:700;color:#805500}
 .lr-status{min-height:20px;font-size:12px;color:#6b6883;margin-top:4px}
 .lr-close{margin-top:12px;border:1px solid #dcd8ea;background:#f6f5fb;color:#4b4866;border-radius:999px;padding:9px 20px;font:700 13px system-ui,sans-serif;cursor:pointer;min-height:40px}
-.lr-badge{display:inline-flex;align-items:center;gap:3px;font-size:.78rem;font-weight:800;color:#a36a00;white-space:nowrap}.lr-badge small{font-weight:600;color:#8a8aa0;font-size:.7rem}
+.lr-badge{display:inline-flex;align-items:center;gap:3px;font-size:.78rem;font-weight:800;color:#a36a00;white-space:nowrap}.lr-badge small{font-weight:600;color:#626277;font-size:.7rem}
 .lr-banner{width:calc(100% - 48px);max-width:1072px;margin:18px auto 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px;border-radius:18px;background:linear-gradient(135deg,#fff8e6,#fff);border:1px solid #f3dfae;color:#3b3322;box-shadow:0 6px 20px #a36a0010}
-.lr-banner .lr-q{flex:1;min-width:200px;font-weight:800;font-size:.95rem;line-height:1.6}.lr-banner .lr-q small{display:block;font-weight:600;font-size:.75rem;color:#8a7a55}
-.lr-banner .lr-act{display:flex;align-items:flex-start;gap:6px}.lr-banner .lr-stars{margin:0}.lr-banner .lr-label,.lr-banner .lr-status{text-align:center;font-size:12px}.lr-banner .lr-x{border:0;background:none;color:#8a7a55;font-size:.78rem;cursor:pointer;min-height:40px;padding:0 6px}
+.lr-banner .lr-q{flex:1;min-width:200px;font-weight:800;font-size:.95rem;line-height:1.6}.lr-banner .lr-q small{display:block;font-weight:600;font-size:.75rem;color:#655332}
+.lr-banner .lr-act{display:flex;align-items:flex-start;gap:6px}.lr-banner .lr-stars{margin:0}.lr-banner .lr-label,.lr-banner .lr-status{text-align:center;font-size:12px}.lr-banner .lr-x{border:0;background:none;color:#655332;font-size:.78rem;cursor:pointer;min-height:40px;padding:0 6px}
 .topbar .lr-wrap{gap:6px;flex:none}.topbar .lr-inline{padding:6px 9px!important}.topbar .lr-inline .lr-txt{display:none}.topbar>a{flex:none}.topbar h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:580px){.lr-banner{width:calc(100% - 32px);padding:12px 14px}}
 @media(prefers-reduced-motion:reduce){.lr-stars button{transition:none}}`;
@@ -114,21 +114,23 @@
   function starPicker(id, onDone, small) {
     const wrap = document.createElement('div');
     const row = document.createElement('div'); row.className = 'lr-stars' + (small ? ' lr-small' : '');
-    row.setAttribute('role', 'radiogroup'); row.setAttribute('aria-label', '星で評価');
+    // Each button submits immediately on activation. Use pressed buttons rather
+    // than radios, whose expected arrow-key selection would imply a new vote.
+    row.setAttribute('role', 'group'); row.setAttribute('aria-label', '星で評価（ボタンを押すと送信）');
     const label = document.createElement('div'); label.className = 'lr-label'; label.setAttribute('aria-hidden', 'true');
     const status = document.createElement('div'); status.className = 'lr-status'; status.setAttribute('role', 'status');
     let current = myVote(id); let busy = false;
     const paint = n => { [...row.children].forEach((b, i) => { b.classList.toggle('on', i < n); b.textContent = i < n ? '★' : '☆'; }); label.textContent = LABELS[n] || ''; };
     for (let n = 1; n <= 5; n++) {
       const b = document.createElement('button'); b.type = 'button';
-      b.setAttribute('role', 'radio'); b.setAttribute('aria-label', `星${n}つ（${LABELS[n]}）`);
-      b.setAttribute('aria-checked', String(n === current));
+      b.setAttribute('aria-label', `星${n}つ（${LABELS[n]}）を送信`);
+      b.setAttribute('aria-pressed', String(n === current));
       b.addEventListener('mouseenter', () => paint(n)); b.addEventListener('focus', () => { if (b.matches(':focus-visible')) paint(n); });
       b.addEventListener('click', async () => {
         if (busy) return; busy = true; paint(n); status.textContent = '送信中…';
         try {
           await sendVote(id, n); current = n;
-          [...row.children].forEach((x, i) => x.setAttribute('aria-checked', String(i + 1 === n)));
+          [...row.children].forEach((x, i) => x.setAttribute('aria-pressed', String(i + 1 === n)));
           status.textContent = 'ありがとう！評価を受けつけました。';
           if (onDone) onDone(n);
         } catch (e) { paint(current); status.textContent = (e && e.message) || '送れませんでした。時間をおいてもう一度どうぞ。'; }
@@ -161,7 +163,7 @@
       dialog.addEventListener(t, e => e.stopPropagation());
       btn.addEventListener(t, e => e.stopPropagation());
     });
-    dialog.addEventListener('close', () => btn.blur());
+    dialog.addEventListener('close', () => btn.focus({ preventScroll:true }));
     dialog.append(title, note, starPicker(id, () => { setBtn(); setTimeout(() => dialog.open && dialog.close(), 1100); }), close);
     btn.addEventListener('click', () => { if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', ''); });
     document.body.append(dialog);

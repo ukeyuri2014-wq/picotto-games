@@ -132,6 +132,9 @@
     const fav = e.target.closest('[data-favorite-id]');
     if (fav) {
       const id = fav.dataset.favoriteId;
+      const shelf = fav.closest('#favorite-games, #recent-games');
+      const shelfButtons = shelf ? [...shelf.querySelectorAll('[data-favorite-id]')] : [];
+      const shelfIndex = shelfButtons.indexOf(fav);
       const g = catalog.get(id) || [...state.favorites,...state.recent].find(x => x.id === id); if (!g) return;
       if (persistent) state = read();
       const exists = state.favorites.some(x => x.id === id);
@@ -139,7 +142,14 @@
       state.favorites = exists ? state.favorites.filter(x => x.id !== id) : [g,...state.favorites];
       const saved = save(); render();
       // Restore keyboard focus if a list row was rebuilt or removed.
-      const replacement = [...document.querySelectorAll('[data-favorite-id]')].find(b => b.dataset.favoriteId === id);
+      // Keep the original button when it survived; otherwise stay in the shelf
+      // that was rebuilt. Do not jump to another copy of the same game above it.
+      const remaining = shelf ? [...shelf.querySelectorAll('[data-favorite-id]')] : [];
+      const replacement = fav.isConnected ? fav
+        : remaining.find(b => b.dataset.favoriteId === id)
+          || remaining[Math.min(shelfIndex, remaining.length - 1)]
+          || (shelf && !shelf.closest('[hidden]') && shelf.querySelector('a'))
+          || document.querySelector(`[data-favorite-id="${id}"]`);
       if (replacement) replacement.focus({preventScroll:true});
       if (saved) status(exists ? 'お気に入りから外しました。' : 'お気に入りに保存しました。次回は「お気に入り」から遊べます。');
       return;
@@ -156,6 +166,17 @@
   window.addEventListener('storage', e => { if (e.key === KEY || e.key === null) { state = read(); render(); } });
   window.addEventListener('pageshow', () => { if (persistent) state = read(); render(); });
   if (currentId) {
+    // ARTICLE-MAP-START
+    const guides = {"115":"all-lights-guide.html","117":"train-switch-guide.html","005":"ricochet-one-guide.html","010":"yofukashi-quest-guide.html","011":"yofukashi-hockey-guide.html","017":"daifugo-kotsu.html","018":"2048-kotsu.html","025":"minesweeper-kotsu.html","027":"reversi-kachikata.html","045":"oekaki-logic-tokikata.html","046":"hakooshi-puzzle-kotsu.html","049":"hitokuchi-dungeon-guide.html","044":"solitaire-kotsu.html"};
+    // ARTICLE-MAP-END
+    if (guides[currentId]) {
+      const nav = document.createElement('nav'); nav.className = 'ludot-reading-links';
+      nav.setAttribute('aria-label', 'このゲームの関連情報');
+      const title = document.createElement('strong'); title.textContent = '遊び方をもう少し知りたいときに';
+      const article = document.createElement('a'); article.href = new URL('blog/' + guides[currentId], root).href; article.textContent = 'このゲームの攻略ノートを読む →';
+      const help = document.createElement('a'); help.href = new URL('help.html#save', root).href; help.textContent = '保存・動かないときの確認';
+      nav.append(title, article, help); document.body.append(nav);
+    }
     const back=document.querySelector('a[href="../../index.html"],a[href="../../"],a[href="../../index.html#games"]');
     if(back){const a=document.createElement('a');a.href=new URL('game-guide.html#game-'+currentId,root).href;a.className='ludot-manual-link';a.textContent='遊び方';a.setAttribute('aria-label',document.title.split('｜')[0]+'の遊び方');back.insertAdjacentElement('afterend',a);}
     const g = {id:currentId,title:document.title.split('｜')[0],path:location.href.split(/[?#]/)[0]};
