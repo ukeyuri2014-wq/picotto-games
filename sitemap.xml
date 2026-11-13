@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/about.html</loc></url>
+  <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/changelog.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/privacy.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/contact.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/help.html</loc></url>
@@ -11,11 +12,13 @@
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/2048-kotsu.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/all-lights-guide.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/browser-game-family-guide.html</loc></url>
+  <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/browser-game-save-guide.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/daifugo-kotsu.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/hakooshi-puzzle-kotsu.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/hitokuchi-dungeon-guide.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/minesweeper-kotsu.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/oekaki-logic-tokikata.html</loc></url>
+  <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/puzzle-state-design.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/reversi-kachikata.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/ricochet-one-guide.html</loc></url>
   <url><loc>https://ukeyuri2014-wq.github.io/picotto-games/blog/solitaire-kotsu.html</loc></url>

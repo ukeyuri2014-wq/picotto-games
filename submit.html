@@ -272,21 +272,21 @@
 
 </style>
 <link rel="canonical" href="https://ukeyuri2014-wq.github.io/picotto-games/submit.html">
-</head>
-<body>
+<link rel="stylesheet" href="assets/ludot-accessibility.css"><link rel="icon" href="assets/ludot-icon.svg" type="image/svg+xml"></head>
+<body><a class="ludot-skip" href="#submission-main">本文へ進む</a>
 
 <div class="nav-outer">
   <nav class="nav">
     <a class="logo" href="index.html">LUDOT<span>.</span></a>
     <div class="links">
-      <a href="index.html#games">GAMES</a>
+      <a href="index.html#games">ゲーム</a><a href="blog/puzzle-state-design.html">作り方</a>
       <a href="submit.html" class="on">SUBMIT</a>
-      <a href="index.html#about">ABOUT</a>
+      <a href="about.html">運営情報</a>
     </div>
   </nav>
 </div>
 
-<header class="hero">
+<main id="submission-main" tabindex="-1"><header class="hero">
   <div class="wrap">
     <div class="eyebrow">SUBMIT YOUR GAME</div>
     <h1>きみのゲームを、<br><em>ここに並べよう。</em></h1>
@@ -378,7 +378,7 @@
           <div class="field"><label for="emoji">絵文字 <span>*</span></label><input id="emoji" name="emoji" maxlength="12" required value="🎮"></div>
         </div></div>
         <div class="field full"><label for="color">カードの色</label><input id="color" name="color" type="color" value="#ff2e88"></div>
-        <div class="field full"><label>完成したHTMLファイル <span>*</span></label><div class="file-drop"><input id="game-file" name="game" type="file" accept=".html,.htm,text/html" required><b id="file-label">ここを押してHTMLを選ぶ</b><small>1ファイル・1MBまで。ZIPや画像ファイルは送れません。</small></div></div>
+        <div class="field full"><label for="game-file">完成したHTMLファイル <span>*</span></label><div class="file-drop"><input id="game-file" name="game" type="file" accept=".html,.htm,text/html" aria-describedby="file-help" required><b id="file-label">ここを押してHTMLを選ぶ</b><small id="file-help">1ファイル・1MBまで。ZIPや画像ファイルは送れません。</small></div></div>
         <div class="bot-field" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
       </div>
       <input type="hidden" name="proofNonce" id="proof-nonce"><input type="hidden" name="proofCounter" id="proof-counter">
@@ -435,7 +435,7 @@
   </section>
 </div>
 
-<footer>
+</main><footer>
   <div class="foot-base">
     <span>© 2026 LUDOT</span>
     <span><a href="index.html">← ゲーム一覧へもどる</a> ・ <a href="help.html">遊び方・FAQ</a> ・ <a href="contact.html">お問い合わせ</a> ・ <a href="privacy.html">プライバシー・広告</a></span>
@@ -476,14 +476,18 @@
     throw new Error("安全確認を完了できませんでした");
   }
 
+  let submitting = false;
   submitForm.addEventListener("submit", async function (event) {
     event.preventDefault();
+    if (submitting) return;
     if (!submitForm.reportValidity()) return;
     const file = fileInput.files && fileInput.files[0];
     if (!file || !/\.html?$/i.test(file.name) || file.size > 1024 * 1024) {
       showStatus("1MB以下のHTMLファイルを選んでください。", "error");
       return;
     }
+    submitting = true;
+    submitButton.disabled = true;
     // 選んだファイルを先に読み込んで手元に写す（拡張機能などが入れたファイルは、送信の瞬間に読めず
     // 「Failed to fetch」になることがあるため）。読めなければ、送る前に分かりやすく知らせる。
     let gameBlob;
@@ -491,12 +495,17 @@
       gameBlob = new Blob([await file.arrayBuffer()], { type: "text/html" });
     } catch (readError) {
       showStatus("選んだファイルを読み込めませんでした。お手数ですが「ここを押してHTMLを選ぶ」から、ご自分でファイルを選び直してください。（ChatGPTなどの拡張機能にファイル選択を任せると、読み込めないことがあります）", "error");
+      submitting = false;
+      submitButton.disabled = false;
       return;
     }
-    const NETWORK_HELP = "受付サーバーと通信できませんでした（Failed to fetch）。\n・ページを再読み込みして、ご自分でファイルを選び直してから送ってください\n・ChatGPTなどのブラウザ拡張機能に操作を任せず、ご自分でボタンを押してください\n・それでも送れないときは、HTMLファイルを担当者へ送ってください（こちらで代わりに投稿します）";
+    const NETWORK_HELP = "送信前の安全確認で通信できませんでした。この操作では作品はまだ送信していません。接続を確認してから、もう一度お試しください。";
+    const UNKNOWN_RESULT = "送信結果を確認できませんでした。作品は受け付けられている可能性があります。同じ作品をすぐ再投稿せず、作品名・作者ニックネーム・投稿した時刻を控えて、お問い合わせ窓口へお知らせください。公開の窓口には本名や連絡先を書かないでください。";
+    let outcomeUncertain = false;
+    const unknownResult = function () { outcomeUncertain = true; return new Error(UNKNOWN_RESULT); };
     const call = async function (url, options) {
       try { return await fetch(url, options); }
-      catch (networkError) { throw new Error(NETWORK_HELP); }
+      catch (networkError) { throw options.method === "POST" ? unknownResult() : new Error(NETWORK_HELP); }
     };
     submitButton.disabled = true;
     submitButton.textContent = "安全確認中…";
@@ -511,11 +520,15 @@
       const payload = new FormData(submitForm);
       payload.set("game", gameBlob, file.name);
       const response = await call(SUBMISSION_API + "/api/submit", { method: "POST", mode: "cors", credentials: "omit", body: payload });
-      const result = await response.json();
+      let result;
+      try { result = await response.json(); }
+      catch (_) { throw unknownResult(); }
+      if (response.status >= 500 || !result || typeof result !== "object" || Array.isArray(result)) throw unknownResult();
       if (!response.ok) {
         const detail = Array.isArray(result.details) && result.details.length ? "\n・" + result.details.join("\n・") : "";
         throw new Error((result.error || "投稿できませんでした") + detail);
       }
+      if (result.ok !== true || typeof result.receipt !== "string" || !result.receipt.trim()) throw unknownResult();
       const adjusted = Array.isArray(result.adjusted) && result.adjusted.length ? "\n\nそのままでは動かない部分を、自動で調整しました：\n・" + result.adjusted.join("\n・") : "";
       showStatus("投稿できました！受付番号：" + result.receipt + "。管理者の確認後、公開されます。" + adjusted, "ok");
       submitForm.reset();
@@ -525,8 +538,9 @@
     } catch (error) {
       showStatus(error && error.message ? error.message : "通信に失敗しました。時間をおいてお試しください。", "error");
     } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = "安全確認して投稿する →";
+      submitting = outcomeUncertain;
+      submitButton.disabled = outcomeUncertain;
+      submitButton.textContent = outcomeUncertain ? "受付結果を確認してください" : "安全確認して投稿する →";
     }
   });
 
