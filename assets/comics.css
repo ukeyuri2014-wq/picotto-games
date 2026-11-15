@@ -1,0 +1,48 @@
+/* ルドット まんがコーナー（2026-11-15） */
+.comic-wrap { max-width: 780px; padding: 52px 0 92px; }
+.comic-intro p { margin: 0 0 18px; color: #39445f; font-size: 1.06rem; font-weight: 700; }
+.cm-points { margin: 28px 0; padding: 20px 24px; background: #fff7dd; border: 1px solid #f0d98e; border-radius: 16px; }
+.cm-points b { display: block; margin-bottom: 6px; }
+.cm-points ul { margin: 0; padding-left: 1.4em; }
+.cm-points li { margin: 6px 0; }
+.ai-note { margin: 24px 0; padding: 18px 22px; background: #f3f9ff; border: 1px solid #d6eafa; border-radius: 16px; font-size: .9rem; }
+.ai-note b { display: block; margin-bottom: 4px; color: #17213d; }
+.ai-note p { margin: 6px 0 0; color: #39445f; }
+.page-jump { margin: 0 0 26px; font-size: .9rem; }
+.page-jump summary { cursor: pointer; font-weight: 700; color: #17213d; }
+.page-jump nav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.page-jump nav a { min-width: 40px; padding: 7px 10px; text-align: center; color: #17213d; background: #fff; border: 1px solid #d9dfeb; border-radius: 10px; text-decoration: none; }
+.page-jump nav a:hover, .page-jump nav a:focus-visible { background: #fff7dd; outline: 2px solid #17213d; }
+.comic-reader { margin: 12px auto 28px; max-width: 760px; }
+.comic-page { margin: 0 0 14px; background: #fff; border: 1px solid rgba(23,33,61,.12); box-shadow: 0 8px 22px rgba(55,74,116,.1); scroll-margin-top: 80px; }
+.comic-page img { display: block; width: 100%; height: auto; }
+.comic-end { margin: 34px 0 20px; text-align: center; color: #5d6884; font-weight: 700; letter-spacing: .08em; }
+.spoiler { margin: 24px 0; padding: 14px 20px; background: #fff; border: 1px solid #e6e3d9; border-radius: 14px; }
+.spoiler summary { cursor: pointer; font-weight: 700; color: #17213d; }
+.spoiler p { margin: 12px 0 0; color: #39445f; }
+.rel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+.rel-card { display: block; overflow: hidden; background: #fff; border: 1px solid rgba(23,33,61,.09); border-radius: 14px; text-decoration: none; color: #17213d; font-size: .85rem; font-weight: 700; }
+.rel-card img { display: block; width: 100%; height: auto; }
+.rel-card span { display: block; padding: 10px 12px 14px; }
+.comic-process { padding: 64px 0 90px; background: #fff; border-top: 1px solid rgba(23,33,61,.08); }
+.process-list { max-width: 780px; margin: 0; padding-left: 1.4em; }
+.process-list li { margin: 0 0 22px; }
+.process-list b { display: block; font-size: 1.1rem; color: #17213d; }
+.process-list p { margin: 6px 0 0; color: #39445f; }
+.process-note { max-width: 780px; margin: 8px 0 0; color: #5d6884; font-size: .85rem; }
+.comics-home { max-width: 1080px; margin: 0 auto; padding: 24px 24px 56px; }
+.comics-home .cm-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 22px; }
+.comics-home .cm-label { margin-bottom: 9px; font-family: var(--mono, monospace); font-size: .68rem; letter-spacing: .32em; color: #ef5363; }
+.comics-home h2 { margin: 0; color: #17213d; font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.3; letter-spacing: -.04em; }
+.comics-home .cm-intro { max-width: 390px; margin: 0; color: rgba(23,33,61,.58); font-size: .84rem; }
+.comics-home .cm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; }
+.comics-home .cm-card { overflow: hidden; color: #17213d; background: rgba(255,255,255,.84); border: 1px solid rgba(23,33,61,.08); border-radius: 20px; box-shadow: 0 13px 32px rgba(55,74,116,.1); text-decoration: none; transition: transform .18s ease, box-shadow .18s ease; }
+.comics-home .cm-card:hover { transform: translateY(-6px); box-shadow: 0 22px 46px rgba(55,74,116,.17); }
+.comics-home .cm-art { aspect-ratio: 16 / 9; overflow: hidden; background: linear-gradient(145deg, #ffe9a8, #c8f5ee); }
+.comics-home .cm-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.comics-home .cm-copy { padding: 14px 16px 18px; }
+.comics-home .cm-tag { display: inline-block; font-size: .68rem; font-weight: 700; color: #ef5363; }
+.comics-home .cm-copy h3 { margin: 4px 0 6px; font-size: 1.05rem; line-height: 1.4; }
+.comics-home .cm-copy p { margin: 0; font-size: .8rem; line-height: 1.7; color: rgba(23,33,61,.7); }
+.comics-home .cm-all { display: inline-block; margin-top: 20px; color: #17213d; font-weight: 700; }
+@media (max-width: 760px) { .rel-grid { grid-template-columns: 1fr; } .comics-home { padding-left: 18px; padding-right: 18px; } .comics-home .cm-head { flex-direction: column; align-items: flex-start; gap: 10px; } }
