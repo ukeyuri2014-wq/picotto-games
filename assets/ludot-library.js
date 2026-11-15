@@ -198,5 +198,19 @@
     bgm.dataset.currentGame = currentId;
     document.head.append(bgm);
   }
+  // 集計先へ送るのはページのゲーム番号だけ。同じタブでは1ページ1回。
+  (() => {
+    const isTop = !currentId && (location.pathname === root.pathname || location.pathname === root.pathname + 'index.html');
+    const key = currentId || (isTop ? 'TOP' : '');
+    if (!/^(\d{3}|TOP)$/.test(key)) return;
+    const mark = 'ludot-play-sent-v1:' + key;
+    try { if (sessionStorage.getItem(mark)) return; sessionStorage.setItem(mark, '1'); } catch (_) {}
+    try {
+      fetch('https://picotto-secure-submissions.edamame2025.chatgpt.site/api/public/plays', {
+        method: 'POST', mode: 'cors', credentials: 'omit', keepalive: true,
+        headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({game: key}),
+      }).catch(() => {});
+    } catch (_) {}
+  })();
   window.LudotLibrary = {setGames};
 })();
