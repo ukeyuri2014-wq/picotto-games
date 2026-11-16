@@ -179,6 +179,19 @@
     }
     const back=document.querySelector('a[href="../../index.html"],a[href="../../"],a[href="../../index.html#games"]');
     if(back){const a=document.createElement('a');a.href=new URL('game-guide.html#game-'+currentId,root).href;a.className='ludot-manual-link';a.textContent='遊び方';a.setAttribute('aria-label',document.title.split('｜')[0]+'の遊び方');back.insertAdjacentElement('afterend',a);}
+    if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
+      const install = document.createElement('a');
+      install.href = new URL('index.html#add-to-home', root).href;
+      install.textContent = 'また遊ぶなら、ルドットをホーム画面に追加 →';
+      let installNav = document.querySelector('.ludot-reading-links');
+      if (!installNav) {
+        installNav = document.createElement('nav');
+        installNav.className = 'ludot-reading-links';
+        installNav.setAttribute('aria-label', '次もルドットで遊ぶ');
+        document.body.append(installNav);
+      }
+      installNav.append(install);
+    }
     const g = {id:currentId,title:document.title.split('｜')[0],path:location.href.split(/[?#]/)[0]};
     if (validGame(g)) {
       // Direct search/bookmark visits are included, while a home click is already recorded.

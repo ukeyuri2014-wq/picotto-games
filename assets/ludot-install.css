@@ -1,0 +1,26 @@
+.ludot-install-card { display:flex; align-items:center; gap:14px; margin:24px 0 0; padding:16px; background:#fff; border:2px solid #ded8fa; border-radius:20px; box-shadow:0 5px 0 #eee9fa; text-align:left; max-width:760px; scroll-margin-top:100px; }
+.ludot-install-icon { flex:none; border-radius:14px; }
+.ludot-install-copy { flex:1; min-width:0; }
+.ludot-install-copy strong { color:#221f38; font-size:14px; line-height:1.6; }
+.ludot-install-copy p { color:#5f5873; font-size:12px; line-height:1.7; margin:3px 0 0; }
+a.ludot-install-button { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:10px 16px; box-sizing:border-box; border-radius:12px; background:#603fce; color:#fff; font-size:14px; line-height:1.5; font-weight:800; text-decoration:none; text-align:center; flex:none; }
+a.ludot-install-button:hover { background:#4b2eac; color:#fff; }
+a.ludot-install-button:focus-visible { outline:3px solid #221f38; outline-offset:4px; }
+a.ludot-install-button[aria-disabled="true"] { opacity:.7; }
+.ludot-install-guide { scroll-margin-top:28px; }
+.ludot-install-preview { display:flex; gap:18px; align-items:center; margin:18px 0; }
+.ludot-install-preview img { flex:none; border-radius:18px; }
+.ludot-install-preview p { margin:6px 0; }
+#home-screen-steps { scroll-margin-top:28px; }
+#home-screen-steps details { margin:12px 0; }
+#home-screen-steps li { margin:10px 0; }
+#ludot-install-status { color:#5f5873; font-size:14px; }
+.ludot-install-card[hidden], [data-ludot-install][hidden] { display:none !important; }
+@media(max-width:600px) {
+  .ludot-install-card { flex-wrap:wrap; gap:10px 12px; padding:14px; border-radius:16px; }
+  .ludot-install-icon { width:48px; height:48px; border-radius:12px; }
+  .ludot-install-copy strong { font-size:13px; }
+  .ludot-install-copy p { font-size:11px; }
+  .ludot-install-card .ludot-install-button { width:100%; }
+  .ludot-install-preview { gap:12px; }
+}
