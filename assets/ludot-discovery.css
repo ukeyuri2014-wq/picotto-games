@@ -1,0 +1,82 @@
+/* Search controls and the results belong together. */
+.hero-stage { min-height:0; }
+.hero-stage > .wrap { display:block; }
+.hero-stage .hero { max-width:780px; padding:70px 0 28px; }
+.hero-stage .hero h1 { font-size:clamp(2.4rem,5vw,4rem); }
+.hero-credit,.showcase { display:none; }
+#games,#play-finder,#game-results { scroll-margin-top:116px; }
+#games { padding-top:16px; }
+#play-finder.discovery-panel { width:100%; max-width:none; margin:0 0 28px; padding:26px; border:1px solid #ddd8ed; border-radius:22px; background:#fff; color:#17213d; }
+.discovery-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+#play-finder .finder-kicker { margin-bottom:4px; }
+#play-finder h2 { font-size:clamp(1.3rem,3vw,1.8rem); margin:0; }
+#play-finder .game-search { margin:18px 0; }
+#play-finder .finder-group { margin-top:18px; }
+#play-finder .finder-label { display:block; font-size:.85rem; margin-bottom:9px; }
+.collection-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.collection-options button { font:inherit; text-align:left; padding:15px; border:2px solid #e1ddec; border-radius:14px; background:#faf9fe; color:#26334e; cursor:pointer; min-width:0; }
+.collection-options strong { display:block; font-size:1.05rem; }
+.collection-options span { display:block; font-size:.72rem; line-height:1.5; margin-top:5px; }
+.collection-options button[aria-pressed="true"] { background:#292344; border-color:#292344; color:#fff; box-shadow:0 3px 0 #dcd5f4; }
+.collection-options button:focus-visible,#game-sort:focus-visible { outline:3px solid #7c5cff; outline-offset:3px; }
+.collection-description { font-size:.8rem; color:#59657c; margin:10px 0 0; line-height:1.65; min-height:1.65em; }
+.discovery-options-row { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+#play-finder .player-options .finder-options { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.child-age-options { margin-top:18px; }
+.child-age-options summary { cursor:pointer; font-weight:700; padding:10px 0; font-size:.85rem; }
+#play-finder .ages { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:8px; overflow:visible; }
+#play-finder .ages .finder-option { min-width:0; }
+#play-finder .genre-filter { flex-wrap:wrap; overflow:visible; gap:7px; margin:0; padding:0; }
+#play-finder .genre-filter button { font-size:.78rem; min-height:40px; padding:7px 12px; line-height:1.4; white-space:normal; }
+#play-finder .finder-actions { align-items:center; gap:16px; margin-top:20px; }
+#play-finder .finder-result { margin:0; color:#364464; font-size:.85rem; line-height:1.6; }
+#play-finder .finder-reset { font-size:.75rem; flex:none; padding:9px; }
+.browse-summary { position:sticky; top:70px; z-index:12; flex-wrap:wrap; margin:0 0 18px; padding:13px 16px; background:#f3f0ff; border:1px solid #dad3f1; border-radius:12px; color:#292344; }
+.browse-tools { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.browse-tools label { font-size:.75rem; }
+#game-sort { font:inherit; font-size:.8rem; border:1px solid #b9b2cb; border-radius:8px; background:#fff; color:#292344; padding:8px; min-height:40px; }
+.browse-tools a { font-size:.8rem; font-weight:700; color:#5438a6; }
+#game-grid .card h3 { overflow-wrap:anywhere; font-family:var(--sans, sans-serif); font-weight:800; line-height:1.5; letter-spacing:0; }
+#game-grid .card .desc { display:-webkit-box; flex:0 0 auto; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; color:#53617b; line-height:1.65; font-size:.82rem; }
+#game-grid .game-alias { font-size:.72rem; color:#5f5873; margin:0; }
+#game-grid .chips .chip { font-family:inherit; letter-spacing:0; font-size:.7rem; color:#30415b; background:#edf1f7; }
+#game-grid .chips .collection-badge { background:#e8e0fa; color:#4b2788; font-weight:800; }
+#game-grid .chips .age { font-size:.66rem; color:#657088; background:transparent; padding-left:0; }
+body.discovery-filtering #my-games,body.discovery-filtering #ranking,body.discovery-filtering #new-arrivals,body.discovery-filtering .showcase { display:none !important; }
+#filter-empty { text-align:center; line-height:1.8; }
+@media(max-width:720px) {
+  .hero-stage .hero { padding:130px 0 8px; }
+  .hero-stage .hero h1 { font-size:clamp(1.6rem,7vw,2rem); }
+  .hero-stage .ludot-install-card { margin-top:14px; }
+  #games { padding-top:10px; }
+  #play-finder.discovery-panel { padding:17px 14px; border-radius:16px; margin-bottom:22px; }
+  .discovery-heading { align-items:flex-start; gap:7px; }
+  #play-finder .finder-kicker { font-size:.58rem; }
+  #play-finder h2 { font-size:1.18rem; }
+  #play-finder .finder-reset { max-width:76px; font-size:.68rem; padding:3px; }
+  .collection-options { gap:6px; }
+  .collection-options button { padding:11px 8px; border-radius:11px; }
+  .collection-options strong { font-size:.87rem; }
+  .collection-options span { font-size:.62rem; }
+  .discovery-options-row { grid-template-columns:minmax(0,1fr); gap:0; }
+  #play-finder .player-options { margin-top:12px; }
+  .child-age-options { margin-top:5px; }
+  #play-finder .finder-actions { flex-direction:column; align-items:stretch; gap:10px; }
+  #play-finder .finder-submit { width:100%; }
+  #play-finder .genre-filter button { font-size:.72rem; padding:7px 10px; }
+  .browse-summary { position:static; font-size:.8rem; gap:10px; }
+  .browse-tools { gap:8px; }
+  .browse-tools label { display:none; }
+  #game-grid .card-body { padding:12px 10px; }
+  #game-grid .card h3 { font-size:.94rem; }
+  #game-grid .card .desc { display:-webkit-box; -webkit-line-clamp:2; font-size:.75rem; }
+  #game-grid .chips .age { display:none; }
+  #game-grid .chips .chip { font-size:.64rem; padding:4px 6px; }
+}
+@media(max-width:359px) {
+  #game-grid { grid-template-columns:minmax(0,1fr); }
+  #game-grid .art { aspect-ratio:16/8; }
+}
+body.discovery-filtering .lr-banner { display:none !important; }
+#play-finder .genre-filter button:disabled { opacity:.42; cursor:default; }
+#game-grid .game-tile[hidden], #game-grid .card[hidden] { display:none !important; }
