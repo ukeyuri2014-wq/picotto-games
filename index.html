@@ -1081,11 +1081,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="ルドット">
-<link rel="stylesheet" href="assets/ludot-install.css?v=20261116">
-<script defer src="assets/ludot-install.js?v=20261116"></script>
+<link rel="stylesheet" href="assets/ludot-install.css?v=20261116-visible">
+<script defer src="assets/ludot-install.js?v=20261116-visible"></script>
 <link rel="stylesheet" href="assets/ludot-discovery.css?v=20261116">
 </head>
-<body><a class="ludot-skip" href="#games">ゲーム一覧へスキップ</a>
+<body class="ludot-install-page"><a class="ludot-skip" href="#games">ゲーム一覧へスキップ</a>
 
 <div class="nav-outer">
   <div class="wrap">
@@ -2473,5 +2473,32 @@
     finally { clearTimeout(timeout); catalogLoading = false; refreshCatalogStatus(); }
   })();
 </script>
+
+<aside class="ludot-install-dock" id="ludot-install-dock" aria-label="ホーム画面への追加">
+  <a href="help.html#home-screen" data-ludot-install class="ludot-install-dock-button">
+    <img src="assets/ludot-icon-192.png" width="44" height="44" alt="">
+    <span><strong>＋ ホーム画面に追加</strong><small>登録不要・無料｜次はアイコンから</small></span>
+  </a>
+</aside>
+<dialog class="ludot-install-dialog" id="ludot-install-dialog" aria-labelledby="ludot-install-dialog-title">
+  <div class="ludot-install-dialog-head"><h2 id="ludot-install-dialog-title">ホーム画面に追加</h2><form method="dialog"><button type="submit" aria-label="追加手順を閉じる" autofocus>閉じる ×</button></form></div>
+  <div class="ludot-install-preview"><img src="assets/ludot-icon-192.png" width="64" height="64" alt="白いLとピンクのドットのルドットアイコン"><div><strong>次は、このアイコンから。</strong><p>会員登録なし・無料で追加できます。</p></div></div>
+  <p class="ludot-install-note">最後の「追加」は、お使いのスマホの画面で行います。</p>
+  <details id="ludot-install-ios" open><summary>iPhone・iPad</summary><ol>
+    <li><strong>Safari</strong>でルドットを開きます。LINEなどの中で開いている場合は、メニューから「Safariで開く」を選びます。</li>
+    <li><strong><svg class="ludot-share-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9H4v12h16V9h-3M12 15V2m-4 4 4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>共有ボタン</strong>を押します。四角から上向きの矢印が目印です。見えないときは「…」を開きます。</li>
+    <li>共有メニューを下へスクロールして<strong>「ホーム画面に追加」</strong>を選びます。</li>
+    <li>名前「ルドット」を確認し、<strong>「追加」</strong>を押せば完了です。</li>
+  </ol></details>
+  <details id="ludot-install-android" open><summary>Android</summary><ol>
+    <li><strong>Chrome</strong>でルドットを開きます。</li>
+    <li>右上の<strong>「⋮」</strong>メニューを押します。</li>
+    <li><strong>「ホーム画面に追加」</strong>または<strong>「アプリをインストール」</strong>を選びます。</li>
+    <li><strong>「追加」</strong>または<strong>「インストール」</strong>を押せば完了です。</li>
+  </ol></details>
+  <details id="ludot-install-desktop"><summary>パソコン</summary><p>Chrome・Edgeはアドレスバーのインストール表示やメニューから追加できます。MacのSafariは「ファイル」→「Dockに追加」を選びます。</p></details>
+  <p id="ludot-install-status" role="status"></p>
+  <p><a href="help.html#home-screen">追加できないとき・詳しい手順 →</a></p>
+</dialog>
 </body>
 </html>
