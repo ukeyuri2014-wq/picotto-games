@@ -4,12 +4,20 @@
   let busy = false;
   const standalone = window.matchMedia('(display-mode: standalone)');
   const status = document.getElementById('ludot-install-status');
+  const dialog = document.getElementById('ludot-install-dialog');
+  const dock = document.getElementById('ludot-install-dock');
+  const showGuide = () => {
+    if (!dialog || typeof dialog.showModal !== 'function') return false;
+    try { if (!dialog.open) dialog.showModal(); return true; } catch (_) { return false; }
+  };
   const say = text => { if (status) status.textContent = text; };
   const isStandalone = () => standalone.matches || navigator.standalone === true;
   function installed() {
     pendingPrompt = null;
     const card = document.getElementById('add-to-home');
     if (card) card.hidden = true;
+    if (dock) dock.hidden = true;
+    document.body.classList.remove('ludot-install-page');
     document.querySelectorAll('[data-ludot-install]').forEach(link => { link.hidden = true; });
     say('ルドットをアプリとして開いています。そのままゲームを楽しめます。');
   }
@@ -25,10 +33,14 @@
     say('ホーム画面への追加が完了しました。次はルドットのアイコンから開けます。');
   });
   document.querySelectorAll('[data-ludot-install]').forEach(link => {
+    if (dialog && typeof dialog.showModal === 'function') {
+      link.setAttribute('aria-haspopup', 'dialog');
+      link.setAttribute('aria-controls', dialog.id);
+    }
     link.addEventListener('click', async event => {
-      // Without browser support, the ordinary link opens the full instructions.
+      // Keep instructions on this page; the ordinary link remains a no-JS fallback.
       if (!pendingPrompt || busy) {
-        if (busy) event.preventDefault();
+        if (busy || showGuide()) event.preventDefault();
         return;
       }
       event.preventDefault();
@@ -45,12 +57,18 @@
           say('追加は見送りました。いつでもこのページから追加できます。');
         }
       } catch (_) {
-        window.location.href = link.href;
+        if (!showGuide()) window.location.href = link.href;
       } finally {
         busy = false;
         link.removeAttribute('aria-disabled');
       }
     });
+  });
+  if (dialog) dialog.addEventListener('click', event => {
+    if (event.target === dialog) {
+      const box = dialog.getBoundingClientRect();
+      if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
+    }
   });
   const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const android = /Android/.test(navigator.userAgent);

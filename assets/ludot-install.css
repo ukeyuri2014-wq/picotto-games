@@ -30,3 +30,42 @@ a.ludot-install-button[aria-disabled="true"] { opacity:.7; }
   .ludot-install-card .ludot-install-button { width:100%; }
   .ludot-install-preview { gap:12px; }
 }
+
+/* Keep the invitation visible even when a link opens the game list directly. */
+body.ludot-install-page { padding-bottom:calc(108px + env(safe-area-inset-bottom, 0px)); }
+.ludot-install-dock { position:fixed; z-index:40; right:18px; bottom:18px; width:320px; max-width:calc(100% - 28px); box-sizing:border-box; padding:8px; background:#fff; border:1px solid #ddd4f5; border-radius:20px; box-shadow:0 4px 24px #21143930; }
+.ludot-install-dock[hidden] { display:none !important; }
+a.ludot-install-dock-button { display:flex; align-items:center; justify-content:center; gap:12px; min-height:64px; padding:8px 12px; box-sizing:border-box; border-radius:14px; background:#603fce; color:#fff; text-decoration:none; line-height:1.5; }
+.ludot-install-dock-button img { flex:none; border-radius:11px; }
+.ludot-install-dock-button span { min-width:0; }
+.ludot-install-dock-button strong { display:block; font:800 16px/1.5 var(--sans, sans-serif); letter-spacing:0; }
+.ludot-install-dock-button small { display:block; font-size:11px; letter-spacing:0; }
+a.ludot-install-dock-button:hover { background:#4b2eac; color:#fff; }
+a.ludot-install-dock-button:focus-visible { outline:3px solid #221f38; outline-offset:3px; }
+.ludot-install-dialog { box-sizing:border-box; width:calc(100% - 24px); max-width:480px; max-height:calc(100dvh - 32px); margin:auto; border:1px solid #ded8fa; border-radius:22px; padding:0 20px 20px; background:#fff; color:#221f38; overflow:auto; overscroll-behavior:contain; text-align:left; font:15px/1.7 var(--sans, sans-serif); }
+.ludot-install-dialog:not([open]) { display:none; }
+.ludot-install-dialog::backdrop { background:#17132fa6; }
+.ludot-install-dialog-head { position:sticky; top:0; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:16px 0 12px; background:#fff; border-bottom:1px solid #eee9fa; }
+.ludot-install-dialog h2 { margin:0; font-size:19px; line-height:1.5; letter-spacing:0; }
+.ludot-install-dialog-head form { margin:0; flex:none; }
+.ludot-install-dialog button { min-height:44px; padding:8px 10px; border:1px solid #ddd4ed; border-radius:10px; background:#f4f1fa; color:#30244b; font:700 13px/1.5 var(--sans, sans-serif); cursor:pointer; }
+.ludot-install-dialog p { margin:12px 0; font-size:14px; }
+.ludot-install-dialog .ludot-install-preview { gap:12px; margin:18px 0 12px; }
+.ludot-install-dialog .ludot-install-preview p { font-size:12px; margin:3px 0; }
+.ludot-install-dialog .ludot-install-note { padding:10px 12px; background:#f3f0ff; border-radius:10px; font-size:13px; }
+.ludot-install-dialog details { margin:12px 0; border:1px solid #e5dff0; border-radius:12px; padding:12px; }
+.ludot-install-dialog summary { cursor:pointer; font-weight:800; min-height:24px; }
+.ludot-install-dialog ol { padding-left:22px; margin:12px 0 0; }
+.ludot-install-dialog li { margin:12px 0; padding-left:2px; }
+.ludot-install-dialog a { color:#603fce; font-weight:700; }
+.ludot-share-icon { width:24px; height:24px; vertical-align:middle; margin-right:5px; }
+#ludot-install-status:empty { display:none; }
+@media(max-width:720px) {
+  .ludot-install-dock { right:0; bottom:0; width:100%; max-width:none; border-width:1px 0 0; border-radius:0; padding:9px max(14px, env(safe-area-inset-right, 0px)) calc(9px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); }
+  .ludot-install-dialog { padding:0 14px 16px; }
+  .ludot-install-dialog h2 { font-size:17px; }
+}
+@media(display-mode:standalone) {
+  .ludot-install-dock,.ludot-install-card { display:none; }
+  body.ludot-install-page { padding-bottom:0; }
+}
