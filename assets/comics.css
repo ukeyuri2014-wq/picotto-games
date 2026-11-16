@@ -5,6 +5,7 @@
 .cm-points b { display: block; margin-bottom: 6px; }
 .cm-points ul { margin: 0; padding-left: 1.4em; }
 .cm-points li { margin: 6px 0; }
+.ai-line { margin: 0 0 24px; color: #5d6884; font-size: .85rem; }
 .ai-note { margin: 24px 0; padding: 18px 22px; background: #f3f9ff; border: 1px solid #d6eafa; border-radius: 16px; font-size: .9rem; }
 .ai-note b { display: block; margin-bottom: 4px; color: #17213d; }
 .ai-note p { margin: 6px 0 0; color: #39445f; }
