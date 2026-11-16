@@ -1078,6 +1078,11 @@
 <link rel="stylesheet" href="assets/ludot-library.css?v=20260914">
 <script defer src="assets/ludot-rating.js?v=20261002"></script>
 <link rel="stylesheet" href="assets/comics.css?v=20261115">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="ルドット">
+<link rel="stylesheet" href="assets/ludot-install.css?v=20261116">
+<script defer src="assets/ludot-install.js?v=20261116"></script>
 </head>
 <body><a class="ludot-skip" href="#games">ゲーム一覧へスキップ</a>
 
@@ -1110,6 +1115,11 @@
         <a class="hero-play" id="hero-play" href="#games">▶ おすすめをあそぶ</a>
         <a class="hero-browse" href="#games">ゲームをえらぶ ↓</a>
       </div>
+      <aside class="ludot-install-card" id="add-to-home" aria-label="ホーム画面からルドットを開く">
+        <img src="assets/ludot-icon-192.png" width="56" height="56" alt="" class="ludot-install-icon">
+        <div class="ludot-install-copy"><strong>また遊ぶときは、このアイコンから。</strong><p>登録不要・無料。スマホのホーム画面にルドットを。</p></div>
+        <a class="ludot-install-button" href="help.html#home-screen" data-ludot-install>＋ ホーム画面に追加</a>
+      </aside>
       <div class="stats">
         <span class="stat"><i style="background:var(--pink)"></i><span id="stat-count">--</span>&nbsp;GAMES</span>
         <span class="stat"><i style="background:var(--teal)"></i>100% FREE</span>
@@ -1397,7 +1407,7 @@
 </footer>
 
 <script src="games.js?v=20261023-search"></script>
-<script src="assets/ludot-library.js?v=20261023"></script>
+<script src="assets/ludot-library.js?v=20261116"></script>
 <script>
   // ============ ゲームごとのキービジュアル（描き下ろしSVG） ============
   const ART = {

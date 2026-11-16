@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "ルドット｜無料ミニゲーム",
+  "short_name": "ルドット",
+  "description": "ひとりでも、ふたりでも。無料ミニゲームとまんがを楽しめるルドット。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffdf7",
+  "theme_color": "#221f38",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/ludot-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/ludot-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
