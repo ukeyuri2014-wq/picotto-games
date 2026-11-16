@@ -1083,6 +1083,7 @@
 <meta name="apple-mobile-web-app-title" content="ルドット">
 <link rel="stylesheet" href="assets/ludot-install.css?v=20261116">
 <script defer src="assets/ludot-install.js?v=20261116"></script>
+<link rel="stylesheet" href="assets/ludot-discovery.css?v=20261116">
 </head>
 <body><a class="ludot-skip" href="#games">ゲーム一覧へスキップ</a>
 
@@ -1127,40 +1128,7 @@
       </div>
     </header>
 
-    <section class="play-finder" id="play-finder" aria-labelledby="finder-title">
-      <p class="finder-kicker">QUICK START</p>
-      <h2 id="finder-title">ゲームをさがす</h2>
-      <p class="finder-lead">名前を入れるだけでもOK。遊び方や年齢でも絞り込めます。</p>
-      <form id="game-search-form" role="search" class="game-search">
-        <label for="game-search">ゲーム名でさがす</label>
-        <div class="search-row"><input id="game-search" name="q" type="search" placeholder="例：アーセナル、すごろく" autocomplete="off" maxlength="100" aria-describedby="search-help"><button type="submit">検索</button></div>
-        <p id="search-help">ひらがな・カタカナ・英字で検索できます。</p>
-      </form>
-      <div class="finder-group">
-        <span class="finder-label">遊び方から探す</span>
-        <div class="finder-options" role="group" aria-label="遊び方">
-          <button class="finder-option" type="button" data-audience="solo" aria-pressed="false"><span class="option-icon" aria-hidden="true">👤</span><span>ひとりで</span><span class="option-count" data-count-for="solo"></span></button>
-          <button class="finder-option" type="button" data-audience="two" aria-pressed="false"><span class="option-icon" aria-hidden="true">👥</span><span>ふたりで</span><span class="option-count" data-count-for="two"></span></button>
-          <button class="finder-option" type="button" data-audience="kids" aria-pressed="false"><span class="option-icon" aria-hidden="true">🧸</span><span>ちいさい子向け</span><span class="option-count" data-count-for="kids"></span></button>
-        </div>
-      </div>
-      <div class="finder-group finder-optional">
-        <span class="finder-label"><span>遊ぶ人の年齢で絞り込む</span><span class="finder-label-note">選ばなくてOK</span></span>
-        <div class="finder-options ages" role="group" aria-label="年齢の目安">
-          <button class="finder-option" type="button" data-age="3" aria-pressed="false">3歳</button>
-          <button class="finder-option" type="button" data-age="6" aria-pressed="false">6歳</button>
-          <button class="finder-option" type="button" data-age="8" aria-pressed="false">8歳</button>
-          <button class="finder-option" type="button" data-age="10" aria-pressed="false">10歳</button>
-          <button class="finder-option" type="button" data-age="adult" aria-pressed="false">大人</button>
-        </div>
-      </div>
-      <div class="finder-actions">
-        <button class="finder-submit" id="finder-submit" type="button">選んだゲームを見る →</button>
-        <button class="finder-reset" id="finder-reset" type="button">リセット</button>
-      </div>
-      <p class="age-guide-note">年齢は遊びやすさの目安です。全年齢の作品は、どの年齢でも表示します。</p>
-      <p class="finder-result" id="finder-result" role="status" aria-live="polite">検索・絞り込みの結果がここに出ます。</p>
-    </section>
+
 
   </div>
   <div class="hero-credit">COME PLAY WITH LUDOT</div>
@@ -1201,12 +1169,40 @@
   </section>
 
   <main id="games">
+    <section class="play-finder discovery-panel" id="play-finder" aria-labelledby="finder-title">
+      <div class="discovery-heading"><div><p class="finder-kicker">FIND YOUR GAME</p><h2 id="finder-title">遊びたいゲームを探す</h2></div><button class="finder-reset" id="finder-reset" type="button">条件を解除</button></div>
+      <form id="game-search-form" role="search" class="game-search">
+        <label for="game-search">名前・ジャンル・キーワード</label>
+        <div class="search-row"><input id="game-search" name="q" type="search" placeholder="例：バカラ" autocomplete="off" maxlength="100" aria-describedby="search-help"><button type="submit">検索</button></div>
+        <p id="search-help">英語のゲーム名もカタカナで探せます。名前が分からなければ「シューティング」などでもOK。</p>
+      </form>
+      <div class="finder-group">
+        <span class="finder-label">おすすめの対象から</span>
+        <div class="collection-options" role="group" aria-label="おすすめの対象">
+          <button type="button" data-collection="all" aria-pressed="true"><strong>すべて</strong><span>全作品から探す</span></button>
+          <button type="button" data-collection="adult" aria-pressed="false"><strong>大人向け</strong><span>戦略・推理・本格アクション</span></button>
+          <button type="button" data-collection="kids" aria-pressed="false"><strong>子ども向け</strong><span>知育・やさしい遊び</span></button>
+        </div>
+        <p id="collection-description" class="collection-description">「大人向け」は、遊びの内容から選んだ作品だけを表示します。</p>
+      </div>
+      <div class="discovery-options-row">
+        <div class="finder-group player-options"><span class="finder-label">人数で絞る</span><div class="finder-options" role="group" aria-label="遊ぶ人数">
+          <button class="finder-option" type="button" data-audience="solo" aria-pressed="false">ひとりで</button>
+          <button class="finder-option" type="button" data-audience="two" aria-pressed="false">ふたりで</button>
+        </div></div>
+        <details class="child-age-options"><summary>子どもの年齢で絞る</summary><div class="finder-options ages" role="group" aria-label="子どもの年齢の目安">
+          <button class="finder-option" type="button" data-age="3" aria-pressed="false">3歳</button><button class="finder-option" type="button" data-age="6" aria-pressed="false">6歳</button><button class="finder-option" type="button" data-age="8" aria-pressed="false">8歳</button><button class="finder-option" type="button" data-age="10" aria-pressed="false">10歳</button>
+        </div><p class="age-guide-note">子ども向けの作品の中で、遊びやすさの目安を絞ります。公式の年齢区分ではありません。</p></details>
+      </div>
+      <div class="finder-group"><span class="finder-label">ジャンルで絞る</span><div class="genre-filter" id="genre-filter" role="group" aria-label="ジャンル"></div></div>
+      <div class="finder-actions"><button class="finder-submit" id="finder-submit" type="button">結果を見る ↓</button><p class="finder-result" id="finder-result" role="status" aria-live="polite">ゲームを読み込んでいます…</p></div>
+    </section>
+
     <div class="sec-head">
-      <div class="label">ALL GAMES</div>
-      <h2>今日は、どこへ行く？ <span class="count" id="game-count"></span></h2>
+      <div class="label">GAME RESULTS</div>
+      <h2 id="game-results" tabindex="-1"><span id="results-title">すべてのゲーム</span> <span class="count" id="game-count"></span></h2>
     </div>
-    <div class="browse-summary" id="browse-summary" hidden><span id="browse-summary-text"></span><button type="button" id="browse-clear">条件を解除</button></div>
-    <div class="genre-filter" id="genre-filter" role="group" aria-label="ジャンルでしぼる"></div>
+    <div class="browse-summary" id="browse-summary"><span id="browse-summary-text"></span><div class="browse-tools"><label for="game-sort">並び順</label><select id="game-sort"><option value="recommended">おすすめ順</option><option value="newest">新着順</option><option value="title">名前順</option></select><a href="#play-finder">条件を変える ↑</a><button type="button" id="browse-clear">条件を解除</button></div></div>
     <div class="grid" id="game-grid"><!-- STATIC-GAMES-START -->
 <a class="card" data-game-id="117" href="games/117-train-switch/index.html"><div class="art"><div class="fallback">🚃</div></div><div class="card-body"><div class="chips"><span class="chip">SIM</span><span class="chip age">目安 6歳〜</span></div><h3>でんしゃのポイント</h3><p class="desc">線路の分かれ道をタップで切りかえて、色のちがう電車をおなじ色の駅へとどけるゲーム。全20ステージで、駅・本数・はやさがだんだん増える。金色のはやい電車は追いつくとぶつかるので道をわけよう。★3つ評価とエンドレスのベスト記録つき。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
 <a class="card" data-game-id="116" href="games/116-mini-tank/index.html"><div class="art"><div class="fallback">🎯</div></div><div class="card-body"><div class="chips"><span class="chip">SHOOTING</span><span class="chip age">目安 6歳〜</span></div><h3>ちびタンク</h3><p class="desc">ちいさな せんしゃで てきの せんしゃを ぜんぶ たおそう。たまは かべで1かい はねかえるので、かべの むこうも ねらえる。てきは3しゅるい、ぜんぶで20ステージ。面は まいかい かわり、ステージごとに★3つと ハイスコアを きろく。スマホは左右スティックで あそべる。</p><div class="card-foot"><span class="play">あそぶ →</span><span class="free">FREE</span></div></div></a>
@@ -1406,6 +1402,7 @@
   </div>
 </footer>
 
+<script src="assets/ludot-discovery.js?v=20261116"></script>
 <script src="games.js?v=20261023-search"></script>
 <script src="assets/ludot-library.js?v=20261116"></script>
 <script>
@@ -2222,65 +2219,25 @@
   const PAGE_SIZE = 24;
   let shownCount = PAGE_SIZE;
   // ジャンルでしぼる：細かいジャンル表記（44種類ある）を、えらびやすい7つにまとめる
-  let activeCat = "all";
-  const CAT_TABS = [
-    ["all", "すべて"], ["action", "アクション"], ["shooter", "シューティング"], ["puzzle", "パズル"],
-    ["brain", "ことば・ちえ"], ["board", "ボード・カード"], ["versus", "たいせん"], ["sim", "ぼうけん・そだてる"],
-  ];
-  const CAT_MERGE = { arcade: "action", rhythm: "action", sports: "action", word: "brain", kids: "brain", card: "board", adventure: "sim", creative: "sim" };
-  let activeAudience = "all";
-  let activeAge = null;
-  let searchQuery = "";
+  const Discovery = window.LudotDiscovery;
+  const CAT_TABS = Discovery.categories;
+  const initialDiscovery = Discovery.readState(location.search);
+  let activeCat = initialDiscovery.cat;
+  let activeAudience = initialDiscovery.audience;
+  let activeCollection = initialDiscovery.collection;
+  let activeAge = initialDiscovery.age;
+  let searchQuery = initialDiscovery.query;
+  let searchComposing = false;
+  let activeSort = initialDiscovery.sort;
   let catalogLoading = true;
   let catalogLoadFailed = false;
   let refreshCatalogStatus = function () {};
-  function normalizeSearch(value) {
-    return String(value || "").normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }).replace(/[\s・･._〜~ー—–-]+/g, "");
-  }
-  function titleMatches(title, query) {
-    const text = normalizeSearch(title).replace(/あせなる/g, "arsenal");
-    const terms = String(query || "").trim().split(/\s+/).filter(Boolean);
-    return terms.every(function (term) { return text.includes(normalizeSearch(term).replace(/あせなる/g, "arsenal")); });
-  }
-  function catOf(g) {
-    let c = typeof g.cat === "string" ? g.cat : "";
-    if (!c) {
-      const t = String(g.genre || "").toUpperCase();
-      if (/2P|VERSUS|たいせん|対戦/.test(t)) c = "versus";
-      else if (/SHOOT|BOSS RUSH|シューティング/.test(t)) c = "shooter";
-      else if (/BOARD|CARD|CASINO|SOLITAIRE|ボード|カード/.test(t)) c = "board";
-      else if (/WORD|QUIZ|TYPING|BRAIN|クイズ|ことば/.test(t)) c = "brain";
-      else if (/PUZZLE|MERGE|LOGIC|SOKOBAN|NONOGRAM|ESCAPE|MEMORY|MATCH|パズル/.test(t)) c = "puzzle";
-      else if (/RPG|ADVENTURE|IDLE|MANAGEMENT|PET|FISHING|DEFENSE|SIM|ぼうけん/.test(t)) c = "sim";
-      else if (/ACTION|ARCADE|RHYTHM|SPORTS|TIMING|ONE BUTTON|アクション/.test(t)) c = "action";
-    }
-    c = CAT_MERGE[c] || c;
-    return CAT_TABS.some(function (t) { return t[0] === c; }) ? c : "other";
-  }
-  function minAgeOf(g) {
-    const match = String(g.age || "").match(/(\d{1,2})\s*歳/);
-    return match ? Number(match[1]) : (/全年齢/.test(String(g.age || "")) ? 0 : 99);
-  }
-  function gameText(g) {
-    return [g.genre, g.description, g.controls].filter(Boolean).join(" ");
-  }
-  function supportsTwo(g) {
-    return /(?:2P|ふたり|2人|二人|P1.+P2)/i.test(gameText(g));
-  }
-  function supportsSolo(g) {
-    const text = gameText(g);
-    return !supportsTwo(g) || /(?:CPU|ひとり|1人|一人)/i.test(text);
-  }
-  function isForKids(g) {
-    return String(g.cat || "").toLowerCase() === "kids" || /KIDS/i.test(String(g.genre || "")) || minAgeOf(g) <= 5;
-  }
-  function finderMatch(g) {
-    if (activeAudience === "solo" && !supportsSolo(g)) return false;
-    if (activeAudience === "two" && !supportsTwo(g)) return false;
-    if (activeAudience === "kids" && !isForKids(g)) return false;
-    if (typeof activeAge === "number" && minAgeOf(g) > activeAge) return false;
-    return true;
-  }
+  const catOf = Discovery.category;
+  const minAgeOf = Discovery.minAge;
+  const supportsTwo = Discovery.supportsTwo;
+  const supportsSolo = Discovery.supportsSolo;
+  const isForKids = g => Discovery.target(g) === 'kids';
+  const discoveryState = () => ({cat:activeCat,audience:activeAudience,collection:activeCollection,age:activeAge,query:searchQuery,sort:activeSort});
   function renderGames(availableGames) {
     const grid = document.getElementById("game-grid");
     const count = document.getElementById("game-count");
@@ -2290,10 +2247,10 @@
     const ranking = document.getElementById("ranking");
     const arrivals = document.getElementById("new-arrivals");
     const gamesMain = document.getElementById("games");
-    // 最初の導線を「案内 → 一覧」に絞り、ランキングと新着は一覧の後で楽しめる順番にする。
-    if (gamesMain && ranking && arrivals && ranking.previousElementSibling !== gamesMain) {
-      gamesMain.after(arrivals);
-      gamesMain.after(ranking);
+    // Keep results directly after their controls; personal shelves follow the list.
+    const personalShelf = document.getElementById('my-games');
+    if (gamesMain && personalShelf && ranking && arrivals) {
+      gamesMain.after(personalShelf); personalShelf.after(ranking); ranking.after(arrivals);
     }
     arrivals.hidden = availableGames.length < 4;
     if (!availableGames.length) {
@@ -2344,11 +2301,13 @@
           '<a class="card" data-game-id="' + g.id + '" data-cat="' + catOf(g) + '" data-age="' + minAgeOf(g) + '" data-solo="' + supportsSolo(g) + '" data-two="' + supportsTwo(g) + '" data-kids="' + isForKids(g) + '" style="--ac:' + ac + '" href="' + g.path + '">' +
           '<div class="art">' + artOf(g) + "</div>" +
           '<div class="card-body">' +
-          '<div class="chips"><span class="chip">' + (g.genre || "GAME") + "</span>" +
-          '<span class="chip age">目安 ' + (g.age || "未確認") + "</span>" +
+          '<div class="chips"><span class="chip">' + Discovery.categoryLabels[catOf(g)] + "</span>" +
+          (Discovery.target(g) !== 'general' ? '<span class="chip collection-badge">' + (Discovery.target(g) === 'adult' ? '大人向け' : '子ども向け') + '</span>' : '') +
+          (Discovery.target(g) !== 'adult' ? '<span class="chip age">遊びやすさ ' + (g.age || '未確認') + '</span>' : '') +
           (g.date === latest ? '<span class="chip new">NEW</span>' : "") +
           '<span class="no">#' + g.id + "</span></div>" +
           "<h3>" + g.title + "</h3>" +
+          (Discovery.reading[g.id] ? '<p class="game-alias">' + Discovery.reading[g.id] + '</p>' : '') +
           '<p class="desc">' + g.description + "</p>" +
           '<div class="meta"><span>' + g.date + "</span><span>by " + g.author + "</span></div>" +
           '<div class="card-foot"><span class="play">あそぶ <span class="arrow">→</span></span><span class="free">FREE</span></div>' +
@@ -2357,128 +2316,93 @@
       })
       .join("");
 
-    // 一覧は24本ずつ表示（ゲームが増えても最初の表示を軽く保つ）。ジャンルでしぼった時は、合うものだけを数える。
-    const more = document.getElementById("more-games");
-    const filterBox = document.getElementById("genre-filter");
-    let filterEmpty = document.getElementById("filter-empty");
+    const more = document.getElementById('more-games');
+    const filterBox = document.getElementById('genre-filter');
+    let filterEmpty = document.getElementById('filter-empty');
     if (!filterEmpty) {
-      filterEmpty = document.createElement("p");
-      filterEmpty.id = "filter-empty";
-      filterEmpty.className = "filter-empty";
-      filterEmpty.hidden = true;
-      filterEmpty.textContent = "この条件に合うゲームは、まだありません。条件を少し変えてみてね。";
-      grid.insertAdjacentElement("afterend", filterEmpty);
+      filterEmpty = document.createElement('p'); filterEmpty.id='filter-empty'; filterEmpty.className='filter-empty'; filterEmpty.hidden=true;
+      grid.insertAdjacentElement('afterend',filterEmpty);
     }
-    const finderResult = document.getElementById("finder-result");
-    const searchInput = document.getElementById("game-search");
-    const searchForm = document.getElementById("game-search-form");
-    const browseSummary = document.getElementById("browse-summary");
-    const browseSummaryText = document.getElementById("browse-summary-text");
-    const audienceLabel = function () {
-      return ({solo:"ひとりで遊べる", two:"ふたりで遊べる", kids:"ちいさい子向け"})[activeAudience] || "";
+    const finderResult = document.getElementById('finder-result');
+    const searchInput = document.getElementById('game-search');
+    const searchForm = document.getElementById('game-search-form');
+    const browseSummaryText = document.getElementById('browse-summary-text');
+    const sortSelect = document.getElementById('game-sort');
+    const cardMap = new Map([...grid.querySelectorAll('.card')].map(card=>[card.dataset.gameId,card]));
+    const collectionLabel = () => ({adult:'大人向け',kids:'子ども向け'})[activeCollection] || '';
+    const audienceLabel = () => ({solo:'ひとりで',two:'ふたりで'})[activeAudience] || '';
+    const syncFinderButtons = () => {
+      document.querySelectorAll('button[data-collection]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.collection===activeCollection)));
+      document.querySelectorAll('button[data-audience]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.audience===activeAudience)));
+      document.querySelectorAll('button[data-age]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.age)===activeAge)));
+      sortSelect.value=activeSort;
+      document.getElementById('collection-description').textContent=activeCollection==='adult'
+        ? '戦略・推理・本格アクションなど、内容から選んだ大人向けの作品だけを表示します。'
+        : activeCollection==='kids' ? '知育・ごっこ遊びなど、子ども向けに選んだ作品を表示します。'
+        : '「大人向け」は、遊びの内容から選んだ作品だけを表示します。';
     };
-    const ageLabel = function () { return activeAge === "adult" ? "大人向けを含む" : (typeof activeAge === "number" ? activeAge + "歳でも遊べる" : ""); };
-    const syncFinderButtons = function () {
-      document.querySelectorAll("[data-audience]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.audience === activeAudience)); });
-      document.querySelectorAll("button[data-age]").forEach(function (b) {
-        const value = b.dataset.age === "adult" ? "adult" : Number(b.dataset.age);
-        b.setAttribute("aria-pressed", String(value === activeAge));
+    const applyPager = () => {
+      const state=discoveryState();
+      state.nameOnly=sorted.some(g=>Discovery.exactName(g,state.query));
+      const matching=sorted.filter(g=>Discovery.matches(g,state)).sort(Discovery.compare(state));
+      cardMap.forEach(card=>{card.hidden=true;const tile=card.closest('.game-tile');if(tile)tile.hidden=true;});
+      matching.forEach((g,i)=>{
+        const card=cardMap.get(g.id); if(!card)return;
+        const tile=card.closest('.game-tile');const node=tile||card;
+        card.hidden=i>=shownCount;node.hidden=card.hidden;grid.append(node);
       });
+      const match=matching.length, shown=Math.min(match,shownCount);
+      more.hidden=shown>=match;more.textContent='もっと見る（残り '+Math.max(0,match-shown)+'本）';
+      filterEmpty.hidden=match!==0;
+      filterEmpty.textContent=catalogLoading?'投稿作品を読み込んでいます…':catalogLoadFailed?'一部の作品を読み込めませんでした。再読み込みしてお試しください。':'この条件に合うゲームはありません。「条件を解除」するか、キーワードを短くしてみてください。';
+      const labels=[collectionLabel(),audienceLabel(),activeAge!==null?activeAge+'歳の目安':'',activeCat!=='all'?Discovery.categoryLabels[activeCat]:'',searchQuery.trim()?'「'+searchQuery.trim()+'」':''].filter(Boolean);
+      const filtering=labels.length>0;
+      document.body.classList.toggle('discovery-filtering',filtering);
+      document.getElementById('results-title').textContent=searchQuery.trim()?'検索結果':collectionLabel()?collectionLabel()+'のゲーム':'すべてのゲーム';
+      count.textContent=match+'本';
+      const warning=catalogLoading?'（投稿作品を読み込み中）':catalogLoadFailed?'（一部の作品は未取得です）':'';
+      finderResult.textContent=(labels.join('・')||'すべてのゲーム')+'：'+match+'本 '+warning;
+      browseSummaryText.textContent=(labels.join('・')||'すべて')+' ／ '+match+'本中 '+shown+'本を表示 '+warning;
+      document.getElementById('finder-submit').textContent='結果を見る（'+match+'本） ↓';
+      document.getElementById('browse-clear').hidden=!filtering;
+      const counts={all:0};
+      sorted.filter(g=>Discovery.matches(g,state,'cat')).forEach(g=>{const c=catOf(g);counts.all++;counts[c]=(counts[c]||0)+1;});
+      filterBox.querySelectorAll('button[data-cat]').forEach(button=>{
+        const n=counts[button.dataset.cat]||0;
+        button.querySelector('.n').textContent=n;
+        button.setAttribute('aria-pressed',String(button.dataset.cat===activeCat));
+        button.disabled=n===0&&button.dataset.cat!==activeCat;
+      });
+      try { const url=Discovery.writeState(location.href,state);if(url!==location.href)history.replaceState(null,'',url); } catch (_) {}
     };
-    const applyPager = function () {
-      const cards = grid.querySelectorAll(".card");
-      let match = 0, shown = 0;
-      cards.forEach(function (c) {
-        const audienceOk = activeAudience === "all" || c.dataset[activeAudience] === "true";
-        const ageOk = typeof activeAge !== "number" || Number(c.dataset.age) <= activeAge;
-        const ok = (activeCat === "all" || c.dataset.cat === activeCat) && audienceOk && ageOk && titleMatches(c.querySelector("h3").textContent, searchQuery);
-        if (ok) match++;
-        const show = ok && shown < shownCount;
-        if (show) shown++;
-        c.hidden = !show;
-        // 保存ボタンつきの外わく（.game-tile）も一緒にかくす。カードだけかくすと保存ボタンが残って積み重なる。
-        const tile = c.parentElement;
-        if (tile && tile.classList.contains("game-tile")) tile.hidden = c.hidden;
-      });
-      more.hidden = shown >= match;
-      more.textContent = "もっと見る（のこり " + Math.max(0, match - shown) + "本）";
-      filterEmpty.hidden = match !== 0;
-      filterEmpty.textContent = catalogLoading ? "投稿作品を読み込んでいます…" : catalogLoadFailed ? "投稿作品の検索結果は未確認です。ページを再読み込みしてください。" : "この条件に合うゲームは、まだありません。条件を少し変えてみてね。";
-      const categoryLabel = CAT_TABS.find(function (t) { return t[0] === activeCat; });
-      const labels = [searchQuery.trim() ? "「" + searchQuery.trim() + "」" : "", activeCat !== "all" ? categoryLabel[1] : "", audienceLabel(), ageLabel()].filter(Boolean);
-      if (finderResult) finderResult.textContent = labels.length ? labels.join("・") + "ゲームが " + match + "本あります。" : "すべてのゲーム " + match + "本から探せます。";
-      if (finderResult && catalogLoading) finderResult.textContent += "（投稿作品を読み込み中…）";
-      if (finderResult && catalogLoadFailed) finderResult.textContent += " 投稿作品を読み込めませんでした。再読み込みしてください。";
-      if (browseSummary && browseSummaryText) {
-        browseSummary.hidden = !labels.length;
-        browseSummaryText.textContent = labels.length ? labels.join("・") + "ゲームを表示中（" + match + "本）" : "";
-      }
+    const showResults=()=>{const heading=document.getElementById('game-results');heading.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});heading.focus({preventScroll:true});};
+    const changed=()=>{shownCount=PAGE_SIZE;syncFinderButtons();applyPager();};
+    const reset=()=>{activeAudience='all';activeCollection='all';activeAge=null;activeCat='all';searchQuery='';activeSort='recommended';searchInput.value='';changed();};
+    refreshCatalogStatus=applyPager;
+    if (!searchComposing) searchInput.value=searchQuery;
+    const bindComposition=(type,handler)=>{
+      const handlers=searchInput._ludotCompositionHandlers||(searchInput._ludotCompositionHandlers={});
+      if(handlers[type])searchInput.removeEventListener(type,handlers[type]);
+      handlers[type]=handler;searchInput.addEventListener(type,handler);
     };
-    refreshCatalogStatus = applyPager;
-    if (searchInput) {
-      searchInput.value = searchQuery;
-      searchInput.oninput = function () { searchQuery = searchInput.value; shownCount = PAGE_SIZE; applyPager(); };
-      searchInput.onkeydown = function (event) { if (event.key === "Escape") { searchInput.value = searchQuery = ""; shownCount = PAGE_SIZE; applyPager(); } };
-    }
-    if (searchForm) searchForm.onsubmit = function (event) { event.preventDefault(); searchQuery = searchInput.value; shownCount = PAGE_SIZE; applyPager(); document.getElementById("games").scrollIntoView({behavior:"smooth", block:"start"}); };
-    more.onclick = function () { shownCount += PAGE_SIZE; applyPager(); };
-    if (filterBox) {
-      const counts = {};
-      sorted.forEach(function (g) { const c = catOf(g); counts[c] = (counts[c] || 0) + 1; });
-      if (activeCat !== "all" && !counts[activeCat]) activeCat = "all";
-      filterBox.innerHTML = CAT_TABS.filter(function (t) { return t[0] === "all" || counts[t[0]]; }).map(function (t) {
-        const n = t[0] === "all" ? sorted.length : counts[t[0]];
-        return '<button type="button" data-cat="' + t[0] + '" aria-pressed="' + (t[0] === activeCat) + '">' + t[1] + '<span class="n">' + n + "</span></button>";
-      }).join("");
-      filterBox.onclick = function (e) {
-        const b = e.target.closest("button[data-cat]");
-        if (!b) return;
-        activeCat = b.dataset.cat;
-        shownCount = PAGE_SIZE;
-        filterBox.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-        applyPager();
-      };
-    }
-    const finder = document.getElementById("play-finder");
-    if (finder) {
-      ["solo", "two", "kids"].forEach(function (key) {
-        const target = finder.querySelector('[data-count-for="' + key + '"]');
-        if (target) target.textContent = availableGames.filter(function (g) {
-          return key === "solo" ? supportsSolo(g) : key === "two" ? supportsTwo(g) : isForKids(g);
-        }).length + "本";
-      });
-      finder.querySelectorAll("[data-audience]").forEach(function (button) {
-        button.onclick = function () {
-          activeAudience = activeAudience === button.dataset.audience ? "all" : button.dataset.audience;
-          shownCount = PAGE_SIZE;
-          syncFinderButtons();
-          applyPager();
-        };
-      });
-      finder.querySelectorAll("[data-age]").forEach(function (button) {
-        button.onclick = function () {
-          const value = button.dataset.age === "adult" ? "adult" : Number(button.dataset.age);
-          activeAge = activeAge === value ? null : value;
-          shownCount = PAGE_SIZE;
-          syncFinderButtons();
-          applyPager();
-        };
-      });
-      document.getElementById("finder-submit").onclick = function () {
-        document.getElementById("games").scrollIntoView({behavior:"smooth", block:"start"});
-      };
-      document.getElementById("finder-reset").onclick = function () {
-        activeAudience = "all"; activeAge = null; activeCat = "all"; searchQuery = ""; if (searchInput) searchInput.value = ""; shownCount = PAGE_SIZE;
-        filterBox.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.cat === "all")); });
-        syncFinderButtons(); applyPager();
-      };
-      document.getElementById("browse-clear").onclick = function () {
-        activeAudience = "all"; activeAge = null; activeCat = "all"; searchQuery = ""; if (searchInput) searchInput.value = ""; shownCount = PAGE_SIZE;
-        filterBox.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.cat === "all")); });
-        syncFinderButtons(); applyPager();
-      };
-      syncFinderButtons();
-    }
+    bindComposition('compositionstart',()=>{searchComposing=true;});
+    searchInput.oninput=event=>{if(searchComposing||event.isComposing)return;searchQuery=searchInput.value;shownCount=PAGE_SIZE;applyPager();};
+    bindComposition('compositionend',()=>{searchComposing=false;searchQuery=searchInput.value;shownCount=PAGE_SIZE;applyPager();});
+    searchInput.onkeydown=event=>{if(searchComposing||event.isComposing)return;if(event.key==='Escape'){searchInput.value=searchQuery='';shownCount=PAGE_SIZE;applyPager();}};
+    searchForm.onsubmit=event=>{event.preventDefault();if(searchComposing||event.isComposing)return;searchQuery=searchInput.value;changed();showResults();};
+    more.onclick=()=>{shownCount+=PAGE_SIZE;applyPager();};
+    const genreSet=new Set(sorted.map(catOf));
+    filterBox.innerHTML=CAT_TABS.filter(t=>t[0]==='all'||genreSet.has(t[0])||t[0]===activeCat).map(t=>'<button type="button" data-cat="'+t[0]+'" aria-pressed="'+(t[0]===activeCat)+'">'+t[1]+'<span class="n">0</span></button>').join('');
+    filterBox.onclick=event=>{const button=event.target.closest('button[data-cat]');if(!button||button.disabled)return;activeCat=button.dataset.cat;changed();};
+    const finder=document.getElementById('play-finder');
+    finder.querySelectorAll('[data-collection]').forEach(button=>{button.onclick=()=>{activeCollection=button.dataset.collection;activeAge=null;changed();};});
+    finder.querySelectorAll('[data-audience]').forEach(button=>{button.onclick=()=>{activeAudience=activeAudience===button.dataset.audience?'all':button.dataset.audience;changed();};});
+    finder.querySelectorAll('[data-age]').forEach(button=>{button.onclick=()=>{const age=Number(button.dataset.age);activeAge=activeAge===age?null:age;activeCollection='kids';changed();};});
+    sortSelect.onchange=()=>{activeSort=sortSelect.value;changed();};
+    document.getElementById('finder-submit').onclick=showResults;
+    document.getElementById('finder-reset').onclick=reset;
+    document.getElementById('browse-clear').onclick=()=>{reset();document.getElementById('game-results').focus({preventScroll:true});};
+    syncFinderButtons();
     applyPager();
 
     // 数字を見せないTOP 3。初回は編集部セレクト、以降はこの端末のプレイ履歴で並び替える。
