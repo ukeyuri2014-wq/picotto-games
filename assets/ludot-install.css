@@ -7,15 +7,21 @@ a.ludot-install-button { display:inline-flex; align-items:center; justify-conten
 a.ludot-install-button:hover { background:#4b2eac; color:#fff; }
 a.ludot-install-button:focus-visible { outline:3px solid #221f38; outline-offset:4px; }
 a.ludot-install-button[aria-disabled="true"] { opacity:.7; }
-.ludot-install-guide { scroll-margin-top:28px; }
+.ludot-install-guide { scroll-margin-top:128px; }
 .ludot-install-preview { display:flex; gap:18px; align-items:center; margin:18px 0; }
 .ludot-install-preview img { flex:none; border-radius:18px; }
 .ludot-install-preview p { margin:6px 0; }
-#home-screen-steps { scroll-margin-top:28px; }
+#home-screen-steps { scroll-margin-top:128px; }
 #home-screen-steps details { margin:12px 0; }
 #home-screen-steps li { margin:10px 0; }
 #ludot-install-status { color:#5f5873; font-size:14px; }
 .ludot-install-card[hidden], [data-ludot-install][hidden] { display:none !important; }
+/* The existing finder has a wide age selector. Keep its intrinsic width
+   from stretching the one-column hero on small phones. */
+.hero-stage > .wrap > .hero, .hero-stage > .wrap > .play-finder { min-width:0; }
+@media(max-width:900px) {
+  .hero-stage > .wrap { grid-template-columns:minmax(0, 1fr); }
+}
 @media(max-width:600px) {
   .ludot-install-card { flex-wrap:wrap; gap:10px 12px; padding:14px; border-radius:16px; }
   .ludot-install-icon { width:48px; height:48px; border-radius:12px; }
