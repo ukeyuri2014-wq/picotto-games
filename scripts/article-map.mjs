@@ -6,5 +6,5 @@ export const articleMap = {
  '027':'reversi-kachikata.html', '045':'oekaki-logic-tokikata.html',
  '046':'hakooshi-puzzle-kotsu.html', '049':'hitokuchi-dungeon-guide.html',
  '044':'solitaire-kotsu.html', '115':'all-lights-guide.html',
- '117':'train-switch-guide.html'
+ '117':'train-switch-guide.html', '086':'car-exit-guide.html'
 };
